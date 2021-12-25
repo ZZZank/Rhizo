@@ -905,7 +905,6 @@ public class Context {
 	 *                       implementations that don't care about security, this value
 	 *                       may be null.
 	 * @return the result of evaluating the string
-	 * @see SecurityController
 	 */
 	public final Object evaluateString(Scriptable scope, String source, String sourceName, int lineno, Object securityDomain) {
 		Script script = compileString(source, sourceName, lineno, securityDomain);
@@ -1416,31 +1415,6 @@ public class Context {
 	}
 
 	/**
-	 * Tell whether debug information is being generated.
-	 *
-	 * @since 1.3
-	 */
-	public final boolean isGeneratingDebug() {
-		return generatingDebug;
-	}
-
-	/**
-	 * Specify whether or not debug information should be generated.
-	 * <p>
-	 * Setting the generation of debug information on will set the
-	 * optimization level to zero.
-	 *
-	 * @since 1.3
-	 */
-	public final void setGeneratingDebug(boolean generatingDebug) {
-		if (sealed) {
-			onSealedMutation();
-		}
-		generatingDebugChanged = true;
-		this.generatingDebug = generatingDebug;
-	}
-
-	/**
 	 * Tell whether source information is being generated.
 	 *
 	 * @since 1.3
@@ -1510,34 +1484,6 @@ public class Context {
 			throw new IllegalArgumentException("Cannot set maximumInterpreterStackDepth to less than 1");
 		}
 		maximumInterpreterStackDepth = max;
-	}
-
-	/**
-	 * Set the security controller for this context.
-	 * <p> SecurityController may only be set if it is currently null
-	 * and {@link SecurityController#hasGlobal()} is <code>false</code>.
-	 * Otherwise a SecurityException is thrown.
-	 *
-	 * @param controller a SecurityController object
-	 * @throws SecurityException if there is already a SecurityController
-	 *                           object for this Context or globally installed.
-	 * @see SecurityController#initGlobal(SecurityController controller)
-	 * @see SecurityController#hasGlobal()
-	 */
-	public final void setSecurityController(SecurityController controller) {
-		if (sealed) {
-			onSealedMutation();
-		}
-		if (controller == null) {
-			throw new IllegalArgumentException();
-		}
-		if (securityController != null) {
-			throw new SecurityException("Can not overwrite existing SecurityController object");
-		}
-		if (SecurityController.hasGlobal()) {
-			throw new SecurityException("Can not overwrite existing global SecurityController object");
-		}
-		securityController = controller;
 	}
 
 	/**
@@ -1857,7 +1803,7 @@ public class Context {
 		if (sourceName == null) {
 			sourceName = "unnamed script";
 		}
-		if (securityDomain != null && getSecurityController() == null) {
+		if (securityDomain != null) {
 			throw new IllegalArgumentException("securityDomain should be null if setSecurityController() was never called");
 		}
 
@@ -1974,19 +1920,6 @@ public class Context {
 		return regExpProxy;
 	}
 
-	// The method must NOT be public or protected
-	SecurityController getSecurityController() {
-		SecurityController global = SecurityController.global();
-		if (global != null) {
-			return global;
-		}
-		return securityController;
-	}
-
-	public final boolean isGeneratingDebugChanged() {
-		return generatingDebugChanged;
-	}
-
 	/**
 	 * Add a name to the list of names forcing the creation of real
 	 * activation objects for functions.
@@ -2059,21 +1992,15 @@ public class Context {
 	// Use ObjToIntMap instead of java.util.HashSet for JDK 1.1 compatibility
 	ObjToIntMap iterating;
 
-	Object interpreterSecurityDomain;
-
-	private SecurityController securityController;
 	private boolean hasClassShutter;
 	private ClassShutter classShutter;
 	private ErrorReporter errorReporter;
 	RegExpProxy regExpProxy;
 	private Locale locale;
-	private boolean generatingDebug;
-	private boolean generatingDebugChanged;
 	private boolean generatingSource = true;
 	boolean useDynamicScope;
 	private int maximumInterpreterStackDepth;
 	private WrapFactory wrapFactory;
-	private Object debuggerData;
 	private int enterCount;
 	private Object propertyListeners;
 	private Map<Object, Object> threadLocalMap;
