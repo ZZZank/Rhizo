@@ -103,15 +103,13 @@ import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
  */
 
 public class ContextFactory {
-	private static volatile boolean hasCustomGlobal;
-	private static ContextFactory global = new ContextFactory();
+	private static final ContextFactory global = new ContextFactory();
 
 	private volatile boolean sealed;
 
 	private final Object listenersLock = new Object();
 	private volatile Object listeners;
 	private boolean disabledListening;
-	private ClassLoader applicationClassLoader;
 	TypeWrappers typeWrappers;
 
 	/**
@@ -141,6 +139,8 @@ public class ContextFactory {
 	}
 
 	/**
+	 * @deprecated Such method has been removed, DO NOT USE
+	 * <p>
 	 * Check if global factory was set.
 	 * Return true to indicate that {@link #initGlobal(ContextFactory)} was
 	 * already called and false to indicate that the global factory was not
@@ -150,10 +150,12 @@ public class ContextFactory {
 	 * @see #initGlobal(ContextFactory)
 	 */
 	public static boolean hasExplicitGlobal() {
-		return hasCustomGlobal;
+		return false;
 	}
 
 	/**
+	 * @deprecated Such method has been removed, DO NOT USE
+	 * <p>
 	 * Set global ContextFactory.
 	 * The method can only be called once.
 	 *
@@ -161,14 +163,7 @@ public class ContextFactory {
 	 * @see #hasExplicitGlobal()
 	 */
 	public synchronized static void initGlobal(ContextFactory factory) {
-		if (factory == null) {
-			throw new IllegalArgumentException();
-		}
-		if (hasCustomGlobal) {
-			throw new IllegalStateException();
-		}
-		hasCustomGlobal = true;
-		global = factory;
+		throw new IllegalStateException("This method has been depecrated");
 	}
 
 	public interface GlobalSetter {
@@ -177,23 +172,11 @@ public class ContextFactory {
 		ContextFactory getContextFactoryGlobal();
 	}
 
+	/**
+	 * @deprecated Such method has been removed, DO NOT USE
+	 */
 	public synchronized static GlobalSetter getGlobalSetter() {
-		if (hasCustomGlobal) {
-			throw new IllegalStateException();
-		}
-		hasCustomGlobal = true;
-		class GlobalSetterImpl implements GlobalSetter {
-			@Override
-			public void setContextFactoryGlobal(ContextFactory factory) {
-				global = factory == null ? new ContextFactory() : factory;
-			}
-
-			@Override
-			public ContextFactory getContextFactoryGlobal() {
-				return global;
-			}
-		}
-		return new GlobalSetterImpl();
+		return null;
 	}
 
 	/**
@@ -290,34 +273,24 @@ public class ContextFactory {
 	}
 
 	/**
+	 * @deprecated Such method has been removed, DO NOT USE
 	 * Get ClassLoader to use when searching for Java classes.
 	 * Unless it was explicitly initialized with
 	 * {@link #initApplicationClassLoader(ClassLoader)} the method returns
 	 * null to indicate that Thread.getContextClassLoader() should be used.
 	 */
 	public final ClassLoader getApplicationClassLoader() {
-		return applicationClassLoader;
+		return null;
 	}
 
 	/**
+	 * @deprecated Such method has been removed, DO NOT USE
 	 * Set explicit class loader to use when searching for Java classes.
 	 *
 	 * @see #getApplicationClassLoader()
 	 */
 	public final void initApplicationClassLoader(ClassLoader loader) {
-		if (loader == null) {
-			throw new IllegalArgumentException("loader is null");
-		}
-		if (!Kit.testIfCanLoadRhinoClasses(loader)) {
-			throw new IllegalArgumentException("Loader can not resolve Rhino classes");
-		}
-
-		if (this.applicationClassLoader != null) {
-			throw new IllegalStateException("applicationClassLoader can only be set once");
-		}
-		checkNotSealed();
-
-		this.applicationClassLoader = loader;
+		throw new IllegalStateException("This method has been depecrated");
 	}
 
 	/**
