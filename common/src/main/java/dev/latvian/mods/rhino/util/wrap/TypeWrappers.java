@@ -36,7 +36,7 @@ public class TypeWrappers {
 		TypeWrapper<T> typeWrapper0 = new TypeWrapper<>(target, validator, factory);
 		wrappers.put(target, typeWrapper0);
 
-		// I know this looks like cancer but it's actually pretty simple - grab T[].class, register ArrayTypeWrapperFactory
+		// I know this looks like cancer, but it's actually pretty simple - grab T[].class, register ArrayTypeWrapperFactory
 		// You may say that it would be better to just implement N-sized array checking directly in java parser, but this is way more efficient
 
 		// 1D
@@ -71,6 +71,8 @@ public class TypeWrappers {
 
 		if (wrapper != null && wrapper.validator.test(from)) {
 			return wrapper.factory;
+		} else if (target.isEnum()) {
+			return EnumTypeWrapper.get(target);
 		}
 		//else if (from != null && target.isArray() && !from.getClass().isArray() && target.getComponentType() == from.getClass() && !target.isPrimitive())
 		//{
