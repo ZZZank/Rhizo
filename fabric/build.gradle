@@ -41,7 +41,8 @@ processResources {
 
 shadowJar {
 	configurations = [project.configurations.shadowCommon]
-	classifier "dev-shadow"
+	// classifier "dev-shadow"
+	archiveClassifier.set("dev-shadow")
 }
 
 remapJar {
@@ -52,7 +53,8 @@ remapJar {
 }
 
 jar {
-	classifier "dev"
+	// classifier "dev"
+	archiveClassifier.set("dev")
 }
 
 components.java {

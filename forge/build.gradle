@@ -48,7 +48,8 @@ shadowJar {
 	exclude "fabric.mod.json"
 
 	configurations = [project.configurations.shadowCommon]
-	classifier "dev-shadow"
+	// classifier "dev-shadow"
+	archiveClassifier.set("dev-shadow")
 }
 
 remapJar {
@@ -71,7 +72,8 @@ jar {
 		])
 	}
 
-	classifier "dev"
+	archiveClassifier.set("dev")
+	// classifier "dev"
 }
 
 components.java {
