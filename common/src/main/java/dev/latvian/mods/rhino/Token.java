@@ -201,7 +201,7 @@ public interface Token {
 	int ARRAYCOMP = 158;  // array comprehension
 	int LETEXPR = 159;
 	int WITHEXPR = 160;
-	int DEBUGGER = 161;
+	// int DEBUGGER = 161;
 	int COMMENT = 162;
 	int GENEXPR = 163;
 	int METHOD = 164;  // ES6 MethodDefinition
@@ -529,8 +529,6 @@ public interface Token {
 				return "WITHEXPR";
 			case LETEXPR:
 				return "LETEXPR";
-			case DEBUGGER:
-				return "DEBUGGER";
 			case COMMENT:
 				return "COMMENT";
 			case GENEXPR:

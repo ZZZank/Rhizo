@@ -165,7 +165,6 @@ public final class IRFactory extends Parser {
 			case Token.FALSE:
 			case Token.THIS:
 			case Token.NULL:
-			case Token.DEBUGGER:
 				return transformLiteral(node);
 
 			case Token.NAME:

@@ -96,7 +96,7 @@ class TokenStream {
 				Id_byte = Token.RESERVED,  // ES3 only
 				Id_catch = Token.CATCH, Id_char = Token.RESERVED,  // ES3 only
 				Id_class = Token.RESERVED, Id_const = Token.CONST,     // reserved
-				Id_debugger = Token.DEBUGGER, Id_double = Token.RESERVED,  // ES3 only
+				Id_double = Token.RESERVED,  // ES3 only
 				Id_enum = Token.RESERVED, Id_extends = Token.RESERVED, Id_final = Token.RESERVED,  // ES3 only
 				Id_finally = Token.FINALLY, Id_float = Token.RESERVED,  // ES3 only
 				Id_goto = Token.RESERVED,  // ES3 only
@@ -144,7 +144,7 @@ class TokenStream {
 							break L0;
 						}
 					}
-					break L;
+					break;
 				case 3:
 					switch (s.charAt(0)) {
 						case 'f':
@@ -184,7 +184,7 @@ class TokenStream {
 							}
 							break L;
 					}
-					break L;
+					break;
 				case 4:
 					switch (s.charAt(0)) {
 						case 'b':
@@ -254,7 +254,7 @@ class TokenStream {
 							id = Id_with;
 							break L;
 					}
-					break L;
+					break;
 				case 5:
 					switch (s.charAt(2)) {
 						case 'a':
@@ -312,7 +312,7 @@ class TokenStream {
 							id = Id_catch;
 							break L;
 					}
-					break L;
+					break;
 				case 6:
 					switch (s.charAt(1)) {
 						case 'a':
@@ -362,7 +362,7 @@ class TokenStream {
 							id = Id_typeof;
 							break L;
 					}
-					break L;
+					break;
 				case 7:
 					switch (s.charAt(1)) {
 						case 'a':
@@ -390,7 +390,7 @@ class TokenStream {
 							id = Id_extends;
 							break L;
 					}
-					break L;
+					break;
 				case 8:
 					switch (s.charAt(0)) {
 						case 'a':
@@ -401,10 +401,6 @@ class TokenStream {
 							X = "continue";
 							id = Id_continue;
 							break L;
-						case 'd':
-							X = "debugger";
-							id = Id_debugger;
-							break L;
 						case 'f':
 							X = "function";
 							id = Id_function;
@@ -414,7 +410,7 @@ class TokenStream {
 							id = Id_volatile;
 							break L;
 					}
-					break L;
+					break;
 				case 9:
 					c = s.charAt(0);
 					if (c == 'i') {
@@ -427,7 +423,7 @@ class TokenStream {
 						X = "transient";
 						id = Id_transient;
 					}
-					break L;
+					break;
 				case 10:
 					c = s.charAt(1);
 					if (c == 'm') {
@@ -437,11 +433,11 @@ class TokenStream {
 						X = "instanceof";
 						id = Id_instanceof;
 					}
-					break L;
+					break;
 				case 12:
 					X = "synchronized";
 					id = Id_synchronized;
-					break L;
+					break;
 			}
 			if (X != null && X != s && !X.equals(s)) {
 				id = 0;
@@ -463,7 +459,7 @@ class TokenStream {
 		// The following assumes that Token.EOF == 0
 		final int
 				// 11.6.2.1 Keywords (ECMAScript2015)
-				Id_break = Token.BREAK, Id_case = Token.CASE, Id_catch = Token.CATCH, Id_class = Token.RESERVED, Id_const = Token.CONST, Id_continue = Token.CONTINUE, Id_debugger = Token.DEBUGGER, Id_default = Token.DEFAULT, Id_delete = Token.DELPROP, Id_do = Token.DO, Id_else = Token.ELSE, Id_export = Token.RESERVED, Id_extends = Token.RESERVED, Id_finally = Token.FINALLY, Id_for = Token.FOR, Id_function = Token.FUNCTION, Id_if = Token.IF, Id_import = Token.RESERVED, Id_in = Token.IN, Id_instanceof = Token.INSTANCEOF, Id_new = Token.NEW, Id_return = Token.RETURN, Id_super = Token.RESERVED, Id_switch = Token.SWITCH, Id_this = Token.THIS, Id_throw = Token.THROW, Id_try = Token.TRY, Id_typeof = Token.TYPEOF, Id_var = Token.VAR, Id_void = Token.VOID, Id_while = Token.WHILE, Id_with = Token.WITH, Id_yield = Token.YIELD,
+				Id_break = Token.BREAK, Id_case = Token.CASE, Id_catch = Token.CATCH, Id_class = Token.RESERVED, Id_const = Token.CONST, Id_continue = Token.CONTINUE, Id_default = Token.DEFAULT, Id_delete = Token.DELPROP, Id_do = Token.DO, Id_else = Token.ELSE, Id_export = Token.RESERVED, Id_extends = Token.RESERVED, Id_finally = Token.FINALLY, Id_for = Token.FOR, Id_function = Token.FUNCTION, Id_if = Token.IF, Id_import = Token.RESERVED, Id_in = Token.IN, Id_instanceof = Token.INSTANCEOF, Id_new = Token.NEW, Id_return = Token.RETURN, Id_super = Token.RESERVED, Id_switch = Token.SWITCH, Id_this = Token.THIS, Id_throw = Token.THROW, Id_try = Token.TRY, Id_typeof = Token.TYPEOF, Id_var = Token.VAR, Id_void = Token.VOID, Id_while = Token.WHILE, Id_with = Token.WITH, Id_yield = Token.YIELD,
 
 				// 11.6.2.2 Future Reserved Words
 				Id_await = Token.RESERVED, Id_enum = Token.RESERVED,
@@ -507,7 +503,7 @@ class TokenStream {
 							break L0;
 						}
 					}
-					break L;
+					break;
 				case 3:
 					switch (s.charAt(0)) {
 						case 'f':
@@ -541,7 +537,7 @@ class TokenStream {
 							}
 							break L;
 					}
-					break L;
+					break;
 				case 4:
 					switch (s.charAt(0)) {
 						case 'c':
@@ -594,7 +590,7 @@ class TokenStream {
 							id = Id_with;
 							break L;
 					}
-					break L;
+					break;
 				case 5:
 					switch (s.charAt(2)) {
 						case 'a':
@@ -642,7 +638,7 @@ class TokenStream {
 							id = Id_catch;
 							break L;
 					}
-					break L;
+					break;
 				case 6:
 					switch (s.charAt(1)) {
 						case 'e':
@@ -686,7 +682,7 @@ class TokenStream {
 							id = Id_typeof;
 							break L;
 					}
-					break L;
+					break;
 				case 7:
 					switch (s.charAt(1)) {
 						case 'a':
@@ -716,23 +712,19 @@ class TokenStream {
 							id = Id_extends;
 							break L;
 					}
-					break L;
+					break;
 				case 8:
 					switch (s.charAt(0)) {
 						case 'c':
 							X = "continue";
 							id = Id_continue;
 							break L;
-						case 'd':
-							X = "debugger";
-							id = Id_debugger;
-							break L;
 						case 'f':
 							X = "function";
 							id = Id_function;
 							break L;
 					}
-					break L;
+					break;
 				case 9:
 					c = s.charAt(0);
 					if (c == 'i' && isStrict) {
@@ -742,7 +734,7 @@ class TokenStream {
 						X = "protected";
 						id = Id_protected;
 					}
-					break L;
+					break;
 				case 10:
 					c = s.charAt(1);
 					if (c == 'm' && isStrict) {
@@ -752,7 +744,7 @@ class TokenStream {
 						X = "instanceof";
 						id = Id_instanceof;
 					}
-					break L;
+					break;
 			}
 			if (X != null && X != s && !X.equals(s)) {
 				id = 0;
