@@ -183,23 +183,22 @@ public class NBTUtils {
 			nbtAccounter.accountBits(384L);
 			if (i > 512) {
 				throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
-			} else {
-				Map<String, Tag> map = new LinkedHashMap<>();
-
-				byte b;
-				while ((b = dataInput.readByte()) != 0) {
-					String string = dataInput.readUTF();
-					nbtAccounter.accountBits(224L + 16L * string.length());
-					TagType<?> tagType = convertType(TagTypes.getType(b));
-					Tag tag = tagType.load(dataInput, i + 1, nbtAccounter);
-
-					if (map.put(string, tag) != null) {
-						nbtAccounter.accountBits(288L);
-					}
-				}
-
-				return new OrderedCompoundTag(map);
 			}
+			Map<String, Tag> map = new LinkedHashMap<>();
+
+			byte b;
+			while ((b = dataInput.readByte()) != 0) {
+				String string = dataInput.readUTF();
+				nbtAccounter.accountBits(224L + 16L * string.length());
+				TagType<?> tagType = convertType(TagTypes.getType(b));
+				Tag tag = tagType.load(dataInput, i + 1, nbtAccounter);
+
+				if (map.put(string, tag) != null) {
+					nbtAccounter.accountBits(288L);
+				}
+			}
+
+			return new OrderedCompoundTag(map);
 		}
 
 		@Override
@@ -219,22 +218,21 @@ public class NBTUtils {
 			nbtAccounter.accountBits(296L);
 			if (i > 512) {
 				throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+			}
+			byte b = dataInput.readByte();
+			int j = dataInput.readInt();
+			if (b == 0 && j > 0) {
+				throw new RuntimeException("Missing type on ListTag");
 			} else {
-				byte b = dataInput.readByte();
-				int j = dataInput.readInt();
-				if (b == 0 && j > 0) {
-					throw new RuntimeException("Missing type on ListTag");
-				} else {
-					nbtAccounter.accountBits(32L * (long) j);
-					TagType<?> tagType = convertType(TagTypes.getType(b));
-					ListTag list = new ListTag();
+				nbtAccounter.accountBits(32L * (long) j);
+				TagType<?> tagType = convertType(TagTypes.getType(b));
+				ListTag list = new ListTag();
 
-					for (int k = 0; k < j; ++k) {
-						list.add(tagType.load(dataInput, i + 1, nbtAccounter));
-					}
-
-					return list;
+				for (int k = 0; k < j; ++k) {
+					list.add(tagType.load(dataInput, i + 1, nbtAccounter));
 				}
+
+				return list;
 			}
 		}
 
@@ -255,28 +253,24 @@ public class NBTUtils {
 		byte b = buf.readByte();
 		if (b == 0) {
 			return null;
-		} else {
-			buf.readerIndex(i);
-
-			try {
-				DataInputStream stream = new DataInputStream(new ByteBufInputStream(buf));
-
-				byte b1 = stream.readByte();
-				if (b1 == 0) {
-					return null;
-				} else {
-					stream.readUTF();
-					TagType<?> tagType = convertType(TagTypes.getType(b1));
-
-					if (tagType != COMPOUND_TYPE) {
-						return null;
-					}
-
-					return COMPOUND_TYPE.load(stream, 0, NbtAccounter.UNLIMITED);
-				}
-			} catch (IOException var5) {
-				throw new EncoderException(var5);
+		}
+		buf.readerIndex(i);
+		try {
+			DataInputStream stream = new DataInputStream(new ByteBufInputStream(buf));
+			byte b1 = stream.readByte();
+			if (b1 == 0) {
+				stream.close();
+				return null;
 			}
+			stream.readUTF();
+			TagType<?> tagType = convertType(TagTypes.getType(b1));
+			if (tagType != COMPOUND_TYPE) {
+				stream.close();
+				return null;
+			}
+			return COMPOUND_TYPE.load(stream, 0, NbtAccounter.UNLIMITED);
+		} catch (IOException var5) {
+			throw new EncoderException(var5);
 		}
 	}
 }
