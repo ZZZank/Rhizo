@@ -6,11 +6,12 @@ import dev.latvian.mods.rhino.ScriptableObject;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class RhinoTest {
 	public static void main(String[] args) {
-		var context = Context.enterWithNewFactory();
+		Context context = Context.enterWithNewFactory();
 		// context.setClassShutter((fullClassName, type) -> type != ClassShutter.TYPE_CLASS_IN_PACKAGE || isClassAllowed(fullClassName));
 
 		RhinoTest test = new RhinoTest(context);
@@ -36,8 +37,8 @@ public class RhinoTest {
 	}
 
 	public void load(String file) {
-		try (var stream = RhinoTest.class.getResourceAsStream(file)) {
-			var script = new String(IOUtils.toByteArray(new BufferedInputStream(stream)), StandardCharsets.UTF_8);
+		try (InputStream stream = RhinoTest.class.getResourceAsStream(file)) {
+			String script = new String(IOUtils.toByteArray(new BufferedInputStream(stream)), StandardCharsets.UTF_8);
 			context.evaluateString(scope, script, file, 1, null);
 		} catch (Throwable ex) {
 			ex.printStackTrace();
