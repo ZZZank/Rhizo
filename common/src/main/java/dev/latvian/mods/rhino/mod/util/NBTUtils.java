@@ -36,6 +36,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -467,9 +468,13 @@ public interface NBTUtils {
 	};
 
 	// TODO: accessTagMap
-	// static Map<String, Tag> accessTagMap(CompoundTag tag) {
-	// 	return tag.tags;
-	// }
+	static Map<String, Tag> accessTagMap(CompoundTag tag) {
+		Map<String, Tag> m = new HashMap<>();
+		for (String key : tag.getAllKeys()) {
+			m.put(key, tag.get(key));
+		}
+		return m;
+	}
 
 	TagType<ListTag> LIST_TYPE = new TagType<ListTag>() {
 		@Override
