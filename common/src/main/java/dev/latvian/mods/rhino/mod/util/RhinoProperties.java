@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.mod.util;
 
-import com.mojang.logging.LogUtils;
+// import com.mojang.logging.LogUtils;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 
 import java.io.InputStream;
@@ -59,7 +59,7 @@ public enum RhinoProperties {
 			ex.printStackTrace();
 		}
 
-		LogUtils.getLogger().info("Rhino properties loaded.");
+		// LogUtils.getLogger().info("Rhino properties loaded.");
 	}
 
 	private void remove(String key) {
