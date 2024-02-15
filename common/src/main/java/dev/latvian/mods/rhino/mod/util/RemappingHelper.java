@@ -51,7 +51,7 @@ public class RemappingHelper {
 					return Optional.empty();
 				}
 			}
-		};
+		}
 	}
 
 	public static Optional<Class<?>> getClass(String name) {

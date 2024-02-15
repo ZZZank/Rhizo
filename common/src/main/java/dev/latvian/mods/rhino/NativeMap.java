@@ -232,11 +232,11 @@ public class NativeMap extends IdScriptableObject {
 			case SymbolId_getSize: {
 				initPrototypeMethod(MAP_TAG, id, NativeSet.GETSIZE, "get size", 0);
 				return;
-			}break;
+			}
 			case SymbolId_toStringTag: {
 				initPrototypeValue(SymbolId_toStringTag, SymbolKey.TO_STRING_TAG, getClassName(), DONTENUM | READONLY);
 				return;
-			}break;
+			}
 			// fallthrough
 		}
 

@@ -115,7 +115,7 @@ public class JsonParser {
 						throw new ParseException("Unexpected comma in object literal");
 					}
 					return object;
-				}break;
+				}
 				case ',': {
 					if (!needsComma) {
 						throw new ParseException("Unexpected comma in object literal");
