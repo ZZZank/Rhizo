@@ -23,7 +23,6 @@ import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.ShortTag;
-import net.minecraft.nbt.StreamTagVisitor;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
@@ -42,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface NBTUtils {
+	
 	ValueUnwrapper VALUE_UNWRAPPER = (contextData, scope, value) -> value instanceof Tag tag ? fromTag(tag) : value;
 
 	@Nullable
@@ -430,7 +430,7 @@ public interface NBTUtils {
 		}
 	}
 
-	TagType<OrderedCompoundTag> COMPOUND_TYPE = new TagType.VariableSize<>() {
+	TagType<OrderedCompoundTag> COMPOUND_TYPE = new TagType<OrderedCompoundTag>() {
 		@Override
 		public OrderedCompoundTag load(DataInput dataInput, int i, NbtAccounter nbtAccounter) throws IOException {
 			nbtAccounter.accountBits(384L);
@@ -456,66 +456,6 @@ public interface NBTUtils {
 		}
 
 		@Override
-		public StreamTagVisitor.ValueResult parse(DataInput dataInput, StreamTagVisitor visitor) throws IOException {
-			while (true) {
-				byte typeId;
-				if ((typeId = dataInput.readByte()) != 0) {
-					TagType<?> valueType = convertType(TagTypes.getType(typeId));
-					switch (visitor.visitEntry(valueType)) {
-						case HALT:
-							return StreamTagVisitor.ValueResult.HALT;
-						case BREAK:
-							StringTag.skipString(dataInput);
-							valueType.skip(dataInput);
-							break;
-						case SKIP:
-							StringTag.skipString(dataInput);
-							valueType.skip(dataInput);
-							continue;
-						default:
-							String key = dataInput.readUTF();
-							switch (visitor.visitEntry(valueType, key)) {
-								case HALT:
-									return StreamTagVisitor.ValueResult.HALT;
-								case BREAK:
-									valueType.skip(dataInput);
-									break;
-								case SKIP:
-									valueType.skip(dataInput);
-									continue;
-								default:
-									switch (valueType.parse(dataInput, visitor)) {
-										case HALT:
-											return StreamTagVisitor.ValueResult.HALT;
-										case BREAK:
-										default:
-											continue;
-									}
-							}
-					}
-				}
-
-				if (typeId != 0) {
-					while ((typeId = dataInput.readByte()) != 0) {
-						StringTag.skipString(dataInput);
-						convertType(TagTypes.getType(typeId)).skip(dataInput);
-					}
-				}
-
-				return visitor.visitContainerEnd();
-			}
-		}
-
-		@Override
-		public void skip(DataInput dataInput) throws IOException {
-			byte typeId;
-			while ((typeId = dataInput.readByte()) != 0) {
-				StringTag.skipString(dataInput);
-				convertType(TagTypes.getType(typeId)).skip(dataInput);
-			}
-		}
-
-		@Override
 		public String getName() {
 			return "COMPOUND";
 		}
@@ -531,7 +471,7 @@ public interface NBTUtils {
 	// 	return tag.tags;
 	// }
 
-	TagType<ListTag> LIST_TYPE = new TagType.VariableSize<>() {
+	TagType<ListTag> LIST_TYPE = new TagType<ListTag>() {
 		@Override
 		public ListTag load(DataInput dataInput, int i, NbtAccounter nbtAccounter) throws IOException {
 			nbtAccounter.accountBits(296L);
@@ -556,68 +496,13 @@ public interface NBTUtils {
 			}
 		}
 
-		@Override
-		public StreamTagVisitor.ValueResult parse(DataInput dataInput, StreamTagVisitor visitor) throws IOException {
-			TagType<?> tagType = convertType(TagTypes.getType(dataInput.readByte()));
-			int size = dataInput.readInt();
-			switch (visitor.visitList(tagType, size)) {
-				case HALT:
-					return StreamTagVisitor.ValueResult.HALT;
-				case BREAK:
-					tagType.skip(dataInput, size);
-					return visitor.visitContainerEnd();
-				default:
-					int i = 0;
-
-					out:
-					for (; i < size; ++i) {
-						switch (visitor.visitElement(tagType, i)) {
-							case HALT:
-								return StreamTagVisitor.ValueResult.HALT;
-							case BREAK:
-								tagType.skip(dataInput);
-								break out;
-							case SKIP:
-								tagType.skip(dataInput);
-								break;
-							default:
-								switch (tagType.parse(dataInput, visitor)) {
-									case HALT:
-										return StreamTagVisitor.ValueResult.HALT;
-									case BREAK:
-										break out;
-								}
-						}
-					}
-
-					int toSkip = size - 1 - i;
-					if (toSkip > 0) {
-						tagType.skip(dataInput, toSkip);
-					}
-
-					return visitor.visitContainerEnd();
-			}
-		}
-
-		@Override
-		public void skip(DataInput visitor) throws IOException {
-			TagType<?> tagType = convertType(TagTypes.getType(visitor.readByte()));
-			int size = visitor.readInt();
-			tagType.skip(visitor, size);
-		}
-
-		@Override
 		public String getName() {
 			return "LIST";
 		}
 
-		@Override
 		public String getPrettyName() {
 			return "TAG_List";
 		}
 	};
-
-
-
 
 }
