@@ -3335,9 +3335,18 @@ public class ClassFileWriter {
 		 */
 		private boolean isSuperBlockEnd(int opcode) {
 			switch (opcode) {
-				case ByteCode.ARETURN, ByteCode.FRETURN, ByteCode.IRETURN, ByteCode.LRETURN, ByteCode.RETURN, ByteCode.ATHROW, ByteCode.GOTO, ByteCode.GOTO_W, ByteCode.TABLESWITCH, ByteCode.LOOKUPSWITCH -> true;
-				default -> false;
-			};
+				case ByteCode.ARETURN:
+				case ByteCode.FRETURN:
+				case ByteCode.IRETURN:
+				case ByteCode.LRETURN:
+				case ByteCode.RETURN:
+				case ByteCode.ATHROW:
+				case ByteCode.GOTO:
+				case ByteCode.GOTO_W:
+				case ByteCode.TABLESWITCH:
+				case ByteCode.LOOKUPSWITCH: return true;
+				default: return false;
+			}
 		}
 
 		/**

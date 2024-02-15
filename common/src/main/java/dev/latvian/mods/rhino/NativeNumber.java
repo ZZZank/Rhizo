@@ -329,15 +329,15 @@ final class NativeNumber extends IdScriptableObject {
 	@Override
 	protected int findPrototypeId(String s) {
 		switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toLocaleString" -> Id_toLocaleString;
-			case "toSource" -> Id_toSource;
-			case "valueOf" -> Id_valueOf;
-			case "toFixed" -> Id_toFixed;
-			case "toExponential" -> Id_toExponential;
-			case "toPrecision" -> Id_toPrecision;
-			default -> super.findPrototypeId(s);
-		};
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toLocaleString": return Id_toLocaleString;
+			case "toSource": return Id_toSource;
+			case "valueOf": return Id_valueOf;
+			case "toFixed": return Id_toFixed;
+			case "toExponential": return Id_toExponential;
+			case "toPrecision": return Id_toPrecision;
+			default: return super.findPrototypeId(s);
+		}
 	}
 }
