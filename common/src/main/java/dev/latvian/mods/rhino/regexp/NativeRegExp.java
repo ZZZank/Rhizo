@@ -2471,23 +2471,28 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 	@Override
 	protected int findInstanceIdInfo(String s) {
-		int id = switch (s) {
-			case "lastIndex" -> Id_lastIndex;
-			case "source" -> Id_source;
-			case "global" -> Id_global;
-			case "ignoreCase" -> Id_ignoreCase;
-			case "multiline" -> Id_multiline;
-			default -> 0;
+		int id;
+		switch (s) {
+			case "lastIndex": id = Id_lastIndex;break;
+			case "source": id = Id_source;break;
+			case "global": id = Id_global;break;
+			case "ignoreCase": id = Id_ignoreCase;break;
+			case "multiline": id = Id_multiline;break;
+			default: id = 0;
 		};
 
 		if (id == 0) {
 			return super.findInstanceIdInfo(s);
 		}
 
-		int attr = switch (id) {
-			case Id_lastIndex -> lastIndexAttr;
-			case Id_source, Id_global, Id_ignoreCase, Id_multiline -> PERMANENT | READONLY | DONTENUM;
-			default -> throw new IllegalStateException();
+		int attr;
+		switch (id) {
+			case Id_lastIndex: attr = lastIndexAttr;break;
+			case Id_source:
+			case Id_global:
+			case Id_ignoreCase:
+			case Id_multiline: attr = PERMANENT | READONLY | DONTENUM;break;
+			default: throw new IllegalStateException();
 		};
 		return instanceIdInfo(attr, id);
 	}

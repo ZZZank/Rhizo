@@ -39,17 +39,17 @@ public class MinecraftRemapper implements Remapper {
 
 		public String descriptorString() {
 			if (descriptorString == null) {
-				descriptorString = switch (realName) {
-					case "boolean" -> "Z";
-					case "byte" -> "B";
-					case "char" -> "C";
-					case "short" -> "S";
-					case "int" -> "I";
-					case "long" -> "J";
-					case "float" -> "F";
-					case "double" -> "D";
-					case "void" -> "V";
-					default -> "L" + realName.replace('.', '/') + ";";
+				switch (realName) {
+					case "boolean": descriptorString = "Z";break;
+					case "byte": descriptorString = "B";break;
+					case "char": descriptorString = "C";break;
+					case "short": descriptorString = "S";break;
+					case "int": descriptorString = "I";break;
+					case "long": descriptorString = "J";break;
+					case "float": descriptorString = "F";break;
+					case "double": descriptorString = "D";break;
+					case "void": descriptorString = "V";break;
+					default: descriptorString = "L" + realName.replace('.', '/') + ";";
 				};
 			}
 

@@ -12,17 +12,18 @@ public interface Remapper {
 			type = type.substring(0, type.length() - 2);
 		}
 
-		String t = switch (type) {
-			case "boolean" -> "Z";
-			case "byte" -> "B";
-			case "short" -> "S";
-			case "int" -> "I";
-			case "long" -> "J";
-			case "float" -> "F";
-			case "double" -> "D";
-			case "char" -> "C";
-			case "void" -> "V";
-			default -> "L" + type.replace('.', '/') + ";";
+		String t;
+		switch (type) {
+			case "boolean": t = "Z";break;
+			case "byte": t = "B";break;
+			case "short": t = "S";break;
+			case "int": t = "I";break;
+			case "long": t = "J";break;
+			case "float": t = "F";break;
+			case "double": t = "D";break;
+			case "char": t = "C";break;
+			case "void": t = "V";break;
+			default: t = "L" + type.replace('.', '/') + ";";
 		};
 
 		return array == 0 ? t : ("[".repeat(array) + t);

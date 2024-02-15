@@ -43,11 +43,12 @@ public final class UniqueTag {
 	// Overridden for better debug printouts
 	@Override
 	public String toString() {
-		String name = switch (tagId) {
-			case ID_NOT_FOUND -> "NOT_FOUND";
-			case ID_NULL_VALUE -> "NULL_VALUE";
-			case ID_DOUBLE_MARK -> "DOUBLE_MARK";
-			default -> throw Kit.codeBug();
+		String name;
+		switch (tagId) {
+			case ID_NOT_FOUND: name = "NOT_FOUND";break;
+			case ID_NULL_VALUE: name = "NULL_VALUE";break;
+			case ID_DOUBLE_MARK: name = "DOUBLE_MARK";break;
+			default: throw Kit.codeBug();
 		};
 		return super.toString() + ": " + name;
 	}

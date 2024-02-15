@@ -106,41 +106,43 @@ class NativeRegExpCtor extends BaseFunction {
 
 	@Override
 	protected int findInstanceIdInfo(String s) {
-		int id = switch (s) {
-			case "multiline" -> Id_multiline;
-			case "$*" -> Id_STAR;
-			case "input" -> Id_input;
-			case "$_" -> Id_UNDERSCORE;
-			case "lastMatch" -> Id_lastMatch;
-			case "$&" -> Id_AMPERSAND;
-			case "lastParen" -> Id_lastParen;
-			case "$+" -> Id_PLUS;
-			case "leftContext" -> Id_leftContext;
-			case "$`" -> Id_BACK_QUOTE;
-			case "rightContext" -> Id_rightContext;
-			case "$'" -> Id_QUOTE;
-			case "$1" -> Id_DOLLAR_1;
-			case "$2" -> Id_DOLLAR_2;
-			case "$3" -> Id_DOLLAR_3;
-			case "$4" -> Id_DOLLAR_4;
-			case "$5" -> Id_DOLLAR_5;
-			case "$6" -> Id_DOLLAR_6;
-			case "$7" -> Id_DOLLAR_7;
-			case "$8" -> Id_DOLLAR_8;
-			case "$9" -> Id_DOLLAR_9;
-			default -> 0;
+		int id;
+		switch (s) {
+			case "multiline": id = Id_multiline;break;
+			case "$*": id = Id_STAR;break;
+			case "input": id = Id_input;break;
+			case "$_": id = Id_UNDERSCORE;break;
+			case "lastMatch": id = Id_lastMatch;break;
+			case "$&": id = Id_AMPERSAND;break;
+			case "lastParen": id = Id_lastParen;break;
+			case "$+": id = Id_PLUS;break;
+			case "leftContext": id = Id_leftContext;break;
+			case "$`": id = Id_BACK_QUOTE;break;
+			case "rightContext": id = Id_rightContext;break;
+			case "$'": id = Id_QUOTE;break;
+			case "$1": id = Id_DOLLAR_1;break;
+			case "$2": id = Id_DOLLAR_2;break;
+			case "$3": id = Id_DOLLAR_3;break;
+			case "$4": id = Id_DOLLAR_4;break;
+			case "$5": id = Id_DOLLAR_5;break;
+			case "$6": id = Id_DOLLAR_6;break;
+			case "$7": id = Id_DOLLAR_7;break;
+			case "$8": id = Id_DOLLAR_8;break;
+			case "$9": id = Id_DOLLAR_9;break;
+			default: id = 0;
 		};
 
 		if (id == 0) {
 			return super.findInstanceIdInfo(s);
 		}
 
-		int attr = switch (id) {
-			case Id_multiline -> multilineAttr;
-			case Id_STAR -> starAttr;
-			case Id_input -> inputAttr;
-			case Id_UNDERSCORE -> underscoreAttr;
-			default -> PERMANENT | READONLY;
+		int attr;
+		switch (id) {
+			case Id_multiline: attr = multilineAttr;break;
+			case Id_STAR: attr = starAttr;break;
+			case Id_input: attr = inputAttr;break;
+			case Id_UNDERSCORE: attr = underscoreAttr;break;
+			default: attr = PERMANENT | READONLY;
 		};
 
 		return instanceIdInfo(attr, super.getMaxInstanceId() + id);

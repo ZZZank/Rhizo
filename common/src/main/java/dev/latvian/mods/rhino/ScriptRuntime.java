@@ -695,16 +695,17 @@ public class ScriptRuntime {
 				sb.setLength(i);
 			}
 
-			int escape = switch (c) {
-				case '\b' -> 'b';
-				case '\f' -> 'f';
-				case '\n' -> 'n';
-				case '\r' -> 'r';
-				case '\t' -> 't';
-				case 0xb -> 'v'; // Java lacks \v.
-				case ' ' -> ' ';
-				case '\\' -> '\\';
-				default -> -1;
+			int escape;
+			switch (c) {
+				case '\b': escape = 'b';break;
+				case '\f': escape = 'f';break;
+				case '\n': escape = 'n';break;
+				case '\r': escape = 'r';break;
+				case '\t': escape = 't';break;
+				case 0xb: escape = 'v';break; // Java lacks \v.
+				case ' ': escape = ' ';break;
+				case '\\': escape = '\\';break;
+				default: escape = -1;
 			};
 			if (escape >= 0) {
 				// an \escaped sort of character

@@ -1664,12 +1664,12 @@ public final class Interpreter extends Icode implements Evaluator {
 						throw Kit.codeBug();
 				}
 			}
-			valBln = switch (op) {
-				case Token.GE -> ScriptRuntime.cmp_LE(rhs, lhs);
-				case Token.LE -> ScriptRuntime.cmp_LE(lhs, rhs);
-				case Token.GT -> ScriptRuntime.cmp_LT(rhs, lhs);
-				case Token.LT -> ScriptRuntime.cmp_LT(lhs, rhs);
-				default -> throw Kit.codeBug();
+			switch (op) {
+				case Token.GE: valBln = ScriptRuntime.cmp_LE(rhs, lhs);break;
+				case Token.LE: valBln = ScriptRuntime.cmp_LE(lhs, rhs);break;
+				case Token.GT: valBln = ScriptRuntime.cmp_LT(rhs, lhs);break;
+				case Token.LT: valBln = ScriptRuntime.cmp_LT(lhs, rhs);break;
+				default: throw Kit.codeBug();
 			};
 		}
 		stack[stackTop] = ScriptRuntime.wrapBoolean(valBln);
@@ -1680,13 +1680,13 @@ public final class Interpreter extends Icode implements Evaluator {
 		int lIntValue = stack_int32(frame, stackTop - 1);
 		int rIntValue = stack_int32(frame, stackTop);
 		stack[--stackTop] = UniqueTag.DOUBLE_MARK;
-		sDbl[stackTop] = switch (op) {
-			case Token.BITAND -> lIntValue & rIntValue;
-			case Token.BITOR -> lIntValue | rIntValue;
-			case Token.BITXOR -> lIntValue ^ rIntValue;
-			case Token.LSH -> lIntValue << rIntValue;
-			case Token.RSH -> lIntValue >> rIntValue;
-			default -> lIntValue;
+		switch (op) {
+			case Token.BITAND: sDbl[stackTop] = lIntValue & rIntValue;break;
+			case Token.BITOR: sDbl[stackTop] = lIntValue | rIntValue;break;
+			case Token.BITXOR: sDbl[stackTop] = lIntValue ^ rIntValue;break;
+			case Token.LSH: sDbl[stackTop] = lIntValue << rIntValue;break;
+			case Token.RSH: sDbl[stackTop] = lIntValue >> rIntValue;break;
+			default: sDbl[stackTop] = lIntValue;break;
 		};
 		return stackTop;
 	}
@@ -2369,13 +2369,13 @@ public final class Interpreter extends Icode implements Evaluator {
 		--stackTop;
 		double lDbl = stack_double(frame, stackTop);
 		stack[stackTop] = UniqueTag.DOUBLE_MARK;
-		sDbl[stackTop] = switch (op) {
-			case Token.SUB -> lDbl - rDbl;
-			case Token.MUL -> lDbl * rDbl;
-			case Token.DIV -> lDbl / rDbl;
-			case Token.MOD -> lDbl % rDbl;
-			case Token.POW -> Math.pow(lDbl, rDbl);
-			default -> lDbl;
+		switch (op) {
+			case Token.SUB: sDbl[stackTop] = lDbl - rDbl;break;
+			case Token.MUL: sDbl[stackTop] = lDbl * rDbl;break;
+			case Token.DIV: sDbl[stackTop] = lDbl / rDbl;break;
+			case Token.MOD: sDbl[stackTop] = lDbl % rDbl;break;
+			case Token.POW: sDbl[stackTop] = Math.pow(lDbl, rDbl);break;
+			default: sDbl[stackTop] = lDbl;break;
 		};
 		return stackTop;
 	}

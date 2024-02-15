@@ -202,11 +202,12 @@ final class Arguments extends IdScriptableObject {
 
 	@Override
 	protected int findInstanceIdInfo(String s) {
-		int id = switch (s) {
-			case "callee" -> Id_callee;
-			case "length" -> Id_length;
-			case "caller" -> Id_caller;
-			default -> 0;
+		int id;
+		switch (s) {
+			case "callee": id = Id_callee;	break;
+			case "length": id = Id_length;	break;
+			case "caller": id = Id_caller;	break;
+			default: id = 0;				break;
 		};
 
 		Context cx = Context.getContext();
@@ -221,11 +222,12 @@ final class Arguments extends IdScriptableObject {
 			return super.findInstanceIdInfo(s);
 		}
 
-		int attr = switch (id) {
-			case Id_callee -> calleeAttr;
-			case Id_caller -> callerAttr;
-			case Id_length -> lengthAttr;
-			default -> throw new IllegalStateException();
+		int attr;
+		switch (id) {
+			case Id_callee: attr = calleeAttr;break;
+			case Id_caller: attr = callerAttr;break;
+			case Id_length: attr = lengthAttr;break;
+			default: throw new IllegalStateException();
 		};
 		return instanceIdInfo(attr, id);
 	}

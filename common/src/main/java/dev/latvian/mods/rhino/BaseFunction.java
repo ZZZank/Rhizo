@@ -137,13 +137,14 @@ public class BaseFunction extends IdScriptableObject implements Function {
 
 	@Override
 	protected int findInstanceIdInfo(String s) {
-		int id = switch (s) {
-			case "name" -> Id_name;
-			case "length" -> Id_length;
-			case "arity" -> Id_arity;
-			case "prototype" -> Id_prototype;
-			case "arguments" -> Id_arguments;
-			default -> 0;
+		int id;
+		switch (s) {
+			case "name": id = Id_name;break;
+			case "length": id = Id_length;break;
+			case "arity": id = Id_arity;break;
+			case "prototype": id = Id_prototype;break;
+			case "arguments": id = Id_arguments;break;
+			default: id = 0;break;
 		};
 
 		if (id == 0) {

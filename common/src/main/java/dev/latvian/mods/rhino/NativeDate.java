@@ -582,9 +582,9 @@ final class NativeDate extends IdScriptableObject {
 
 			if (i == len) {
 				// reached EOF, check for end state
-				state = switch (state) {
-					case HOUR, TZHOUR -> ERROR;
-					default -> state;
+				switch (state) {
+					case HOUR:
+					case TZHOUR: state = ERROR;
 				};
 				break;
 			}
@@ -996,11 +996,12 @@ final class NativeDate extends IdScriptableObject {
 	}
 
 	private static String toLocale_helper(double t, int methodId) {
-		DateFormat formatter = switch (methodId) {
-			case Id_toLocaleString -> localeDateTimeFormatter;
-			case Id_toLocaleTimeString -> localeTimeFormatter;
-			case Id_toLocaleDateString -> localeDateFormatter;
-			default -> throw new AssertionError(); // unreachable
+		DateFormat formatter;
+		switch (methodId) {
+			case Id_toLocaleString: formatter = localeDateTimeFormatter;break;
+			case Id_toLocaleTimeString: formatter = localeTimeFormatter;break;
+			case Id_toLocaleDateString: formatter = localeDateFormatter;break;
+			default: throw new AssertionError(); // unreachable
 		};
 
 		synchronized (formatter) {
