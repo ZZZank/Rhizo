@@ -28,7 +28,7 @@ public interface AABBWrapper {
 	}
 
 	static AABB ofSize(Vec3 vec3, double x, double y, double z) {
-		return AABB.ofSize(vec3, x, y, z);
+		return AABB.ofSize(x, y, z).move(vec3);
 	}
 
 	static AABB wrap(Object o) {
