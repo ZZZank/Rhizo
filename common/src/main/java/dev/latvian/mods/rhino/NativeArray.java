@@ -1363,7 +1363,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 			case Id_some: return Boolean.FALSE;
 			case Id_findIndex: return ScriptRuntime.wrapNumber(-1);
 			default: return Undefined.instance;
-		};
+		}
 	}
 
 	/**
@@ -2386,7 +2386,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 			case "includes": return Id_includes;
 			case "copyWithin": return Id_copyWithin;
 			default: return 0;
-		};
+		}
 	}
 
 	@Override

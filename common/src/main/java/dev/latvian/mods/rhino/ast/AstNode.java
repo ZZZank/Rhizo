@@ -330,7 +330,7 @@ public abstract class AstNode extends Node implements Comparable<AstNode> {
 			case Token.YIELD_STAR: return 
 					true;
 			default: return false;
-		};
+		}
 	}
 
 	/**

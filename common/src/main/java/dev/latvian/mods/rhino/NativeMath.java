@@ -676,7 +676,7 @@ final class NativeMath extends IdScriptableObject {
 			case "fround": return Id_fround;
 			case "clz32": return Id_clz32;
 			default: return 0;
-		};
+		}
 	}
 
 	// #/string_id_map#

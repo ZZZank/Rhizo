@@ -176,7 +176,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
 			case Id_prototype: return "prototype";
 			case Id_arguments: return "arguments";
 			default: return super.getInstanceIdName(id);
-		};
+		}
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
 			case Id_prototype: return getPrototypeProperty();
 			case Id_arguments: return getArguments();
 			default: return super.getInstanceIdValue(id);
-		};
+		}
 	}
 
 	@Override
@@ -539,7 +539,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
 			case "call": return Id_call;
 			case "bind": return Id_bind;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 }
 

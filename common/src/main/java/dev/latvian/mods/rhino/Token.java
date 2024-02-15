@@ -376,7 +376,7 @@ public interface Token {
 			case OPTIONAL_CHAINING: return "OPTIONAL_CHAINING";
 			case GETOPTIONAL: return "GETOPTIONAL";
 			default: throw new IllegalStateException(String.valueOf(token));
-		};
+		}
 	}
 
 	/**

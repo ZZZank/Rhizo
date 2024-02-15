@@ -88,7 +88,7 @@ class TokenStream {
 			case "import":
 			case "extends": return Token.RESERVED;
 			default: return Token.EOF;
-		}; // & 0xFF;
+		} // & 0xFF;
 	}
 
 	private static boolean isAlpha(int c) {

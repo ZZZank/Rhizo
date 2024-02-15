@@ -630,7 +630,7 @@ public final class IRFactory extends Parser {
 
 				throw new IllegalArgumentException("Can't transform: " + node + " (" + node.getClass().getName() + ")");
 			}
-		};
+		}
 	}
 
 	private Node transformArrayComp(ArrayComprehension node) {

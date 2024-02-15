@@ -76,7 +76,7 @@ public enum UnitSymbol implements UnitToken {
 			case '>': return stream.nextIf('=') ? GTE : stream.nextIf('>') ? RSH : GT;
 			case '=': return stream.nextIf('=') ? EQ : SET;
 			default: return null;
-		};
+		}
 	}
 
 	public final String symbol;
@@ -121,7 +121,7 @@ public enum UnitSymbol implements UnitToken {
 			case ADD: return POSITIVE;
 			case SUB: return NEGATE;
 			default: return null;
-		};
+		}
 	}
 
 	public boolean is(UnitToken next) {

@@ -180,6 +180,6 @@ public class NativeWeakMap extends IdScriptableObject {
 			case "has": return Id_has;
 			case "set": return Id_set;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 }

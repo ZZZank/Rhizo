@@ -185,7 +185,7 @@ public class ClassFileWriter {
 			case ByteCode.T_INT: return 'I';
 			case ByteCode.T_LONG: return 'J';
 			default: throw new IllegalArgumentException("bad operand");
-		};
+		}
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class ClassFileWriter {
 			case '[': return descriptor;
 			case 'L': return classDescriptorToInternalName(descriptor);
 			default: throw new IllegalArgumentException("bad descriptor:" + descriptor);
-		};
+		}
 	}
 
 	static int putInt64(long value, byte[] array, int offset) {
@@ -3408,7 +3408,7 @@ public class ClassFileWriter {
 				case ByteCode.IF_ICMPLT:
 				case ByteCode.IF_ICMPNE: return true;
 				default: return false;
-			};
+			}
 		}
 
 		private int getOperand(int offset) {

@@ -337,6 +337,6 @@ final class NativeError extends IdScriptableObject {
 			case "toString": return Id_toString;
 			case "toSource": return Id_toSource;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 }

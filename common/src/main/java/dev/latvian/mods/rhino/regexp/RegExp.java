@@ -233,7 +233,7 @@ public class RegExp {
 			case '`': return res.leftContext;
 			case '\'': return res.rightContext;
 			default: return null;
-		};
+		}
 	}
 
 	/**

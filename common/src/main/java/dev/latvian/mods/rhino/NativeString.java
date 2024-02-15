@@ -475,7 +475,7 @@ final class NativeString extends IdScriptableObject implements Wrapper {
 			case "namespace": return instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_namespace);
 			case "path": return instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_path);
 			default: return super.findInstanceIdInfo(s);
-		};
+		}
 	}
 
 	@Override
@@ -485,7 +485,7 @@ final class NativeString extends IdScriptableObject implements Wrapper {
 			case Id_namespace: return "namespace";
 			case Id_path: return "path";
 			default: return super.getInstanceIdName(id);
-		};
+		}
 	}
 
 	@Override
@@ -1247,7 +1247,7 @@ final class NativeString extends IdScriptableObject implements Wrapper {
 			case "trimStart": return Id_trimStart;
 			case "trimEnd": return Id_trimEnd;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 }
 

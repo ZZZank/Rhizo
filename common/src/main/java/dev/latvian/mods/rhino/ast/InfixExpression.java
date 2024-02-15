@@ -158,6 +158,6 @@ public class InfixExpression extends AstNode {
 			case Token.OR:
 			case Token.NULLISH_COALESCING: return left != null && left.hasSideEffects() || (right != null && right.hasSideEffects());
 			default: return super.hasSideEffects();
-		};
+		}
 	}
 }

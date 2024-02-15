@@ -46,7 +46,7 @@ class SpecialRef extends Ref {
 			case SPECIAL_PROTO: return target.getPrototype();
 			case SPECIAL_PARENT: return target.getParentScope();
 			default: throw Kit.codeBug();
-		};
+		}
 	}
 
 	@Override

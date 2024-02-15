@@ -112,6 +112,6 @@ final class NativeBoolean extends IdScriptableObject {
 			case "toSource": return Id_toSource;
 			case "valueOf": return Id_valueOf;
 			default: return 0;
-		};
+		}
 	}
 }

@@ -43,6 +43,6 @@ final class ConstantEntry {
 			case ConstantPool.CONSTANT_NameAndType: return str1.equals(entry.str1) && str2.equals(entry.str2);
 			case ConstantPool.CONSTANT_InvokeDynamic: return intval == entry.intval && str1.equals(entry.str1) && str2.equals(entry.str2);
 			default: throw new RuntimeException("unsupported constant type");
-		};
+		}
 	}
 }

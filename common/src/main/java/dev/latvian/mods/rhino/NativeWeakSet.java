@@ -158,7 +158,7 @@ public class NativeWeakSet extends IdScriptableObject {
 			case "delete": return Id_delete;
 			case "has": return Id_has;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 
 	// #/string_id_map#

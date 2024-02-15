@@ -319,6 +319,6 @@ public class NativeMap extends IdScriptableObject {
 			case "entries": return Id_entries;
 			case "forEach": return Id_forEach;
 			default: return 0;
-		};
+		}
 	}
 }

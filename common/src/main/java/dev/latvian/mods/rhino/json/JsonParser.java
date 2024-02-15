@@ -91,7 +91,7 @@ public class JsonParser {
 				case '0':
 				case '-': return readNumber(c);
 				default: throw new ParseException("Unexpected token: " + c);
-			};
+			}
 		}
 		throw new ParseException("Empty JSON string");
 	}

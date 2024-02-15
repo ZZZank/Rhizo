@@ -405,7 +405,7 @@ public final class ES6Generator extends IdScriptableObject {
 			case "return": return Id_return;
 			case "throw": return Id_throw;
 			default: return 0;
-		};
+		}
 	}
 
 	enum State {

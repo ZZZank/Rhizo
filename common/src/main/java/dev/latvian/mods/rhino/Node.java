@@ -841,7 +841,7 @@ public class Node implements Iterable<Node> {
 					case Token.SWITCH: return first.endCheckSwitch();
 					case Token.TRY: return first.endCheckTry();
 					default: return endCheckBlock();
-				};
+				}
 
 			default:
 				return END_DROPS_OFF;

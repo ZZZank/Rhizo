@@ -202,7 +202,7 @@ public class NativeCallSite extends IdScriptableObject {
 			case Id_isToplevel: return Boolean.FALSE;
 			case Id_toString: return js_toString(thisObj);
 			default: throw new IllegalArgumentException(String.valueOf(id));
-		};
+		}
 	}
 
 	@Override
@@ -232,7 +232,7 @@ public class NativeCallSite extends IdScriptableObject {
 			case "getColumnNumber": return Id_getColumnNumber;
 			case "getFunctionName": return Id_getFunctionName;
 			default: return 0;
-		};
+		}
 	}
 	// #/string_id_map#
 }

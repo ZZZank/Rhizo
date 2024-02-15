@@ -176,7 +176,7 @@ class NativeRegExpCtor extends BaseFunction {
 				case Id_DOLLAR_8: return "$8";
 				case Id_DOLLAR_9: return "$9";
 				default: return super.getInstanceIdName(id);
-			};
+			}
 		}
 
 		return super.getInstanceIdName(id);

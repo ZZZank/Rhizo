@@ -1853,7 +1853,7 @@ final class NativeDate extends IdScriptableObject {
 			case "toISOString": return Id_toISOString;
 			case "toJSON": return Id_toJSON;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 }
 

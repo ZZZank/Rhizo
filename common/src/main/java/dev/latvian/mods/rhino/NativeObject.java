@@ -717,7 +717,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 			case "__lookupGetter__": return Id___lookupGetter__;
 			case "__lookupSetter__": return Id___lookupSetter__;
 			default: return 0;
-		};
+		}
 	}
 
 	@Override

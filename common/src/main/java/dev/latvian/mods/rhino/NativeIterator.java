@@ -229,7 +229,7 @@ public final class NativeIterator extends IdScriptableObject {
 				/// XXX: what about argument? SpiderMonkey apparently ignores it
 					thisObj;
 			default: throw new IllegalArgumentException(String.valueOf(id));
-		};
+		}
 	}
 
 	@Override
@@ -239,7 +239,7 @@ public final class NativeIterator extends IdScriptableObject {
 			case "__iterator__": return Id___iterator__;
 			case "constructor": return Id_constructor;
 			default: return 0;
-		};
+		}
 	}
 }
 

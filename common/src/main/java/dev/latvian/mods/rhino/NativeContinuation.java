@@ -91,7 +91,7 @@ public final class NativeContinuation extends IdScriptableObject implements Func
 		switch (s) {
 			case "constructor": return Id_constructor;
 			default: return 0;
-		};
+		}
 	}
 
 	// #/string_id_map#

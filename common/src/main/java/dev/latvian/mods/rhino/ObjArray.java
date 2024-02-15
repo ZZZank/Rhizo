@@ -99,7 +99,7 @@ public class ObjArray {
 			case 3: return f3;
 			case 4: return f4;
 			default: return data[index - FIELDS_STORE_SIZE];
-		};
+		}
 	}
 
 	private void setImpl(int index, Object value) {

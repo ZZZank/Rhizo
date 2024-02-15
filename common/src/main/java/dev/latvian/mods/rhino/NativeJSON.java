@@ -439,6 +439,6 @@ public final class NativeJSON extends IdScriptableObject {
 			case "parse": return Id_parse;
 			case "stringify": return Id_stringify;
 			default: return super.findPrototypeId(s);
-		};
+		}
 	}
 }

@@ -76,7 +76,7 @@ final class TypeInfo {
 				case 'F': return FLOAT;
 				case 'J': return LONG;
 				default: throw new IllegalArgumentException("bad type");
-			};
+			}
 		}
 		return TypeInfo.OBJECT(type, pool);
 	}

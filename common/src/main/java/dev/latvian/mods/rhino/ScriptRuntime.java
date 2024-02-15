@@ -300,7 +300,7 @@ public class ScriptRuntime {
 			case '\uFEFF': return // <BOM>
 					true;
 			default: return Character.getType(c) == Character.SPACE_SEPARATOR;
-		};
+		}
 	}
 
 	public static Boolean wrapBoolean(boolean b) {

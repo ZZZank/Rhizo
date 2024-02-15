@@ -157,7 +157,7 @@ class NativeScript extends BaseFunction {
 			case "compile": return Id_compile;
 			case "exec": return Id_exec;
 			default: return 0;
-		};
+		}
 	}
 }
 

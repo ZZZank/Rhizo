@@ -96,7 +96,7 @@ public abstract class ES6Iterator extends IdScriptableObject {
 			case Id_next: return iterator.next(cx, scope);
 			case SymbolId_iterator: return iterator;
 			default: throw new IllegalArgumentException(String.valueOf(id));
-		};
+		}
 	}
 
 	@Override

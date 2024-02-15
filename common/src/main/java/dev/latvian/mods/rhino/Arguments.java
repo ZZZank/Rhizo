@@ -239,7 +239,7 @@ final class Arguments extends IdScriptableObject {
 			case Id_length: return "length";
 			case Id_caller: return "caller";
 			default: return null;
-		};
+		}
 	}
 
 	@Override

@@ -2506,7 +2506,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			case Id_ignoreCase: return "ignoreCase";
 			case Id_multiline: return "multiline";
 			default: return super.getInstanceIdName(id);
-		};
+		}
 	}
 
 	@Override
@@ -2518,7 +2518,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			case Id_ignoreCase: return ScriptRuntime.wrapBoolean((re.flags & JSREG_FOLD) != 0);
 			case Id_multiline: return ScriptRuntime.wrapBoolean((re.flags & JSREG_MULTILINE) != 0);
 			default: return super.getInstanceIdValue(id);
-		};
+		}
 	}
 
 	private void setLastIndex(Object value) {
@@ -2654,7 +2654,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			case "test": return Id_test;
 			case "prefix": return Id_prefix;
 			default: return 0;
-		};
+		}
 	}
 
 }       // class NativeRegExp
