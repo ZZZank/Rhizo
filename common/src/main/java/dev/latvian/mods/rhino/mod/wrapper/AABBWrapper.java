@@ -36,7 +36,8 @@ public interface AABBWrapper {
 			return (AABB) o;
 		} else if (o instanceof BlockPos) {
 			return ofBlock((BlockPos) o);
-		} else if (o instanceof double[] d) {
+		} else if (o instanceof double[]) {
+		    double[] d = (double[]) o;
 
 			if (d.length == 0) {
 				return EMPTY;

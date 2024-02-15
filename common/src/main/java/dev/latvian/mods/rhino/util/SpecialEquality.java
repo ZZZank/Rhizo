@@ -7,7 +7,8 @@ public interface SpecialEquality {
 	static boolean checkSpecialEquality(Object o, Object o1, boolean shallow) {
 		if (o == o1) {
 			return true;
-		} else if (o instanceof SpecialEquality s) {
+		} else if (o instanceof SpecialEquality) {
+		    SpecialEquality s = (SpecialEquality) o;
 			return s.specialEquals(o1, shallow);
 		} else if (o != null && o1 != null && o.getClass().isEnum()) {
 			if (o1 instanceof Number) {

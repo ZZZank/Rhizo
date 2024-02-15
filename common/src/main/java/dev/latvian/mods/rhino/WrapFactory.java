@@ -117,7 +117,8 @@ public class WrapFactory {
 	 * @return the wrapped value which shall not be null
 	 */
 	public Scriptable wrapAsJavaObject(SharedContextData data, Scriptable scope, Object javaObject, Class<?> staticType) {
-		if (javaObject instanceof CustomJavaToJsWrapper w) {
+		if (javaObject instanceof CustomJavaToJsWrapper) {
+		    CustomJavaToJsWrapper w = (CustomJavaToJsWrapper) javaObject;
 			return w.convertJavaToJs(data, scope, staticType);
 		}
 
@@ -127,11 +128,14 @@ public class WrapFactory {
 			return w.convertJavaToJs(data, scope, staticType);
 		}
 
-		if (javaObject instanceof Map map) {
+		if (javaObject instanceof Map) {
+		    Map map = (Map) javaObject;
 			return new NativeJavaMap(data, scope, map, map);
-		} else if (javaObject instanceof List list) {
+		} else if (javaObject instanceof List) {
+     		List list = (List) javaObject;
 			return new NativeJavaList(data, scope, list, list);
-		} else if (javaObject instanceof Set<?> set) {
+		} else if (javaObject instanceof Set<?>) {
+     		Set<?> set = (Set<?>) javaObject;
 			return new NativeJavaList(data, scope, set, new JavaSetWrapper<>(set));
 		}
 

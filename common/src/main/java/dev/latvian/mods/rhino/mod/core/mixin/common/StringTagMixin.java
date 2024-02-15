@@ -12,7 +12,8 @@ public abstract class StringTagMixin implements SpecialEquality {
 
 	@Override
 	public boolean specialEquals(Object o, boolean shallow) {
-		if (o instanceof CharSequence s) {
+		if (o instanceof CharSequence) {
+		    CharSequence s = (CharSequence) o;
 			return s.equals(getAsString());
 		}
 

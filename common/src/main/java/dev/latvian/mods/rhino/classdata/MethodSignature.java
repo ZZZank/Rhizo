@@ -60,7 +60,8 @@ public class MethodSignature {
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
-		} else if (obj instanceof MethodSignature o) {
+		} else if (obj instanceof MethodSignature) {
+     MethodSignature o = (MethodSignature) obj;
 			if (types.length != o.types.length) {
 				return false;
 			}

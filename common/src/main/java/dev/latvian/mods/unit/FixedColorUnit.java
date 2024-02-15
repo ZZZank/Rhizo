@@ -49,7 +49,8 @@ public class FixedColorUnit extends Unit implements UnitToken {
 
 	@Override
 	public Unit withAlpha(Unit a) {
-		if (a instanceof FixedNumberUnit u) {
+		if (a instanceof FixedNumberUnit) {
+		    FixedNumberUnit u = (FixedNumberUnit) a;
 			if (u.value >= 1D) {
 				return of(color, false);
 			} else if (u.value <= 0D) {

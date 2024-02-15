@@ -613,21 +613,29 @@ public final class IRFactory extends Parser {
 			case Token.YIELD: 
 			case Token.YIELD_STAR: return transformYield((Yield) node);
 			default: {
-				if (node instanceof ExpressionStatement n) {
+				if (node instanceof ExpressionStatement) {
+				    ExpressionStatement n = (ExpressionStatement) node;
 					return transformExprStmt(n);
-				} else if (node instanceof Assignment n) {
+				} else if (node instanceof Assignment) {
+     				Assignment n = (Assignment) node;
 					return transformAssignment(n);
-				} else if (node instanceof UnaryExpression n) {
+				} else if (node instanceof UnaryExpression) {
+     				UnaryExpression n = (UnaryExpression) node;
 					return transformUnary(n);
-				} else if (node instanceof InfixExpression n) {
+				} else if (node instanceof InfixExpression) {
+     				InfixExpression n = (InfixExpression) node;
 					return transformInfix(n);
-				} else if (node instanceof VariableDeclaration n) {
+				} else if (node instanceof VariableDeclaration) {
+     				VariableDeclaration n = (VariableDeclaration) node;
 					return transformVariables(n);
-				} else if (node instanceof ParenthesizedExpression n) {
+				} else if (node instanceof ParenthesizedExpression) {
+     				ParenthesizedExpression n = (ParenthesizedExpression) node;
 					return transformParenExpr(n);
-				} else if (node instanceof LabeledStatement n) {
+				} else if (node instanceof LabeledStatement) {
+     				LabeledStatement n = (LabeledStatement) node;
 					return transformLabeledStatement(n);
-				} else if (node instanceof LetNode n) {
+				} else if (node instanceof LetNode) {
+     				LetNode n = (LetNode) node;
 					return transformLetNode(n);
 				}
 

@@ -51,7 +51,8 @@ public interface NBTUtils {
 			return null;
 		} else if (t instanceof StringTag) {
 			return t.getAsString();
-		} else if (t instanceof NumericTag num) {
+		} else if (t instanceof NumericTag) {
+		    NumericTag num = (NumericTag) t;
 			return num.getAsNumber();
 		}
 
@@ -62,15 +63,19 @@ public interface NBTUtils {
 	static Tag toTag(@Nullable Object v) {
 		if (v == null || v instanceof EndTag) {
 			return null;
-		} else if (v instanceof Tag tag) {
+		} else if (v instanceof Tag) {
+		    Tag tag = (Tag) v;
 			return tag;
-		} else if (v instanceof NBTSerializable s) {
+		} else if (v instanceof NBTSerializable) {
+		    NBTSerializable s = (NBTSerializable) v;
 			return s.toNBT();
 		} else if (v instanceof CharSequence || v instanceof Character) {
 			return StringTag.valueOf(v.toString());
-		} else if (v instanceof Boolean b) {
+		} else if (v instanceof Boolean) {
+		    Boolean b = (Boolean) v;
 			return ByteTag.valueOf(b);
-		} else if (v instanceof Number number) {
+		} else if (v instanceof Number) {
+		    Number number = (Number) v;
 			if (number instanceof Byte) {
 				return ByteTag.valueOf(number.byteValue());
 			} else if (number instanceof Short) {
@@ -84,7 +89,8 @@ public interface NBTUtils {
 			}
 
 			return DoubleTag.valueOf(number.doubleValue());
-		} else if (v instanceof JsonPrimitive json) {
+		} else if (v instanceof JsonPrimitive) {
+		    JsonPrimitive json = (JsonPrimitive) v;
 			if (json.isNumber()) {
 				return toTag(json.getAsNumber());
 			} else if (json.isBoolean()) {
@@ -92,7 +98,8 @@ public interface NBTUtils {
 			} else {
 				return StringTag.valueOf(json.getAsString());
 			}
-		} else if (v instanceof Map<?, ?> map) {
+		} else if (v instanceof Map<?, ?>) {
+		    Map<?, ?> map = (Map<?, ?>) v;
 			CompoundTag tag = new OrderedCompoundTag();
 
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -104,7 +111,8 @@ public interface NBTUtils {
 			}
 
 			return tag;
-		} else if (v instanceof JsonObject json) {
+		} else if (v instanceof JsonObject) {
+		    JsonObject json = (JsonObject) v;
 			CompoundTag tag = new OrderedCompoundTag();
 
 			for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
@@ -116,9 +124,11 @@ public interface NBTUtils {
 			}
 
 			return tag;
-		} else if (v instanceof Collection<?> c) {
+		} else if (v instanceof Collection<?>) {
+		    Collection<?> c = (Collection<?>) v;
 			return toTagCollection(c);
-		} else if (v instanceof JsonArray array) {
+		} else if (v instanceof JsonArray) {
+		    JsonArray array = (JsonArray) v;
 			List<Tag> list = new ArrayList<>(array.size());
 
 			for (JsonElement element : array) {
@@ -145,13 +155,15 @@ public interface NBTUtils {
 			} catch (Exception ex) {
 				return null;
 			}
-		} else if (v instanceof JsonPrimitive json) {
+		} else if (v instanceof JsonPrimitive) {
+		    JsonPrimitive json = (JsonPrimitive) v;
 			try {
 				return TagParser.parseTag(json.getAsString());
 			} catch (Exception ex) {
 				return null;
 			}
-		} else if (v instanceof JsonObject json) {
+		} else if (v instanceof JsonObject) {
+		    JsonObject json = (JsonObject) v;
 			try {
 				return TagParser.parseTag(json.toString());
 			} catch (Exception ex) {
@@ -176,7 +188,8 @@ public interface NBTUtils {
 			} catch (Exception ex) {
 				return null;
 			}
-		} else if (v instanceof JsonArray array) {
+		} else if (v instanceof JsonArray) {
+		    JsonArray array = (JsonArray) v;
 			List<Tag> list = new ArrayList<>(array.size());
 
 			for (JsonElement element : array) {

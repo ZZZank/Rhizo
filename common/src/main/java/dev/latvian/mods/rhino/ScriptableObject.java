@@ -220,7 +220,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 				}
 			} else {
 				Context cx = Context.getContext();
-				if (setter instanceof MemberBox nativeSetter) {
+				if (setter instanceof MemberBox) {
+				    MemberBox nativeSetter = (MemberBox) setter;
 					Class<?>[] pTypes = nativeSetter.argTypes;
 					// XXX: cache tag since it is already calculated in
 					// defineProperty ?
@@ -237,7 +238,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 						args = new Object[]{start, actualArg};
 					}
 					nativeSetter.invoke(setterThis, args);
-				} else if (setter instanceof Function f) {
+				} else if (setter instanceof Function) {
+     				Function f = (Function) setter;
 					f.call(cx, f.getParentScope(), start, new Object[]{value});
 				}
 				return true;
@@ -248,7 +250,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		@Override
 		Object getValue(Scriptable start) {
 			if (getter != null) {
-				if (getter instanceof MemberBox nativeGetter) {
+				if (getter instanceof MemberBox) {
+				    MemberBox nativeGetter = (MemberBox) getter;
 					Object getterThis;
 					Object[] args;
 					if (nativeGetter.delegateTo == null) {
@@ -259,13 +262,15 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 						args = new Object[]{start};
 					}
 					return nativeGetter.invoke(getterThis, args);
-				} else if (getter instanceof Function f) {
+				} else if (getter instanceof Function) {
+     				Function f = (Function) getter;
 					Context cx = Context.getContext();
 					return f.call(cx, f.getParentScope(), start, ScriptRuntime.EMPTY_OBJECTS);
 				}
 			}
 			Object val = this.value;
-			if (val instanceof LazilyLoadedCtor initializer) {
+			if (val instanceof LazilyLoadedCtor) {
+			    LazilyLoadedCtor initializer = (LazilyLoadedCtor) val;
 				try {
 					initializer.init();
 				} finally {
@@ -834,7 +839,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @param propertyName the name of the property to define.
 	 */
 	public static void defineConstProperty(Scriptable destination, String propertyName) {
-		if (destination instanceof ConstProperties cp) {
+		if (destination instanceof ConstProperties) {
+		    ConstProperties cp = (ConstProperties) destination;
 			cp.defineConst(propertyName, destination);
 		} else {
 			defineProperty(destination, propertyName, Undefined.instance, CONST);
@@ -919,7 +925,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		Object proto;
 		if (ctor instanceof BaseFunction) {
 			proto = ((BaseFunction) ctor).getPrototypeProperty();
-		} else if (ctor instanceof Scriptable ctorObj) {
+		} else if (ctor instanceof Scriptable) {
+     		Scriptable ctorObj = (Scriptable) ctor;
 			proto = ctorObj.get("prototype", ctorObj);
 		} else {
 			return null;
@@ -1050,7 +1057,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		if (base == null) {
 			return;
 		}
-		if (base instanceof ConstProperties cp) {
+		if (base instanceof ConstProperties) {
+		    ConstProperties cp = (ConstProperties) base;
 
 			if (cp.isConst(name)) {
 				throw ScriptRuntime.typeError1("msg.const.redecl", name);
@@ -1340,7 +1348,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	public static Object getTopScopeValue(Scriptable scope, Object key) {
 		scope = ScriptableObject.getTopLevelScope(scope);
 		for (; ; ) {
-			if (scope instanceof ScriptableObject so) {
+			if (scope instanceof ScriptableObject) {
+			    ScriptableObject so = (ScriptableObject) scope;
 				Object value = so.getAssociatedValue(key);
 				if (value != null) {
 					return value;
@@ -1822,7 +1831,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		if (slot == null) {
 			return null;
 		}
-		if (slot instanceof GetterSlot gslot) {
+		if (slot instanceof GetterSlot) {
+		    GetterSlot gslot = (GetterSlot) slot;
 			Object result = isSetter ? gslot.setter : gslot.getter;
 			return result != null ? result : Undefined.instance;
 		}

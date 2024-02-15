@@ -878,12 +878,14 @@ public class ScriptRuntime {
 		if (value instanceof Boolean) {
 			return toString(value);
 		}
-		if (value instanceof Scriptable obj) {
+		if (value instanceof Scriptable) {
+		    Scriptable obj = (Scriptable) value;
 			// Wrapped Java objects won't have "toSource" and will report
 			// errors for get()s of nonexistent name, so use has() first
 			if (ScriptableObject.hasProperty(obj, "toSource")) {
 				Object v = ScriptableObject.getProperty(obj, "toSource");
-				if (v instanceof Function f) {
+				if (v instanceof Function) {
+				    Function f = (Function) v;
 					return toString(f.call(cx, scope, obj, EMPTY_OBJECTS));
 				}
 			}
@@ -2450,7 +2452,8 @@ public class ScriptRuntime {
 	private static boolean eqString(CharSequence x, Object y) {
 		if (y == null || y == Undefined.instance) {
 			return false;
-		} else if (y instanceof CharSequence c) {
+		} else if (y instanceof CharSequence) {
+     		CharSequence c = (CharSequence) y;
 			return x.length() == c.length() && x.toString().equals(c.toString());
 		} else if (y instanceof Number) {
 			return toNumber(x.toString()) == ((Number) y).doubleValue();
@@ -2767,16 +2770,19 @@ public class ScriptRuntime {
 			String errorMsg;
 			Throwable javaException = null;
 
-			if (t instanceof EcmaError ee) {
+			if (t instanceof EcmaError) {
+			    EcmaError ee = (EcmaError) t;
 				re = ee;
 				type = TopLevel.NativeErrors.valueOf(ee.getName());
 				errorMsg = ee.getErrorMessage();
-			} else if (t instanceof WrappedException we) {
+			} else if (t instanceof WrappedException) {
+     			WrappedException we = (WrappedException) t;
 				re = we;
 				javaException = we.getWrappedException();
 				type = TopLevel.NativeErrors.JavaException;
 				errorMsg = javaException.getClass().getName() + ": " + javaException.getMessage();
-			} else if (t instanceof EvaluatorException ee) {
+			} else if (t instanceof EvaluatorException) {
+     			EvaluatorException ee = (EvaluatorException) t;
 				// Pure evaluator exception, nor WrappedException instance
 				re = ee;
 				type = TopLevel.NativeErrors.InternalError;
@@ -2841,16 +2847,19 @@ public class ScriptRuntime {
 
 		var contextData = SharedContextData.get(cx, scope);
 
-		if (t instanceof EcmaError ee) {
+		if (t instanceof EcmaError) {
+		    EcmaError ee = (EcmaError) t;
 			re = ee;
 			errorName = ee.getName();
 			errorMsg = ee.getErrorMessage();
-		} else if (t instanceof WrappedException we) {
+		} else if (t instanceof WrappedException) {
+     		WrappedException we = (WrappedException) t;
 			re = we;
 			javaException = we.getWrappedException();
 			errorName = "JavaException";
 			errorMsg = javaException.getClass().getName() + ": " + javaException.getMessage();
-		} else if (t instanceof EvaluatorException ee) {
+		} else if (t instanceof EvaluatorException) {
+     		EvaluatorException ee = (EvaluatorException) t;
 			// Pure evaluator exception, nor WrappedException instance
 			re = ee;
 			errorName = "InternalError";

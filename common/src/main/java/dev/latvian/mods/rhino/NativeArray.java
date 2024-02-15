@@ -515,7 +515,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		}
 		// if no args, use "," as separator
 		String separator = (args.length < 1 || args[0] == Undefined.instance) ? "," : ScriptRuntime.toString(args[0]);
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly) {
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < length; i++) {
@@ -566,7 +567,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Scriptable js_reverse(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly) {
 				for (int i = 0, j = ((int) na.length) - 1; i < j; i++, j--) {
 					Object temp = na.dense[i];
@@ -643,7 +645,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Object js_push(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly && na.ensureCapacity((int) na.length + args.length)) {
 				for (Object arg : args) {
 					na.dense[(int) na.length++] = arg;
@@ -665,7 +668,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
 		Object result;
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly && na.length > 0) {
 				na.length--;
 				result = na.dense[(int) na.length];
@@ -696,7 +700,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Object js_shift(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly && na.length > 0) {
 				na.length--;
 				Object result = na.dense[0];
@@ -737,7 +742,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Object js_unshift(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly && na.ensureCapacity((int) na.length + args.length)) {
 				System.arraycopy(na.dense, 0, na.dense, args.length, (int) na.length);
 				System.arraycopy(args, 0, na.dense, 0, args.length);
@@ -1027,7 +1033,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				return NEGATIVE_ONE;
 			}
 		}
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly) {
 				Scriptable proto = na.getPrototype();
 				for (int i = (int) start; i < length; i++) {
@@ -1082,7 +1089,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				return NEGATIVE_ONE;
 			}
 		}
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly) {
 				Scriptable proto = na.getPrototype();
 				for (int i = (int) start; i >= 0; i--) {
@@ -1133,7 +1141,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				return Boolean.FALSE;
 			}
 		}
-		if (o instanceof NativeArray na) {
+		if (o instanceof NativeArray) {
+		    NativeArray na = (NativeArray) o;
 			if (na.denseOnly) {
 				Scriptable proto = na.getPrototype();
 				for (int i = (int) k; i < len; i++) {
@@ -2056,7 +2065,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				// assume that the representation is sparse
 				Object[] e = getIds(); // will only find in object itself
 				for (Object id : e) {
-					if (id instanceof String strId) {
+					if (id instanceof String) {
+					    String strId = (String) id;
 						// > MAXINT will appear as string
 						long index = toArrayIndex(strId);
 						if (index >= longVal) {

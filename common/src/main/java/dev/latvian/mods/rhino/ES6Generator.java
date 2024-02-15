@@ -254,7 +254,8 @@ public final class ES6Generator extends IdScriptableObject {
 		try {
 			Object r = function.resumeGenerator(cx, scope, GeneratorState.GENERATOR_SEND, savedState, value);
 
-			if (r instanceof YieldStarResult ysResult) {
+			if (r instanceof YieldStarResult) {
+			    YieldStarResult ysResult = (YieldStarResult) r;
 				// This special result tells us that we are executing a "yield *"
 				state = State.SUSPENDED_YIELD;
 				try {

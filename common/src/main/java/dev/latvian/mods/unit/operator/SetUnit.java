@@ -12,7 +12,8 @@ public class SetUnit extends OpUnit {
 
 	@Override
 	public double get(UnitVariables variables) {
-		if (left instanceof VariableUnit var) {
+		if (left instanceof VariableUnit) {
+		    VariableUnit var = (VariableUnit) left;
 			variables.getVariables().set(var.name, right.get(variables));
 		}
 
@@ -21,7 +22,8 @@ public class SetUnit extends OpUnit {
 
 	@Override
 	public int getInt(UnitVariables variables) {
-		if (left instanceof VariableUnit var) {
+		if (left instanceof VariableUnit) {
+		    VariableUnit var = (VariableUnit) left;
 			variables.getVariables().set(var.name, right.get(variables));
 		}
 
@@ -30,7 +32,8 @@ public class SetUnit extends OpUnit {
 
 	@Override
 	public boolean getBoolean(UnitVariables variables) {
-		if (left instanceof VariableUnit var) {
+		if (left instanceof VariableUnit) {
+		    VariableUnit var = (VariableUnit) left;
 			variables.getVariables().set(var.name, right.get(variables));
 		}
 

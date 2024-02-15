@@ -43,6 +43,8 @@ public class NativeCollectionIterator extends ES6Iterator {
 			case VALUES: return e.value;
 			case BOTH: return cx.newArray(scope, new Object[]{e.key, e.value});
 		};
+		//not actually functional, `switch` has already cover all cases
+		return cx.newArray(scope, new Object[]{e.key, e.value});
 	}
 
 	enum Type {

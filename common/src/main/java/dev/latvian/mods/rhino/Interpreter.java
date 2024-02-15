@@ -222,7 +222,8 @@ public final class Interpreter extends Icode implements Evaluator {
 			// are typically exposed as NativeContinuation.implementation,
 			// comparing them allows establishing whether the continuations
 			// are semantically equal.
-			if (other instanceof CallFrame otherCallFrame) {
+			if (other instanceof CallFrame) {
+			    CallFrame otherCallFrame = (CallFrame) other;
 				// If the call is not within a Context with a top call, we force
 				// one. It is required as some objects within fully initialized
 				// global scopes (notably, XMLLibImpl) need to have a top scope
@@ -999,7 +1000,8 @@ public final class Interpreter extends Icode implements Evaluator {
 								if (frame.useActivation) {
 									calleeScope = ScriptableObject.getTopLevelScope(frame.scope);
 								}
-								if (fun instanceof InterpretedFunction ifun) {
+								if (fun instanceof InterpretedFunction) {
+								    InterpretedFunction ifun = (InterpretedFunction) fun;
 									CallFrame callParentFrame = frame;
 									if (op == Icode_TAIL_CALL) {
 										// In principle tail call can re-use the current
@@ -1050,7 +1052,8 @@ public final class Interpreter extends Icode implements Evaluator {
 									break withoutExceptions;
 								}
 
-								if (fun instanceof IdFunctionObject ifun) {
+								if (fun instanceof IdFunctionObject) {
+								    IdFunctionObject ifun = (IdFunctionObject) fun;
 									if (NativeContinuation.isContinuationConstructor(ifun)) {
 										frame.stack[stackTop] = captureContinuation(cx, frame.parentFrame, false);
 										continue;
@@ -1059,7 +1062,8 @@ public final class Interpreter extends Icode implements Evaluator {
 									// Function.call within this interpreter loop invocation
 									if (BaseFunction.isApplyOrCall(ifun)) {
 										Callable applyCallable = ScriptRuntime.getCallable(funThisObj);
-										if (applyCallable instanceof InterpretedFunction iApplyCallable) {
+										if (applyCallable instanceof InterpretedFunction) {
+										    InterpretedFunction iApplyCallable = (InterpretedFunction) applyCallable;
 											frame = initFrameForApplyOrCall(cx, frame, indexReg, stack, sDbl, stackTop, op, calleeScope, ifun, iApplyCallable);
 											continue StateLoop;
 										}
@@ -1068,11 +1072,13 @@ public final class Interpreter extends Icode implements Evaluator {
 
 								// Bug 447697 -- make best effort to keep __noSuchMethod__ within this
 								// interpreter loop invocation
-								if (fun instanceof ScriptRuntime.NoSuchMethodShim noSuchMethodShim) {
+								if (fun instanceof ScriptRuntime.NoSuchMethodShim) {
+								    ScriptRuntime.NoSuchMethodShim noSuchMethodShim = (ScriptRuntime.NoSuchMethodShim) fun;
 									// get the shim and the actual method
 									Callable noSuchMethodMethod = noSuchMethodShim.noSuchMethodMethod;
 									// if the method is in fact an InterpretedFunction
-									if (noSuchMethodMethod instanceof InterpretedFunction ifun) {
+									if (noSuchMethodMethod instanceof InterpretedFunction) {
+									    InterpretedFunction ifun = (InterpretedFunction) noSuchMethodMethod;
 										frame = initFrameForNoSuchMethod(cx, frame, indexReg, stack, sDbl, stackTop, op, funThisObj, calleeScope, noSuchMethodShim, ifun);
 										continue StateLoop;
 									}
@@ -1094,7 +1100,8 @@ public final class Interpreter extends Icode implements Evaluator {
 								stackTop -= indexReg;
 
 								Object lhs = stack[stackTop];
-								if (lhs instanceof InterpretedFunction f) {
+								if (lhs instanceof InterpretedFunction) {
+								    InterpretedFunction f = (InterpretedFunction) lhs;
 									Scriptable newInstance = f.createObject(cx, frame.scope);
 									CallFrame calleeFrame = initFrame(cx, frame.scope, newInstance, stack, sDbl, stackTop + 1, indexReg, f, frame);
 
@@ -1111,7 +1118,8 @@ public final class Interpreter extends Icode implements Evaluator {
 									throw ScriptRuntime.notFunctionError(lhs);
 								}
 
-								if (fun instanceof IdFunctionObject ifun) {
+								if (fun instanceof IdFunctionObject) {
+								    IdFunctionObject ifun = (IdFunctionObject) fun;
 									if (NativeContinuation.isContinuationConstructor(ifun)) {
 										frame.stack[stackTop] = captureContinuation(cx, frame.parentFrame, false);
 										continue;
@@ -1814,7 +1822,8 @@ public final class Interpreter extends Icode implements Evaluator {
 				val = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 			}
 			String stringReg = frame.idata.argNames[indexReg];
-			if (frame.scope instanceof ConstProperties cp) {
+			if (frame.scope instanceof ConstProperties) {
+			    ConstProperties cp = (ConstProperties) frame.scope;
 				cp.putConst(stringReg, frame.scope, val);
 			} else {
 				throw Kit.codeBug();

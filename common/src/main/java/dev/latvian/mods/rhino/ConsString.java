@@ -52,7 +52,8 @@ public class ConsString implements CharSequence {
 
 			CharSequence next = right;
 			do {
-				if (next instanceof ConsString casted) {
+				if (next instanceof ConsString) {
+				    ConsString casted = (ConsString) next;
 					if (casted.isFlat) {
 						next = casted.left;
 					} else {

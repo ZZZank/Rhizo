@@ -239,15 +239,20 @@ final class EqualObjectGraphs {
 		}
 
 		// Handle special Scriptable implementations
-		if (s1 instanceof NativeContinuation s3) {
+		if (s1 instanceof NativeContinuation) {
+		    NativeContinuation s3 = (NativeContinuation) s1;
 			return s2 instanceof NativeContinuation s4 && NativeContinuation.equalImplementations(s3, s4);
-		} else if (s1 instanceof IdFunctionObject s3) {
+		} else if (s1 instanceof IdFunctionObject) {
+     		IdFunctionObject s3 = (IdFunctionObject) s1;
 			return s2 instanceof IdFunctionObject s4 && IdFunctionObject.equalObjectGraphs(s3, s4, this);
-		} else if (s1 instanceof ArrowFunction s3) {
+		} else if (s1 instanceof ArrowFunction) {
+     		ArrowFunction s3 = (ArrowFunction) s1;
 			return s2 instanceof ArrowFunction s4 && ArrowFunction.equalObjectGraphs(s3, s4, this);
-		} else if (s1 instanceof BoundFunction s3) {
+		} else if (s1 instanceof BoundFunction) {
+     		BoundFunction s3 = (BoundFunction) s1;
 			return s2 instanceof BoundFunction s4 && BoundFunction.equalObjectGraphs(s3, s4, this);
-		} else if (s1 instanceof NativeSymbol s3) {
+		} else if (s1 instanceof NativeSymbol) {
+     		NativeSymbol s3 = (NativeSymbol) s1;
 			return s2 instanceof NativeSymbol s4 && equalGraphs(s3.getKey(), s4.getKey());
 		}
 		return true;

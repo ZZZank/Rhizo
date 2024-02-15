@@ -25,7 +25,8 @@ public class EnumTypeWrapper<T> implements TypeWrapperFactory<T> {
 
 		String name = e.name();
 
-		if (e instanceof RemappedEnumConstant c) {
+		if (e instanceof RemappedEnumConstant) {
+		    RemappedEnumConstant c = (RemappedEnumConstant) e;
 			String s = c.getRemappedEnumConstantName();
 
 			if (!s.isEmpty()) {

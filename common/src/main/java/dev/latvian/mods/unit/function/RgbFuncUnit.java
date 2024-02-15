@@ -24,7 +24,8 @@ public class RgbFuncUnit extends FuncUnit {
 				c.a = args[3];
 			}
 		} else if (args.length == 2) {
-			if (args[0] instanceof FixedColorUnit u) {
+			if (args[0] instanceof FixedColorUnit) {
+			    FixedColorUnit u = (FixedColorUnit) args[0];
 				if (args[1].isFixed()) {
 					return u.withAlpha(args[1]);
 				} else {

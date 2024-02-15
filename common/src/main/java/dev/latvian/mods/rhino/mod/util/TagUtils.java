@@ -46,7 +46,8 @@ public class TagUtils {
 			return new JsonPrimitive(t.getAsString());
 		} else if (t instanceof NumericTag) {
 			return new JsonPrimitive(((NumericTag) t).getAsNumber());
-		} else if (t instanceof CollectionTag<?> l) {
+		} else if (t instanceof CollectionTag<?>) {
+		    CollectionTag<?> l = (CollectionTag<?>) t;
 			JsonArray array = new JsonArray();
 
 			for (Tag tag : l) {
@@ -54,7 +55,8 @@ public class TagUtils {
 			}
 
 			return array;
-		} else if (t instanceof CompoundTag c) {
+		} else if (t instanceof CompoundTag) {
+		    CompoundTag c = (CompoundTag) t;
 			JsonObject object = new JsonObject();
 
 			for (String key : c.getAllKeys()) {

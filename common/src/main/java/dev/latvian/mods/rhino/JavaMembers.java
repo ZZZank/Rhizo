@@ -40,7 +40,8 @@ public class JavaMembers {
 
 		@Override
 		public boolean equals(Object o) {
-			if (o instanceof MethodSignature ms) {
+			if (o instanceof MethodSignature) {
+			    MethodSignature ms = (MethodSignature) o;
 				return ms.name.equals(name) && Arrays.equals(args, ms.args);
 			}
 			return false;
@@ -117,7 +118,8 @@ public class JavaMembers {
 		if (ht.containsKey(getterName)) {
 			// Check that the getter is a method.
 			Object member = ht.get(getterName);
-			if (member instanceof NativeJavaMethod njmGet) {
+			if (member instanceof NativeJavaMethod) {
+			    NativeJavaMethod njmGet = (NativeJavaMethod) member;
 				return extractGetMethod(njmGet.methods, isStatic);
 			}
 		}
@@ -288,7 +290,8 @@ public class JavaMembers {
 		Object rval;
 		Class<?> type;
 		try {
-			if (member instanceof BeanProperty bp) {
+			if (member instanceof BeanProperty) {
+			    BeanProperty bp = (BeanProperty) member;
 				if (bp.getter == null) {
 					return Scriptable.NOT_FOUND;
 				}
@@ -325,7 +328,8 @@ public class JavaMembers {
 		Context cx = Context.getContext();
 
 		// Is this a bean property "set"?
-		if (member instanceof BeanProperty bp) {
+		if (member instanceof BeanProperty) {
+		    BeanProperty bp = (BeanProperty) member;
 			if (bp.setter == null) {
 				throw reportMemberNotFound(name);
 			}
@@ -393,7 +397,8 @@ public class JavaMembers {
 				// Try to get static member from instance (LC3)
 				obj = staticMembers.get(trueName);
 			}
-			if (obj instanceof NativeJavaMethod njm) {
+			if (obj instanceof NativeJavaMethod) {
+			    NativeJavaMethod njm = (NativeJavaMethod) obj;
 				methodsOrCtors = njm.methods;
 			}
 		}
@@ -521,7 +526,8 @@ public class JavaMembers {
 				Object member = ht.get(name);
 				if (member == null) {
 					ht.put(name, field);
-				} else if (member instanceof NativeJavaMethod method) {
+				} else if (member instanceof NativeJavaMethod) {
+     				NativeJavaMethod method = (NativeJavaMethod) member;
 					FieldAndMethods fam = new FieldAndMethods(scope, method.methods, field);
 					Map<String, FieldAndMethods> fmht = isStatic ? staticFieldAndMethods : fieldAndMethods;
 					if (fmht == null) {
@@ -534,7 +540,8 @@ public class JavaMembers {
 					}
 					fmht.put(name, fam);
 					ht.put(name, fam);
-				} else if (member instanceof Field oldField) {
+				} else if (member instanceof Field) {
+     				Field oldField = (Field) member;
 					// If this newly reflected field shadows an inherited field,
 					// then replace it. Otherwise, since access to the field
 					// would be ambiguous from Java, no field should be
@@ -617,7 +624,8 @@ public class JavaMembers {
 					if (ht.containsKey(setterName)) {
 						// Is this value a method?
 						Object member = ht.get(setterName);
-						if (member instanceof NativeJavaMethod njmSet) {
+						if (member instanceof NativeJavaMethod) {
+						    NativeJavaMethod njmSet = (NativeJavaMethod) member;
 							if (getter != null) {
 								// We have a getter. Now, do we have a matching
 								// setter?

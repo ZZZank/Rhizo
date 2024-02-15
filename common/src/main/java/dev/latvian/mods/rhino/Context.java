@@ -742,7 +742,8 @@ public class Context {
 			if (l == null) {
 				break;
 			}
-			if (l instanceof PropertyChangeListener pcl) {
+			if (l instanceof PropertyChangeListener) {
+			    PropertyChangeListener pcl = (PropertyChangeListener) l;
 				pcl.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
 			}
 		}

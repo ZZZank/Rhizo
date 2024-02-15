@@ -73,7 +73,8 @@ public class IdEnumeration implements Consumer<Object> {
 			}
 			if (id instanceof Symbol) {
 				continue;
-			} else if (id instanceof String strId) {
+			} else if (id instanceof String) {
+     			String strId = (String) id;
 				if (!obj.has(strId, obj)) {
 					continue;   // must have been deleted
 				}

@@ -17,7 +17,8 @@ public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
 				stream.context.debugInfo("> " + next);
 			}
 
-			if (next instanceof UnitSymbol nextOperator) {
+			if (next instanceof UnitSymbol) {
+			    UnitSymbol nextOperator = (UnitSymbol) next;
 				boolean pushedCurrent = false;
 
 				while (!operatorsStack.isEmpty()) {

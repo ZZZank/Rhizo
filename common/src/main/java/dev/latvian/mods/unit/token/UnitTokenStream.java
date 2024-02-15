@@ -187,7 +187,8 @@ public final class UnitTokenStream {
 			}
 		}
 
-		if (token instanceof StringUnitToken str) {
+		if (token instanceof StringUnitToken) {
+		    StringUnitToken str = (StringUnitToken) token;
 			if (ifNextToken(UnitSymbol.LP)) {
 				FunctionUnitToken func = new FunctionUnitToken(str.name(), new ArrayList<>());
 

@@ -45,12 +45,12 @@ public class RemappingHelper {
 			case "float": return Optional.of(Float.TYPE);
 			case "double": return Optional.of(Double.TYPE);
 			default: {
-				try {
-					return Optional.of(Class.forName(name));
-				} catch (Exception ex) {
-					return Optional.empty();
+					try {
+						return Optional.of(Class.forName(name));
+					} catch (Exception ex) {
+						return Optional.empty();
+					}
 				}
-			}
 		}
 	}
 
@@ -131,28 +131,31 @@ public class RemappingHelper {
 
 		try (var metaInfoReader = createReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
 			for (var metaInfo : GSON.fromJson(metaInfoReader, JsonObject.class).get("versions").getAsJsonArray()) {
-				if (metaInfo.getAsJsonObject().get("id").getAsString().equals(mcVersion)) {
-					String metaUrl = metaInfo.getAsJsonObject().get("url").getAsString();
+				if (!metaInfo.getAsJsonObject().get("id").getAsString().equals(mcVersion)) {
+					continue;
+				}
+				String metaUrl = metaInfo.getAsJsonObject().get("url").getAsString();
 
-					try (var metaReader = createReader(metaUrl)) {
-						var meta = GSON.fromJson(metaReader, JsonObject.class);
+				try (var metaReader = createReader(metaUrl)) {
+					var meta = GSON.fromJson(metaReader, JsonObject.class);
 
-						if (meta.get("downloads") instanceof JsonObject o && o.get("client_mappings") instanceof JsonObject cmap && cmap.has("url")) {
-							try (var cmapReader = createReader(cmap.get("url").getAsString())) {
-								var mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
-								callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
-								mojangMappings.cleanup();
+					if (meta.get("downloads") instanceof JsonObject o 
+						&& o.get("client_mappings") instanceof JsonObject cmap 
+						&& cmap.has("url")) {
+						try (var cmapReader = createReader(cmap.get("url").getAsString())) {
+							var mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
+							callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
+							mojangMappings.cleanup();
 
-								try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(Path.of("mm.jsmappings"))))) {
-									mojangMappings.write(out);
-								}
-
-								LOGGER.info("Finished generating mappings!");
-								return;
+							try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(Path.of("mm.jsmappings"))))) {
+								mojangMappings.write(out);
 							}
-						} else {
-							throw new RemapperException("This Minecraft version doesn't have mappings!");
+
+							LOGGER.info("Finished generating mappings!");
+							return;
 						}
+					} else {
+						throw new RemapperException("This Minecraft version doesn't have mappings!");
 					}
 				}
 			}

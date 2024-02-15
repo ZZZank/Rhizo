@@ -216,7 +216,8 @@ public class SharedContextData {
 	}
 
 	public void addToTopLevelScope(String name, Object value) {
-		if (value instanceof Class<?> c) {
+		if (value instanceof Class<?>) {
+		    Class<?> c = (Class<?>) value;
 			ScriptableObject.putProperty(topLevelScope, name, new NativeJavaClass(topLevelScope, c));
 		} else {
 			ScriptableObject.putProperty(topLevelScope, name, Context.javaToJS(this, value, topLevelScope));
