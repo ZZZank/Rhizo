@@ -6,7 +6,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class RhinoModForge {
 	@SubscribeEvent
 	public static void loaded(FMLCommonSetupEvent event) {
 		if (RemappingHelper.GENERATE) {
-			RemappingHelper.run(FMLLoader.versionInfo().mcVersion(), RhinoModForge::generateMappings);
+			RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
 		}
 	}
 
