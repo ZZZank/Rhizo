@@ -307,18 +307,18 @@ public class NativeMap extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "set" -> Id_set;
-			case "get" -> Id_get;
-			case "delete" -> Id_delete;
-			case "has" -> Id_has;
-			case "clear" -> Id_clear;
-			case "keys" -> Id_keys;
-			case "values" -> Id_values;
-			case "entries" -> Id_entries;
-			case "forEach" -> Id_forEach;
-			default -> 0;
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "set": return Id_set;
+			case "get": return Id_get;
+			case "delete": return Id_delete;
+			case "has": return Id_has;
+			case "clear": return Id_clear;
+			case "keys": return Id_keys;
+			case "values": return Id_values;
+			case "entries": return Id_entries;
+			case "forEach": return Id_forEach;
+			default: return 0;
 		};
 	}
 }

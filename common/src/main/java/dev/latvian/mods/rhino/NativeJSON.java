@@ -434,11 +434,11 @@ public final class NativeJSON extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "toSource" -> Id_toSource;
-			case "parse" -> Id_parse;
-			case "stringify" -> Id_stringify;
-			default -> super.findPrototypeId(s);
+		switch (s) {
+			case "toSource": return Id_toSource;
+			case "parse": return Id_parse;
+			case "stringify": return Id_stringify;
+			default: return super.findPrototypeId(s);
 		};
 	}
 }

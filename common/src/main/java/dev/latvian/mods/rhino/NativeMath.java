@@ -638,44 +638,44 @@ final class NativeMath extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "toSource" -> Id_toSource;
-			case "abs" -> Id_abs;
-			case "acos" -> Id_acos;
-			case "asin" -> Id_asin;
-			case "atan" -> Id_atan;
-			case "atan2" -> Id_atan2;
-			case "ceil" -> Id_ceil;
-			case "cos" -> Id_cos;
-			case "exp" -> Id_exp;
-			case "floor" -> Id_floor;
-			case "log" -> Id_log;
-			case "max" -> Id_max;
-			case "min" -> Id_min;
-			case "pow" -> Id_pow;
-			case "random" -> Id_random;
-			case "round" -> Id_round;
-			case "sin" -> Id_sin;
-			case "sqrt" -> Id_sqrt;
-			case "tan" -> Id_tan;
-			case "cbrt" -> Id_cbrt;
-			case "cosh" -> Id_cosh;
-			case "expm1" -> Id_expm1;
-			case "hypot" -> Id_hypot;
-			case "log1p" -> Id_log1p;
-			case "log10" -> Id_log10;
-			case "sinh" -> Id_sinh;
-			case "tanh" -> Id_tanh;
-			case "imul" -> Id_imul;
-			case "trunc" -> Id_trunc;
-			case "acosh" -> Id_acosh;
-			case "asinh" -> Id_asinh;
-			case "atanh" -> Id_atanh;
-			case "sign" -> Id_sign;
-			case "log2" -> Id_log2;
-			case "fround" -> Id_fround;
-			case "clz32" -> Id_clz32;
-			default -> 0;
+		switch (s) {
+			case "toSource": return Id_toSource;
+			case "abs": return Id_abs;
+			case "acos": return Id_acos;
+			case "asin": return Id_asin;
+			case "atan": return Id_atan;
+			case "atan2": return Id_atan2;
+			case "ceil": return Id_ceil;
+			case "cos": return Id_cos;
+			case "exp": return Id_exp;
+			case "floor": return Id_floor;
+			case "log": return Id_log;
+			case "max": return Id_max;
+			case "min": return Id_min;
+			case "pow": return Id_pow;
+			case "random": return Id_random;
+			case "round": return Id_round;
+			case "sin": return Id_sin;
+			case "sqrt": return Id_sqrt;
+			case "tan": return Id_tan;
+			case "cbrt": return Id_cbrt;
+			case "cosh": return Id_cosh;
+			case "expm1": return Id_expm1;
+			case "hypot": return Id_hypot;
+			case "log1p": return Id_log1p;
+			case "log10": return Id_log10;
+			case "sinh": return Id_sinh;
+			case "tanh": return Id_tanh;
+			case "imul": return Id_imul;
+			case "trunc": return Id_trunc;
+			case "acosh": return Id_acosh;
+			case "asinh": return Id_asinh;
+			case "atanh": return Id_atanh;
+			case "sign": return Id_sign;
+			case "log2": return Id_log2;
+			case "fround": return Id_fround;
+			case "clz32": return Id_clz32;
+			default: return 0;
 		};
 	}
 

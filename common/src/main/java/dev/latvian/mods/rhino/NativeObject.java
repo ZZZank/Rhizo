@@ -703,20 +703,20 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toLocaleString" -> Id_toLocaleString;
-			case "valueOf" -> Id_valueOf;
-			case "hasOwnProperty" -> Id_hasOwnProperty;
-			case "propertyIsEnumerable" -> Id_propertyIsEnumerable;
-			case "isPrototypeOf" -> Id_isPrototypeOf;
-			case "toSource" -> Id_toSource;
-			case "__defineGetter__" -> Id___defineGetter__;
-			case "__defineSetter__" -> Id___defineSetter__;
-			case "__lookupGetter__" -> Id___lookupGetter__;
-			case "__lookupSetter__" -> Id___lookupSetter__;
-			default -> 0;
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toLocaleString": return Id_toLocaleString;
+			case "valueOf": return Id_valueOf;
+			case "hasOwnProperty": return Id_hasOwnProperty;
+			case "propertyIsEnumerable": return Id_propertyIsEnumerable;
+			case "isPrototypeOf": return Id_isPrototypeOf;
+			case "toSource": return Id_toSource;
+			case "__defineGetter__": return Id___defineGetter__;
+			case "__defineSetter__": return Id___defineSetter__;
+			case "__lookupGetter__": return Id___lookupGetter__;
+			case "__lookupSetter__": return Id___lookupSetter__;
+			default: return 0;
 		};
 	}
 

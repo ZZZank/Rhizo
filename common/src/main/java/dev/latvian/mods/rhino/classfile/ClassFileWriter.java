@@ -175,16 +175,16 @@ public class ClassFileWriter {
 	 * Convert a newarray operand into an internal type.
 	 */
 	private static char arrayTypeToName(int type) {
-		return switch (type) {
-			case ByteCode.T_BOOLEAN -> 'Z';
-			case ByteCode.T_CHAR -> 'C';
-			case ByteCode.T_FLOAT -> 'F';
-			case ByteCode.T_DOUBLE -> 'D';
-			case ByteCode.T_BYTE -> 'B';
-			case ByteCode.T_SHORT -> 'S';
-			case ByteCode.T_INT -> 'I';
-			case ByteCode.T_LONG -> 'J';
-			default -> throw new IllegalArgumentException("bad operand");
+		switch (type) {
+			case ByteCode.T_BOOLEAN: return 'Z';
+			case ByteCode.T_CHAR: return 'C';
+			case ByteCode.T_FLOAT: return 'F';
+			case ByteCode.T_DOUBLE: return 'D';
+			case ByteCode.T_BYTE: return 'B';
+			case ByteCode.T_SHORT: return 'S';
+			case ByteCode.T_INT: return 'I';
+			case ByteCode.T_LONG: return 'J';
+			default: throw new IllegalArgumentException("bad operand");
 		};
 	}
 
@@ -203,10 +203,19 @@ public class ClassFileWriter {
 	 * @param descriptor the simple type descriptor to convert
 	 */
 	private static String descriptorToInternalName(String descriptor) {
-		return switch (descriptor.charAt(0)) {
-			case 'B', 'C', 'D', 'F', 'I', 'J', 'S', 'Z', 'V', '[' -> descriptor;
-			case 'L' -> classDescriptorToInternalName(descriptor);
-			default -> throw new IllegalArgumentException("bad descriptor:" + descriptor);
+		switch (descriptor.charAt(0)) {
+			case 'B':
+			case 'C':
+			case 'D':
+			case 'F':
+			case 'I':
+			case 'J':
+			case 'S':
+			case 'Z':
+			case 'V':
+			case '[': return descriptor;
+			case 'L': return classDescriptorToInternalName(descriptor);
+			default: throw new IllegalArgumentException("bad descriptor:" + descriptor);
 		};
 	}
 
@@ -3325,7 +3334,7 @@ public class ClassFileWriter {
 		 * returns or unconditional jumps.
 		 */
 		private boolean isSuperBlockEnd(int opcode) {
-			return switch (opcode) {
+			switch (opcode) {
 				case ByteCode.ARETURN, ByteCode.FRETURN, ByteCode.IRETURN, ByteCode.LRETURN, ByteCode.RETURN, ByteCode.ATHROW, ByteCode.GOTO, ByteCode.GOTO_W, ByteCode.TABLESWITCH, ByteCode.LOOKUPSWITCH -> true;
 				default -> false;
 			};
@@ -3379,9 +3388,26 @@ public class ClassFileWriter {
 		 * Determine whether or not an opcode is a conditional or unconditional jump.
 		 */
 		private boolean isBranch(int opcode) {
-			return switch (opcode) {
-				case ByteCode.GOTO, ByteCode.GOTO_W, ByteCode.IFEQ, ByteCode.IFGE, ByteCode.IFGT, ByteCode.IFLE, ByteCode.IFLT, ByteCode.IFNE, ByteCode.IFNONNULL, ByteCode.IFNULL, ByteCode.IF_ACMPEQ, ByteCode.IF_ACMPNE, ByteCode.IF_ICMPEQ, ByteCode.IF_ICMPGE, ByteCode.IF_ICMPGT, ByteCode.IF_ICMPLE, ByteCode.IF_ICMPLT, ByteCode.IF_ICMPNE -> true;
-				default -> false;
+			switch (opcode) {
+				case ByteCode.GOTO:
+				case ByteCode.GOTO_W:
+				case ByteCode.IFEQ:
+				case ByteCode.IFGE:
+				case ByteCode.IFGT:
+				case ByteCode.IFLE:
+				case ByteCode.IFLT:
+				case ByteCode.IFNE:
+				case ByteCode.IFNONNULL:
+				case ByteCode.IFNULL:
+				case ByteCode.IF_ACMPEQ:
+				case ByteCode.IF_ACMPNE:
+				case ByteCode.IF_ICMPEQ:
+				case ByteCode.IF_ICMPGE:
+				case ByteCode.IF_ICMPGT:
+				case ByteCode.IF_ICMPLE:
+				case ByteCode.IF_ICMPLT:
+				case ByteCode.IF_ICMPNE: return true;
+				default: return false;
 			};
 		}
 

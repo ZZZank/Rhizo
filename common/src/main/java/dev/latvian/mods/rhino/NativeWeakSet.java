@@ -152,12 +152,12 @@ public class NativeWeakSet extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "add" -> Id_add;
-			case "delete" -> Id_delete;
-			case "has" -> Id_has;
-			default -> super.findPrototypeId(s);
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "add": return Id_add;
+			case "delete": return Id_delete;
+			case "has": return Id_has;
+			default: return super.findPrototypeId(s);
 		};
 	}
 

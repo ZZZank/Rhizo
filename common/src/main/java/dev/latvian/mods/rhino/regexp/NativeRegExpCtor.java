@@ -153,29 +153,29 @@ class NativeRegExpCtor extends BaseFunction {
 		int shifted = id - super.getMaxInstanceId();
 
 		if (1 <= shifted && shifted <= MAX_INSTANCE_ID) {
-			return switch (shifted) {
-				case Id_multiline -> "multiline";
-				case Id_STAR -> "$*";
-				case Id_input -> "input";
-				case Id_UNDERSCORE -> "$_";
-				case Id_lastMatch -> "lastMatch";
-				case Id_AMPERSAND -> "$&";
-				case Id_lastParen -> "lastParen";
-				case Id_PLUS -> "$+";
-				case Id_leftContext -> "leftContext";
-				case Id_BACK_QUOTE -> "$`";
-				case Id_rightContext -> "rightContext";
-				case Id_QUOTE -> "$'";
-				case Id_DOLLAR_1 -> "$1";
-				case Id_DOLLAR_2 -> "$2";
-				case Id_DOLLAR_3 -> "$3";
-				case Id_DOLLAR_4 -> "$4";
-				case Id_DOLLAR_5 -> "$5";
-				case Id_DOLLAR_6 -> "$6";
-				case Id_DOLLAR_7 -> "$7";
-				case Id_DOLLAR_8 -> "$8";
-				case Id_DOLLAR_9 -> "$9";
-				default -> super.getInstanceIdName(id);
+			switch (shifted) {
+				case Id_multiline: return "multiline";
+				case Id_STAR: return "$*";
+				case Id_input: return "input";
+				case Id_UNDERSCORE: return "$_";
+				case Id_lastMatch: return "lastMatch";
+				case Id_AMPERSAND: return "$&";
+				case Id_lastParen: return "lastParen";
+				case Id_PLUS: return "$+";
+				case Id_leftContext: return "leftContext";
+				case Id_BACK_QUOTE: return "$`";
+				case Id_rightContext: return "rightContext";
+				case Id_QUOTE: return "$'";
+				case Id_DOLLAR_1: return "$1";
+				case Id_DOLLAR_2: return "$2";
+				case Id_DOLLAR_3: return "$3";
+				case Id_DOLLAR_4: return "$4";
+				case Id_DOLLAR_5: return "$5";
+				case Id_DOLLAR_6: return "$6";
+				case Id_DOLLAR_7: return "$7";
+				case Id_DOLLAR_8: return "$8";
+				case Id_DOLLAR_9: return "$9";
+				default: return super.getInstanceIdName(id);
 			};
 		}
 

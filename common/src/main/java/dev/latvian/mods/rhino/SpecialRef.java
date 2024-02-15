@@ -41,11 +41,11 @@ class SpecialRef extends Ref {
 
 	@Override
 	public Object get(Context cx) {
-		return switch (type) {
-			case SPECIAL_NONE -> ScriptRuntime.getObjectProp(target, name, cx);
-			case SPECIAL_PROTO -> target.getPrototype();
-			case SPECIAL_PARENT -> target.getParentScope();
-			default -> throw Kit.codeBug();
+		switch (type) {
+			case SPECIAL_NONE: return ScriptRuntime.getObjectProp(target, name, cx);
+			case SPECIAL_PROTO: return target.getPrototype();
+			case SPECIAL_PARENT: return target.getParentScope();
+			default: throw Kit.codeBug();
 		};
 	}
 

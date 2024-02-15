@@ -2499,25 +2499,25 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		return switch (id) {
-			case Id_lastIndex -> "lastIndex";
-			case Id_source -> "source";
-			case Id_global -> "global";
-			case Id_ignoreCase -> "ignoreCase";
-			case Id_multiline -> "multiline";
-			default -> super.getInstanceIdName(id);
+		switch (id) {
+			case Id_lastIndex: return "lastIndex";
+			case Id_source: return "source";
+			case Id_global: return "global";
+			case Id_ignoreCase: return "ignoreCase";
+			case Id_multiline: return "multiline";
+			default: return super.getInstanceIdName(id);
 		};
 	}
 
 	@Override
 	protected Object getInstanceIdValue(int id) {
-		return switch (id) {
-			case Id_lastIndex -> lastIndex;
-			case Id_source -> new String(re.source);
-			case Id_global -> ScriptRuntime.wrapBoolean((re.flags & JSREG_GLOB) != 0);
-			case Id_ignoreCase -> ScriptRuntime.wrapBoolean((re.flags & JSREG_FOLD) != 0);
-			case Id_multiline -> ScriptRuntime.wrapBoolean((re.flags & JSREG_MULTILINE) != 0);
-			default -> super.getInstanceIdValue(id);
+		switch (id) {
+			case Id_lastIndex: return lastIndex;
+			case Id_source: return new String(re.source);
+			case Id_global: return ScriptRuntime.wrapBoolean((re.flags & JSREG_GLOB) != 0);
+			case Id_ignoreCase: return ScriptRuntime.wrapBoolean((re.flags & JSREG_FOLD) != 0);
+			case Id_multiline: return ScriptRuntime.wrapBoolean((re.flags & JSREG_MULTILINE) != 0);
+			default: return super.getInstanceIdValue(id);
 		};
 	}
 
@@ -2646,14 +2646,14 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 	// #string_id_map#
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "compile" -> Id_compile;
-			case "toString" -> Id_toString;
-			case "toSource" -> Id_toSource;
-			case "exec" -> Id_exec;
-			case "test" -> Id_test;
-			case "prefix" -> Id_prefix;
-			default -> 0;
+		switch (s) {
+			case "compile": return Id_compile;
+			case "toString": return Id_toString;
+			case "toSource": return Id_toSource;
+			case "exec": return Id_exec;
+			case "test": return Id_test;
+			case "prefix": return Id_prefix;
+			default: return 0;
 		};
 	}
 

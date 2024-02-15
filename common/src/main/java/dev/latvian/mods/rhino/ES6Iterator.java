@@ -92,10 +92,10 @@ public abstract class ES6Iterator extends IdScriptableObject {
 			throw incompatibleCallError(f);
 		}
 
-		return switch (id) {
-			case Id_next -> iterator.next(cx, scope);
-			case SymbolId_iterator -> iterator;
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+		switch (id) {
+			case Id_next: return iterator.next(cx, scope);
+			case SymbolId_iterator: return iterator;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		};
 	}
 

@@ -835,12 +835,12 @@ public class Node implements Iterable<Node> {
 					return END_DROPS_OFF;
 				}
 
-				return switch (first.type) {
-					case Token.LABEL -> first.endCheckLabel();
-					case Token.IFNE -> first.endCheckIf();
-					case Token.SWITCH -> first.endCheckSwitch();
-					case Token.TRY -> first.endCheckTry();
-					default -> endCheckBlock();
+				switch (first.type) {
+					case Token.LABEL: return first.endCheckLabel();
+					case Token.IFNE: return first.endCheckIf();
+					case Token.SWITCH: return first.endCheckSwitch();
+					case Token.TRY: return first.endCheckTry();
+					default: return endCheckBlock();
 				};
 
 			default:

@@ -41,40 +41,53 @@ class TokenStream {
 	 * ECMAScript 6.
 	 */
 	private static int stringToKeywordForES(String name, boolean isStrict) {
-		return switch (name) {
-			case "break" -> Token.BREAK;
-			case "case" -> Token.CASE;
-			case "catch" -> Token.CATCH;
-			case "const" -> Token.CONST;
-			case "continue" -> Token.CONTINUE;
-			case "default" -> Token.DEFAULT;
-			case "delprop" -> Token.DELPROP;
-			case "do" -> Token.DO;
-			case "else" -> Token.ELSE;
-			case "finally" -> Token.FINALLY;
-			case "for" -> Token.FOR;
-			case "function" -> Token.FUNCTION;
-			case "if" -> Token.IF;
-			case "in" -> Token.IN;
-			case "instanceof" -> Token.INSTANCEOF;
-			case "new" -> Token.NEW;
-			case "return" -> Token.RETURN;
-			case "switch" -> Token.SWITCH;
-			case "this" -> Token.THIS;
-			case "throw" -> Token.THROW;
-			case "try" -> Token.TRY;
-			case "typeof" -> Token.TYPEOF;
-			case "var" -> Token.VAR;
-			case "void" -> Token.VOID;
-			case "while" -> Token.WHILE;
-			case "with" -> Token.WITH;
-			case "yield" -> Token.YIELD;
-			case "false" -> Token.FALSE;
-			case "null" -> Token.NULL;
-			case "true" -> Token.TRUE;
-			case "let" -> Token.LET;
-			case "class", "export", "static", "public", "protected", "private", "package", "interface", "implements", "enum", "await", "super", "import", "extends" -> Token.RESERVED;
-			default -> Token.EOF;
+		switch (name) {
+			case "break": return Token.BREAK;
+			case "case": return Token.CASE;
+			case "catch": return Token.CATCH;
+			case "const": return Token.CONST;
+			case "continue": return Token.CONTINUE;
+			case "default": return Token.DEFAULT;
+			case "delprop": return Token.DELPROP;
+			case "do": return Token.DO;
+			case "else": return Token.ELSE;
+			case "finally": return Token.FINALLY;
+			case "for": return Token.FOR;
+			case "function": return Token.FUNCTION;
+			case "if": return Token.IF;
+			case "in": return Token.IN;
+			case "instanceof": return Token.INSTANCEOF;
+			case "new": return Token.NEW;
+			case "return": return Token.RETURN;
+			case "switch": return Token.SWITCH;
+			case "this": return Token.THIS;
+			case "throw": return Token.THROW;
+			case "try": return Token.TRY;
+			case "typeof": return Token.TYPEOF;
+			case "var": return Token.VAR;
+			case "void": return Token.VOID;
+			case "while": return Token.WHILE;
+			case "with": return Token.WITH;
+			case "yield": return Token.YIELD;
+			case "false": return Token.FALSE;
+			case "null": return Token.NULL;
+			case "true": return Token.TRUE;
+			case "let": return Token.LET;
+			case "class":
+			case "export":
+			case "static":
+			case "public":
+			case "protected":
+			case "private":
+			case "package":
+			case "interface":
+			case "implements":
+			case "enum":
+			case "await":
+			case "super":
+			case "import":
+			case "extends": return Token.RESERVED;
+			default: return Token.EOF;
 		}; // & 0xFF;
 	}
 

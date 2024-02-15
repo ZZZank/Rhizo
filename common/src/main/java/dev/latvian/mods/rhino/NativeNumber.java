@@ -328,7 +328,7 @@ final class NativeNumber extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
+		switch (s) {
 			case "constructor" -> Id_constructor;
 			case "toString" -> Id_toString;
 			case "toLocaleString" -> Id_toLocaleString;

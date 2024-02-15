@@ -173,13 +173,13 @@ public class NativeWeakMap extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "delete" -> Id_delete;
-			case "get" -> Id_get;
-			case "has" -> Id_has;
-			case "set" -> Id_set;
-			default -> super.findPrototypeId(s);
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "delete": return Id_delete;
+			case "get": return Id_get;
+			case "has": return Id_has;
+			case "set": return Id_set;
+			default: return super.findPrototypeId(s);
 		};
 	}
 }

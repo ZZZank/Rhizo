@@ -169,25 +169,25 @@ public class BaseFunction extends IdScriptableObject implements Function {
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		return switch (id) {
-			case Id_length -> "length";
-			case Id_arity -> "arity";
-			case Id_name -> "name";
-			case Id_prototype -> "prototype";
-			case Id_arguments -> "arguments";
-			default -> super.getInstanceIdName(id);
+		switch (id) {
+			case Id_length: return "length";
+			case Id_arity: return "arity";
+			case Id_name: return "name";
+			case Id_prototype: return "prototype";
+			case Id_arguments: return "arguments";
+			default: return super.getInstanceIdName(id);
 		};
 	}
 
 	@Override
 	protected Object getInstanceIdValue(int id) {
-		return switch (id) {
-			case Id_length -> ScriptRuntime.wrapInt(getLength());
-			case Id_arity -> ScriptRuntime.wrapInt(getArity());
-			case Id_name -> getFunctionName();
-			case Id_prototype -> getPrototypeProperty();
-			case Id_arguments -> getArguments();
-			default -> super.getInstanceIdValue(id);
+		switch (id) {
+			case Id_length: return ScriptRuntime.wrapInt(getLength());
+			case Id_arity: return ScriptRuntime.wrapInt(getArity());
+			case Id_name: return getFunctionName();
+			case Id_prototype: return getPrototypeProperty();
+			case Id_arguments: return getArguments();
+			default: return super.getInstanceIdValue(id);
 		};
 	}
 
@@ -531,14 +531,14 @@ public class BaseFunction extends IdScriptableObject implements Function {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toSource" -> Id_toSource;
-			case "apply" -> Id_apply;
-			case "call" -> Id_call;
-			case "bind" -> Id_bind;
-			default -> super.findPrototypeId(s);
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toSource": return Id_toSource;
+			case "apply": return Id_apply;
+			case "call": return Id_call;
+			case "bind": return Id_bind;
+			default: return super.findPrototypeId(s);
 		};
 	}
 }

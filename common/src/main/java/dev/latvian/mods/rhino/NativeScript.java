@@ -151,12 +151,12 @@ class NativeScript extends BaseFunction {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "compile" -> Id_compile;
-			case "exec" -> Id_exec;
-			default -> 0;
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "compile": return Id_compile;
+			case "exec": return Id_exec;
+			default: return 0;
 		};
 	}
 }

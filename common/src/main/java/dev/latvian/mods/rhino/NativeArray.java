@@ -1357,12 +1357,12 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 					break;
 			}
 		}
-		return switch (id) {
-			case Id_every -> Boolean.TRUE;
-			case Id_filter, Id_map -> array;
-			case Id_some -> Boolean.FALSE;
-			case Id_findIndex -> ScriptRuntime.wrapNumber(-1);
-			default -> Undefined.instance;
+		switch (id) {
+			case Id_every: return Boolean.TRUE;
+			case Id_filter, Id_map: return array;
+			case Id_some: return Boolean.FALSE;
+			case Id_findIndex: return ScriptRuntime.wrapNumber(-1);
+			default: return Undefined.instance;
 		};
 	}
 
@@ -2353,39 +2353,39 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toLocaleString" -> Id_toLocaleString;
-			case "toSource" -> Id_toSource;
-			case "join" -> Id_join;
-			case "reverse" -> Id_reverse;
-			case "sort" -> Id_sort;
-			case "push" -> Id_push;
-			case "pop" -> Id_pop;
-			case "shift" -> Id_shift;
-			case "unshift" -> Id_unshift;
-			case "splice" -> Id_splice;
-			case "concat" -> Id_concat;
-			case "slice" -> Id_slice;
-			case "indexOf" -> Id_indexOf;
-			case "lastIndexOf" -> Id_lastIndexOf;
-			case "every" -> Id_every;
-			case "filter" -> Id_filter;
-			case "forEach" -> Id_forEach;
-			case "map" -> Id_map;
-			case "some" -> Id_some;
-			case "find" -> Id_find;
-			case "findIndex" -> Id_findIndex;
-			case "reduce" -> Id_reduce;
-			case "reduceRight" -> Id_reduceRight;
-			case "fill" -> Id_fill;
-			case "keys" -> Id_keys;
-			case "values" -> Id_values;
-			case "entries" -> Id_entries;
-			case "includes" -> Id_includes;
-			case "copyWithin" -> Id_copyWithin;
-			default -> 0;
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toLocaleString": return Id_toLocaleString;
+			case "toSource": return Id_toSource;
+			case "join": return Id_join;
+			case "reverse": return Id_reverse;
+			case "sort": return Id_sort;
+			case "push": return Id_push;
+			case "pop": return Id_pop;
+			case "shift": return Id_shift;
+			case "unshift": return Id_unshift;
+			case "splice": return Id_splice;
+			case "concat": return Id_concat;
+			case "slice": return Id_slice;
+			case "indexOf": return Id_indexOf;
+			case "lastIndexOf": return Id_lastIndexOf;
+			case "every": return Id_every;
+			case "filter": return Id_filter;
+			case "forEach": return Id_forEach;
+			case "map": return Id_map;
+			case "some": return Id_some;
+			case "find": return Id_find;
+			case "findIndex": return Id_findIndex;
+			case "reduce": return Id_reduce;
+			case "reduceRight": return Id_reduceRight;
+			case "fill": return Id_fill;
+			case "keys": return Id_keys;
+			case "values": return Id_values;
+			case "entries": return Id_entries;
+			case "includes": return Id_includes;
+			case "copyWithin": return Id_copyWithin;
+			default: return 0;
 		};
 	}
 

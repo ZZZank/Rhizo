@@ -106,12 +106,12 @@ final class NativeBoolean extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toSource" -> Id_toSource;
-			case "valueOf" -> Id_valueOf;
-			default -> 0;
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toSource": return Id_toSource;
+			case "valueOf": return Id_valueOf;
+			default: return 0;
 		};
 	}
 }

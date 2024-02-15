@@ -470,21 +470,21 @@ final class NativeString extends IdScriptableObject implements Wrapper {
 
 	@Override
 	protected int findInstanceIdInfo(String s) {
-		return switch (s) {
-			case "length" -> instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_length);
-			case "namespace" -> instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_namespace);
-			case "path" -> instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_path);
-			default -> super.findInstanceIdInfo(s);
+		switch (s) {
+			case "length": return instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_length);
+			case "namespace": return instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_namespace);
+			case "path": return instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_path);
+			default: return super.findInstanceIdInfo(s);
 		};
 	}
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		return switch (id) {
-			case Id_length -> "length";
-			case Id_namespace -> "namespace";
-			case Id_path -> "path";
-			default -> super.getInstanceIdName(id);
+		switch (id) {
+			case Id_length: return "length";
+			case Id_namespace: return "namespace";
+			case Id_path: return "path";
+			default: return super.getInstanceIdName(id);
 		};
 	}
 
@@ -1196,57 +1196,57 @@ final class NativeString extends IdScriptableObject implements Wrapper {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toSource" -> Id_toSource;
-			case "valueOf" -> Id_valueOf;
-			case "charAt" -> Id_charAt;
-			case "charCodeAt" -> Id_charCodeAt;
-			case "indexOf" -> Id_indexOf;
-			case "lastIndexOf" -> Id_lastIndexOf;
-			case "split" -> Id_split;
-			case "substring" -> Id_substring;
-			case "toLowerCase" -> Id_toLowerCase;
-			case "toUpperCase" -> Id_toUpperCase;
-			case "substr" -> Id_substr;
-			case "concat" -> Id_concat;
-			case "slice" -> Id_slice;
-			case "bold" -> Id_bold;
-			case "italics" -> Id_italics;
-			case "fixed" -> Id_fixed;
-			case "strike" -> Id_strike;
-			case "small" -> Id_small;
-			case "big" -> Id_big;
-			case "blink" -> Id_blink;
-			case "sup" -> Id_sup;
-			case "sub" -> Id_sub;
-			case "fontsize" -> Id_fontsize;
-			case "fontcolor" -> Id_fontcolor;
-			case "link" -> Id_link;
-			case "anchor" -> Id_anchor;
-			case "equals" -> Id_equals;
-			case "equalsIgnoreCase" -> Id_equalsIgnoreCase;
-			case "match" -> Id_match;
-			case "search" -> Id_search;
-			case "replace" -> Id_replace;
-			case "localeCompare" -> Id_localeCompare;
-			case "toLocaleLowerCase" -> Id_toLocaleLowerCase;
-			case "toLocaleUpperCase" -> Id_toLocaleUpperCase;
-			case "trim" -> Id_trim;
-			case "trimLeft" -> Id_trimLeft;
-			case "trimRight" -> Id_trimRight;
-			case "includes" -> Id_includes;
-			case "startsWith" -> Id_startsWith;
-			case "endsWith" -> Id_endsWith;
-			case "normalize" -> Id_normalize;
-			case "repeat" -> Id_repeat;
-			case "codePointAt" -> Id_codePointAt;
-			case "padStart" -> Id_padStart;
-			case "padEnd" -> Id_padEnd;
-			case "trimStart" -> Id_trimStart;
-			case "trimEnd" -> Id_trimEnd;
-			default -> super.findPrototypeId(s);
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toSource": return Id_toSource;
+			case "valueOf": return Id_valueOf;
+			case "charAt": return Id_charAt;
+			case "charCodeAt": return Id_charCodeAt;
+			case "indexOf": return Id_indexOf;
+			case "lastIndexOf": return Id_lastIndexOf;
+			case "split": return Id_split;
+			case "substring": return Id_substring;
+			case "toLowerCase": return Id_toLowerCase;
+			case "toUpperCase": return Id_toUpperCase;
+			case "substr": return Id_substr;
+			case "concat": return Id_concat;
+			case "slice": return Id_slice;
+			case "bold": return Id_bold;
+			case "italics": return Id_italics;
+			case "fixed": return Id_fixed;
+			case "strike": return Id_strike;
+			case "small": return Id_small;
+			case "big": return Id_big;
+			case "blink": return Id_blink;
+			case "sup": return Id_sup;
+			case "sub": return Id_sub;
+			case "fontsize": return Id_fontsize;
+			case "fontcolor": return Id_fontcolor;
+			case "link": return Id_link;
+			case "anchor": return Id_anchor;
+			case "equals": return Id_equals;
+			case "equalsIgnoreCase": return Id_equalsIgnoreCase;
+			case "match": return Id_match;
+			case "search": return Id_search;
+			case "replace": return Id_replace;
+			case "localeCompare": return Id_localeCompare;
+			case "toLocaleLowerCase": return Id_toLocaleLowerCase;
+			case "toLocaleUpperCase": return Id_toLocaleUpperCase;
+			case "trim": return Id_trim;
+			case "trimLeft": return Id_trimLeft;
+			case "trimRight": return Id_trimRight;
+			case "includes": return Id_includes;
+			case "startsWith": return Id_startsWith;
+			case "endsWith": return Id_endsWith;
+			case "normalize": return Id_normalize;
+			case "repeat": return Id_repeat;
+			case "codePointAt": return Id_codePointAt;
+			case "padStart": return Id_padStart;
+			case "padEnd": return Id_padEnd;
+			case "trimStart": return Id_trimStart;
+			case "trimEnd": return Id_trimEnd;
+			default: return super.findPrototypeId(s);
 		};
 	}
 }

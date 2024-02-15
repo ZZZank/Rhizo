@@ -31,21 +31,21 @@ public class RemappingHelper {
 	private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new HashMap<>();
 
 	private static Optional<Class<?>> loadClass(String name) {
-		return switch (name) {
-			case "void" -> Optional.of(Void.TYPE);
-			case "boolean" -> Optional.of(Boolean.TYPE);
-			case "char" -> Optional.of(Character.TYPE);
-			case "byte" -> Optional.of(Byte.TYPE);
-			case "short" -> Optional.of(Short.TYPE);
-			case "int" -> Optional.of(Integer.TYPE);
-			case "long" -> Optional.of(Long.TYPE);
-			case "float" -> Optional.of(Float.TYPE);
-			case "double" -> Optional.of(Double.TYPE);
-			default -> {
+		switch (name) {
+			case "void": return Optional.of(Void.TYPE);
+			case "boolean": return Optional.of(Boolean.TYPE);
+			case "char": return Optional.of(Character.TYPE);
+			case "byte": return Optional.of(Byte.TYPE);
+			case "short": return Optional.of(Short.TYPE);
+			case "int": return Optional.of(Integer.TYPE);
+			case "long": return Optional.of(Long.TYPE);
+			case "float": return Optional.of(Float.TYPE);
+			case "double": return Optional.of(Double.TYPE);
+			default: {
 				try {
-					yield Optional.of(Class.forName(name));
+					return Optional.of(Class.forName(name));
 				} catch (Exception ex) {
-					yield Optional.empty();
+					return Optional.empty();
 				}
 			}
 		};

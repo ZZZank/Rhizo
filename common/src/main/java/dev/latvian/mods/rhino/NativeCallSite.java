@@ -185,16 +185,23 @@ public class NativeCallSite extends IdScriptableObject {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		return switch (id) {
-			case Id_constructor -> make(scope, f);
-			case Id_getFunctionName -> getFunctionName(thisObj);
-			case Id_getFileName -> getFileName(thisObj);
-			case Id_getLineNumber -> getLineNumber(thisObj);
-			case Id_getThis, Id_getTypeName, Id_getFunction, Id_getColumnNumber -> Undefined.instance;
-			case Id_getMethodName -> null;
-			case Id_getEvalOrigin, Id_isEval, Id_isConstructor, Id_isNative, Id_isToplevel -> Boolean.FALSE;
-			case Id_toString -> js_toString(thisObj);
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+		switch (id) {
+			case Id_constructor: return make(scope, f);
+			case Id_getFunctionName: return getFunctionName(thisObj);
+			case Id_getFileName: return getFileName(thisObj);
+			case Id_getLineNumber: return getLineNumber(thisObj);
+			case Id_getThis: 
+			case Id_getTypeName: 
+			case Id_getFunction: 
+			case Id_getColumnNumber: return Undefined.instance;
+			case Id_getMethodName: return null;
+			case Id_getEvalOrigin: 
+			case Id_isEval: 
+			case Id_isConstructor: 
+			case Id_isNative: 
+			case Id_isToplevel: return Boolean.FALSE;
+			case Id_toString: return js_toString(thisObj);
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		};
 	}
 
@@ -208,23 +215,23 @@ public class NativeCallSite extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "isEval" -> Id_isEval;
-			case "getThis" -> Id_getThis;
-			case "isNative" -> Id_isNative;
-			case "toString" -> Id_toString;
-			case "isToplevel" -> Id_isToplevel;
-			case "getFileName" -> Id_getFileName;
-			case "constructor" -> Id_constructor;
-			case "getFunction" -> Id_getFunction;
-			case "getTypeName" -> Id_getTypeName;
-			case "getEvalOrigin" -> Id_getEvalOrigin;
-			case "getLineNumber" -> Id_getLineNumber;
-			case "getMethodName" -> Id_getMethodName;
-			case "isConstructor" -> Id_isConstructor;
-			case "getColumnNumber" -> Id_getColumnNumber;
-			case "getFunctionName" -> Id_getFunctionName;
-			default -> 0;
+		switch (s) {
+			case "isEval": return Id_isEval;
+			case "getThis": return Id_getThis;
+			case "isNative": return Id_isNative;
+			case "toString": return Id_toString;
+			case "isToplevel": return Id_isToplevel;
+			case "getFileName": return Id_getFileName;
+			case "constructor": return Id_constructor;
+			case "getFunction": return Id_getFunction;
+			case "getTypeName": return Id_getTypeName;
+			case "getEvalOrigin": return Id_getEvalOrigin;
+			case "getLineNumber": return Id_getLineNumber;
+			case "getMethodName": return Id_getMethodName;
+			case "isConstructor": return Id_isConstructor;
+			case "getColumnNumber": return Id_getColumnNumber;
+			case "getFunctionName": return Id_getFunctionName;
+			default: return 0;
 		};
 	}
 	// #/string_id_map#

@@ -62,16 +62,20 @@ final class TypeInfo {
 	 */
 	static int fromType(String type, ConstantPool pool) {
 		if (type.length() == 1) {
-			return switch (type.charAt(0)) { // sbyte
+			switch (type.charAt(0)) { // sbyte
 				// unicode char
 				// short
 				// boolean
-				case 'B', 'C', 'S', 'Z', 'I' -> // all of the above are verified as integers
+				case 'B':
+				case 'C':
+				case 'S':
+				case 'Z':
+				case 'I': return // all of the above are verified as integers
 						INTEGER;
-				case 'D' -> DOUBLE;
-				case 'F' -> FLOAT;
-				case 'J' -> LONG;
-				default -> throw new IllegalArgumentException("bad type");
+				case 'D': return DOUBLE;
+				case 'F': return FLOAT;
+				case 'J': return LONG;
+				default: throw new IllegalArgumentException("bad type");
 			};
 		}
 		return TypeInfo.OBJECT(type, pool);

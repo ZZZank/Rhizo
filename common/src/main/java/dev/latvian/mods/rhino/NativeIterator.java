@@ -223,22 +223,22 @@ public final class NativeIterator extends IdScriptableObject {
 			throw incompatibleCallError(f);
 		}
 
-		return switch (id) {
-			case Id_next -> iterator.objectIterator.nextExec(cx, scope);
-			case Id___iterator__ ->
+		switch (id) {
+			case Id_next: return iterator.objectIterator.nextExec(cx, scope);
+			case Id___iterator__: return
 				/// XXX: what about argument? SpiderMonkey apparently ignores it
 					thisObj;
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		};
 	}
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "next" -> Id_next;
-			case "__iterator__" -> Id___iterator__;
-			case "constructor" -> Id_constructor;
-			default -> 0;
+		switch (s) {
+			case "next": return Id_next;
+			case "__iterator__": return Id___iterator__;
+			case "constructor": return Id_constructor;
+			default: return 0;
 		};
 	}
 }

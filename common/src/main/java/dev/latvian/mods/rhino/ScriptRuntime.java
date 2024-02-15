@@ -279,7 +279,7 @@ public class ScriptRuntime {
 	 * <BOM>
 	 */
 	static boolean isStrWhiteSpaceChar(int c) {
-		return switch (c) { // <SP>
+		switch (c) { // <SP>
 			// <LF>
 			// <CR>
 			// <TAB>
@@ -288,9 +288,18 @@ public class ScriptRuntime {
 			// <VT>
 			// <LS>
 			// <PS>
-			case ' ', '\n', '\r', '\t', '\u00A0', '\u000C', '\u000B', '\u2028', '\u2029', '\uFEFF' -> // <BOM>
+			case ' ': 
+			case '\n': 
+			case '\r': 
+			case '\t': 
+			case '\u00A0': 
+			case '\u000C': 
+			case '\u000B': 
+			case '\u2028': 
+			case '\u2029': 
+			case '\uFEFF': return // <BOM>
 					true;
-			default -> Character.getType(c) == Character.SPACE_SEPARATOR;
+			default: return Character.getType(c) == Character.SPACE_SEPARATOR;
 		};
 	}
 

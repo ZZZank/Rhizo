@@ -332,11 +332,11 @@ final class NativeError extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			case "toString" -> Id_toString;
-			case "toSource" -> Id_toSource;
-			default -> super.findPrototypeId(s);
+		switch (s) {
+			case "constructor": return Id_constructor;
+			case "toString": return Id_toString;
+			case "toSource": return Id_toSource;
+			default: return super.findPrototypeId(s);
 		};
 	}
 }

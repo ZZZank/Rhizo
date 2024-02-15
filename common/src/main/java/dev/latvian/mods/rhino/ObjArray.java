@@ -92,13 +92,13 @@ public class ObjArray {
 	}
 
 	private Object getImpl(int index) {
-		return switch (index) {
-			case 0 -> f0;
-			case 1 -> f1;
-			case 2 -> f2;
-			case 3 -> f3;
-			case 4 -> f4;
-			default -> data[index - FIELDS_STORE_SIZE];
+		switch (index) {
+			case 0: return f0;
+			case 1: return f1;
+			case 2: return f2;
+			case 3: return f3;
+			case 4: return f4;
+			default: return data[index - FIELDS_STORE_SIZE];
 		};
 	}
 

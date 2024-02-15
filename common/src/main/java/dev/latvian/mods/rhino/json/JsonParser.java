@@ -72,15 +72,25 @@ public class JsonParser {
 		consumeWhitespace();
 		while (pos < length) {
 			char c = src.charAt(pos++);
-			return switch (c) {
-				case '{' -> readObject();
-				case '[' -> readArray();
-				case 't' -> readTrue();
-				case 'f' -> readFalse();
-				case '"' -> readString();
-				case 'n' -> readNull();
-				case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-' -> readNumber(c);
-				default -> throw new ParseException("Unexpected token: " + c);
+			switch (c) {
+				case '{': return readObject();
+				case '[': return readArray();
+				case 't': return readTrue();
+				case 'f': return readFalse();
+				case '"': return readString();
+				case 'n': return readNull();
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+				case '0':
+				case '-': return readNumber(c);
+				default: throw new ParseException("Unexpected token: " + c);
 			};
 		}
 		throw new ParseException("Empty JSON string");

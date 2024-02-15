@@ -234,11 +234,11 @@ final class Arguments extends IdScriptableObject {
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		return switch (id) {
-			case Id_callee -> "callee";
-			case Id_length -> "length";
-			case Id_caller -> "caller";
-			default -> null;
+		switch (id) {
+			case Id_callee: return "callee";
+			case Id_length: return "length";
+			case Id_caller: return "caller";
+			default: return null;
 		};
 	}
 

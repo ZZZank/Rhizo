@@ -400,11 +400,11 @@ public final class ES6Generator extends IdScriptableObject {
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "next" -> Id_next;
-			case "return" -> Id_return;
-			case "throw" -> Id_throw;
-			default -> 0;
+		switch (s) {
+			case "next": return Id_next;
+			case "return": return Id_return;
+			case "throw": return Id_throw;
+			default: return 0;
 		};
 	}
 

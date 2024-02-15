@@ -226,13 +226,13 @@ public class RegExp {
 		}
 
 		skip[0] = 2;
-		return switch (dc) {
-			case '$' -> new SubString("$");
-			case '&' -> res.lastMatch;
-			case '+' -> res.lastParen;
-			case '`' -> res.leftContext;
-			case '\'' -> res.rightContext;
-			default -> null;
+		switch (dc) {
+			case '$': return new SubString("$");
+			case '&': return res.lastMatch;
+			case '+': return res.lastParen;
+			case '`': return res.leftContext;
+			case '\'': return res.rightContext;
+			default: return null;
 		};
 	}
 

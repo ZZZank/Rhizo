@@ -88,9 +88,9 @@ public final class NativeContinuation extends IdScriptableObject implements Func
 
 	@Override
 	protected int findPrototypeId(String s) {
-		return switch (s) {
-			case "constructor" -> Id_constructor;
-			default -> 0;
+		switch (s) {
+			case "constructor": return Id_constructor;
+			default: return 0;
 		};
 	}
 

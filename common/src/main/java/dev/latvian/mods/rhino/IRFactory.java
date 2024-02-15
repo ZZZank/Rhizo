@@ -571,52 +571,61 @@ public final class IRFactory extends Parser {
 	// IR transformation part of the public AST API - desirable?
 	// Another possibility:  create AstTransformer interface and adapter.
 	public Node transform(AstNode node) {
-		return switch (node.getType()) {
-			case Token.EMPTY, Token.COMMENT, Token.BREAK, Token.NAME, Token.TRUE, Token.FALSE, Token.THIS, Token.NULL, Token.NUMBER -> node;
-			case Token.ARRAYCOMP -> transformArrayComp((ArrayComprehension) node);
-			case Token.ARRAYLIT -> transformArrayLiteral((ArrayLiteral) node);
-			case Token.BLOCK -> transformBlock(node);
-			case Token.CALL -> transformFunctionCall((FunctionCall) node);
-			case Token.CONTINUE -> transformContinue((ContinueStatement) node);
-			case Token.DO -> transformDoLoop((DoLoop) node);
-			case Token.FOR -> node instanceof ForInLoop ? transformForInLoop((ForInLoop) node) : transformForLoop((ForLoop) node);
-			case Token.FUNCTION -> transformFunction((FunctionNode) node);
-			case Token.GENEXPR -> transformGenExpr((GeneratorExpression) node);
-			case Token.GETELEM -> transformElementGet((ElementGet) node);
-			case Token.GETPROP -> transformPropertyGet((PropertyGet) node);
-			case Token.HOOK -> transformCondExpr((ConditionalExpression) node);
-			case Token.IF -> transformIf((IfStatement) node);
-			case Token.NEW -> transformNewExpr((NewExpression) node);
-			case Token.OBJECTLIT -> transformObjectLiteral((ObjectLiteral) node);
-			case Token.TEMPLATE_LITERAL -> transformTemplateLiteral((TemplateLiteral) node);
-			case Token.TAGGED_TEMPLATE_LITERAL -> transformTemplateLiteralCall((TaggedTemplateLiteral) node);
-			case Token.REGEXP -> transformRegExp((RegExpLiteral) node);
-			case Token.RETURN -> transformReturn((ReturnStatement) node);
-			case Token.SCRIPT -> transformScript((ScriptNode) node);
-			case Token.STRING -> transformString((StringLiteral) node);
-			case Token.SWITCH -> transformSwitch((SwitchStatement) node);
-			case Token.THROW -> transformThrow((ThrowStatement) node);
-			case Token.TRY -> transformTry((TryStatement) node);
-			case Token.WHILE -> transformWhileLoop((WhileLoop) node);
-			case Token.WITH -> transformWith((WithStatement) node);
-			case Token.YIELD, Token.YIELD_STAR -> transformYield((Yield) node);
-			default -> {
+		switch (node.getType()) {
+			case Token.EMPTY: 
+			case Token.COMMENT: 
+			case Token.BREAK: 
+			case Token.NAME: 
+			case Token.TRUE: 
+			case Token.FALSE: 
+			case Token.THIS: 
+			case Token.NULL: 
+			case Token.NUMBER: return node;
+			case Token.ARRAYCOMP: return transformArrayComp((ArrayComprehension) node);
+			case Token.ARRAYLIT: return transformArrayLiteral((ArrayLiteral) node);
+			case Token.BLOCK: return transformBlock(node);
+			case Token.CALL: return transformFunctionCall((FunctionCall) node);
+			case Token.CONTINUE: return transformContinue((ContinueStatement) node);
+			case Token.DO: return transformDoLoop((DoLoop) node);
+			case Token.FOR: return node instanceof ForInLoop ? transformForInLoop((ForInLoop) node) : transformForLoop((ForLoop) node);
+			case Token.FUNCTION: return transformFunction((FunctionNode) node);
+			case Token.GENEXPR: return transformGenExpr((GeneratorExpression) node);
+			case Token.GETELEM: return transformElementGet((ElementGet) node);
+			case Token.GETPROP: return transformPropertyGet((PropertyGet) node);
+			case Token.HOOK: return transformCondExpr((ConditionalExpression) node);
+			case Token.IF: return transformIf((IfStatement) node);
+			case Token.NEW: return transformNewExpr((NewExpression) node);
+			case Token.OBJECTLIT: return transformObjectLiteral((ObjectLiteral) node);
+			case Token.TEMPLATE_LITERAL: return transformTemplateLiteral((TemplateLiteral) node);
+			case Token.TAGGED_TEMPLATE_LITERAL: return transformTemplateLiteralCall((TaggedTemplateLiteral) node);
+			case Token.REGEXP: return transformRegExp((RegExpLiteral) node);
+			case Token.RETURN: return transformReturn((ReturnStatement) node);
+			case Token.SCRIPT: return transformScript((ScriptNode) node);
+			case Token.STRING: return transformString((StringLiteral) node);
+			case Token.SWITCH: return transformSwitch((SwitchStatement) node);
+			case Token.THROW: return transformThrow((ThrowStatement) node);
+			case Token.TRY: return transformTry((TryStatement) node);
+			case Token.WHILE: return transformWhileLoop((WhileLoop) node);
+			case Token.WITH: return transformWith((WithStatement) node);
+			case Token.YIELD: 
+			case Token.YIELD_STAR: return transformYield((Yield) node);
+			default: {
 				if (node instanceof ExpressionStatement n) {
-					yield transformExprStmt(n);
+					return transformExprStmt(n);
 				} else if (node instanceof Assignment n) {
-					yield transformAssignment(n);
+					return transformAssignment(n);
 				} else if (node instanceof UnaryExpression n) {
-					yield transformUnary(n);
+					return transformUnary(n);
 				} else if (node instanceof InfixExpression n) {
-					yield transformInfix(n);
+					return transformInfix(n);
 				} else if (node instanceof VariableDeclaration n) {
-					yield transformVariables(n);
+					return transformVariables(n);
 				} else if (node instanceof ParenthesizedExpression n) {
-					yield transformParenExpr(n);
+					return transformParenExpr(n);
 				} else if (node instanceof LabeledStatement n) {
-					yield transformLabeledStatement(n);
+					return transformLabeledStatement(n);
 				} else if (node instanceof LetNode n) {
-					yield transformLetNode(n);
+					return transformLetNode(n);
 				}
 
 				throw new IllegalArgumentException("Can't transform: " + node + " (" + node.getClass().getName() + ")");
