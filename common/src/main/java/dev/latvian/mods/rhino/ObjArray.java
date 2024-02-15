@@ -104,12 +104,12 @@ public class ObjArray {
 
 	private void setImpl(int index, Object value) {
 		switch (index) {
-			case 0 -> f0 = value;
-			case 1 -> f1 = value;
-			case 2 -> f2 = value;
-			case 3 -> f3 = value;
-			case 4 -> f4 = value;
-			default -> data[index - FIELDS_STORE_SIZE] = value;
+			case 0: f0 = value;break;
+			case 1: f1 = value;break;
+			case 2: f2 = value;break;
+			case 3: f3 = value;break;
+			case 4: f4 = value;break;
+			default: data[index - FIELDS_STORE_SIZE] = value;
 		}
 
 	}
@@ -152,30 +152,36 @@ public class ObjArray {
 		--N;
 		Object top;
 		switch (N) {
-			case -1 -> throw onEmptyStackTopRead();
-			case 0 -> {
+			case -1: throw onEmptyStackTopRead();
+			case 0: {
 				top = f0;
 				f0 = null;
+				break;
 			}
-			case 1 -> {
+			case 1: {
 				top = f1;
 				f1 = null;
+				break;
 			}
-			case 2 -> {
+			case 2: {
 				top = f2;
 				f2 = null;
+				break;
 			}
-			case 3 -> {
+			case 3: {
 				top = f3;
 				f3 = null;
+				break;
 			}
-			case 4 -> {
+			case 4: {
 				top = f4;
 				f4 = null;
+				break;
 			}
-			default -> {
+			default: {
 				top = data[N - FIELDS_STORE_SIZE];
 				data[N - FIELDS_STORE_SIZE] = null;
+				break;
 			}
 		}
 		size = N;

@@ -2101,13 +2101,15 @@ public class Parser {
 		AstSymbol symbol = definingScope != null ? definingScope.getSymbol(name) : null;
 
 		if (symbol != null && definingScope == currentScope) {
-			addError(switch (symbol.getDeclType()) {
-				case Token.LET -> "msg.let.redecl";
-				case Token.VAR -> "msg.var.redecl";
-				case Token.CONST -> "msg.const.redecl";
-				case Token.FUNCTION -> "msg.fn.redecl";
-				default -> "msg.parm.redecl";
-			}, name);
+			String msgId;
+			switch (symbol.getDeclType()) {
+				case Token.LET: msgId = "msg.let.redecl";break;
+				case Token.VAR: msgId = "msg.var.redecl";break;
+				case Token.CONST: msgId = "msg.const.redecl";break;
+				case Token.FUNCTION: msgId = "msg.fn.redecl";break;
+				default: msgId = "msg.parm.redecl";
+			}
+			addError(msgId, name);
 
 			return;
 		}
@@ -2121,8 +2123,12 @@ public class Parser {
 		 */
 
 		switch (declType) {
-			case Token.LET, Token.VAR, Token.CONST, Token.FUNCTION, Token.LP -> currentScope.putSymbol(new AstSymbol(declType, name));
-			default -> throw Kit.codeBug();
+			case Token.LET:
+			case Token.VAR:
+			case Token.CONST:
+			case Token.FUNCTION:
+			case Token.LP: currentScope.putSymbol(new AstSymbol(declType, name));break;
+			default: throw Kit.codeBug();
 		}
 
 		/*
@@ -3212,10 +3218,10 @@ public class Parser {
 		AstNode pname;
 		int tt = peekToken();
 		switch (tt) {
-			case Token.NAME -> pname = createNameNode();
-			case Token.STRING -> pname = createStringLiteral();
-			case Token.NUMBER -> pname = new NumberLiteral(ts.tokenBeg, ts.getString(), ts.getNumber());
-			default -> {
+			case Token.NAME: pname = createNameNode();break;
+			case Token.STRING: pname = createStringLiteral();break;
+			case Token.NUMBER: pname = new NumberLiteral(ts.tokenBeg, ts.getString(), ts.getNumber());break;
+			default: {
 				if (TokenStream.isKeyword(ts.getString(), inUseStrictDirective)) {
 					// convert keyword to property name, e.g. ({if: 1})
 					pname = createNameNode();
@@ -3461,15 +3467,18 @@ public class Parser {
 		List<String> destructuringNames = new ArrayList<>();
 		boolean empty = true;
 		switch (left.getType()) {
-			case Token.ARRAYLIT -> empty = destructuringArray((ArrayLiteral) left, variableType, tempName, comma, destructuringNames);
-			case Token.OBJECTLIT -> empty = destructuringObject((ObjectLiteral) left, variableType, tempName, comma, destructuringNames);
-			case Token.GETPROP, Token.GETELEM -> {
+			case Token.ARRAYLIT: empty = destructuringArray((ArrayLiteral) left, variableType, tempName, comma, destructuringNames);break;
+			case Token.OBJECTLIT: empty = destructuringObject((ObjectLiteral) left, variableType, tempName, comma, destructuringNames);break;
+			case Token.GETPROP, Token.GETELEM: {
 				switch (variableType) {
-					case Token.CONST, Token.LET, Token.VAR -> reportError("msg.bad.assign.left");
+					case Token.CONST:
+					case Token.LET:
+					case Token.VAR: reportError("msg.bad.assign.left");
 				}
 				comma.addChildToBack(simpleAssignment(left, createName(tempName)));
+				break;
 			}
-			default -> reportError("msg.bad.assign.left");
+			default: reportError("msg.bad.assign.left");
 		}
 		if (empty) {
 			// Don't want a COMMA node with no children. Just add a zero.

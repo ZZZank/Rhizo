@@ -43,23 +43,24 @@ public class NativeGlobal implements IdFunctionCall {
 			String name;
 			int arity = 1;
 			switch (id) {
-				case Id_decodeURI -> name = "decodeURI";
-				case Id_decodeURIComponent -> name = "decodeURIComponent";
-				case Id_encodeURI -> name = "encodeURI";
-				case Id_encodeURIComponent -> name = "encodeURIComponent";
-				case Id_escape -> name = "escape";
-				case Id_eval -> name = "eval";
-				case Id_isFinite -> name = "isFinite";
-				case Id_isNaN -> name = "isNaN";
-				case Id_isXMLName -> name = "isXMLName";
-				case Id_parseFloat -> name = "parseFloat";
-				case Id_parseInt -> {
+				case Id_decodeURI: name = "decodeURI";break;
+				case Id_decodeURIComponent: name = "decodeURIComponent";break;
+				case Id_encodeURI: name = "encodeURI";break;
+				case Id_encodeURIComponent: name = "encodeURIComponent";break;
+				case Id_escape: name = "escape";break;
+				case Id_eval: name = "eval";break;
+				case Id_isFinite: name = "isFinite";break;
+				case Id_isNaN: name = "isNaN";break;
+				case Id_isXMLName: name = "isXMLName";break;
+				case Id_parseFloat: name = "parseFloat";break;
+				case Id_parseInt: {
 					name = "parseInt";
 					arity = 2;
+					break;
 				}
-				case Id_unescape -> name = "unescape";
-				case Id_uneval -> name = "uneval";
-				default -> throw Kit.codeBug();
+				case Id_unescape: name = "unescape";break;
+				case Id_uneval: name = "uneval";break;
+				default: throw Kit.codeBug();
 			}
 			IdFunctionObject f = new IdFunctionObject(obj, FTAG, id, name, arity, scope);
 			if (sealed) {

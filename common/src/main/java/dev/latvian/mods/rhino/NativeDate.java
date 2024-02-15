@@ -607,10 +607,11 @@ final class NativeDate extends IdScriptableObject {
 
 			// state transition
 			switch (state) {
-				case YEAR, MONTH -> state = (c == '-' ? state + 1 : c == 'T' ? HOUR : ERROR);
-				case DAY -> state = (c == 'T' ? HOUR : ERROR);
-				case HOUR -> state = (c == ':' ? MIN : ERROR);
-				case TZHOUR -> {
+				case YEAR:
+				case MONTH: state = (c == '-' ? state + 1 : c == 'T' ? HOUR : ERROR);break;
+				case DAY: state = (c == 'T' ? HOUR : ERROR);break;
+				case HOUR: state = (c == ':' ? MIN : ERROR);break;
+				case TZHOUR: {
 					// state = (c == ':' ? state + 1 : ERROR);
 					// Non-standard extension, https://bugzilla.mozilla.org/show_bug.cgi?id=682754
 					if (c != ':') {
@@ -618,11 +619,12 @@ final class NativeDate extends IdScriptableObject {
 						i -= 1;
 					}
 					state = TZMIN;
+					break;
 				}
-				case MIN -> state = (c == ':' ? SEC : c == '+' || c == '-' ? TZHOUR : ERROR);
-				case SEC -> state = (c == '.' ? MSEC : c == '+' || c == '-' ? TZHOUR : ERROR);
-				case MSEC -> state = (c == '+' || c == '-' ? TZHOUR : ERROR);
-				case TZMIN -> state = ERROR;
+				case MIN: state = (c == ':' ? SEC : c == '+' || c == '-' ? TZHOUR : ERROR);break;
+				case SEC: state = (c == '.' ? MSEC : c == '+' || c == '-' ? TZHOUR : ERROR);break;
+				case MSEC: state = (c == '+' || c == '-' ? TZHOUR : ERROR);break;
+				case TZMIN: state = ERROR;break;
 			}
 			if (state == TZHOUR) {
 				// save timezone modificator
@@ -852,18 +854,18 @@ final class NativeDate extends IdScriptableObject {
 					index -= 12;
 					// timezones
 					switch (index) {
-						case 0 /* gmt */ -> tzoffset = 0;
-						case 1 /* ut */ -> tzoffset = 0;
-						case 2 /* utc */ -> tzoffset = 0;
-						case 3 /* est */ -> tzoffset = 5 * 60;
-						case 4 /* edt */ -> tzoffset = 4 * 60;
-						case 5 /* cst */ -> tzoffset = 6 * 60;
-						case 6 /* cdt */ -> tzoffset = 5 * 60;
-						case 7 /* mst */ -> tzoffset = 7 * 60;
-						case 8 /* mdt */ -> tzoffset = 6 * 60;
-						case 9 /* pst */ -> tzoffset = 8 * 60;
-						case 10 /* pdt */ -> tzoffset = 7 * 60;
-						default -> Kit.codeBug();
+						case 0 /* gmt */: tzoffset = 0;break;
+						case 1 /* ut */: tzoffset = 0;break;
+						case 2 /* utc */: tzoffset = 0;break;
+						case 3 /* est */: tzoffset = 5 * 60;break;
+						case 4 /* edt */: tzoffset = 4 * 60;break;
+						case 5 /* cst */: tzoffset = 6 * 60;break;
+						case 6 /* cdt */: tzoffset = 5 * 60;break;
+						case 7 /* mst */: tzoffset = 7 * 60;break;
+						case 8 /* mdt */: tzoffset = 6 * 60;break;
+						case 9 /* pst */: tzoffset = 8 * 60;break;
+						case 10 /* pdt */: tzoffset = 7 * 60;break;
+						default: Kit.codeBug();
 					}
 				}
 			}

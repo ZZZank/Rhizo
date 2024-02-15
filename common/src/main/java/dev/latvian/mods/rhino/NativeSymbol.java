@@ -188,12 +188,12 @@ public class NativeSymbol extends IdScriptableObject implements Symbol {
 	@Override
 	protected void initPrototypeId(int id) {
 		switch (id) {
-			case Id_constructor -> initPrototypeMethod(CLASS_NAME, id, "constructor", 0);
-			case Id_toString -> initPrototypeMethod(CLASS_NAME, id, "toString", 0);
-			case Id_valueOf -> initPrototypeMethod(CLASS_NAME, id, "valueOf", 0);
-			case SymbolId_toStringTag -> initPrototypeValue(id, SymbolKey.TO_STRING_TAG, CLASS_NAME, DONTENUM | READONLY);
-			case SymbolId_toPrimitive -> initPrototypeMethod(CLASS_NAME, id, SymbolKey.TO_PRIMITIVE, "Symbol.toPrimitive", 1);
-			default -> super.initPrototypeId(id);
+			case Id_constructor: initPrototypeMethod(CLASS_NAME, id, "constructor", 0);break;
+			case Id_toString: initPrototypeMethod(CLASS_NAME, id, "toString", 0);break;
+			case Id_valueOf: initPrototypeMethod(CLASS_NAME, id, "valueOf", 0);break;
+			case SymbolId_toStringTag: initPrototypeValue(id, SymbolKey.TO_STRING_TAG, CLASS_NAME, DONTENUM | READONLY);break;
+			case SymbolId_toPrimitive: initPrototypeMethod(CLASS_NAME, id, SymbolKey.TO_PRIMITIVE, "Symbol.toPrimitive", 1);break;
+			default: super.initPrototypeId(id);
 		}
 	}
 

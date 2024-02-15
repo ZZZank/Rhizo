@@ -49,11 +49,11 @@ final class NativeBoolean extends IdScriptableObject {
 	@Override
 	protected void initPrototypeId(int id) {
 		switch (id) {
-			case Id_constructor -> initPrototypeMethod(BOOLEAN_TAG, id, "constructor", 1);
-			case Id_toString -> initPrototypeMethod(BOOLEAN_TAG, id, "toString", 0);
-			case Id_toSource -> initPrototypeMethod(BOOLEAN_TAG, id, "toSource", 0);
-			case Id_valueOf -> initPrototypeMethod(BOOLEAN_TAG, id, "valueOf", 0);
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			case Id_constructor: initPrototypeMethod(BOOLEAN_TAG, id, "constructor", 1);break;
+			case Id_toString: initPrototypeMethod(BOOLEAN_TAG, id, "toString", 0);break;
+			case Id_toSource: initPrototypeMethod(BOOLEAN_TAG, id, "toSource", 0);break;
+			case Id_valueOf: initPrototypeMethod(BOOLEAN_TAG, id, "valueOf", 0);break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 	}
 

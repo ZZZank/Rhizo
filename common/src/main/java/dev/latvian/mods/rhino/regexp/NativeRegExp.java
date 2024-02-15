@@ -245,18 +245,23 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 		// If re starts with literal, init anchorCh accordingly
 		switch (regexp.program[0]) {
-			case REOP_UCFLAT1, REOP_UCFLAT1i -> regexp.anchorCh = (char) getIndex(regexp.program, 1);
-			case REOP_FLAT1, REOP_FLAT1i -> regexp.anchorCh = (char) (regexp.program[1] & 0xFF);
-			case REOP_FLAT, REOP_FLATi -> {
+			case REOP_UCFLAT1:
+			case REOP_UCFLAT1i: regexp.anchorCh = (char) getIndex(regexp.program, 1);break;
+			case REOP_FLAT1:
+			case REOP_FLAT1i: regexp.anchorCh = (char) (regexp.program[1] & 0xFF);break;
+			case REOP_FLAT:
+			case REOP_FLATi: {
 				int k = getIndex(regexp.program, 1);
 				regexp.anchorCh = regexp.source[k];
+				break;
 			}
-			case REOP_BOL -> regexp.anchorCh = ANCHOR_BOL;
-			case REOP_ALT -> {
+			case REOP_BOL: regexp.anchorCh = ANCHOR_BOL;
+			case REOP_ALT: {
 				RENode n = state.result;
 				if (n.kid.op == REOP_BOL && n.kid2.op == REOP_BOL) {
 					regexp.anchorCh = ANCHOR_BOL;
 				}
+				break;
 			}
 		}
 

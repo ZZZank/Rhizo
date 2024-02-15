@@ -501,7 +501,7 @@ class CodeGenerator extends Icode {
 		Node child = node.getFirstChild();
 		int savedStackDepth = stackDepth;
 		switch (type) {
-			case Token.FUNCTION -> {
+			case Token.FUNCTION:
 				int fnIndex = node.getExistingIntProp(Node.FUNCTION_PROP);
 				FunctionNode fn = scriptOrFn.getFunctionNode(fnIndex);
 				// See comments in visitStatement for Token.FUNCTION case
@@ -510,13 +510,13 @@ class CodeGenerator extends Icode {
 				}
 				addIndexOp(Icode_CLOSURE_EXPR, fnIndex);
 				stackChange(1);
-			}
-			case Token.LOCAL_LOAD -> {
+				break;
+			case Token.LOCAL_LOAD:
 				int localIndex = getLocalBlockRef(node);
 				addIndexOp(Token.LOCAL_LOAD, localIndex);
 				stackChange(1);
-			}
-			case Token.COMMA -> {
+				break;
+			case Token.COMMA:
 				Node lastChild = node.getLastChild();
 				while (child != lastChild) {
 					visitExpression(child, 0);
@@ -526,12 +526,15 @@ class CodeGenerator extends Icode {
 				}
 				// Preserve tail context flag if any
 				visitExpression(child, contextFlags & ECF_TAIL);
-			}
-			case Token.USE_STACK ->
+				break;
+			case Token.USE_STACK:
 				// Indicates that stack was modified externally,
 				// like placed catch object
-					stackChange(1);
-			case Token.REF_CALL, Token.CALL, Token.NEW -> {
+				stackChange(1);
+				break;
+			case Token.REF_CALL:
+			case Token.CALL:
+			case Token.NEW:
 				if (type == Token.NEW) {
 					visitExpression(child, 0);
 				} else {
@@ -570,8 +573,9 @@ class CodeGenerator extends Icode {
 				if (argCount > itsData.itsMaxCalleeArgs) {
 					itsData.itsMaxCalleeArgs = argCount;
 				}
-			}
-			case Token.AND, Token.OR -> {
+				break;
+			case Token.AND:
+			case Token.OR:
 				visitExpression(child, 0);
 				addIcode(Icode_DUP);
 				stackChange(1);
@@ -585,8 +589,8 @@ class CodeGenerator extends Icode {
 				// Preserve tail context flag if any
 				visitExpression(child, contextFlags & ECF_TAIL);
 				resolveForwardGoto(afterSecondJumpStart);
-			}
-			case Token.HOOK -> {
+				break;
+			case Token.HOOK:
 				Node ifThen = child.getNext();
 				Node ifElse = ifThen.getNext();
 				visitExpression(child, 0);
@@ -602,33 +606,63 @@ class CodeGenerator extends Icode {
 				// Preserve tail context flag if any
 				visitExpression(ifElse, contextFlags & ECF_TAIL);
 				resolveForwardGoto(afterElseJumpStart);
-			}
-			case Token.GETPROP, Token.GETPROPNOWARN, Token.GETOPTIONAL -> {
+				break;
+			case Token.GETPROP:
+			case Token.GETPROPNOWARN:
+			case Token.GETOPTIONAL:
 				visitExpression(child, 0);
 				child = child.getNext();
 				addStringOp(type, child.getString());
-			}
-			case Token.DELPROP -> {
+				break;
+			case Token.DELPROP:
 				boolean isName = child.getType() == Token.BINDNAME;
 				visitExpression(child, 0);
 				child = child.getNext();
 				visitExpression(child, 0);
 				if (isName) {
-					// special handling for delete name
+// special handling for delete name
 					addIcode(Icode_DELNAME);
 				} else {
 					addToken(Token.DELPROP);
 				}
 				stackChange(-1);
-			}
-			case Token.GETELEM, Token.BITAND, Token.BITOR, Token.BITXOR, Token.LSH, Token.RSH, Token.URSH, Token.ADD, Token.SUB, Token.MOD, Token.DIV, Token.MUL, Token.EQ, Token.NE, Token.SHEQ, Token.SHNE, Token.IN, Token.INSTANCEOF, Token.LE, Token.LT, Token.GE, Token.GT, Token.NULLISH_COALESCING, Token.POW -> {
+				break;
+			case Token.GETELEM:
+			case Token.BITAND:
+			case Token.BITOR:
+			case Token.BITXOR:
+			case Token.LSH:
+			case Token.RSH:
+			case Token.URSH:
+			case Token.ADD:
+			case Token.SUB:
+			case Token.MOD:
+			case Token.DIV:
+			case Token.MUL:
+			case Token.EQ:
+			case Token.NE:
+			case Token.SHEQ:
+			case Token.SHNE:
+			case Token.IN:
+			case Token.INSTANCEOF:
+			case Token.LE:
+			case Token.LT:
+			case Token.GE:
+			case Token.GT:
+			case Token.NULLISH_COALESCING:
+			case Token.POW:
 				visitExpression(child, 0);
 				child = child.getNext();
 				visitExpression(child, 0);
 				addToken(type);
 				stackChange(-1);
-			}
-			case Token.POS, Token.NEG, Token.NOT, Token.BITNOT, Token.TYPEOF, Token.VOID -> {
+				break;
+			case Token.POS:
+			case Token.NEG:
+			case Token.NOT:
+			case Token.BITNOT:
+			case Token.TYPEOF:
+			case Token.VOID:
 				visitExpression(child, 0);
 				if (type == Token.VOID) {
 					addIcode(Icode_POP);
@@ -636,12 +670,14 @@ class CodeGenerator extends Icode {
 				} else {
 					addToken(type);
 				}
-			}
-			case Token.GET_REF, Token.DEL_REF -> {
+				break;
+			case Token.GET_REF:
+			case Token.DEL_REF:
 				visitExpression(child, 0);
 				addToken(type);
-			}
-			case Token.SETPROP, Token.SETPROP_OP -> {
+				break;
+			case Token.SETPROP:
+			case Token.SETPROP_OP:
 				visitExpression(child, 0);
 				child = child.getNext();
 				String property = child.getString();
@@ -656,8 +692,9 @@ class CodeGenerator extends Icode {
 				visitExpression(child, 0);
 				addStringOp(Token.SETPROP, property);
 				stackChange(-1);
-			}
-			case Token.SETELEM, Token.SETELEM_OP -> {
+				break;
+			case Token.SETELEM:
+			case Token.SETELEM_OP:
 				visitExpression(child, 0);
 				child = child.getNext();
 				visitExpression(child, 0);
@@ -673,8 +710,9 @@ class CodeGenerator extends Icode {
 				visitExpression(child, 0);
 				addToken(Token.SETELEM);
 				stackChange(-2);
-			}
-			case Token.SET_REF, Token.SET_REF_OP -> {
+				break;
+			case Token.SET_REF:
+			case Token.SET_REF_OP:
 				visitExpression(child, 0);
 				child = child.getNext();
 				if (type == Token.SET_REF_OP) {
@@ -687,24 +725,25 @@ class CodeGenerator extends Icode {
 				visitExpression(child, 0);
 				addToken(Token.SET_REF);
 				stackChange(-1);
-			}
-			case Token.STRICT_SETNAME, Token.SETNAME -> {
+				break;
+			case Token.STRICT_SETNAME:
+			case Token.SETNAME:
 				String name = child.getString();
 				visitExpression(child, 0);
 				child = child.getNext();
 				visitExpression(child, 0);
 				addStringOp(type, name);
 				stackChange(-1);
-			}
-			case Token.SETCONST -> {
-				String name = child.getString();
+				break;
+			case Token.SETCONST:
+				String childName = child.getString();
 				visitExpression(child, 0);
 				child = child.getNext();
 				visitExpression(child, 0);
-				addStringOp(Icode_SETCONST, name);
+				addStringOp(Icode_SETCONST, childName);
 				stackChange(-1);
-			}
-			case Token.TYPEOFNAME -> {
+				break;
+			case Token.TYPEOFNAME:
 				int index = -1;
 				// use typeofname if an activation frame exists
 				// since the vars all exist there instead of in jregs
@@ -719,13 +758,18 @@ class CodeGenerator extends Icode {
 					stackChange(1);
 					addToken(Token.TYPEOF);
 				}
-			}
-			case Token.BINDNAME, Token.NAME, Token.STRING -> {
+				break;
+			case Token.BINDNAME:
+			case Token.NAME:
+			case Token.STRING:
 				addStringOp(type, node.getString());
 				stackChange(1);
-			}
-			case Token.INC, Token.DEC -> visitIncDec(node, child);
-			case Token.NUMBER -> {
+				break;
+			case Token.INC:
+			case Token.DEC:
+				visitIncDec(node, child);
+				break;
+			case Token.NUMBER:
 				double num = node.getDouble();
 				int inum = (int) num;
 				if (inum == num) {
@@ -746,57 +790,64 @@ class CodeGenerator extends Icode {
 						addInt(inum);
 					}
 				} else {
-					int index = getDoubleIndex(num);
-					addIndexOp(Token.NUMBER, index);
+					addIndexOp(Token.NUMBER, getDoubleIndex(num));
 				}
 				stackChange(1);
-			}
-			case Token.GETVAR -> {
+				break;
+			case Token.GETVAR:
 				if (itsData.itsNeedsActivation) {
 					Kit.codeBug();
 				}
-				int index = scriptOrFn.getIndexForNameNode(node);
-				addVarOp(Token.GETVAR, index);
+				addVarOp(Token.GETVAR, scriptOrFn.getIndexForNameNode(node));
 				stackChange(1);
-			}
-			case Token.SETVAR -> {
+				break;
+			case Token.SETVAR:
 				if (itsData.itsNeedsActivation) {
 					Kit.codeBug();
 				}
-				int index = scriptOrFn.getIndexForNameNode(child);
+				int idx = scriptOrFn.getIndexForNameNode(child);
 				child = child.getNext();
 				visitExpression(child, 0);
-				addVarOp(Token.SETVAR, index);
-			}
-			case Token.SETCONSTVAR -> {
+				addVarOp(Token.SETVAR, idx);
+				break;
+			case Token.SETCONSTVAR:
 				if (itsData.itsNeedsActivation) {
 					Kit.codeBug();
 				}
-				int index = scriptOrFn.getIndexForNameNode(child);
 				child = child.getNext();
 				visitExpression(child, 0);
-				addVarOp(Token.SETCONSTVAR, index);
-			}
-			case Token.NULL, Token.THIS, Token.THISFN, Token.FALSE, Token.TRUE -> {
+				addVarOp(Token.SETCONSTVAR, scriptOrFn.getIndexForNameNode(child));
+				break;
+			case Token.NULL:
+			case Token.THIS:
+			case Token.THISFN:
+			case Token.FALSE:
+			case Token.TRUE:
 				addToken(type);
 				stackChange(1);
-			}
-			case Token.ENUM_NEXT, Token.ENUM_ID -> {
+				break;
+			case Token.ENUM_NEXT:
+			case Token.ENUM_ID:
 				addIndexOp(type, getLocalBlockRef(node));
 				stackChange(1);
-			}
-			case Token.REGEXP -> {
-				int index = node.getExistingIntProp(Node.REGEXP_PROP);
-				addIndexOp(Token.REGEXP, index);
+				break;
+			case Token.REGEXP:
+				addIndexOp(Token.REGEXP, node.getExistingIntProp(Node.REGEXP_PROP));
 				stackChange(1);
-			}
-			case Token.ARRAYLIT, Token.OBJECTLIT -> visitLiteral(node, child);
-			case Token.ARRAYCOMP -> visitArrayComprehension(node, child, child.getNext());
-			case Token.REF_SPECIAL -> {
+				break;
+			case Token.ARRAYLIT:
+			case Token.OBJECTLIT:
+				visitLiteral(node, child);
+				break;
+			case Token.ARRAYCOMP:
+				visitArrayComprehension(node, child, child.getNext());
+				break;
+			case Token.REF_SPECIAL:
 				visitExpression(child, 0);
 				addStringOp(type, (String) node.getProp(Node.NAME_PROP));
-			}
-			case Token.YIELD, Token.YIELD_STAR -> {
+				break;
+			case Token.YIELD:
+			case Token.YIELD_STAR:
 				if (child != null) {
 					visitExpression(child, 0);
 				} else {
@@ -809,8 +860,8 @@ class CodeGenerator extends Icode {
 					addIcode(Icode_YIELD_STAR);
 				}
 				addUint16(node.getLineno() & 0xFFFF);
-			}
-			case Token.WITHEXPR -> {
+				break;
+			case Token.WITHEXPR:
 				Node enterWith = node.getFirstChild();
 				Node with = enterWith.getNext();
 				visitExpression(enterWith.getFirstChild(), 0);
@@ -818,9 +869,12 @@ class CodeGenerator extends Icode {
 				stackChange(-1);
 				visitExpression(with.getFirstChild(), 0);
 				addToken(Token.LEAVEWITH);
-			}
-			case Token.TEMPLATE_LITERAL -> visitTemplateLiteral(node);
-			default -> throw badTree(node);
+				break;
+			case Token.TEMPLATE_LITERAL:
+				visitTemplateLiteral(node);
+				break;
+			default:
+				throw badTree(node);
 		}
 		if (savedStackDepth + 1 != stackDepth) {
 			Kit.codeBug();

@@ -2012,13 +2012,13 @@ public class ClassFileWriter {
 	 */
 	public void addLoadConstant(int k) {
 		switch (k) {
-			case 0 -> add(ByteCode.ICONST_0);
-			case 1 -> add(ByteCode.ICONST_1);
-			case 2 -> add(ByteCode.ICONST_2);
-			case 3 -> add(ByteCode.ICONST_3);
-			case 4 -> add(ByteCode.ICONST_4);
-			case 5 -> add(ByteCode.ICONST_5);
-			default -> add(ByteCode.LDC, itsConstantPool.addConstant(k));
+			case 0: add(ByteCode.ICONST_0);break;
+			case 1: add(ByteCode.ICONST_1);break;
+			case 2: add(ByteCode.ICONST_2);break;
+			case 3: add(ByteCode.ICONST_3);break;
+			case 4: add(ByteCode.ICONST_4);break;
+			case 5: add(ByteCode.ICONST_5);break;
+			default: add(ByteCode.LDC, itsConstantPool.addConstant(k));
 		}
 	}
 
@@ -2149,9 +2149,11 @@ public class ClassFileWriter {
 		char fieldTypeChar = fieldType.charAt(0);
 		int fieldSize = (fieldTypeChar == 'J' || fieldTypeChar == 'D') ? 2 : 1;
 		switch (theOpCode) {
-			case ByteCode.GETFIELD, ByteCode.GETSTATIC -> newStack += fieldSize;
-			case ByteCode.PUTSTATIC, ByteCode.PUTFIELD -> newStack -= fieldSize;
-			default -> throw new IllegalArgumentException("bad opcode for field reference");
+			case ByteCode.GETFIELD:
+			case ByteCode.GETSTATIC: newStack += fieldSize;break;
+			case ByteCode.PUTSTATIC:
+			case ByteCode.PUTFIELD: newStack -= fieldSize;break;
+			default: throw new IllegalArgumentException("bad opcode for field reference");
 		}
 		if (newStack < 0 || Short.MAX_VALUE < newStack) {
 			badStack(newStack);
@@ -2692,11 +2694,11 @@ public class ClassFileWriter {
 
 	private void xop(int shortOp, int op, int local) {
 		switch (local) {
-			case 0 -> add(shortOp);
-			case 1 -> add(shortOp + 1);
-			case 2 -> add(shortOp + 2);
-			case 3 -> add(shortOp + 3);
-			default -> add(op, local);
+			case 0: add(shortOp);break;
+			case 1: add(shortOp + 1);break;
+			case 2: add(shortOp + 2);break;
+			case 3: add(shortOp + 3);break;
+			default: add(op, local);
 		}
 	}
 
@@ -3926,12 +3928,12 @@ public class ClassFileWriter {
 					}
 					byte constType = itsConstantPool.getConstantType(index);
 					switch (constType) {
-						case ConstantPool.CONSTANT_Double -> push(TypeInfo.DOUBLE);
-						case ConstantPool.CONSTANT_Float -> push(TypeInfo.FLOAT);
-						case ConstantPool.CONSTANT_Long -> push(TypeInfo.LONG);
-						case ConstantPool.CONSTANT_Integer -> push(TypeInfo.INTEGER);
-						case ConstantPool.CONSTANT_String -> push(TypeInfo.OBJECT("java/lang/String", itsConstantPool));
-						default -> throw new IllegalArgumentException("bad const type " + constType);
+						case ConstantPool.CONSTANT_Double: push(TypeInfo.DOUBLE);break;
+						case ConstantPool.CONSTANT_Float: push(TypeInfo.FLOAT);break;
+						case ConstantPool.CONSTANT_Long: push(TypeInfo.LONG);break;
+						case ConstantPool.CONSTANT_Integer: push(TypeInfo.INTEGER);break;
+						case ConstantPool.CONSTANT_String: push(TypeInfo.OBJECT("java/lang/String", itsConstantPool));break;
+						default: throw new IllegalArgumentException("bad const type " + constType);
 					}
 					break;
 				case ByteCode.NEW:

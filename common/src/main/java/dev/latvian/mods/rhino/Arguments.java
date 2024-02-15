@@ -268,10 +268,10 @@ final class Arguments extends IdScriptableObject {
 	@Override
 	protected void setInstanceIdValue(int id, Object value) {
 		switch (id) {
-			case Id_callee -> calleeObj = value;
-			case Id_length -> lengthObj = value;
-			case Id_caller -> callerObj = (value != null) ? value : UniqueTag.NULL_VALUE;
-			default -> super.setInstanceIdValue(id, value);
+			case Id_callee: calleeObj = value;break;
+			case Id_length: lengthObj = value;break;
+			case Id_caller: callerObj = (value != null) ? value : UniqueTag.NULL_VALUE;break;
+			default: super.setInstanceIdValue(id, value);
 		}
 
 	}
@@ -279,10 +279,10 @@ final class Arguments extends IdScriptableObject {
 	@Override
 	protected void setInstanceIdAttributes(int id, int attr) {
 		switch (id) {
-			case Id_callee -> calleeAttr = attr;
-			case Id_length -> lengthAttr = attr;
-			case Id_caller -> callerAttr = attr;
-			default -> super.setInstanceIdAttributes(id, attr);
+			case Id_callee: calleeAttr = attr;break;
+			case Id_length: lengthAttr = attr;break;
+			case Id_caller: callerAttr = attr;break;
+			default: super.setInstanceIdAttributes(id, attr);
 		}
 	}
 

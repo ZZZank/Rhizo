@@ -214,15 +214,15 @@ public class JsonParser {
 			}
 			char c = src.charAt(pos++);
 			switch (c) {
-				case '"' -> b.append('"');
-				case '\\' -> b.append('\\');
-				case '/' -> b.append('/');
-				case 'b' -> b.append('\b');
-				case 'f' -> b.append('\f');
-				case 'n' -> b.append('\n');
-				case 'r' -> b.append('\r');
-				case 't' -> b.append('\t');
-				case 'u' -> {
+				case '"': b.append('"');break;
+				case '\\': b.append('\\');break;
+				case '/': b.append('/');break;
+				case 'b': b.append('\b');break;
+				case 'f': b.append('\f');break;
+				case 'n': b.append('\n');break;
+				case 'r': b.append('\r');break;
+				case 't': b.append('\t');break;
+				case 'u': {
 					if (length - pos < 5) {
 						throw new ParseException("Invalid character code: \\u" + src.substring(pos));
 					}
@@ -232,8 +232,9 @@ public class JsonParser {
 					}
 					pos += 4;
 					b.append((char) code);
+					break;
 				}
-				default -> throw new ParseException("Unexpected character in string: '\\" + c + "'");
+				default: throw new ParseException("Unexpected character in string: '\\" + c + "'");
 			}
 			stringStart = pos;
 			while (pos < length) {

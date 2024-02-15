@@ -153,16 +153,19 @@ public class BaseFunction extends IdScriptableObject implements Function {
 
 		int attr;
 		switch (id) {
-			case Id_length, Id_arity, Id_name -> attr = DONTENUM | READONLY | PERMANENT;
-			case Id_prototype -> {
+			case Id_length:
+			case Id_arity:
+			case Id_name: attr = DONTENUM | READONLY | PERMANENT;break;
+			case Id_prototype: {
 				// some functions such as built-ins don't have a prototype property
 				if (!hasPrototypeProperty()) {
 					return 0;
 				}
 				attr = prototypePropertyAttributes;
+				break;
 			}
-			case Id_arguments -> attr = argumentsAttributes;
-			default -> throw new IllegalStateException();
+			case Id_arguments: attr = argumentsAttributes;break;
+			default: throw new IllegalStateException();
 		}
 		return instanceIdInfo(attr, id);
 	}

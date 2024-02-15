@@ -627,20 +627,25 @@ public final class JavaAdapter implements IdFunctionCall {
 			cfw.addInvoke(ByteCode.INVOKESTATIC, "dev/latvian/mods/rhino/Context", "toNumber", "(Ljava/lang/Object;)D");
 			String typeName = retType.getName();
 			switch (typeName.charAt(0)) {
-				case 'b', 's', 'i' -> {
+				case 'b':
+				case 's':
+				case 'i': {
 					cfw.add(ByteCode.D2I);
 					cfw.add(ByteCode.IRETURN);
+					break;
 				}
-				case 'l' -> {
+				case 'l': {
 					cfw.add(ByteCode.D2L);
 					cfw.add(ByteCode.LRETURN);
+					break;
 				}
-				case 'f' -> {
+				case 'f': {
 					cfw.add(ByteCode.D2F);
 					cfw.add(ByteCode.FRETURN);
+					break;
 				}
-				case 'd' -> cfw.add(ByteCode.DRETURN);
-				default -> throw new RuntimeException("Unexpected return type " + retType);
+				case 'd': cfw.add(ByteCode.DRETURN);
+				default: throw new RuntimeException("Unexpected return type " + retType);
 			}
 
 		} else {
@@ -748,10 +753,14 @@ public final class JavaAdapter implements IdFunctionCall {
 		if (retType.isPrimitive()) {
 			String typeName = retType.getName();
 			switch (typeName.charAt(0)) {
-				case 'b', 'c', 's', 'i', 'z' -> cfw.add(ByteCode.IRETURN);
-				case 'l' -> cfw.add(ByteCode.LRETURN);
-				case 'f' -> cfw.add(ByteCode.FRETURN);
-				case 'd' -> cfw.add(ByteCode.DRETURN);
+				case 'b':
+				case 'c':
+				case 's':
+				case 'i':
+				case 'z': cfw.add(ByteCode.IRETURN);break;
+				case 'l': cfw.add(ByteCode.LRETURN);break;
+				case 'f': cfw.add(ByteCode.FRETURN);break;
+				case 'd': cfw.add(ByteCode.DRETURN);break;
 			}
 		} else {
 			cfw.add(ByteCode.ARETURN);
