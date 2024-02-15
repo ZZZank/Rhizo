@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -25,9 +27,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class RemappingHelper {
+
 	public static final boolean GENERATE = System.getProperty("generaterhinomappings", "0").equals("1");
 	private static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().disableHtmlEscaping().create();
-	public static final Logger LOGGER = LoggerFactory.getLogger("Rhino Script Remapper");
+	public static final Logger LOGGER = LogManager.getLogger("Rhino Script Remapper");
 	private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new HashMap<>();
 
 	private static Optional<Class<?>> loadClass(String name) {
