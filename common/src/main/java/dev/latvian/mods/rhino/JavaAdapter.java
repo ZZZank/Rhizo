@@ -572,26 +572,28 @@ public final class JavaAdapter implements IdFunctionCall {
 			cfw.add(ByteCode.DUP);
 			String typeName = argType.getName();
 			switch (typeName.charAt(0)) {
-				case 'b', 's', 'i' -> {
+				case 'b':
+				case 's':
+				case 'i': {
 					// load an int value, convert to double.
 					cfw.add(ByteCode.ILOAD, paramOffset);
 					cfw.add(ByteCode.I2D);
-				}
-				case 'l' -> {
+				}break;
+				case 'l': {
 					// load a long, convert to double.
 					cfw.add(ByteCode.LLOAD, paramOffset);
 					cfw.add(ByteCode.L2D);
 					size = 2;
-				}
-				case 'f' -> {
+				}break;
+				case 'f': {
 					// load a float, convert to double.
 					cfw.add(ByteCode.FLOAD, paramOffset);
 					cfw.add(ByteCode.F2D);
-				}
-				case 'd' -> {
+				}break;
+				case 'd': {
 					cfw.add(ByteCode.DLOAD, paramOffset);
 					size = 2;
-				}
+				}break;
 			}
 			cfw.addInvoke(ByteCode.INVOKESPECIAL, "java/lang/Double", "<init>", "(D)V");
 		}
@@ -721,22 +723,26 @@ public final class JavaAdapter implements IdFunctionCall {
 		}
 		String typeName = paramType.getName();
 		switch (typeName.charAt(0)) {
-			case 'z', 'b', 'c', 's', 'i' -> {
+			case 'z':
+			case 'b':
+			case 'c':
+			case 's':
+			case 'i': {
 				// load an int value, convert to double.
 				cfw.addILoad(paramOffset);
 				return 1;
 			}
-			case 'l' -> {
+			case 'l': {
 				// load a long, convert to double.
 				cfw.addLLoad(paramOffset);
 				return 2;
 			}
-			case 'f' -> {
+			case 'f': {
 				// load a float, convert to double.
 				cfw.addFLoad(paramOffset);
 				return 1;
 			}
-			case 'd' -> {
+			case 'd': {
 				cfw.addDLoad(paramOffset);
 				return 2;
 			}

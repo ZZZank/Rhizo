@@ -687,17 +687,17 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 		switch (c) {
 			/* assertions and atoms */
-			case '^' -> {
+			case '^': {
 				state.result = new RENode(REOP_BOL);
 				state.progLength++;
 				return true;
 			}
-			case '$' -> {
+			case '$': {
 				state.result = new RENode(REOP_EOL);
 				state.progLength++;
 				return true;
 			}
-			case '\\' -> {
+			case '\\': {
 				if (state.cp < state.cpend) {
 					c = src[state.cp++];
 					switch (c) {
@@ -875,7 +875,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 				reportError("msg.trail.backslash", "");
 				return false;
 			}
-			case '(' -> {
+			case '(': {
 				RENode result = null;
 				termStart = state.cp;
 				if (state.cp + 1 < state.cpend && src[state.cp] == '?' && ((c = src[state.cp + 1]) == '=' || c == '!' || c == ':')) {
@@ -911,11 +911,11 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 				}
 				break;
 			}
-			case ')' -> {
+			case ')': {
 				reportError("msg.re.unmatched.right.paren", "");
 				return false;
 			}
-			case '[' -> {
+			case '[': {
 				state.result = new RENode(REOP_CLASS);
 				termStart = state.cp;
 				state.result.startIndex = termStart;
@@ -943,16 +943,18 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 					return false;
 				}
 				state.progLength += 3; /* CLASS, <index> */
-			}
-			case '.' -> {
+			}break;
+			case '.': {
 				state.result = new RENode(REOP_DOT);
 				state.progLength++;
-			}
-			case '*', '+', '?' -> {
+			}break;
+			case '*':
+			case '+':
+			case '?': {
 				reportError("msg.bad.quant", String.valueOf(src[state.cp - 1]));
 				return false;
 			}
-			default -> {
+			default: {
 				state.result = new RENode(REOP_FLAT);
 				state.result.chr = c;
 				state.result.length = 1;

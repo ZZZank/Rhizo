@@ -2125,12 +2125,15 @@ public class ClassFileWriter {
 			badStack(newStack);
 		}
 		switch (theOpCode) {
-			case ByteCode.NEW, ByteCode.ANEWARRAY, ByteCode.CHECKCAST, ByteCode.INSTANCEOF -> {
+			case ByteCode.NEW:
+			case ByteCode.ANEWARRAY:
+			case ByteCode.CHECKCAST:
+			case ByteCode.INSTANCEOF: {
 				short classIndex = itsConstantPool.addClass(className);
 				addToCodeBuffer(theOpCode);
 				addToCodeInt16(classIndex);
-			}
-			default -> throw new IllegalArgumentException("bad opcode for class reference");
+			}break;
+			default: throw new IllegalArgumentException("bad opcode for class reference");
 		}
 		itsStackTop = (short) newStack;
 		if (newStack > itsMaxStack) {
@@ -2186,7 +2189,10 @@ public class ClassFileWriter {
 		}
 
 		switch (theOpCode) {
-			case ByteCode.INVOKEVIRTUAL, ByteCode.INVOKESPECIAL, ByteCode.INVOKESTATIC, ByteCode.INVOKEINTERFACE -> {
+			case ByteCode.INVOKEVIRTUAL:
+			case ByteCode.INVOKESPECIAL:
+			case ByteCode.INVOKESTATIC:
+			case ByteCode.INVOKEINTERFACE: {
 				addToCodeBuffer(theOpCode);
 				if (theOpCode == ByteCode.INVOKEINTERFACE) {
 					short ifMethodRefIndex = itsConstantPool.addInterfaceMethodRef(className, methodName, methodType);
@@ -2197,8 +2203,8 @@ public class ClassFileWriter {
 					short methodRefIndex = itsConstantPool.addMethodRef(className, methodName, methodType);
 					addToCodeInt16(methodRefIndex);
 				}
-			}
-			default -> throw new IllegalArgumentException("bad opcode for method reference");
+			}break;
+			default: throw new IllegalArgumentException("bad opcode for method reference");
 		}
 		itsStackTop = (short) newStack;
 		if (newStack > itsMaxStack) {
@@ -3036,17 +3042,24 @@ public class ClassFileWriter {
 		StringBuilder paramType = new StringBuilder();
 		while (start < rParenIndex) {
 			switch (type.charAt(start)) {
-				case 'B', 'C', 'D', 'F', 'I', 'J', 'S', 'Z' -> {
+				case 'B':
+				case 'C':
+				case 'D':
+				case 'F':
+				case 'I':
+				case 'J':
+				case 'S':
+				case 'Z': {
 					paramType.append(type.charAt(start));
 					++start;
-				}
-				case 'L' -> {
+				}break;
+				case 'L': {
 					int end = type.indexOf(';', start) + 1;
 					String name = type.substring(start, end);
 					paramType.append(name);
 					start = end;
-				}
-				case '[' -> {
+				}break;
+				case '[': {
 					paramType.append('[');
 					++start;
 					continue;

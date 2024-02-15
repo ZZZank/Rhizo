@@ -885,13 +885,14 @@ class CodeGenerator extends Icode {
 		// Generate code to place on stack function and thisObj
 		int type = left.getType();
 		switch (type) {
-			case Token.NAME -> {
+			case Token.NAME: {
 				String name = left.getString();
 				// stack: ... -> ... function thisObj
 				addStringOp(Icode_NAME_AND_THIS, name);
 				stackChange(2);
-			}
-			case Token.GETPROP, Token.GETELEM -> {
+			}break;
+			case Token.GETPROP:
+			case Token.GETELEM: {
 				Node target = left.getFirstChild();
 				visitExpression(target, 0);
 				Node id = target.getNext();
@@ -905,8 +906,8 @@ class CodeGenerator extends Icode {
 					// stack: ... target id -> ... function thisObj
 					addIcode(Icode_ELEM_AND_THIS);
 				}
-			}
-			default -> {
+			}break;
+			default: {
 				// Including Token.GETVAR
 				visitExpression(left, 0);
 				// stack: ... value -> ... function thisObj

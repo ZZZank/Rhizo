@@ -213,7 +213,7 @@ public class NativeGlobal implements IdFunctionCall {
 		boolean exponentValid = false;
 		for (; i < len; i++) {
 			switch (s.charAt(i)) {
-				case '.' -> {
+				case '.': {
 					if (decimal != -1) // Only allow a single decimal point.
 					{
 						break;
@@ -221,7 +221,8 @@ public class NativeGlobal implements IdFunctionCall {
 					decimal = i;
 					continue;
 				}
-				case 'e', 'E' -> {
+				case 'e':
+				case 'E': {
 					if (exponent != -1) {
 						break;
 					} else if (i == len - 1) {
@@ -230,7 +231,8 @@ public class NativeGlobal implements IdFunctionCall {
 					exponent = i;
 					continue;
 				}
-				case '+', '-' -> {
+				case '+':
+				case '-': {
 					// Only allow '+' or '-' after 'e' or 'E'
 					if (exponent != i - 1) {
 						break;
@@ -240,13 +242,22 @@ public class NativeGlobal implements IdFunctionCall {
 					}
 					continue;
 				}
-				case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> {
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9': {
 					if (exponent != -1) {
 						exponentValid = true;
 					}
 					continue;
 				}
-				default -> {
+				default: {
 				}
 			}
 			break;
