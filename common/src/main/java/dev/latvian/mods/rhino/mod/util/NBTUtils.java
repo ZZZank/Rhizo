@@ -526,9 +526,10 @@ public interface NBTUtils {
 		}
 	};
 
-	static Map<String, Tag> accessTagMap(CompoundTag tag) {
-		return tag.tags;
-	}
+	// TODO: accessTagMap
+	// static Map<String, Tag> accessTagMap(CompoundTag tag) {
+	// 	return tag.tags;
+	// }
 
 	TagType<ListTag> LIST_TYPE = new TagType.VariableSize<>() {
 		@Override
