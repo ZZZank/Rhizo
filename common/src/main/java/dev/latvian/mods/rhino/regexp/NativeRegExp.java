@@ -969,31 +969,31 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 		}
 		boolean hasQ = false;
 		switch (src[state.cp]) {
-			case '+' -> {
+			case '+': {
 				state.result = new RENode(REOP_QUANT);
 				state.result.min = 1;
 				state.result.max = -1;
 				/* <PLUS>, <parencount>, <parenindex>, <next> ... <ENDCHILD> */
 				state.progLength += 8;
 				hasQ = true;
-			}
-			case '*' -> {
+			}break;
+			case '*': {
 				state.result = new RENode(REOP_QUANT);
 				state.result.min = 0;
 				state.result.max = -1;
 				/* <STAR>, <parencount>, <parenindex>, <next> ... <ENDCHILD> */
 				state.progLength += 8;
 				hasQ = true;
-			}
-			case '?' -> {
+			}break;
+			case '?': {
 				state.result = new RENode(REOP_QUANT);
 				state.result.min = 0;
 				state.result.max = 1;
 				/* <OPT>, <parencount>, <parenindex>, <next> ... <ENDCHILD> */
 				state.progLength += 8;
 				hasQ = true;
-			}
-			case '{' ->  /* balance '}' */ {
+			}break;
+			case '{':  /* balance '}' */ {
 				int min = 0;
 				int max = -1;
 				int leftCurl = state.cp;
@@ -2573,31 +2573,31 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_compile -> {
+			case Id_compile: {
 				arity = 2;
 				s = "compile";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 0;
 				s = "toSource";
-			}
-			case Id_exec -> {
+			}break;
+			case Id_exec: {
 				arity = 1;
 				s = "exec";
-			}
-			case Id_test -> {
+			}break;
+			case Id_test: {
 				arity = 1;
 				s = "test";
-			}
-			case Id_prefix -> {
+			}break;
+			case Id_prefix: {
 				arity = 1;
 				s = "prefix";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(REGEXP_TAG, id, s, arity);
 	}

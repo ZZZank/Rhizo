@@ -224,11 +224,11 @@ public class BaseFunction extends IdScriptableObject implements Function {
 	@Override
 	protected void setInstanceIdAttributes(int id, int attr) {
 		switch (id) {
-			case Id_prototype -> {
+			case Id_prototype: {
 				prototypePropertyAttributes = attr;
 				return;
 			}
-			case Id_arguments -> {
+			case Id_arguments: {
 				argumentsAttributes = attr;
 				return;
 			}
@@ -250,31 +250,31 @@ public class BaseFunction extends IdScriptableObject implements Function {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 1;
 				s = "toSource";
-			}
-			case Id_apply -> {
+			}break;
+			case Id_apply: {
 				arity = 2;
 				s = "apply";
-			}
-			case Id_call -> {
+			}break;
+			case Id_call: {
 				arity = 1;
 				s = "call";
-			}
-			case Id_bind -> {
+			}break;
+			case Id_bind: {
 				arity = 1;
 				s = "bind";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(FUNCTION_TAG, id, s, arity);
 	}

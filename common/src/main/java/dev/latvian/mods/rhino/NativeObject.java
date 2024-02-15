@@ -138,55 +138,55 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_toLocaleString -> {
+			}break;
+			case Id_toLocaleString: {
 				arity = 0;
 				s = "toLocaleString";
-			}
-			case Id_valueOf -> {
+			}break;
+			case Id_valueOf: {
 				arity = 0;
 				s = "valueOf";
-			}
-			case Id_hasOwnProperty -> {
+			}break;
+			case Id_hasOwnProperty: {
 				arity = 1;
 				s = "hasOwnProperty";
-			}
-			case Id_propertyIsEnumerable -> {
+			}break;
+			case Id_propertyIsEnumerable: {
 				arity = 1;
 				s = "propertyIsEnumerable";
-			}
-			case Id_isPrototypeOf -> {
+			}break;
+			case Id_isPrototypeOf: {
 				arity = 1;
 				s = "isPrototypeOf";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 0;
 				s = "toSource";
-			}
-			case Id___defineGetter__ -> {
+			}break;
+			case Id___defineGetter__: {
 				arity = 2;
 				s = "__defineGetter__";
-			}
-			case Id___defineSetter__ -> {
+			}break;
+			case Id___defineSetter__: {
 				arity = 2;
 				s = "__defineSetter__";
-			}
-			case Id___lookupGetter__ -> {
+			}break;
+			case Id___lookupGetter__: {
 				arity = 1;
 				s = "__lookupGetter__";
-			}
-			case Id___lookupSetter__ -> {
+			}break;
+			case Id___lookupSetter__: {
 				arity = 1;
 				s = "__lookupSetter__";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(OBJECT_TAG, id, s, arity);
 	}

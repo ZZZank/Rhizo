@@ -366,19 +366,19 @@ public final class NativeJSON extends IdScriptableObject {
 			String name;
 			int arity;
 			switch (id) {
-				case Id_toSource -> {
+				case Id_toSource: {
 					arity = 0;
 					name = "toSource";
-				}
-				case Id_parse -> {
+				}break;
+				case Id_parse: {
 					arity = 2;
 					name = "parse";
-				}
-				case Id_stringify -> {
+				}break;
+				case Id_stringify: {
 					arity = 3;
 					name = "stringify";
-				}
-				default -> throw new IllegalStateException(String.valueOf(id));
+				}break;
+				default: throw new IllegalStateException(String.valueOf(id));
 			}
 			initPrototypeMethod(JSON_TAG, id, name, arity);
 		} else {

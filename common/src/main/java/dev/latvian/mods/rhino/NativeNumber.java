@@ -197,39 +197,39 @@ final class NativeNumber extends IdScriptableObject {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 1;
 				s = "toString";
-			}
-			case Id_toLocaleString -> {
+			}break;
+			case Id_toLocaleString: {
 				arity = 1;
 				s = "toLocaleString";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 0;
 				s = "toSource";
-			}
-			case Id_valueOf -> {
+			}break;
+			case Id_valueOf: {
 				arity = 0;
 				s = "valueOf";
-			}
-			case Id_toFixed -> {
+			}break;
+			case Id_toFixed: {
 				arity = 1;
 				s = "toFixed";
-			}
-			case Id_toExponential -> {
+			}break;
+			case Id_toExponential: {
 				arity = 1;
 				s = "toExponential";
-			}
-			case Id_toPrecision -> {
+			}break;
+			case Id_toPrecision: {
 				arity = 1;
 				s = "toPrecision";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(NUMBER_TAG, id, s, arity);
 	}

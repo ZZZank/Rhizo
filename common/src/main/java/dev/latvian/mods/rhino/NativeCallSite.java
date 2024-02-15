@@ -114,67 +114,67 @@ public class NativeCallSite extends IdScriptableObject {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 0;
 				s = "constructor";
-			}
-			case Id_getThis -> {
+			}break;
+			case Id_getThis: {
 				arity = 0;
 				s = "getThis";
-			}
-			case Id_getTypeName -> {
+			}break;
+			case Id_getTypeName: {
 				arity = 0;
 				s = "getTypeName";
-			}
-			case Id_getFunction -> {
+			}break;
+			case Id_getFunction: {
 				arity = 0;
 				s = "getFunction";
-			}
-			case Id_getFunctionName -> {
+			}break;
+			case Id_getFunctionName: {
 				arity = 0;
 				s = "getFunctionName";
-			}
-			case Id_getMethodName -> {
+			}break;
+			case Id_getMethodName: {
 				arity = 0;
 				s = "getMethodName";
-			}
-			case Id_getFileName -> {
+			}break;
+			case Id_getFileName: {
 				arity = 0;
 				s = "getFileName";
-			}
-			case Id_getLineNumber -> {
+			}break;
+			case Id_getLineNumber: {
 				arity = 0;
 				s = "getLineNumber";
-			}
-			case Id_getColumnNumber -> {
+			}break;
+			case Id_getColumnNumber: {
 				arity = 0;
 				s = "getColumnNumber";
-			}
-			case Id_getEvalOrigin -> {
+			}break;
+			case Id_getEvalOrigin: {
 				arity = 0;
 				s = "getEvalOrigin";
-			}
-			case Id_isToplevel -> {
+			}break;
+			case Id_isToplevel: {
 				arity = 0;
 				s = "isToplevel";
-			}
-			case Id_isEval -> {
+			}break;
+			case Id_isEval: {
 				arity = 0;
 				s = "isEval";
-			}
-			case Id_isNative -> {
+			}break;
+			case Id_isNative: {
 				arity = 0;
 				s = "isNative";
-			}
-			case Id_isConstructor -> {
+			}break;
+			case Id_isConstructor: {
 				arity = 0;
 				s = "isConstructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(CALLSITE_TAG, id, s, arity);
 	}

@@ -138,27 +138,27 @@ public class NativeWeakMap extends IdScriptableObject {
 		String s, fnName = null;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 0;
 				s = "constructor";
-			}
-			case Id_delete -> {
+			}break;
+			case Id_delete: {
 				arity = 1;
 				s = "delete";
-			}
-			case Id_get -> {
+			}break;
+			case Id_get: {
 				arity = 1;
 				s = "get";
-			}
-			case Id_has -> {
+			}break;
+			case Id_has: {
 				arity = 1;
 				s = "has";
-			}
-			case Id_set -> {
+			}break;
+			case Id_set: {
 				arity = 2;
 				s = "set";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(MAP_TAG, id, s, fnName, arity);
 	}

@@ -191,19 +191,19 @@ public final class NativeIterator extends IdScriptableObject {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 2;
 				s = "constructor";
-			}
-			case Id_next -> {
+			}break;
+			case Id_next: {
 				arity = 0;
 				s = "next";
-			}
-			case Id___iterator__ -> {
+			}break;
+			case Id___iterator__: {
 				arity = 1;
 				s = ITERATOR_PROPERTY_NAME;
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(ITERATOR_TAG, id, s, arity);
 	}

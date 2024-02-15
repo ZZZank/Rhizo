@@ -96,23 +96,23 @@ class NativeScript extends BaseFunction {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_exec -> {
+			}break;
+			case Id_exec: {
 				arity = 0;
 				s = "exec";
-			}
-			case Id_compile -> {
+			}break;
+			case Id_compile: {
 				arity = 1;
 				s = "compile";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(SCRIPT_TAG, id, s, arity);
 	}
@@ -124,20 +124,20 @@ class NativeScript extends BaseFunction {
 		}
 		int id = f.methodId();
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				String source = (args.length == 0) ? "" : ScriptRuntime.toString(args[0]);
 				Script script = compile(cx, source);
 				NativeScript nscript = new NativeScript(script);
 				ScriptRuntime.setObjectProtoAndParent(nscript, scope);
 				return nscript;
 			}
-			case Id_toString -> {
+			case Id_toString: {
 				return "not_supported";
 			}
-			case Id_exec -> {
+			case Id_exec: {
 				throw Context.reportRuntimeError1("msg.cant.call.indirect", "exec");
 			}
-			case Id_compile -> {
+			case Id_compile: {
 				NativeScript real = realThis(thisObj, f);
 				String source = ScriptRuntime.toString(args, 0);
 				real.script = compile(cx, source);

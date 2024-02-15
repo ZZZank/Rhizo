@@ -543,203 +543,203 @@ final class NativeString extends IdScriptableObject implements Wrapper {
 		String s, fnName = null;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 0;
 				s = "toSource";
-			}
-			case Id_valueOf -> {
+			}break;
+			case Id_valueOf: {
 				arity = 0;
 				s = "valueOf";
-			}
-			case Id_charAt -> {
+			}break;
+			case Id_charAt: {
 				arity = 1;
 				s = "charAt";
-			}
-			case Id_charCodeAt -> {
+			}break;
+			case Id_charCodeAt: {
 				arity = 1;
 				s = "charCodeAt";
-			}
-			case Id_indexOf -> {
+			}break;
+			case Id_indexOf: {
 				arity = 1;
 				s = "indexOf";
-			}
-			case Id_lastIndexOf -> {
+			}break;
+			case Id_lastIndexOf: {
 				arity = 1;
 				s = "lastIndexOf";
-			}
-			case Id_split -> {
+			}break;
+			case Id_split: {
 				arity = 2;
 				s = "split";
-			}
-			case Id_substring -> {
+			}break;
+			case Id_substring: {
 				arity = 2;
 				s = "substring";
-			}
-			case Id_toLowerCase -> {
+			}break;
+			case Id_toLowerCase: {
 				arity = 0;
 				s = "toLowerCase";
-			}
-			case Id_toUpperCase -> {
+			}break;
+			case Id_toUpperCase: {
 				arity = 0;
 				s = "toUpperCase";
-			}
-			case Id_substr -> {
+			}break;
+			case Id_substr: {
 				arity = 2;
 				s = "substr";
-			}
-			case Id_concat -> {
+			}break;
+			case Id_concat: {
 				arity = 1;
 				s = "concat";
-			}
-			case Id_slice -> {
+			}break;
+			case Id_slice: {
 				arity = 2;
 				s = "slice";
-			}
-			case Id_bold -> {
+			}break;
+			case Id_bold: {
 				arity = 0;
 				s = "bold";
-			}
-			case Id_italics -> {
+			}break;
+			case Id_italics: {
 				arity = 0;
 				s = "italics";
-			}
-			case Id_fixed -> {
+			}break;
+			case Id_fixed: {
 				arity = 0;
 				s = "fixed";
-			}
-			case Id_strike -> {
+			}break;
+			case Id_strike: {
 				arity = 0;
 				s = "strike";
-			}
-			case Id_small -> {
+			}break;
+			case Id_small: {
 				arity = 0;
 				s = "small";
-			}
-			case Id_big -> {
+			}break;
+			case Id_big: {
 				arity = 0;
 				s = "big";
-			}
-			case Id_blink -> {
+			}break;
+			case Id_blink: {
 				arity = 0;
 				s = "blink";
-			}
-			case Id_sup -> {
+			}break;
+			case Id_sup: {
 				arity = 0;
 				s = "sup";
-			}
-			case Id_sub -> {
+			}break;
+			case Id_sub: {
 				arity = 0;
 				s = "sub";
-			}
-			case Id_fontsize -> {
+			}break;
+			case Id_fontsize: {
 				arity = 0;
 				s = "fontsize";
-			}
-			case Id_fontcolor -> {
+			}break;
+			case Id_fontcolor: {
 				arity = 0;
 				s = "fontcolor";
-			}
-			case Id_link -> {
+			}break;
+			case Id_link: {
 				arity = 0;
 				s = "link";
-			}
-			case Id_anchor -> {
+			}break;
+			case Id_anchor: {
 				arity = 0;
 				s = "anchor";
-			}
-			case Id_equals -> {
+			}break;
+			case Id_equals: {
 				arity = 1;
 				s = "equals";
-			}
-			case Id_equalsIgnoreCase -> {
+			}break;
+			case Id_equalsIgnoreCase: {
 				arity = 1;
 				s = "equalsIgnoreCase";
-			}
-			case Id_match -> {
+			}break;
+			case Id_match: {
 				arity = 1;
 				s = "match";
-			}
-			case Id_search -> {
+			}break;
+			case Id_search: {
 				arity = 1;
 				s = "search";
-			}
-			case Id_replace -> {
+			}break;
+			case Id_replace: {
 				arity = 2;
 				s = "replace";
-			}
-			case Id_localeCompare -> {
+			}break;
+			case Id_localeCompare: {
 				arity = 1;
 				s = "localeCompare";
-			}
-			case Id_toLocaleLowerCase -> {
+			}break;
+			case Id_toLocaleLowerCase: {
 				arity = 0;
 				s = "toLocaleLowerCase";
-			}
-			case Id_toLocaleUpperCase -> {
+			}break;
+			case Id_toLocaleUpperCase: {
 				arity = 0;
 				s = "toLocaleUpperCase";
-			}
-			case Id_trim -> {
+			}break;
+			case Id_trim: {
 				arity = 0;
 				s = "trim";
-			}
-			case Id_trimLeft -> {
+			}break;
+			case Id_trimLeft: {
 				arity = 0;
 				s = "trimLeft";
-			}
-			case Id_trimRight -> {
+			}break;
+			case Id_trimRight: {
 				arity = 0;
 				s = "trimRight";
-			}
-			case Id_includes -> {
+			}break;
+			case Id_includes: {
 				arity = 1;
 				s = "includes";
-			}
-			case Id_startsWith -> {
+			}break;
+			case Id_startsWith: {
 				arity = 1;
 				s = "startsWith";
-			}
-			case Id_endsWith -> {
+			}break;
+			case Id_endsWith: {
 				arity = 1;
 				s = "endsWith";
-			}
-			case Id_normalize -> {
+			}break;
+			case Id_normalize: {
 				arity = 0;
 				s = "normalize";
-			}
-			case Id_repeat -> {
+			}break;
+			case Id_repeat: {
 				arity = 1;
 				s = "repeat";
-			}
-			case Id_codePointAt -> {
+			}break;
+			case Id_codePointAt: {
 				arity = 1;
 				s = "codePointAt";
-			}
-			case Id_padStart -> {
+			}break;
+			case Id_padStart: {
 				arity = 1;
 				s = "padStart";
-			}
-			case Id_padEnd -> {
+			}break;
+			case Id_padEnd: {
 				arity = 1;
 				s = "padEnd";
-			}
-			case Id_trimStart -> {
+			}break;
+			case Id_trimStart: {
 				arity = 0;
 				s = "trimStart";
-			}
-			case Id_trimEnd -> {
+			}break;
+			case Id_trimEnd: {
 				arity = 0;
 				s = "trimEnd";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(STRING_TAG, id, s, fnName, arity);
 	}

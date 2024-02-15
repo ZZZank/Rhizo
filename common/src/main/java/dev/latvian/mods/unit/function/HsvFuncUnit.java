@@ -45,37 +45,37 @@ public class HsvFuncUnit extends FuncUnit {
 		double dg;
 		double db;
 		switch (i) {
-			case 0 -> {
+			case 0: {
 				dr = v;
 				dg = m;
 				db = k;
-			}
-			case 1 -> {
+			}break;
+			case 1: {
 				dr = l;
 				dg = v;
 				db = k;
-			}
-			case 2 -> {
+			}break;
+			case 2: {
 				dr = k;
 				dg = v;
 				db = m;
-			}
-			case 3 -> {
+			}break;
+			case 3: {
 				dr = k;
 				dg = l;
 				db = v;
-			}
-			case 4 -> {
+			}break;
+			case 4: {
 				dr = m;
 				dg = k;
 				db = v;
-			}
-			case 5 -> {
+			}break;
+			case 5: {
 				dr = v;
 				dg = k;
 				db = l;
-			}
-			default -> {
+			}break;
+			default: {
 				dr = 0D;
 				dg = 0D;
 				db = 0D;

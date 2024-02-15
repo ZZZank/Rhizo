@@ -222,19 +222,19 @@ final class NativeError extends IdScriptableObject {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 0;
 				s = "toSource";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(ERROR_TAG, id, s, arity);
 	}

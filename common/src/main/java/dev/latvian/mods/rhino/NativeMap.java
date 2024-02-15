@@ -229,61 +229,61 @@ public class NativeMap extends IdScriptableObject {
 	@Override
 	protected void initPrototypeId(int id) {
 		switch (id) {
-			case SymbolId_getSize -> {
+			case SymbolId_getSize: {
 				initPrototypeMethod(MAP_TAG, id, NativeSet.GETSIZE, "get size", 0);
 				return;
-			}
-			case SymbolId_toStringTag -> {
+			}break;
+			case SymbolId_toStringTag: {
 				initPrototypeValue(SymbolId_toStringTag, SymbolKey.TO_STRING_TAG, getClassName(), DONTENUM | READONLY);
 				return;
-			}
+			}break;
 			// fallthrough
 		}
 
 		String s, fnName = null;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 0;
 				s = "constructor";
-			}
-			case Id_set -> {
+			}break;
+			case Id_set: {
 				arity = 2;
 				s = "set";
-			}
-			case Id_get -> {
+			}break;
+			case Id_get: {
 				arity = 1;
 				s = "get";
-			}
-			case Id_delete -> {
+			}break;
+			case Id_delete: {
 				arity = 1;
 				s = "delete";
-			}
-			case Id_has -> {
+			}break;
+			case Id_has: {
 				arity = 1;
 				s = "has";
-			}
-			case Id_clear -> {
+			}break;
+			case Id_clear: {
 				arity = 0;
 				s = "clear";
-			}
-			case Id_keys -> {
+			}break;
+			case Id_keys: {
 				arity = 0;
 				s = "keys";
-			}
-			case Id_values -> {
+			}break;
+			case Id_values: {
 				arity = 0;
 				s = "values";
-			}
-			case Id_entries -> {
+			}break;
+			case Id_entries: {
 				arity = 0;
 				s = "entries";
-			}
-			case Id_forEach -> {
+			}break;
+			case Id_forEach: {
 				arity = 1;
 				s = "forEach";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(MAP_TAG, id, s, fnName, arity);
 	}

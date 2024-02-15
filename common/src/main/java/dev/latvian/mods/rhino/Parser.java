@@ -2133,14 +2133,14 @@ public class Parser {
 
 		/*
 		switch (declType) {
-			case Token.LET -> {
+			case Token.LET: {
 				if (!ignoreNotInBlock && ((currentScope.getType() == Token.IF) || currentScope instanceof Loop)) {
 					addError("msg.let.decl.not.in.block");
 					return;
 				}
 				currentScope.putSymbol(new Symbol(declType, name));
 			}
-			case Token.VAR, Token.CONST, Token.FUNCTION -> {
+			case Token.VAR, Token.CONST, Token.FUNCTION: {
 				if (symbol != null) {
 					if (symDeclType == Token.VAR) {
 						addStrictWarning("msg.var.redecl", name);
@@ -2151,7 +2151,7 @@ public class Parser {
 					currentScriptOrFn.putSymbol(new Symbol(declType, name));
 				}
 			}
-			case Token.LP -> {
+			case Token.LP: {
 				if (symbol != null) {
 					// must be duplicate parameter. Second parameter hides the
 					// first, so go ahead and add the second parameter
@@ -2159,7 +2159,7 @@ public class Parser {
 				}
 				currentScriptOrFn.putSymbol(new Symbol(declType, name));
 			}
-			default -> throw codeBug();
+			default: throw codeBug();
 		}
 		 */
 	}
@@ -3279,18 +3279,18 @@ public class Parser {
 		}
 		ObjectProperty pn = new ObjectProperty(pos);
 		switch (entryKind) {
-			case GET_ENTRY -> {
+			case GET_ENTRY: {
 				pn.setIsGetterMethod();
 				fn.setFunctionIsGetterMethod();
-			}
-			case SET_ENTRY -> {
+			}break;
+			case SET_ENTRY: {
 				pn.setIsSetterMethod();
 				fn.setFunctionIsSetterMethod();
-			}
-			case METHOD_ENTRY -> {
+			}break;
+			case METHOD_ENTRY: {
 				pn.setIsNormalMethod();
 				fn.setFunctionIsNormalMethod();
-			}
+			}break;
 		}
 		int end = getNodeEnd(fn);
 		pn.setLeft(propName);

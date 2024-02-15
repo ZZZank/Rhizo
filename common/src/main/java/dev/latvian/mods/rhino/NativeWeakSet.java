@@ -121,23 +121,23 @@ public class NativeWeakSet extends IdScriptableObject {
 		String s, fnName = null;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 0;
 				s = "constructor";
-			}
-			case Id_add -> {
+			}break;
+			case Id_add: {
 				arity = 1;
 				s = "add";
-			}
-			case Id_delete -> {
+			}break;
+			case Id_delete: {
 				arity = 1;
 				s = "delete";
-			}
-			case Id_has -> {
+			}break;
+			case Id_has: {
 				arity = 1;
 				s = "has";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(MAP_TAG, id, s, fnName, arity);
 	}

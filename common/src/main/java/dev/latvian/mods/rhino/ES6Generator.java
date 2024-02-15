@@ -91,19 +91,19 @@ public final class ES6Generator extends IdScriptableObject {
 		String s;
 		int arity;
 		switch (id) {
-			case Id_next -> {
+			case Id_next: {
 				arity = 1;
 				s = "next";
-			}
-			case Id_return -> {
+			}break;
+			case Id_return: {
 				arity = 1;
 				s = "return";
-			}
-			case Id_throw -> {
+			}break;
+			case Id_throw: {
 				arity = 1;
 				s = "throw";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(GENERATOR_TAG, id, s, arity);
 	}

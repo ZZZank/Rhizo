@@ -1547,131 +1547,131 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		String s, fnName = null;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 1;
 				s = "constructor";
-			}
-			case Id_toString -> {
+			}break;
+			case Id_toString: {
 				arity = 0;
 				s = "toString";
-			}
-			case Id_toLocaleString -> {
+			}break;
+			case Id_toLocaleString: {
 				arity = 0;
 				s = "toLocaleString";
-			}
-			case Id_toSource -> {
+			}break;
+			case Id_toSource: {
 				arity = 0;
 				s = "toSource";
-			}
-			case Id_join -> {
+			}break;
+			case Id_join: {
 				arity = 1;
 				s = "join";
-			}
-			case Id_reverse -> {
+			}break;
+			case Id_reverse: {
 				arity = 0;
 				s = "reverse";
-			}
-			case Id_sort -> {
+			}break;
+			case Id_sort: {
 				arity = 1;
 				s = "sort";
-			}
-			case Id_push -> {
+			}break;
+			case Id_push: {
 				arity = 1;
 				s = "push";
-			}
-			case Id_pop -> {
+			}break;
+			case Id_pop: {
 				arity = 0;
 				s = "pop";
-			}
-			case Id_shift -> {
+			}break;
+			case Id_shift: {
 				arity = 0;
 				s = "shift";
-			}
-			case Id_unshift -> {
+			}break;
+			case Id_unshift: {
 				arity = 1;
 				s = "unshift";
-			}
-			case Id_splice -> {
+			}break;
+			case Id_splice: {
 				arity = 2;
 				s = "splice";
-			}
-			case Id_concat -> {
+			}break;
+			case Id_concat: {
 				arity = 1;
 				s = "concat";
-			}
-			case Id_slice -> {
+			}break;
+			case Id_slice: {
 				arity = 2;
 				s = "slice";
-			}
-			case Id_indexOf -> {
+			}break;
+			case Id_indexOf: {
 				arity = 1;
 				s = "indexOf";
-			}
-			case Id_lastIndexOf -> {
+			}break;
+			case Id_lastIndexOf: {
 				arity = 1;
 				s = "lastIndexOf";
-			}
-			case Id_every -> {
+			}break;
+			case Id_every: {
 				arity = 1;
 				s = "every";
-			}
-			case Id_filter -> {
+			}break;
+			case Id_filter: {
 				arity = 1;
 				s = "filter";
-			}
-			case Id_forEach -> {
+			}break;
+			case Id_forEach: {
 				arity = 1;
 				s = "forEach";
-			}
-			case Id_map -> {
+			}break;
+			case Id_map: {
 				arity = 1;
 				s = "map";
-			}
-			case Id_some -> {
+			}break;
+			case Id_some: {
 				arity = 1;
 				s = "some";
-			}
-			case Id_find -> {
+			}break;
+			case Id_find: {
 				arity = 1;
 				s = "find";
-			}
-			case Id_findIndex -> {
+			}break;
+			case Id_findIndex: {
 				arity = 1;
 				s = "findIndex";
-			}
-			case Id_reduce -> {
+			}break;
+			case Id_reduce: {
 				arity = 1;
 				s = "reduce";
-			}
-			case Id_reduceRight -> {
+			}break;
+			case Id_reduceRight: {
 				arity = 1;
 				s = "reduceRight";
-			}
-			case Id_fill -> {
+			}break;
+			case Id_fill: {
 				arity = 1;
 				s = "fill";
-			}
-			case Id_keys -> {
+			}break;
+			case Id_keys: {
 				arity = 0;
 				s = "keys";
-			}
-			case Id_values -> {
+			}break;
+			case Id_values: {
 				arity = 0;
 				s = "values";
-			}
-			case Id_entries -> {
+			}break;
+			case Id_entries: {
 				arity = 0;
 				s = "entries";
-			}
-			case Id_includes -> {
+			}break;
+			case Id_includes: {
 				arity = 1;
 				s = "includes";
-			}
-			case Id_copyWithin -> {
+			}break;
+			case Id_copyWithin: {
 				arity = 2;
 				s = "copyWithin";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 
 		initPrototypeMethod(ARRAY_TAG, id, s, fnName, arity);

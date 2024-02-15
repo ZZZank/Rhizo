@@ -921,7 +921,7 @@ class CodeGenerator extends Icode {
 		int incrDecrMask = node.getExistingIntProp(Node.INCRDECR_PROP);
 		int childType = child.getType();
 		switch (childType) {
-			case Token.GETVAR -> {
+			case Token.GETVAR: {
 				if (itsData.itsNeedsActivation) {
 					Kit.codeBug();
 				}
@@ -929,21 +929,21 @@ class CodeGenerator extends Icode {
 				addVarOp(Icode_VAR_INC_DEC, i);
 				addUint8(incrDecrMask);
 				stackChange(1);
-			}
-			case Token.NAME -> {
+			}break;
+			case Token.NAME: {
 				String name = child.getString();
 				addStringOp(Icode_NAME_INC_DEC, name);
 				addUint8(incrDecrMask);
 				stackChange(1);
-			}
-			case Token.GETPROP -> {
+			}break;
+			case Token.GETPROP: {
 				Node object = child.getFirstChild();
 				visitExpression(object, 0);
 				String property = object.getNext().getString();
 				addStringOp(Icode_PROP_INC_DEC, property);
 				addUint8(incrDecrMask);
-			}
-			case Token.GETELEM -> {
+			}break;
+			case Token.GETELEM: {
 				Node object = child.getFirstChild();
 				visitExpression(object, 0);
 				Node index = object.getNext();
@@ -951,14 +951,14 @@ class CodeGenerator extends Icode {
 				addIcode(Icode_ELEM_INC_DEC);
 				addUint8(incrDecrMask);
 				stackChange(-1);
-			}
-			case Token.GET_REF -> {
+			}break;
+			case Token.GET_REF: {
 				Node ref = child.getFirstChild();
 				visitExpression(ref, 0);
 				addIcode(Icode_REF_INC_DEC);
 				addUint8(incrDecrMask);
-			}
-			default -> throw badTree(node);
+			}break;
+			default: throw badTree(node);
 		}
 	}
 

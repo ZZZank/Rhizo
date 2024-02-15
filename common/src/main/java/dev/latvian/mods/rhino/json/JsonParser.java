@@ -110,19 +110,19 @@ public class JsonParser {
 		while (pos < length) {
 			char c = src.charAt(pos++);
 			switch (c) {
-				case '}' -> {
+				case '}': {
 					if (!needsComma) {
 						throw new ParseException("Unexpected comma in object literal");
 					}
 					return object;
-				}
-				case ',' -> {
+				}break;
+				case ',': {
 					if (!needsComma) {
 						throw new ParseException("Unexpected comma in object literal");
 					}
 					needsComma = false;
-				}
-				case '"' -> {
+				}break;
+				case '"': {
 					if (needsComma) {
 						throw new ParseException("Missing comma in object literal");
 					}
@@ -136,8 +136,8 @@ public class JsonParser {
 						object.put((int) index, object, value);
 					}
 					needsComma = true;
-				}
-				default -> throw new ParseException("Unexpected token in object literal");
+				}break;
+				default: throw new ParseException("Unexpected token in object literal");
 			}
 			consumeWhitespace();
 		}
@@ -156,21 +156,21 @@ public class JsonParser {
 		while (pos < length) {
 			char c = src.charAt(pos);
 			switch (c) {
-				case ']' -> {
+				case ']': {
 					if (!needsComma) {
 						throw new ParseException("Unexpected comma in array literal");
 					}
 					pos += 1;
 					return cx.newArray(scope, list.toArray());
 				}
-				case ',' -> {
+				case ',': {
 					if (!needsComma) {
 						throw new ParseException("Unexpected comma in array literal");
 					}
 					needsComma = false;
 					pos += 1;
-				}
-				default -> {
+				}break;
+				default: {
 					if (needsComma) {
 						throw new ParseException("Missing comma in array literal");
 					}

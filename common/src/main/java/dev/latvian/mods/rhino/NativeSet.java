@@ -198,11 +198,11 @@ public class NativeSet extends IdScriptableObject {
 	@Override
 	protected void initPrototypeId(int id) {
 		switch (id) {
-			case SymbolId_getSize -> {
+			case SymbolId_getSize: {
 				initPrototypeMethod(SET_TAG, id, GETSIZE, "get size", 0);
 				return;
 			}
-			case SymbolId_toStringTag -> {
+			case SymbolId_toStringTag: {
 				initPrototypeValue(SymbolId_toStringTag, SymbolKey.TO_STRING_TAG, getClassName(), DONTENUM | READONLY);
 				return;
 			}
@@ -212,39 +212,39 @@ public class NativeSet extends IdScriptableObject {
 		String s, fnName = null;
 		int arity;
 		switch (id) {
-			case Id_constructor -> {
+			case Id_constructor: {
 				arity = 0;
 				s = "constructor";
-			}
-			case Id_add -> {
+			}break;
+			case Id_add: {
 				arity = 1;
 				s = "add";
-			}
-			case Id_delete -> {
+			}break;
+			case Id_delete: {
 				arity = 1;
 				s = "delete";
-			}
-			case Id_has -> {
+			}break;
+			case Id_has: {
 				arity = 1;
 				s = "has";
-			}
-			case Id_clear -> {
+			}break;
+			case Id_clear: {
 				arity = 0;
 				s = "clear";
-			}
-			case Id_entries -> {
+			}break;
+			case Id_entries: {
 				arity = 0;
 				s = "entries";
-			}
-			case Id_values -> {
+			}break;
+			case Id_values: {
 				arity = 0;
 				s = "values";
-			}
-			case Id_forEach -> {
+			}break;
+			case Id_forEach: {
 				arity = 1;
 				s = "forEach";
-			}
-			default -> throw new IllegalArgumentException(String.valueOf(id));
+			}break;
+			default: throw new IllegalArgumentException(String.valueOf(id));
 		}
 		initPrototypeMethod(SET_TAG, id, s, fnName, arity);
 	}
