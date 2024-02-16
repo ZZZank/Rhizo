@@ -2140,7 +2140,9 @@ public class Parser {
 				}
 				currentScope.putSymbol(new Symbol(declType, name));
 			}
-			case Token.VAR, Token.CONST, Token.FUNCTION: {
+			case Token.VAR:
+			case Token.CONST:
+			case Token.FUNCTION: {
 				if (symbol != null) {
 					if (symDeclType == Token.VAR) {
 						addStrictWarning("msg.var.redecl", name);
@@ -2589,7 +2591,8 @@ public class Parser {
 		for (; ; ) {
 			int tt = peekToken();
 			switch (tt) {
-				case Token.DOT, Token.OPTIONAL_CHAINING:
+				case Token.DOT:
+				case Token.OPTIONAL_CHAINING:
 					lineno = ts.lineno;
 					pn = propertyAccess(tt, pn);
 					pn.setLineno(lineno);
@@ -3484,7 +3487,8 @@ public class Parser {
 		switch (left.getType()) {
 			case Token.ARRAYLIT: empty = destructuringArray((ArrayLiteral) left, variableType, tempName, comma, destructuringNames);break;
 			case Token.OBJECTLIT: empty = destructuringObject((ObjectLiteral) left, variableType, tempName, comma, destructuringNames);break;
-			case Token.GETPROP, Token.GETELEM: {
+			case Token.GETPROP:
+			case Token.GETELEM: {
 				switch (variableType) {
 					case Token.CONST:
 					case Token.LET:

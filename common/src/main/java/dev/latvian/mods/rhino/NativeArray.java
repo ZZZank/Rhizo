@@ -1372,7 +1372,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		}
 		switch (id) {
 			case Id_every: return Boolean.TRUE;
-			case Id_filter, Id_map: return array;
+			case Id_filter:
+			case Id_map: return array;
 			case Id_some: return Boolean.FALSE;
 			case Id_findIndex: return ScriptRuntime.wrapNumber(-1);
 			default: return Undefined.instance;
