@@ -54,11 +54,11 @@ subprojects {
 
 	compileJava {
 		options.encoding = "UTF-8"
-		options.release.set(17)
+		options.release.set(8)
 	}
 
 	java {
-		sourceCompatibility = targetCompatibility = '17'
+		sourceCompatibility = targetCompatibility = '8'
 		withSourcesJar()
 	}
 
