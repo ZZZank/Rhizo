@@ -349,10 +349,11 @@ public class JavaMembers {
 				bp.setters.call(cx, ScriptableObject.getTopLevelScope(scope), scope, args);
 			}
 		} else {
-			if (!(member instanceof Field field)) {
+			if (!(member instanceof Field)) {
 				String str = (member == null) ? "msg.java.internal.private" : "msg.java.method.assign";
 				throw Context.reportRuntimeError1(str, name);
 			}
+			Field field = (Field) member;
 			int fieldModifiers = field.getModifiers();
 
 			if (Modifier.isFinal(fieldModifiers)) {

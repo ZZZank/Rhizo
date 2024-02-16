@@ -323,9 +323,10 @@ public interface Scriptable extends IdEnumerationIterator {
 	default boolean enumerationIteratorHasNext(Context cx, Consumer<Object> currentId) {
 		Object v = ScriptableObject.getProperty(this, ES6Iterator.NEXT_METHOD);
 
-		if (!(v instanceof Callable f)) {
+		if (!(v instanceof Callable)) {
 			throw ScriptRuntime.notFunctionError(this, ES6Iterator.NEXT_METHOD);
 		}
+		Callable f = (Callable) v;
 
 		Scriptable scope = getParentScope();
 		Object r = f.call(cx, scope, this, ScriptRuntime.EMPTY_OBJECTS);
@@ -339,9 +340,10 @@ public interface Scriptable extends IdEnumerationIterator {
 	default boolean enumerationIteratorNext(Context cx, Consumer<Object> currentId) throws JavaScriptException {
 		Object v = ScriptableObject.getProperty(this, ES6Iterator.NEXT_METHOD);
 
-		if (!(v instanceof Callable f)) {
+		if (!(v instanceof Callable)) {
 			return false;
 		}
+		Callable f = (Callable) v;
 
 		Scriptable scope = getParentScope();
 		currentId.accept(f.call(cx, scope, this, ScriptRuntime.EMPTY_OBJECTS));

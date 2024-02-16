@@ -92,8 +92,11 @@ public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
 	public UnitToken normalize() {
 		if (infix.size() == 1) {
 			return infix.get(0);
-		} else if (infix.size() == 3 && infix.get(1) instanceof UnitSymbol symbol && symbol.op != null) {
-			return new OpResultUnitToken(symbol, infix.get(0), infix.get(2));
+		} else if (infix.size() == 3 && infix.get(1) instanceof UnitSymbol) {
+			UnitSymbol symbol = (UnitSymbol) infix.get(1);
+			if (symbol.op != null) {
+				return new OpResultUnitToken(symbol, infix.get(0), infix.get(2));
+			}
 		}
 
 		return this;

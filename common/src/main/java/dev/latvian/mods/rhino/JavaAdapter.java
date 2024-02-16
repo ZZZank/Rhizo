@@ -39,9 +39,10 @@ public final class JavaAdapter implements IdFunctionCall {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof JavaAdapterSignature sig)) {
+			if (!(obj instanceof JavaAdapterSignature)) {
 				return false;
 			}
+			JavaAdapterSignature sig = (JavaAdapterSignature) obj;
 			if (superClass != sig.superClass) {
 				return false;
 			}
@@ -215,11 +216,13 @@ public final class JavaAdapter implements IdFunctionCall {
 		Object[] ids = ScriptableObject.getPropertyIds(obj);
 		ObjToIntMap map = new ObjToIntMap(ids.length);
 		for (int i = 0; i != ids.length; ++i) {
-			if (!(ids[i] instanceof String id)) {
+			if (!(ids[i] instanceof String)) {
 				continue;
 			}
+			String id = (String) ids[i];
 			Object value = ScriptableObject.getProperty(obj, id);
-			if (value instanceof Function f) {
+			if (value instanceof Function) {
+			    Function f = (Function) value;
 				int length = ScriptRuntime.toInt32(ScriptableObject.getProperty(f, "length"));
 				if (length < 0) {
 					length = 0;

@@ -172,9 +172,10 @@ public class NativeSet extends IdScriptableObject {
 	}
 
 	private Object js_forEach(Context cx, Scriptable scope, Object arg1, Object arg2) {
-		if (!(arg1 instanceof final Callable f)) {
+		if (!(arg1 instanceof Callable)) {
 			throw ScriptRuntime.notFunctionError(arg1);
 		}
+		final Callable f = (Callable) arg1;
 
 		boolean isStrict = cx.isStrictMode();
 		Iterator<Hashtable.Entry> i = entries.iterator();

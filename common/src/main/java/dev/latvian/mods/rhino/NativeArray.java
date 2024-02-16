@@ -902,8 +902,10 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		long newlen = srclen + offset;
 
 		// First, optimize for a pair of native, dense arrays
-		if ((newlen <= Integer.MAX_VALUE) && (result instanceof final NativeArray denseResult)) {
-			if (denseResult.denseOnly && (arg instanceof final NativeArray denseArg)) {
+		if ((newlen <= Integer.MAX_VALUE) && (result instanceof NativeArray)) {
+			final NativeArray denseResult = (NativeArray) result;
+			if (denseResult.denseOnly && (arg instanceof NativeArray)) {
+				final NativeArray denseArg = (NativeArray) arg;
 				if (denseArg.denseOnly) {
 					// Now we can optimize
 					denseResult.ensureCapacity((int) newlen);
@@ -1249,7 +1251,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		// Optimize for a native array. If properties were overridden with setters
 		// and other non-default options then we won't get here.
-		if ((o instanceof NativeArray na) && (count <= Integer.MAX_VALUE)) {
+		if ((o instanceof NativeArray) && (count <= Integer.MAX_VALUE)) {
+			NativeArray na = (NativeArray) o;
 			if (na.denseOnly) {
 				for (; count > 0; count--) {
 					na.dense[(int) to] = na.dense[(int) from];
@@ -1293,9 +1296,10 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		long length = getLengthProperty(cx, o, id == Id_map);
 		Object callbackArg = args.length > 0 ? args[0] : Undefined.instance;
-		if (callbackArg == null || !(callbackArg instanceof Function f)) {
+		if (callbackArg == null || !(callbackArg instanceof Function)) {
 			throw ScriptRuntime.notFunctionError(callbackArg);
 		}
+		Function f = (Function) callbackArg;
 		if (callbackArg instanceof NativeRegExp) {
 			// Previously, it was allowed to pass RegExp instance as a callback (it implements Function)
 			// But according to ES2015 21.2.6 Properties of RegExp Instances:
@@ -1383,9 +1387,10 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		long length = getLengthProperty(cx, o, false);
 		Object callbackArg = args.length > 0 ? args[0] : Undefined.instance;
-		if (callbackArg == null || !(callbackArg instanceof Function f)) {
+		if (callbackArg == null || !(callbackArg instanceof Function)) {
 			throw ScriptRuntime.notFunctionError(callbackArg);
 		}
+		Function f = (Function) callbackArg;
 		Scriptable parent = getTopLevelScope(f);
 		// hack to serve both reduce and reduceRight with the same loop
 		boolean movingLeft = id == Id_reduce;

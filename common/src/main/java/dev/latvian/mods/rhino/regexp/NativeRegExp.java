@@ -2291,7 +2291,8 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 	}
 
 	Scriptable compile(Context cx, Scriptable scope, Object[] args) {
-		if (args.length > 0 && args[0] instanceof NativeRegExp thatObj) {
+		if (args.length > 0 && args[0] instanceof NativeRegExp) {
+			NativeRegExp thatObj = (NativeRegExp) args[0];
 			if (args.length > 1 && args[1] != Undefined.instance) {
 				// report error
 				throw ScriptRuntime.typeError0("msg.bad.regexp.compile");

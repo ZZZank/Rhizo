@@ -131,9 +131,10 @@ public class ClassFileWriter {
 			if (obj == this) {
 				return true;
 			}
-			if (!(obj instanceof MHandle mh)) {
+			if (!(obj instanceof MHandle)) {
 				return false;
 			}
+			MHandle mh = (MHandle) obj;
 			return tag == mh.tag && owner.equals(mh.owner) && name.equals(mh.name) && desc.equals(mh.desc);
 		}
 

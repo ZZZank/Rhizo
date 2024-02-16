@@ -211,9 +211,10 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 			case Id_toLocaleString: {
 				Object toString = getProperty(thisObj, "toString");
-				if (!(toString instanceof Callable fun)) {
+				if (!(toString instanceof Callable)) {
 					throw ScriptRuntime.notFunctionError(toString);
 				}
+				Callable fun = (Callable) toString;
 				return fun.call(cx, scope, thisObj, ScriptRuntime.EMPTY_OBJECTS);
 			}
 
@@ -256,7 +257,8 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 				if (arg instanceof Symbol) {
 					result = ((SymbolScriptable) thisObj).has((Symbol) arg, thisObj);
-					if (result && thisObj instanceof ScriptableObject so) {
+					if (result && thisObj instanceof ScriptableObject) {
+						ScriptableObject so = (ScriptableObject) thisObj;
 						int attrs = so.getAttributes((Symbol) arg);
 						result = ((attrs & DONTENUM) == 0);
 					}
@@ -267,13 +269,15 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 					try {
 						if (s.stringId == null) {
 							result = thisObj.has(s.index, thisObj);
-							if (result && thisObj instanceof ScriptableObject so) {
+							if (result && thisObj instanceof ScriptableObject) {
+								ScriptableObject so = (ScriptableObject) thisObj;
 								int attrs = so.getAttributes(s.index);
 								result = ((attrs & DONTENUM) == 0);
 							}
 						} else {
 							result = thisObj.has(s.stringId, thisObj);
-							if (result && thisObj instanceof ScriptableObject so) {
+							if (result && thisObj instanceof ScriptableObject) {
+								ScriptableObject so = (ScriptableObject) thisObj;
 								int attrs = so.getAttributes(s.stringId);
 								result = ((attrs & DONTENUM) == 0);
 							}
@@ -295,7 +299,8 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 				}
 
 				boolean result = false;
-				if (args.length != 0 && args[0] instanceof Scriptable v) {
+				if (args.length != 0 && args[0] instanceof Scriptable) {
+					Scriptable v = (Scriptable) args[0];
 					do {
 						v = v.getPrototype();
 						if (v == thisObj) {
@@ -311,13 +316,15 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 				return ScriptRuntime.defaultObjectToSource(cx, scope, thisObj, args);
 			case Id___defineGetter__:
 			case Id___defineSetter__: {
-				if (args.length < 2 || !(args[1] instanceof Callable getterOrSetter)) {
+				if (args.length < 2 || !(args[1] instanceof Callable)) {
 					Object badArg = (args.length >= 2 ? args[1] : Undefined.instance);
 					throw ScriptRuntime.notFunctionError(badArg);
 				}
-				if (!(thisObj instanceof ScriptableObject so)) {
+				Callable getterOrSetter = (Callable) args[1];
+				if (!(thisObj instanceof ScriptableObject)) {
 					throw Context.reportRuntimeError2("msg.extend.scriptable", thisObj == null ? "null" : thisObj.getClass().getName(), String.valueOf(args[0]));
 				}
+				ScriptableObject so = (ScriptableObject) thisObj;
 				ScriptRuntime.StringIdOrIndex s = ScriptRuntime.toStringIdOrIndex(cx, args[0]);
 				int index = s.stringId != null ? 0 : s.index;
 				boolean isSetter = (id == Id___defineSetter__);
@@ -330,9 +337,10 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 			case Id___lookupGetter__:
 			case Id___lookupSetter__: {
-				if (args.length < 1 || !(thisObj instanceof ScriptableObject so)) {
+				if (args.length < 1 || !(thisObj instanceof ScriptableObject)) {
 					return Undefined.instance;
 				}
+				ScriptableObject so = (ScriptableObject) thisObj;
 
 				ScriptRuntime.StringIdOrIndex s = ScriptRuntime.toStringIdOrIndex(cx, args[0]);
 				int index = s.stringId != null ? 0 : s.index;
@@ -377,9 +385,10 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 				final Object arg0 = args[0];
 				ScriptRuntimeES6.requireObjectCoercible(cx, arg0, f);
-				if (!(arg0 instanceof ScriptableObject obj)) {
+				if (!(arg0 instanceof ScriptableObject)) {
 					return arg0;
 				}
+				ScriptableObject obj = (ScriptableObject) arg0;
 				if (!obj.isExtensible()) {
 					throw ScriptRuntime.typeError0("msg.not.extensible");
 				}
@@ -783,9 +792,10 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 						@Override
 						public boolean equals(Object other) {
-							if (!(other instanceof Entry<?, ?> e)) {
+							if (!(other instanceof Entry<?, ?>)) {
 								return false;
 							}
+							Entry<?, ?> e = (Entry<?, ?>) other;
 							return (ekey == null ? e.getKey() == null : ekey.equals(e.getKey())) && (value == null ? e.getValue() == null : value.equals(e.getValue()));
 						}
 

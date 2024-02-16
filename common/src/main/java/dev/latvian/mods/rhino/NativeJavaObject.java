@@ -368,7 +368,8 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper {
 					double time = ((NativeDate) value).getJSTimeValue();
 					// XXX: This will replace NaN by 0
 					return new Date((long) time);
-				} else if (type.isArray() && value instanceof NativeArray array) {
+				} else if (type.isArray() && value instanceof NativeArray) {
+				    NativeArray array = (NativeArray) value;
 					// Make a new java array, and coerce the JS array components
 					// to the target (component) type.
 					long length = array.getLength();
@@ -680,7 +681,8 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper {
 
 	@Override
 	public Object get(Symbol key, Scriptable start) {
-		if (javaObject instanceof Iterable<?> itr && SymbolKey.ITERATOR.equals(key)) {
+		if (javaObject instanceof Iterable<?> && SymbolKey.ITERATOR.equals(key)) {
+		    Iterable<?> itr = (Iterable<?>) javaObject;
 			return new JavaIteratorWrapper(itr.iterator());
 		}
 
@@ -837,7 +839,8 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper {
 				throw Context.reportRuntimeError0("msg.default.value");
 			}
 			Object converterObject = get(converterName, this);
-			if (converterObject instanceof Function f) {
+			if (converterObject instanceof Function) {
+			    Function f = (Function) converterObject;
 				value = f.call(Context.getContext(), f.getParentScope(), this, ScriptRuntime.EMPTY_OBJECTS);
 			} else {
 				if (hint == ScriptRuntime.NumberClass && javaObject instanceof Boolean) {

@@ -1111,12 +1111,13 @@ public final class Interpreter extends Icode implements Evaluator {
 									frame = calleeFrame;
 									continue StateLoop;
 								}
-								if (!(lhs instanceof Function fun)) {
+								if (!(lhs instanceof Function)) {
 									if (lhs == DBL_MRK) {
 										lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 									}
 									throw ScriptRuntime.notFunctionError(lhs);
 								}
+								Function fun = (Function) lhs;
 
 								if (fun instanceof IdFunctionObject) {
 								    IdFunctionObject ifun = (IdFunctionObject) fun;

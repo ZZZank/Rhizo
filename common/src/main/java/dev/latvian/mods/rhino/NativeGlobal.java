@@ -387,7 +387,8 @@ public class NativeGlobal implements IdFunctionCall {
 	}
 
 	static boolean isEvalFunction(Object functionObj) {
-		if (functionObj instanceof IdFunctionObject function) {
+		if (functionObj instanceof IdFunctionObject) {
+			IdFunctionObject function = (IdFunctionObject) functionObj;
 			return function.hasTag(FTAG) && function.methodId() == Id_eval;
 		}
 		return false;

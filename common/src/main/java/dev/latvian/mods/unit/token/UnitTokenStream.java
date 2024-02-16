@@ -179,7 +179,8 @@ public final class UnitTokenStream {
 	public UnitToken readSingleToken() {
 		UnitToken token = nextToken();
 
-		if (token instanceof UnitSymbol symbol && symbol.unaryOp != null) {
+		if (token instanceof UnitSymbol && ((UnitSymbol) token).unaryOp != null) {
+		    UnitSymbol symbol = (UnitSymbol) token;
 			if (peekToken() == UnitSymbol.LP) {
 				return new UnaryOpUnitToken(symbol, readFully());
 			} else {

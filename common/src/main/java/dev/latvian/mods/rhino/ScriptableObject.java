@@ -353,9 +353,10 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 				methodName = "valueOf";
 			}
 			Object v = getProperty(object, methodName);
-			if (!(v instanceof Function fun)) {
+			if (!(v instanceof Function)) {
 				continue;
 			}
+			Function fun = (Function) v;
 			if (cx == null) {
 				cx = Context.getContext();
 			}
@@ -822,10 +823,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @param attributes   the attributes of the JavaScript property
 	 */
 	public static void defineProperty(Scriptable destination, String propertyName, Object value, int attributes) {
-		if (!(destination instanceof ScriptableObject so)) {
+		if (!(destination instanceof ScriptableObject)) {
 			destination.put(propertyName, destination, value);
 			return;
 		}
+		ScriptableObject so = (ScriptableObject) destination;
 		so.defineProperty(propertyName, value, attributes);
 	}
 
@@ -1287,9 +1289,10 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 */
 	public static Object callMethod(Context cx, Scriptable obj, String methodName, Object[] args) {
 		Object funObj = getProperty(obj, methodName);
-		if (!(funObj instanceof Function fun)) {
+		if (!(funObj instanceof Function)) {
 			throw ScriptRuntime.notFunctionError(obj, methodName);
 		}
+		Function fun = (Function) funObj;
 		// XXX: What should be the scope when calling funObj?
 		// The following favor scope stored in the object on the assumption
 		// that is more useful especially under dynamic scope setup.
@@ -2521,7 +2524,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			try {
 				for (Slot slot : slotMap) {
 					Object value = slot.value;
-					if (value instanceof LazilyLoadedCtor initializer) {
+					if (value instanceof LazilyLoadedCtor) {
+						LazilyLoadedCtor initializer = (LazilyLoadedCtor) value;
 						try {
 							initializer.init();
 						} finally {

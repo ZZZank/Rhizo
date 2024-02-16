@@ -1664,9 +1664,10 @@ public class ScriptRuntime {
 	public static Scriptable toIterator(Context cx, Scriptable scope, Scriptable obj, boolean keyOnly) {
 		if (ScriptableObject.hasProperty(obj, NativeIterator.ITERATOR_PROPERTY_NAME)) {
 			Object v = ScriptableObject.getProperty(obj, NativeIterator.ITERATOR_PROPERTY_NAME);
-			if (!(v instanceof Callable f)) {
+			if (!(v instanceof Callable)) {
 				throw typeError0("msg.invalid.iterator");
 			}
+			Callable f = (Callable) v;
 			Object[] args = new Object[]{keyOnly ? Boolean.TRUE : Boolean.FALSE};
 			v = f.call(cx, scope, obj, args);
 			if (!(v instanceof Scriptable)) {
@@ -1708,7 +1709,7 @@ public class ScriptRuntime {
 	private static IdEnumeration enumInitInOrder(Context cx, IdEnumeration x) {
 		Object iterator = x.obj instanceof SymbolScriptable ? ScriptableObject.getProperty(x.obj, SymbolKey.ITERATOR) : null;
 
-		if (!(iterator instanceof Callable f)) {
+		if (!(iterator instanceof Callable)) {
 			if (iterator instanceof IdEnumerationIterator) {
 				x.iterator = (IdEnumerationIterator) iterator;
 				return x;
@@ -1716,6 +1717,7 @@ public class ScriptRuntime {
 
 			throw typeError1("msg.not.iterable", toString(x.obj));
 		}
+		Callable f = (Callable) iterator;
 
 		Scriptable scope = x.obj.getParentScope();
 		Object v = f.call(cx, scope, x.obj, EMPTY_OBJECTS);
@@ -1841,9 +1843,10 @@ public class ScriptRuntime {
 	 * after calling this method.
 	 */
 	public static Callable getValueFunctionAndThis(Object value, Context cx) {
-		if (!(value instanceof Callable f)) {
+		if (!(value instanceof Callable)) {
 			throw notFunctionError(value);
 		}
+		Callable f = (Callable) value;
 
 		Scriptable thisObj = null;
 		if (f instanceof Scriptable) {
@@ -1901,7 +1904,8 @@ public class ScriptRuntime {
 	 * store args.clone(), not args array itself.
 	 */
 	public static Ref callRef(Callable function, Scriptable thisObj, Object[] args, Context cx) {
-		if (function instanceof RefCallable rfunction) {
+		if (function instanceof RefCallable) {
+		    RefCallable rfunction = (RefCallable) function;
 			Ref ref = rfunction.refCall(cx, thisObj, args);
 			if (ref == null) {
 				throw new IllegalStateException(rfunction.getClass().getName() + ".refCall() returned null");
@@ -1919,9 +1923,10 @@ public class ScriptRuntime {
 	 * See ECMA 11.2.2
 	 */
 	public static Scriptable newObject(Object fun, Context cx, Scriptable scope, Object[] args) {
-		if (!(fun instanceof Function function)) {
+		if (!(fun instanceof Function)) {
 			throw notFunctionError(fun);
 		}
+		Function function = (Function) fun;
 		return function.construct(cx, scope, args);
 	}
 
@@ -2268,10 +2273,10 @@ public class ScriptRuntime {
 	}
 
 	public static Object toPrimitive(Object val, Class<?> typeHint) {
-		if (!(val instanceof Scriptable s)) {
+		if (!(val instanceof Scriptable)) {
 			return val;
 		}
-		Object result = s.getDefaultValue(typeHint);
+		Object result = ((Scriptable) val).getDefaultValue(typeHint);
 		if ((result instanceof Scriptable) && !isSymbol(result)) {
 			throw typeError0("msg.bad.default.value");
 		}

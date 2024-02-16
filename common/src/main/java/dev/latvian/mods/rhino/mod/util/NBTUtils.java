@@ -147,7 +147,8 @@ public interface NBTUtils {
 
 	@Nullable
 	static CompoundTag toTagCompound(@Nullable Object v) {
-		if (v instanceof CompoundTag nbt) {
+		if (v instanceof CompoundTag) {
+		    CompoundTag nbt = (CompoundTag) v;
 			return nbt;
 		} else if (v instanceof CharSequence) {
 			try {
@@ -180,7 +181,8 @@ public interface NBTUtils {
 
 	@Nullable
 	static CollectionTag<?> toTagCollection(@Nullable Object v) {
-		if (v instanceof CollectionTag tag) {
+		if (v instanceof CollectionTag) {
+		    CollectionTag tag = (CollectionTag) v;
 			return tag;
 		} else if (v instanceof CharSequence) {
 			try {
@@ -480,13 +482,17 @@ public interface NBTUtils {
 		}
 	};
 
-	// TODO: accessTagMap
-	static Map<String, Tag> accessTagMap(CompoundTag tag) {
-		Map<String, Tag> m = new HashMap<>();
-		for (String key : tag.getAllKeys()) {
-			m.put(key, tag.get(key));
+	public class WrappedCompoundTag extends CompoundTag {
+		public static WrappedCompoundTag of(CompoundTag tag) {
+			return (WrappedCompoundTag) tag;
 		}
-		return m;
+		public Map<String, Tag> entries() {
+			return super.entries();
+		}
+	}
+
+	static Map<String, Tag> accessTagMap(CompoundTag tag) {
+		return WrappedCompoundTag.of(tag).entries();
 	}
 
 	TagType<ListTag> LIST_TYPE = new TagType<ListTag>() {

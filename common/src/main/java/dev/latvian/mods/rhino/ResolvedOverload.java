@@ -40,9 +40,10 @@ public class ResolvedOverload {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof ResolvedOverload ovl)) {
+		if (!(other instanceof ResolvedOverload)) {
 			return false;
 		}
+		ResolvedOverload ovl = (ResolvedOverload) other;
 		return Arrays.equals(types, ovl.types) && index == ovl.index;
 	}
 

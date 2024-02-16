@@ -202,7 +202,8 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 		// If it looks like a "cast" of an object to this class type,
 		// walk the prototype chain to see if there's a wrapper of a
 		// object that's an instanceof this class.
-		if (args.length == 1 && args[0] instanceof Scriptable p) {
+		if (args.length == 1 && args[0] instanceof Scriptable) {
+			Scriptable p = (Scriptable) args[0];
 			Class<?> c = getClassObject();
 			do {
 				if (p instanceof Wrapper) {
