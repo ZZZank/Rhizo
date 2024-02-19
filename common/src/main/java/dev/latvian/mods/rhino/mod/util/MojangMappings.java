@@ -511,7 +511,7 @@ public class MojangMappings {
 		}
 
 		public ClassDef(MojangMappings mappings, String name) {
-			this(mappings, name, "", Map.of(), Set.of());
+			this(mappings, name, "", new HashMap<>(), new HashSet<>());
 		}
 
 		public ClassDef descriptor(String s) {

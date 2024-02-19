@@ -96,7 +96,7 @@ public class RemappingHelper {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					LOGGER.error("Failed to load Rhino Minecraft remapper from config/mm.jsmappings!", ex);
-					minecraftRemapper = new MinecraftRemapper(Map.of(), Map.of());
+					minecraftRemapper = new MinecraftRemapper(new HashMap<>(), new HashMap<>());
 				}
 			} else {
 				try (BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource("mm.jsmappings"))))) {
@@ -104,7 +104,7 @@ public class RemappingHelper {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					LOGGER.error("Failed to load Rhino Minecraft remapper from mod jar!", ex);
-					minecraftRemapper = new MinecraftRemapper(Map.of(), Map.of());
+					minecraftRemapper = new MinecraftRemapper(new HashMap<>(), new HashMap<>());
 				}
 			}
 

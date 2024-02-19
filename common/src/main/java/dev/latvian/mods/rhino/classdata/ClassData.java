@@ -59,7 +59,7 @@ public class ClassData {
 	private Map<String, ClassMember> getOwnMembers() {
 		if (ownMembers == null) {
 			if (type == Object.class) {
-				ownMembers = Map.of();
+				ownMembers = new HashMap<>();
 				return ownMembers;
 			}
 
@@ -112,7 +112,7 @@ public class ClassData {
 			}
 
 			if (ownMembers.isEmpty()) {
-				ownMembers = Map.of();
+				ownMembers = new HashMap<>();
 			}
 		}
 
@@ -157,7 +157,7 @@ public class ClassData {
 			}
 
 			if (actualMembers.isEmpty()) {
-				actualMembers = Map.of();
+				actualMembers = new HashMap<>();
 			}
 		}
 
