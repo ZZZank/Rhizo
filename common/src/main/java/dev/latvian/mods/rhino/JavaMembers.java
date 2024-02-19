@@ -31,11 +31,27 @@ import java.util.Set;
  * @see NativeJavaClass
  */
 public class JavaMembers {
-	public record MethodSignature(String name, Class<?>[] args) {
+	public static class MethodSignature {
+		private final String name;
+		public String name() {
+			return name;
+		}
+
+		private final Class<?>[] args;
+		public Class<?>[] args() {
+			return args;
+		}
+
 		private static final Class<?>[] NO_ARGS = new Class<?>[0];
 
 		public MethodSignature(Method method) {
-			this(method.getName(), method.getParameterCount() == 0 ? NO_ARGS : method.getParameterTypes());
+			this.name = method.getName();
+			this.args = method.getParameterCount() == 0 ? NO_ARGS : method.getParameterTypes();
+		}
+
+		public MethodSignature(String name, Class<?>[] args) {
+			this.name = name;
+			this.args = args;
 		}
 
 		@Override
@@ -50,6 +66,11 @@ public class JavaMembers {
 		@Override
 		public int hashCode() {
 			return name.hashCode() ^ args.length;
+		}
+
+		@Override
+		public String toString() {
+			return "JavaMember {" + name + ", " + args + "}";
 		}
 	}
 

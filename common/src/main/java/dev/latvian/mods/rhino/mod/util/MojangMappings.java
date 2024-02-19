@@ -448,13 +448,25 @@ public class MojangMappings {
 		}
 	}
 
-	public record NamedSignature(String name, @Nullable MethodDefSignature signature) {
+	public static class NamedSignature {
+		private final String name;
+		@Nullable private final MethodDefSignature signature;
+		public NamedSignature(String name, @Nullable MethodDefSignature signature) {
+			this.name = name;
+			this.signature = signature;
+		}
+		public String name() {
+			return this.name;
+		}
+		public MethodDefSignature signature() {
+			return this.signature;
+		}
+
 		@Override
 		public String toString() {
 			if (signature == null) {
 				return name;
 			}
-
 			return name + "(" + signature + ")";
 		}
 
@@ -617,7 +629,63 @@ public class MojangMappings {
 
 	}
 
-	public record MemberDef(ClassDef parent, NamedSignature rawName, String mmName, TypeDef type, MutableObject<String> unmappedName) {
+	public class MemberDef {
+
+		private final ClassDef parent;
+		private final NamedSignature rawName;
+		private final String mmName;
+		private final TypeDef type;
+		private final MutableObject<String> unmappedName;
+		public ClassDef parent() {
+			return this.parent;
+		}
+		public NamedSignature rawName() {
+			return this.rawName;
+		}
+		public String mmName() {
+			return this.mmName;
+		}
+		public TypeDef type() {
+			return this.type;
+		}
+		public MutableObject<String> unmappedName() {
+			return this.unmappedName;
+		}
+		MemberDef(ClassDef parent, NamedSignature rawName, String mmName, TypeDef type, MutableObject<String> unmappedName) {
+			this.parent = parent;
+			this.rawName = rawName;
+			this.mmName = mmName;
+			this.type = type;
+			this.unmappedName = unmappedName;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("MemberDef {%s, %s, %s, %s, %s}", parent, rawName, mmName, type,unmappedName);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof MemberDef) {
+				MemberDef other = (MemberDef) obj;
+				return parent == other.parent &&
+					rawName == other.rawName &&
+					mmName == other.mmName &&
+					type == other.type &&
+					unmappedName == other.unmappedName;
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(parent, rawName, mmName, type, unmappedName);
+		}
+
+
 		public boolean cleanup() {
 			return unmappedName.getValue().isEmpty();
 		}
