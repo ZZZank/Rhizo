@@ -5,26 +5,29 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unused")
 public class ScopeTests {
+
 	public static final RhinoTest TEST = new RhinoTest("scope");
 
 	@Test
 	@DisplayName("Const in Two Blocks")
 	public void constInTwoBlocks() {
-		TEST.test("constInTwoBlocks", """
-				if (false) {
-				  const xxx = 1
-				}
-								
-				if (true) {
-				  const xxx = 2
-				}
-								
-				console.info(true)
-				""", """
-				true
-				""");
+		TEST.test(
+			"constInTwoBlocks",
+			String.join(
+				"\n",
+				"if (false) {",
+				"const xxx = 1",
+				"}",
+				"",
+				"if (true) {",
+				"const xxx = 2",
+				"}",
+				"",
+				"console.info(true)"
+			),
+			String.join("\n", "true")
+		);
 	}
-
 	/* Need to figure out what the actual values should be
 	@Test
 	@DisplayName("Scopes II")

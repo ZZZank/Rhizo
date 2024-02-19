@@ -29,8 +29,11 @@ class ClassInfo:
     def __init__(self) -> None:
         pass
 
-    # public record FunctionUnitToken(String name, List<UnitToken> args) implements UnitToken {
     def fromStr(line: str):
+        """Example format: 
+        
+        `public record FunctionUnitToken(String name, List<UnitToken> args) implements UnitToken {`
+        """
         idxAccess = line.index(" record ")
         idxRecord = idxAccess + len("record ")
         idxFnName = line.index("(", idxRecord + 1)

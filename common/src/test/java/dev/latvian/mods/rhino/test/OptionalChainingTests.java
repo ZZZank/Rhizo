@@ -15,40 +15,40 @@ public class OptionalChainingTests {
 	@DisplayName("Init")
 	@Order(1)
 	public void init() {
-		TEST.test("init", """
-				let a = { b: { c: 'd' } }
-				let e = { f: {} }
-				let h = null
-				""", "");
+		TEST.test("init", String.join("\n",
+				"let a = { b: { c: 'd' } }",
+				"let e = { f: {} }",
+				"let h = null"
+		), "");
 	}
 
 	@Test
 	@DisplayName("Should Error")
 	@Order(2)
 	public void shouldError() {
-		TEST.test("shouldError", """
-				console.info(a.b.c)
-				console.info(e.f.g)
-				console.info(h.i.j)
-				""", """
-				d
-				undefined
-				Error: TypeError: Cannot read property "i" from null (optionalChaining/shouldError#3)
-				""");
+		TEST.test("shouldError", String.join("\n",
+				"console.info(a.b.c)",
+				"console.info(e.f.g)",
+				"console.info(h.i.j)"
+		 ), String.join("\n",
+				"d",
+				"undefined",
+				"Error: TypeError: Cannot read property \"i\" from null (optionalChaining/shouldError#3)"
+		));
 	}
 
 	@Test
 	@DisplayName("Shouldnt Error")
 	@Order(2)
 	public void shouldntError() {
-		TEST.test("shouldntError", """
-				console.info(a?.b?.c)
-				console.info(e?.f?.g)
-				console.info(h?.i?.j)
-				""", """
-				d
-				undefined
-				undefined
-				""");
+		TEST.test("shouldntError", String.join("\n",
+				"console.info(a?.b?.c)",
+				"console.info(e?.f?.g)",
+				"console.info(h?.i?.j)"
+				), String.join("\n",
+				"d",
+				"undefined",
+				"undefined"
+				));
 	}
 }
