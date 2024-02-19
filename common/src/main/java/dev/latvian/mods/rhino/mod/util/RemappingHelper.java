@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class RemappingHelper {
 		return CLASS_CACHE.computeIfAbsent(name, RemappingHelper::loadClass);
 	}
 
-	public class MappingContext {
+	public static class MappingContext {
 	
 		//TODO++: this is originally a record
 		private final String mcVersion;
@@ -156,23 +157,38 @@ public class RemappingHelper {
 				try (Reader metaReader = createReader(metaUrl)) {
 					JsonObject meta = GSON.fromJson(metaReader, JsonObject.class);
 
+					JsonObject clientMappings = null;
+					JsonElement tmp = meta.get("downloads");
+
+					/*These lines are the same as:
 					if (meta.get("downloads") instanceof JsonObject o 
 						&& o.get("client_mappings") instanceof JsonObject cmap 
 						&& cmap.has("url")) {
 						try (Reader cmapReader = createReader(cmap.get("url").getAsString())) {
-							MojangMappings mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
-							callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
-							mojangMappings.cleanup();
-
-							try (BufferedOutputStream out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(Path.of("mm.jsmappings"))))) {
-								mojangMappings.write(out);
+					*/
+					if (tmp instanceof JsonObject) {
+						tmp = ((JsonObject) tmp).get("client_mappings");
+						if (tmp instanceof JsonObject) {
+							clientMappings = (JsonObject) tmp;
+							if (!clientMappings.has("url")) {
+								clientMappings = null;
 							}
-
-							LOGGER.info("Finished generating mappings!");
-							return;
 						}
-					} else {
+					}
+
+					if (clientMappings == null) {
 						throw new RemapperException("This Minecraft version doesn't have mappings!");
+					}
+					try (Reader cmapReader = createReader(clientMappings.get("url").getAsString())) {
+						MojangMappings mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
+						callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
+						mojangMappings.cleanup();
+						//TODO++: varify if its path is correct
+						try (BufferedOutputStream out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(FileSystems.getDefault().getPath("mm.jsmappings"))))) {
+							mojangMappings.write(out);
+						}
+
+						LOGGER.info("Finished generating mappings!");
 					}
 				}
 			}

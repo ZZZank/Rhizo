@@ -83,7 +83,14 @@ public class MinecraftRemapper implements Remapper {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj == this || obj instanceof RemappedType type && type.parent == parent && type.array == array;
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof RemappedType) {
+				RemappedType type = (RemappedType) obj;
+				return type.parent == parent && type.array == array;
+			}
+			return false;
 		}
 
 		@Override

@@ -2,6 +2,8 @@ package dev.latvian.mods.rhino.mod.fabric;
 
 import dev.latvian.mods.rhino.mod.util.MojangMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.MojangMappings.ClassDef;
+import dev.latvian.mods.rhino.mod.util.MojangMappings.MemberDef;
 import dev.latvian.mods.rhino.mod.util.MojangMappings.NamedSignature;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -31,7 +33,7 @@ public class RhinoModFabric implements ModInitializer {
 
 			RemappingHelper.LOGGER.info("- Checking class " + rawClassName);
 
-			var mmClass = context.mappings().getClass(rawClassName.replace('/', '.'));
+			ClassDef mmClass = context.mappings().getClass(rawClassName.replace('/', '.'));
 
 			if (mmClass != null) {
 				if (!mmClass.mmName.equals(unmappedClassName)) {
@@ -43,7 +45,7 @@ public class RhinoModFabric implements ModInitializer {
 				for (FieldMapping fieldDef : classDef.getFields()) {
 					String rawFieldName = fieldDef.getName(rawNamespace);
 					NamedSignature sig = new MojangMappings.NamedSignature(rawFieldName, null);
-					var mmField = mmClass.members.get(sig);
+					MemberDef mmField = mmClass.members.get(sig);
 
 					if (mmField != null) {
 						String unmappedFieldName = fieldDef.getName(runtimeNamespace);
@@ -62,7 +64,7 @@ public class RhinoModFabric implements ModInitializer {
 					//TODO: verify getNamespaceId()
 					String rawMethodDesc = methodDef.getDesc(methodDef.getTree().getNamespaceId(rawNamespace));
 					NamedSignature sig = new MojangMappings.NamedSignature(rawMethodName, context.mappings().readSignatureFromDescriptor(rawMethodDesc));
-					var mmMethod = mmClass.members.get(sig);
+					MemberDef mmMethod = mmClass.members.get(sig);
 
 					if (mmMethod != null) {
 						String unmappedMethodName = methodDef.getName(runtimeNamespace);

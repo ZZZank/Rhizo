@@ -475,7 +475,14 @@ public class MojangMappings {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj == this || obj instanceof NamedSignature other && name.equals(other.name) && Objects.equals(signature, other.signature);
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof NamedSignature) {
+				NamedSignature other = (NamedSignature) obj;
+				return name.equals(other.name) && Objects.equals(signature, other.signature);
+			}
+			return false;
 		}
 
 		@Override
@@ -543,7 +550,14 @@ public class MojangMappings {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj == this || obj instanceof ClassDef other && rawName.equals(other.rawName);
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof ClassDef) {
+				ClassDef other = (ClassDef) obj;
+				return rawName.equals(other.rawName);
+			}
+			return false;
 		}
 
 		@Override
@@ -617,7 +631,14 @@ public class MojangMappings {
 
 		@Override
 		public boolean equals(Object obj) {
-			return obj == this || obj instanceof TypeDef t && parent.equals(t.parent) && array == t.array;
+			if (obj == this) {
+				return true;
+			}
+			if (obj instanceof TypeDef) {
+				TypeDef t = (TypeDef) obj;
+				return parent.equals(t.parent) && array == t.array;
+			}
+			return false;
 		}
 
 		@Override

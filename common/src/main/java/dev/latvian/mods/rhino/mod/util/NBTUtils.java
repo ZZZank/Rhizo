@@ -44,7 +44,7 @@ import java.util.Map.Entry;
 
 public interface NBTUtils {
 	
-	ValueUnwrapper VALUE_UNWRAPPER = (contextData, scope, value) -> value instanceof Tag tag ? fromTag(tag) : value;
+	ValueUnwrapper VALUE_UNWRAPPER = (contextData, scope, value) -> value instanceof Tag ? fromTag((Tag) value) : value;
 
 	@Nullable
 	static Object fromTag(@Nullable Tag t) {
@@ -173,7 +173,8 @@ public interface NBTUtils {
 			}
 		}
 
-		return toTag(v) instanceof CompoundTag nbt ? nbt : null;
+		Tag tag = toTag(v);
+		return tag instanceof CompoundTag ? (CompoundTag) tag : null;
 	}
 
 	static boolean isTagCollection(Object o) {
