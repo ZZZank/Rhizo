@@ -5,7 +5,41 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public record CustomJavaToJsWrapperProviderHolder<T>(Predicate<T> predicate, CustomJavaToJsWrapperProvider<T> provider) {
+public class CustomJavaToJsWrapperProviderHolder<T> {
+
+	private final Predicate<T> predicate;
+	private final CustomJavaToJsWrapperProvider<T> provider;
+	public CustomJavaToJsWrapperProviderHolder(Predicate<T> predicate, CustomJavaToJsWrapperProvider<T> provider) {
+		this.predicate = predicate;
+		this.provider = provider;
+	}
+	public Predicate<T> predicate() {
+		return this.predicate;
+	}
+	public CustomJavaToJsWrapperProvider<T> provider() {
+		return this.provider;
+	}
+	@Override
+	public String toString() {
+		return String.format("MemberDef {%s}", predicate, provider);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof CustomJavaToJsWrapperProviderHolder) {
+			CustomJavaToJsWrapperProviderHolder other = (CustomJavaToJsWrapperProviderHolder) obj;
+			return predicate.equals(other.predicate) && provider.equals(other.provider);
+		}
+		return false;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(predicate, provider);
+	}
+
+
 	public static class PredicateFromClass<T> implements Predicate<T> {
 		private final Class<T> type;
 		public PredicateFromClass(Class<T> type){

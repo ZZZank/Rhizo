@@ -1,11 +1,40 @@
 package dev.latvian.mods.unit.token;
 
+import java.util.Objects;
+
 import dev.latvian.mods.unit.Unit;
 
-public record UnaryOpUnitToken(UnitSymbol operator, UnitToken token) implements UnitToken {
+public class UnaryOpUnitToken implements UnitToken {
+
+    private final UnitSymbol operator;
+    private final UnitToken token;
+    public UnaryOpUnitToken(UnitSymbol operator, UnitToken token) {
+        this.operator = operator;
+        this.token = token;
+    }
+    public UnitSymbol operator() {
+        return this.operator;
+    }
+    public UnitToken token() {
+        return this.token;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UnaryOpUnitToken)) {
+            return false;
+        }
+        UnaryOpUnitToken other = (UnaryOpUnitToken) obj;
+        return
+            this.operator == other.operator &&
+            this.token == other.token;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(operator, token);
+    }
 	@Override
 	public Unit interpret(UnitTokenStream stream) {
-		var unit = token.interpret(stream);
+		Unit unit = token.interpret(stream);
 		return operator.unaryOp.create(unit);
 	}
 

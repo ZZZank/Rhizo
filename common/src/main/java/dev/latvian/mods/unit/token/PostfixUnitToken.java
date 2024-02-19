@@ -4,9 +4,31 @@ import dev.latvian.mods.unit.Unit;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Stack;
 
-public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
+public class PostfixUnitToken implements UnitToken{
+
+    private final List<UnitToken> infix;
+    public PostfixUnitToken(List<UnitToken> infix) {
+        this.infix = infix;
+    }
+    public List<UnitToken> infix() {
+        return this.infix;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PostfixUnitToken)) {
+            return false;
+        }
+        PostfixUnitToken other = (PostfixUnitToken) obj;
+        return
+            this.infix == other.infix;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(infix);
+    }
 	@Override
 	public Unit interpret(UnitTokenStream stream) {
 		Stack<UnitSymbol> operatorsStack = new Stack<>();
@@ -22,7 +44,7 @@ public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
 				boolean pushedCurrent = false;
 
 				while (!operatorsStack.isEmpty()) {
-					var o = operatorsStack.peek();
+					UnitSymbol o = operatorsStack.peek();
 
 					if (o != null) {
 						if (o.hasHigherPrecedenceThan(nextOperator)) {
@@ -67,7 +89,7 @@ public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
 		}
 
 		while (!operatorsStack.isEmpty()) {
-			var last = operatorsStack.pop();
+			UnitSymbol last = operatorsStack.pop();
 			postfix.add(last);
 		}
 
@@ -75,9 +97,9 @@ public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
 			stream.context.debugInfo("Postfix", postfix);
 		}
 
-		var resultStack = new Stack<UnitToken>();
+		Stack<UnitToken> resultStack = new Stack<UnitToken>();
 
-		for (var token : postfix) {
+		for (UnitToken token : postfix) {
 			token.unstack(resultStack);
 
 			if (stream.context.isDebug()) {
@@ -85,7 +107,7 @@ public record PostfixUnitToken(List<UnitToken> infix) implements UnitToken {
 			}
 		}
 
-		var lastUnit = resultStack.pop();
+		UnitToken lastUnit = resultStack.pop();
 		return lastUnit.interpret(stream);
 	}
 

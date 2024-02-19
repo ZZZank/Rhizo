@@ -50,7 +50,7 @@ class ClassInfo:
         return info
 
     def format(self):
-        lines = [f"{self.modifier} class {self.type} {self.additional}" + "{"]
+        lines = [f"{self.modifier} class {self.type} {self.additional} " + "{"]
         lines.append("")
         tab = " " * 4
         # fields
@@ -128,5 +128,6 @@ class ClassInfo:
 
 line = input()
 info: ClassInfo = ClassInfo.fromStr(line)
+print('---')
 for line in info.format():
     print(line)

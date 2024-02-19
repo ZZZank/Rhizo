@@ -60,7 +60,22 @@ public class RemappingHelper {
 		return CLASS_CACHE.computeIfAbsent(name, RemappingHelper::loadClass);
 	}
 
-	public record MappingContext(String mcVersion, MojangMappings mappings) {
+	public class MappingContext {
+	
+		//TODO++: this is originally a record
+		private final String mcVersion;
+		private final MojangMappings mappings;
+		public MappingContext(String mcVersion, MojangMappings mappings) {
+			this.mappings = mappings;
+			this.mcVersion = mcVersion;
+	    }
+		public String mcVersion() {
+			return this.mcVersion;
+		}
+		public MojangMappings mappings() {
+			return this.mappings;
+		}
+
 	}
 
 	public interface Callback {

@@ -1,9 +1,35 @@
 package dev.latvian.mods.rhino.util;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unchecked")
-public record Possible<T>(@Nullable Object value) {
+public class Possible<T> {
+
+	private final @Nullable Object value;
+	Possible(Object value) {
+		this.value = value;
+	}
+	Object value() {
+		return this.value;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof Possible) {
+			Possible other = (Possible) obj;
+			return this.value.equals(other.value);
+		}
+		return false;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
+	}
+
 	public static final Possible<?> EMPTY = new Possible<>(null);
 	public static final Possible<?> NULL = new Possible<>(null);
 
