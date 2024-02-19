@@ -68,7 +68,6 @@ import dev.latvian.mods.rhino.ast.WithStatement;
 import dev.latvian.mods.rhino.ast.Yield;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -113,7 +112,7 @@ public class Parser {
 
 	// Exception to unwind
 	private static class ParserException extends RuntimeException {
-		@Serial
+		// @Serial
 		private static final long serialVersionUID = 5882582646773765630L;
 	}
 

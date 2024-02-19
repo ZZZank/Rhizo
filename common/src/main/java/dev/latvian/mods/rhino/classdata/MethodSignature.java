@@ -84,7 +84,7 @@ public class MethodSignature {
 			StringBuilder sb = new StringBuilder();
 			sb.append('(');
 
-			for (var type : types) {
+			for (Class<?> type : types) {
 				sb.append(type.descriptorString());
 			}
 
@@ -100,7 +100,7 @@ public class MethodSignature {
 		if (hashCode == 0) {
 			int h = 1;
 
-			for (var type : types) {
+			for (Class<?> type : types) {
 				h = 31 * h + type.hashCode();
 			}
 

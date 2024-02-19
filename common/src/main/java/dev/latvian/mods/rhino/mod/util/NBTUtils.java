@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public interface NBTUtils {
 	
@@ -280,8 +281,8 @@ public interface NBTUtils {
 	static Tag compoundTag(Map<?, ?> map) {
 		OrderedCompoundTag tag = new OrderedCompoundTag();
 
-		for (var entry : map.entrySet()) {
-			var tag1 = toTag(entry.getValue());
+		for (Entry<?, ?> entry : map.entrySet()) {
+			Tag tag1 = toTag(entry.getValue());
 
 			if (tag1 != null) {
 				tag.put(String.valueOf(entry.getKey()), tag1);

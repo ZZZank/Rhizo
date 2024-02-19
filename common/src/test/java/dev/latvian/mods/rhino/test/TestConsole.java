@@ -19,8 +19,8 @@ public class TestConsole {
 
 		StringBuilder builder = new StringBuilder();
 
-		var lineP = new int[]{0};
-		var lineS = Context.getSourcePositionFromStack(lineP);
+		int[] lineP = new int[]{0};
+		String lineS = Context.getSourcePositionFromStack(lineP);
 
 		if (lineP[0] > 0) {
 			if (lineS != null) {

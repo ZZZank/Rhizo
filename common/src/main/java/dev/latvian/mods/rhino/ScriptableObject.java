@@ -15,7 +15,6 @@ import dev.latvian.mods.rhino.annotations.JSSetter;
 import dev.latvian.mods.rhino.annotations.JSStaticFunction;
 import dev.latvian.mods.rhino.util.Deletable;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
@@ -289,7 +288,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * method is defined to be stable.
 	 */
 	public static final class KeyComparator implements Comparator<Object>, Serializable {
-		@Serial
+		// @Serial
 		private static final long serialVersionUID = 6411335891523988149L;
 
 		@Override

@@ -431,7 +431,7 @@ public class FunctionObject extends BaseFunction {
 			if (hasVoidReturn) {
 				result = Undefined.instance;
 			} else if (returnTypeTag == JAVA_UNSUPPORTED_TYPE) {
-				var contextData = SharedContextData.get(cx, scope);
+				SharedContextData contextData = SharedContextData.get(cx, scope);
 				result = contextData.getWrapFactory().wrap(contextData, scope, result, null);
 			}
 			// XXX: the code assumes that if returnTypeTag == JAVA_OBJECT_TYPE

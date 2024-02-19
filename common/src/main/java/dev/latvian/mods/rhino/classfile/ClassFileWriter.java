@@ -12,7 +12,6 @@ import dev.latvian.mods.rhino.UintMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serial;
 import java.util.Arrays;
 
 /**
@@ -104,7 +103,7 @@ public class ClassFileWriter {
 	 */
 	public static class ClassFileFormatException extends RuntimeException {
 
-		@Serial
+		// @Serial
 		private static final long serialVersionUID = 1263998431033790599L;
 
 		ClassFileFormatException(String message) {

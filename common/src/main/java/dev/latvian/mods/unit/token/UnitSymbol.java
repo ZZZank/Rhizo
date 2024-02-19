@@ -135,8 +135,8 @@ public enum UnitSymbol implements UnitToken {
 				throw new UnitInterpretException("Not enough elements in stack!");
 			}
 
-			var right = stack.pop();
-			var left = stack.pop();
+			UnitToken right = stack.pop();
+			UnitToken left = stack.pop();
 			stack.push(new OpResultUnitToken(this, left, right));
 		} else {
 			throw new UnitInterpretException("Unexpected symbol '" + this + "'!");

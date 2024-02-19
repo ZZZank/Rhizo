@@ -37,7 +37,7 @@ public enum RhinoProperties {
 		properties = new Properties();
 
 		try {
-			var propertiesFile = getGameDir().resolve("rhino.local.properties");
+			Path propertiesFile = getGameDir().resolve("rhino.local.properties");
 			writeProperties = false;
 
 			if (Files.exists(propertiesFile)) {
@@ -63,7 +63,7 @@ public enum RhinoProperties {
 	}
 
 	private void remove(String key) {
-		var s = properties.getProperty(key);
+		String s = properties.getProperty(key);
 
 		if (s != null) {
 			properties.remove(key);
@@ -72,7 +72,7 @@ public enum RhinoProperties {
 	}
 
 	private String get(String key, String def) {
-		var s = properties.getProperty(key);
+		String s = properties.getProperty(key);
 
 		if (s == null) {
 			properties.setProperty(key, def);

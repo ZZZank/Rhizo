@@ -126,7 +126,7 @@ public final class NativeIterator extends IdScriptableObject {
 			Iterator<?> iterator = getJavaIterator(obj);
 			if (iterator != null) {
 				scope = getTopLevelScope(scope);
-				var contextData = SharedContextData.get(cx, scope);
+				SharedContextData contextData = SharedContextData.get(cx, scope);
 				return contextData.getWrapFactory().wrap(contextData, scope, new WrappedJavaIterator(iterator, scope), WrappedJavaIterator.class);
 			}
 

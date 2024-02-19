@@ -1,7 +1,11 @@
 package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.ScriptableObject;
 import dev.latvian.mods.rhino.SharedContextData;
+import dev.latvian.mods.rhino.classdata.ClassData;
+import dev.latvian.mods.rhino.classdata.ClassDataCache;
+import dev.latvian.mods.rhino.classdata.ClassMember;
 import net.minecraft.world.entity.player.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -15,11 +19,11 @@ public class ClassDataTests {
 	@DisplayName("Class Data")
 	public void classData() {
 		Context cx = Context.enterWithNewFactory();
-		var scope = cx.initStandardObjects();
-		var contextData = SharedContextData.get(scope);
-		var cache = contextData.getClassDataCache();
-		var data = cache.of(Player.class);
-		var member = data.getMember("x");
+		ScriptableObject scope = cx.initStandardObjects();
+		SharedContextData contextData = SharedContextData.get(scope);
+		ClassDataCache cache = contextData.getClassDataCache();
+		ClassData data = cache.of(Player.class);
+		ClassMember member = data.getMember("x");
 		System.out.println(member);
 		Context.exit();
 	}

@@ -10,7 +10,6 @@ import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.ScriptRuntime;
 import dev.latvian.mods.rhino.Scriptable;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class JsonParser {
 
 	public static class ParseException extends Exception {
 
-		@Serial
+		// @Serial
 		private static final long serialVersionUID = 4804542791749920772L;
 
 		ParseException(String message) {

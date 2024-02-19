@@ -114,7 +114,7 @@ public class InterfaceAdapter {
 			}
 			function = (Callable) value;
 		}
-		var contextData = SharedContextData.get(cx, topScope);
+		SharedContextData contextData = SharedContextData.get(cx, topScope);
 		WrapFactory wf = contextData.getWrapFactory();
 		if (args == null) {
 			args = ScriptRuntime.EMPTY_OBJECTS;

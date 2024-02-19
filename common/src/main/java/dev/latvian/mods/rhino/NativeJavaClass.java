@@ -150,7 +150,7 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 		}
 
 		Scriptable scope = ScriptableObject.getTopLevelScope(start);
-		var contextData = members.contextData;
+		SharedContextData contextData = members.contextData;
 		WrapFactory wrapFactory = contextData.getWrapFactory();
 
 		if (javaClassPropertyName.equals(name)) {
@@ -243,7 +243,7 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 			// bytecode generation won't work on Dalvik VM.
 			if ("Dalvik".equals(System.getProperty("java.vm.name")) && classObject.isInterface()) {
 				Object obj = createInterfaceAdapter(classObject, ScriptableObject.ensureScriptableObject(args[0]));
-				var contextData = members.contextData;
+				SharedContextData contextData = members.contextData;
 				return contextData.getWrapFactory().wrapAsJavaObject(contextData, scope, obj, null);
 			}
 			// use JavaAdapter to construct a new class on the fly that

@@ -8,8 +8,6 @@
 
 package dev.latvian.mods.rhino;
 
-import java.io.Serial;
-
 /**
  * Java reflection of JavaScript exceptions.
  * Instances of this class are thrown by the JavaScript 'throw' keyword.
@@ -17,7 +15,7 @@ import java.io.Serial;
  * @author Mike McCabe
  */
 public class JavaScriptException extends RhinoException {
-	@Serial
+	// @Serial
 	private static final long serialVersionUID = -7666130513694669293L;
 	private final Object value;
 

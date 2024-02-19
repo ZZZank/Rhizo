@@ -255,7 +255,7 @@ public final class NativeJSON extends IdScriptableObject {
 			array++;
 		}
 
-		var mcl = remapper.getMappedClass(cl);
+		String mcl = remapper.getMappedClass(cl);
 		StringBuilder clName = new StringBuilder(mcl.isEmpty() ? cl.getName() : mcl);
 
 		if (array > 0) {

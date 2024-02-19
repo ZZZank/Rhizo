@@ -8,14 +8,12 @@
 
 package dev.latvian.mods.rhino;
 
-import java.io.Serial;
-
 /**
  * The class of exceptions raised by the engine as described in
  * ECMA edition 3. See section 15.11.6 in particular.
  */
 public class EcmaError extends RhinoException {
-	@Serial
+	// @Serial
 	private static final long serialVersionUID = -6261226256957286699L;
 
 	private final String errorName;

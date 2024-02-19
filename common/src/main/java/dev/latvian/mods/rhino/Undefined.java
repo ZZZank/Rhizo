@@ -6,7 +6,6 @@
 
 package dev.latvian.mods.rhino;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.Proxy;
 
@@ -36,7 +35,7 @@ public class Undefined implements Serializable {
 	private Undefined() {
 	}
 
-	@Serial
+	// @Serial
 	public Object readResolve() {
 		return instance;
 	}

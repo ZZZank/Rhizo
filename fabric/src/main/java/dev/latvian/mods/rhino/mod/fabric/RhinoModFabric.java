@@ -2,10 +2,15 @@ package dev.latvian.mods.rhino.mod.fabric;
 
 import dev.latvian.mods.rhino.mod.util.MojangMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.MojangMappings.NamedSignature;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
+import net.fabricmc.loader.impl.lib.mappingio.tree.MappingTree;
+import net.fabricmc.loader.impl.lib.mappingio.tree.MappingTree.ClassMapping;
+import net.fabricmc.loader.impl.lib.mappingio.tree.MappingTree.FieldMapping;
+import net.fabricmc.loader.impl.lib.mappingio.tree.MappingTree.MethodMapping;
 
 public class RhinoModFabric implements ModInitializer {
 	@Override
@@ -16,13 +21,13 @@ public class RhinoModFabric implements ModInitializer {
 	}
 
 	private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
-		var runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
-		var rawNamespace = "official";
-		var tinyTree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+		String runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
+		String rawNamespace = "official";
+		MappingTree tinyTree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
 
-		for (var classDef : tinyTree.getClasses()) {
-			var unmappedClassName = classDef.getName(runtimeNamespace).replace('/', '.');
-			var rawClassName = classDef.getName(rawNamespace);
+		for (ClassMapping classDef : tinyTree.getClasses()) {
+			String unmappedClassName = classDef.getName(runtimeNamespace).replace('/', '.');
+			String rawClassName = classDef.getName(rawNamespace);
 
 			RemappingHelper.LOGGER.info("- Checking class " + rawClassName);
 
@@ -35,13 +40,13 @@ public class RhinoModFabric implements ModInitializer {
 
 				RemappingHelper.LOGGER.info("Remapped class " + unmappedClassName + " to " + mmClass.displayName);
 
-				for (var fieldDef : classDef.getFields()) {
-					var rawFieldName = fieldDef.getName(rawNamespace);
-					var sig = new MojangMappings.NamedSignature(rawFieldName, null);
+				for (FieldMapping fieldDef : classDef.getFields()) {
+					String rawFieldName = fieldDef.getName(rawNamespace);
+					NamedSignature sig = new MojangMappings.NamedSignature(rawFieldName, null);
 					var mmField = mmClass.members.get(sig);
 
 					if (mmField != null) {
-						var unmappedFieldName = fieldDef.getName(runtimeNamespace);
+						String unmappedFieldName = fieldDef.getName(runtimeNamespace);
 
 						if (!unmappedFieldName.equals(mmField.mmName())) {
 							mmField.unmappedName().setValue(unmappedFieldName);
@@ -52,15 +57,15 @@ public class RhinoModFabric implements ModInitializer {
 					}
 				}
 
-				for (var methodDef : classDef.getMethods()) {
-					var rawMethodName = methodDef.getName(rawNamespace);
+				for (MethodMapping methodDef : classDef.getMethods()) {
+					String rawMethodName = methodDef.getName(rawNamespace);
 					//TODO: verify getNamespaceId()
-					var rawMethodDesc = methodDef.getDesc(methodDef.getTree().getNamespaceId(rawNamespace));
-					var sig = new MojangMappings.NamedSignature(rawMethodName, context.mappings().readSignatureFromDescriptor(rawMethodDesc));
+					String rawMethodDesc = methodDef.getDesc(methodDef.getTree().getNamespaceId(rawNamespace));
+					NamedSignature sig = new MojangMappings.NamedSignature(rawMethodName, context.mappings().readSignatureFromDescriptor(rawMethodDesc));
 					var mmMethod = mmClass.members.get(sig);
 
 					if (mmMethod != null) {
-						var unmappedMethodName = methodDef.getName(runtimeNamespace);
+						String unmappedMethodName = methodDef.getName(runtimeNamespace);
 
 						if (!unmappedMethodName.equals(mmMethod.mmName())) {
 							mmMethod.unmappedName().setValue(unmappedMethodName);

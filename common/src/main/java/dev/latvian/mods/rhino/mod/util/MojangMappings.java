@@ -3,6 +3,8 @@ package dev.latvian.mods.rhino.mod.util;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
+import dev.latvian.mods.rhino.mod.util.MojangMappings.TypeDef;
+
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -40,7 +42,7 @@ public class MojangMappings {
 		allTypes = new HashMap<>();
 		methodSignatures = new HashMap<>();
 
-		for (var c : new ClassDef[]{
+		for (ClassDef c : new ClassDef[]{
 				VOID,
 				BOOLEAN,
 				CHAR,
@@ -63,8 +65,8 @@ public class MojangMappings {
 			return types[0].getSingleArgumentSignature();
 		}
 
-		var sig = new MethodDefSignature(types);
-		var cached = methodSignatures.get(sig);
+		MethodDefSignature sig = new MethodDefSignature(types);
+		MethodDefSignature cached = methodSignatures.get(sig);
 
 		if (cached != null) {
 			return cached;
@@ -79,11 +81,11 @@ public class MojangMappings {
 			return SIG_EMPTY;
 		}
 
-		var reader = new StringReader(descriptor);
-		var types = new ArrayList<TypeDef>(2);
+		StringReader reader = new StringReader(descriptor);
+		List<TypeDef> types = new ArrayList<TypeDef>(2);
 
 		while (true) {
-			var c = reader.read();
+			int c = reader.read();
 
 			if (c == '(') {
 				continue;
@@ -101,7 +103,7 @@ public class MojangMappings {
 			}
 
 			if (c == 'L') {
-				var sb = new StringBuilder();
+				StringBuilder sb = new StringBuilder();
 
 				while (true) {
 					c = reader.read();
@@ -152,7 +154,7 @@ public class MojangMappings {
 
 	@Nullable
 	public ClassDef getClass(String name) {
-		var mmc = classesMM.get(name);
+		ClassDef mmc = classesMM.get(name);
 		return mmc != null ? mmc : classes.get(name);
 	}
 
@@ -169,7 +171,7 @@ public class MojangMappings {
 			string = string.substring(1);
 		}
 
-		var c = getClass(string);
+		ClassDef c = getClass(string);
 
 		if (c != null) {
 			return c.array(array);
@@ -188,10 +190,10 @@ public class MojangMappings {
 	private void parse0(List<String> lines) {
 		lines.removeIf(MojangMappings::invalidLine);
 
-		for (var line : lines) {
+		for (String line : lines) {
 			if (line.charAt(line.length() - 1) == ':') {
-				var s = line.split(" -> ", 2); // replace with faster, last index of space check
-				var c = new ClassDef(this, s[1].substring(0, s[1].length() - 1), s[0], new HashMap<>(0), new HashSet<>(0));
+				String[] s = line.split(" -> ", 2); // replace with faster, last index of space check
+				ClassDef c = new ClassDef(this, s[1].substring(0, s[1].length() - 1), s[0], new HashMap<>(0), new HashSet<>(0));
 				c.mapped = true;
 				classes.put(c.rawName, c);
 				classesMM.put(c.mmName, c);
@@ -201,7 +203,7 @@ public class MojangMappings {
 
 		ClassDef currentClassDef = null;
 
-		for (var line : lines) {
+		for (String line : lines) {
 			if (line.charAt(0) == ' ') {
 				if (currentClassDef == null) {
 					throw new RemapperException("Field or method without class! " + line);
@@ -209,9 +211,9 @@ public class MojangMappings {
 
 				line = line.substring(Math.max(4, line.lastIndexOf(':') + 1));
 				int typeSpace = line.indexOf(' ');
-				var type = getType(line.substring(0, typeSpace));
+				TypeDef type = getType(line.substring(0, typeSpace));
 				line = line.substring(typeSpace + 1);
-				var rawName = line.substring(line.lastIndexOf(' ') + 1);
+				String rawName = line.substring(line.lastIndexOf(' ') + 1);
 				line = line.substring(0, line.indexOf(' '));
 				String name;
 				MethodDefSignature sig;
@@ -224,8 +226,8 @@ public class MojangMappings {
 					if (line.isEmpty()) {
 						sig = SIG_EMPTY;
 					} else {
-						var sclasses = line.split(",");
-						var types = new TypeDef[sclasses.length];
+						String[] sclasses = line.split(",");
+						TypeDef[] types = new TypeDef[sclasses.length];
 						for (int i = 0; i < sclasses.length; i++) {
 							types[i] = getType(sclasses[i]);
 						}
@@ -237,14 +239,14 @@ public class MojangMappings {
 					sig = null;
 				}
 
-				var rawNameSig = new NamedSignature(rawName, sig);
+				NamedSignature rawNameSig = new NamedSignature(rawName, sig);
 
 				if (name.startsWith("lambda$") || name.startsWith("access$") || line.startsWith("val$") || line.startsWith("this$")) {
 					currentClassDef.ignoredMembers.add(rawNameSig);
 					continue;
 				}
 
-				var m = new MemberDef(currentClassDef, rawNameSig, name, type, new MutableObject<>(""));
+				MemberDef m = new MemberDef(currentClassDef, rawNameSig, name, type, new MutableObject<>(""));
 				currentClassDef.members.put(rawNameSig, m);
 			} else if (line.charAt(line.length() - 1) == ':') {
 				currentClassDef = classes.get(line.substring(line.lastIndexOf(' ') + 1, line.length() - 1));
@@ -257,20 +259,20 @@ public class MojangMappings {
 	}
 
 	public void updateOccurrences() {
-		for (var c : allTypes.values()) {
+		for (TypeDef c : allTypes.values()) {
 			c.occurrences = 0;
 		}
 
-		for (var m : methodSignatures.values()) {
+		for (MethodDefSignature m : methodSignatures.values()) {
 			m.occurrences = 0;
 		}
 
-		for (var c : classes.values()) {
-			for (var m : c.members.values()) {
+		for (ClassDef c : classes.values()) {
+			for (MemberDef m : c.members.values()) {
 				if (m.rawName.signature != null && m.rawName.signature.types.length > 0) {
 					m.rawName.signature.occurrences++;
 
-					for (var t : m.rawName.signature.types) {
+					for (TypeDef t : m.rawName.signature.types) {
 						t.occurrences++;
 					}
 				}
@@ -290,15 +292,15 @@ public class MojangMappings {
 		cleanup();
 		updateOccurrences();
 
-		var typeDefList = new ArrayList<>(allTypes.values());
+		List<TypeDef> typeDefList = new ArrayList<>(allTypes.values());
 		typeDefList.sort(TypeDef::compareTo);
 
-		var unmappedTypes = new ArrayList<TypeDef>();
-		var mappedTypes = new ArrayList<TypeDef>();
-		var arrayTypes = new ArrayList<TypeDef>();
+		List<TypeDef> unmappedTypes = new ArrayList<TypeDef>();
+		List<TypeDef> mappedTypes = new ArrayList<TypeDef>();
+		List<TypeDef> arrayTypes = new ArrayList<TypeDef>();
 
 		for (int i = 0; i < typeDefList.size(); i++) {
-			var c = typeDefList.get(i);
+			TypeDef c = typeDefList.get(i);
 			c.index = i;
 
 			if (c.array > 0) {
@@ -310,7 +312,7 @@ public class MojangMappings {
 			}
 		}
 
-		var sigList = new ArrayList<>(methodSignatures.values());
+		List<MethodDefSignature> sigList = new ArrayList<>(methodSignatures.values());
 		sigList.sort(MethodDefSignature::compareTo);
 
 		for (int i = 0; i < sigList.size(); i++) {
@@ -331,18 +333,18 @@ public class MojangMappings {
 		writeVarInt(stream, mappedTypes.size());
 		writeVarInt(stream, arrayTypes.size());
 
-		for (var c : unmappedTypes) {
+		for (TypeDef c : unmappedTypes) {
 			writeVarInt(stream, c.index);
 			writeUtf(stream, c.parent.rawName);
 		}
 
-		for (var c : mappedTypes) {
+		for (TypeDef c : mappedTypes) {
 			writeVarInt(stream, c.index);
 			writeUtf(stream, c.parent.unmappedName.getValue());
 			writeUtf(stream, c.parent.mmName);
 		}
 
-		for (var c : arrayTypes) {
+		for (TypeDef c : arrayTypes) {
 			writeVarInt(stream, c.index);
 			writeVarInt(stream, c.parent.noArrayType.index);
 			writeVarInt(stream, c.array);
@@ -350,20 +352,20 @@ public class MojangMappings {
 
 		writeVarInt(stream, sigList.size());
 
-		for (var s : sigList) {
+		for (MethodDefSignature s : sigList) {
 			writeVarInt(stream, s.types.length);
 
-			for (var c : s.types) {
+			for (TypeDef c : s.types) {
 				writeVarInt(stream, c.index);
 			}
 		}
 
-		for (var c : mappedTypes) {
-			var fields = new ArrayList<MemberDef>();
-			var arg0methods = new ArrayList<MemberDef>();
-			var argNmethods = new ArrayList<MemberDef>();
+		for (TypeDef c : mappedTypes) {
+			List<MemberDef> fields = new ArrayList<MemberDef>();
+			List<MemberDef> arg0methods = new ArrayList<MemberDef>();
+			List<MemberDef> argNmethods = new ArrayList<MemberDef>();
 
-			for (var f : c.parent.members.values()) {
+			for (MemberDef f : c.parent.members.values()) {
 				if (f.rawName.signature == null) {
 					fields.add(f);
 				} else if (f.rawName.signature.types.length == 0) {
@@ -377,17 +379,17 @@ public class MojangMappings {
 			writeVarInt(stream, arg0methods.size());
 			writeVarInt(stream, argNmethods.size());
 
-			for (var m : fields) {
+			for (MemberDef m : fields) {
 				writeUtf(stream, m.unmappedName.getValue());
 				writeUtf(stream, m.mmName);
 			}
 
-			for (var m : arg0methods) {
+			for (MemberDef m : arg0methods) {
 				writeUtf(stream, m.unmappedName.getValue());
 				writeUtf(stream, m.mmName);
 			}
 
-			for (var m : argNmethods) {
+			for (MemberDef m : argNmethods) {
 				writeUtf(stream, m.unmappedName.getValue());
 				writeUtf(stream, m.mmName);
 				writeVarInt(stream, m.rawName.signature.index);
@@ -396,7 +398,7 @@ public class MojangMappings {
 	}
 
 	public static MojangMappings parse(String mcVersion, List<String> lines) throws Exception {
-		var mappings = new MojangMappings(mcVersion);
+		MojangMappings mappings = new MojangMappings(mcVersion);
 		mappings.parse0(lines);
 		return mappings;
 	}
@@ -414,7 +416,7 @@ public class MojangMappings {
 
 		@Override
 		public boolean equals(Object o) {
-			return this == o || o instanceof MethodDefSignature sig && Arrays.equals(types, sig.types);
+			return this == o || o instanceof MethodDefSignature && Arrays.equals(types, ((MethodDefSignature) o).types);
 		}
 
 		@Override
@@ -430,7 +432,7 @@ public class MojangMappings {
 				return types[0].toString();
 			}
 
-			var sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 
 			for (int i = 0; i < types.length; i++) {
 				if (i > 0) {
@@ -498,8 +500,8 @@ public class MojangMappings {
 			this.mappings = mappings;
 			this.rawName = rawName;
 			this.mmName = mmName;
-			var dn = mmName.isEmpty() ? rawName : mmName;
-			var dni = dn.lastIndexOf('.');
+			String dn = mmName.isEmpty() ? rawName : mmName;
+			int dni = dn.lastIndexOf('.');
 			this.displayName = dni == -1 ? dn : dn.substring(dni + 1);
 			this.members = members;
 			this.ignoredMembers = ignoredMembers;
@@ -522,8 +524,8 @@ public class MojangMappings {
 				return noArrayType;
 			}
 
-			var t = new TypeDef(this, a);
-			var t1 = mappings.allTypes.get(t);
+			TypeDef t = new TypeDef(this, a);
+			TypeDef t1 = mappings.allTypes.get(t);
 
 			if (t1 == null) {
 				mappings.allTypes.put(t, t);

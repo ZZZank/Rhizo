@@ -70,7 +70,7 @@ public class ClassData {
 
 				if (Modifier.isPublic(m) && !Modifier.isTransient(m) && !field.isAnnotationPresent(HideFromJS.class)) {
 					String n = cache.data.getRemapper().getMappedField(type, field);
-					var cm = make(n);
+					ClassMember cm = make(n);
 					cm.field = field;
 					cm.isFinal = Modifier.isFinal(m);
 				}
@@ -81,7 +81,7 @@ public class ClassData {
 
 				if (Modifier.isPublic(m) && !Modifier.isNative(m)) {
 					String n = cache.data.getRemapper().getMappedMethod(type, method);
-					var cm = make(n);
+					ClassMember cm = make(n);
 
 					if (cm.methods == null) {
 						cm.methods = new HashMap<>();
@@ -122,14 +122,14 @@ public class ClassData {
 	private Map<String, ClassMember> getActualMembers() {
 		if (actualMembers == null) {
 			Map<String, ClassMember> members = new HashMap<>();
-			var stack = new ArrayDeque<ClassData>();
+			ArrayDeque<ClassData> stack = new ArrayDeque<ClassData>();
 			stack.add(this);
 
 			while (!stack.isEmpty()) {
-				var current = stack.pop();
+				ClassData current = stack.pop();
 
-				for (var member : current.getOwnMembers().values()) {
-					var existing = members.get(member.name);
+				for (ClassMember member : current.getOwnMembers().values()) {
+					ClassMember existing = members.get(member.name);
 
 					if (existing == null) {
 						existing = new ClassMember(this, member.name);
@@ -139,11 +139,11 @@ public class ClassData {
 					existing.merge(member);
 				}
 
-				for (var iface : current.type.getInterfaces()) {
+				for (Class<?> iface : current.type.getInterfaces()) {
 					stack.add(cache.of(iface));
 				}
 
-				var parent = current.getParent();
+				ClassData parent = current.getParent();
 
 				if (parent != null) {
 					stack.add(parent);
@@ -152,7 +152,7 @@ public class ClassData {
 
 			actualMembers = new HashMap<>(members.size());
 
-			for (var member : members.values()) {
+			for (ClassMember member : members.values()) {
 				actualMembers.put(member.name, member);
 			}
 

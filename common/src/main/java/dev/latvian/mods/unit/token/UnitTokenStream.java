@@ -6,6 +6,7 @@ import dev.latvian.mods.unit.UnitContext;
 import dev.latvian.mods.unit.operator.GroupUnit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class UnitTokenStream {
 	private static boolean isHex(char c) {
@@ -29,29 +30,29 @@ public final class UnitTokenStream {
 		this.inputStringPos = new ArrayList<>();
 		this.infixPos = -1;
 
-		var current = new StringBuilder();
+		StringBuilder current = new StringBuilder();
 
 		while (true) {
-			var c = charStream.next();
+			char c = charStream.next();
 
 			if (c == 0) {
 				break;
 			}
 
 			int cpos = charStream.position;
-			var symbol = UnitSymbol.read(c, charStream);
+			UnitSymbol symbol = UnitSymbol.read(c, charStream);
 
 			if (symbol == UnitSymbol.HASH) {
 				if (isHex(charStream.peek(1)) && isHex(charStream.peek(2)) && isHex(charStream.peek(3)) && isHex(charStream.peek(4)) && isHex(charStream.peek(5)) && isHex(charStream.peek(6))) {
-					var alpha = isHex(charStream.peek(7)) && isHex(charStream.peek(8));
+					boolean alpha = isHex(charStream.peek(7)) && isHex(charStream.peek(8));
 
 					current.append('#');
 
-					for (var i = 0; i < (alpha ? 8 : 6); i++) {
+					for (int i = 0; i < (alpha ? 8 : 6); i++) {
 						current.append(charStream.next());
 					}
 
-					var color = Long.decode(current.toString()).intValue();
+					int color = Long.decode(current.toString()).intValue();
 					current.setLength(0);
 
 					inputStringPos.add(cpos);
@@ -86,7 +87,7 @@ public final class UnitTokenStream {
 			current.setLength(0);
 		}
 
-		var interpretedUnits = new ArrayList<Unit>();
+		List<Unit> interpretedUnits = new ArrayList<Unit>();
 
 		if (context.isDebug()) {
 			context.debugInfo("Infix", infix);
@@ -94,7 +95,7 @@ public final class UnitTokenStream {
 
 		try {
 			do {
-				var unitToken = readFully();
+				UnitToken unitToken = readFully();
 				interpretedUnits.add(unitToken.interpret(this));
 			}
 			while (ifNextToken(UnitSymbol.SEMICOLON));
@@ -163,13 +164,13 @@ public final class UnitTokenStream {
 		}
 
 		if (ifNextToken(UnitSymbol.HOOK)) {
-			var left = readFully();
+			UnitToken left = readFully();
 
 			if (!ifNextToken(UnitSymbol.COLON)) {
 				throw new UnitInterpretException("Expected ':', got '" + peekToken() + "'!");
 			}
 
-			var right = readFully();
+			UnitToken right = readFully();
 			return new TernaryUnitToken(postfix.normalize(), left, right);
 		}
 

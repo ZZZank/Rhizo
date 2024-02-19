@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ClassMember {
 	public final ClassData classData;
@@ -52,7 +53,7 @@ public class ClassMember {
 	}
 
 	public Possible<?> invoke(MethodSignature sig, @Nullable Object obj, Object[] args) throws Exception {
-		var m = methods.get(sig);
+		MethodInfo m = methods.get(sig);
 
 		if (m != null) {
 			return Possible.of(m.method.invoke(obj, args));
@@ -70,12 +71,12 @@ public class ClassMember {
 			jsMethods = new HashMap<>();
 		}
 
-		var p = jsMethods.get(sig);
+		Possible<MethodInfo> p = jsMethods.get(sig);
 
 		if (p == null) {
 			p = Possible.absent();
 
-			for (var m : methods.values()) {
+			for (MethodInfo m : methods.values()) {
 				if (m.signature.matches(sig, classData.cache.data)) {
 					p = Possible.of(m);
 					break;
@@ -100,9 +101,9 @@ public class ClassMember {
 				methods = new HashMap<>();
 			}
 
-			for (var entry : member.methods.entrySet()) {
-				var mi = methods.get(entry.getKey());
-				var m = entry.getValue();
+			for (Map.Entry<MethodSignature, MethodInfo> entry : member.methods.entrySet()) {
+				MethodInfo mi = methods.get(entry.getKey());
+				MethodInfo m = entry.getValue();
 
 				if (mi == null) {
 					methods.put(entry.getKey(), m);

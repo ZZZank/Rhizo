@@ -6,7 +6,6 @@
 
 package dev.latvian.mods.rhino;
 
-import java.io.Serial;
 
 /**
  * A wrapper for runtime exceptions.
@@ -17,7 +16,7 @@ import java.io.Serial;
  * @author Norris Boyd
  */
 public class WrappedException extends EvaluatorException {
-	@Serial
+	// @Serial
 	private static final long serialVersionUID = -1551979216966520648L;
 	private final Throwable exception;
 

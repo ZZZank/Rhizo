@@ -2,13 +2,17 @@ package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.mod.util.MojangMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.MojangMappings.MemberDef;
+import dev.latvian.mods.rhino.mod.util.MojangMappings.NamedSignature;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.BufferedReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Mod("rhino")
@@ -27,9 +31,9 @@ public class RhinoModForge {
 	private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
 		MojangMappings.ClassDef current = null;
 
-		var srg = new ArrayList<String>();
+		List<String> srg = new ArrayList<String>();
 
-		try (var reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
+		try (Reader reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
 			String line;
 
 			while ((line = reader.readLine()) != null) {
@@ -37,10 +41,10 @@ public class RhinoModForge {
 			}
 		}
 
-		var pattern = Pattern.compile("[\t ]");
+		Pattern pattern = Pattern.compile("[\t ]");
 
 		for (int i = 1; i < srg.size(); i++) {
-			var s = pattern.split(srg.get(i));
+			String[] s = pattern.split(srg.get(i));
 
 			if (s.length < 3 || s[1].isEmpty()) {
 				continue;
@@ -61,9 +65,9 @@ public class RhinoModForge {
 						continue;
 					}
 
-					var sigs = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
-					var sig = new MojangMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigs));
-					var m = current.members.get(sig);
+					String sigs = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
+					NamedSignature sig = new MojangMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigs));
+					MemberDef m = current.members.get(sig);
 
 					if (m != null && !m.mmName().equals(s[3])) {
 						m.unmappedName().setValue(s[3]);
@@ -72,8 +76,8 @@ public class RhinoModForge {
 						RemappingHelper.LOGGER.info("Method " + s[3] + " [" + sig + "] not found!");
 					}
 				} else if (s.length == 4) {
-					var sig = new MojangMappings.NamedSignature(s[1], null);
-					var m = current.members.get(sig);
+					NamedSignature sig = new MojangMappings.NamedSignature(s[1], null);
+					MemberDef m = current.members.get(sig);
 
 					if (m != null) {
 						if (!m.mmName().equals(s[2])) {

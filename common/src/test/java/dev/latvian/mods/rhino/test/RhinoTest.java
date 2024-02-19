@@ -2,10 +2,12 @@ package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.Scriptable;
+import dev.latvian.mods.rhino.ScriptableObject;
 import dev.latvian.mods.rhino.SharedContextData;
 import dev.latvian.mods.rhino.mod.util.CollectionTagWrapper;
 import dev.latvian.mods.rhino.mod.util.CompoundTagWrapper;
 import dev.latvian.mods.rhino.mod.util.NBTUtils;
+import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -32,10 +34,10 @@ public class RhinoTest {
 			return sharedScope;
 		}
 
-		var scope = cx.initStandardObjects();
-		var data = SharedContextData.get(cx, scope);
+		ScriptableObject scope = cx.initStandardObjects();
+		SharedContextData data = SharedContextData.get(cx, scope);
 
-		var typeWrappers = data.getTypeWrappers();
+		TypeWrappers typeWrappers = data.getTypeWrappers();
 		typeWrappers.register(CompoundTag.class, NBTUtils::isTagCompound, NBTUtils::toTagCompound);
 		typeWrappers.register(CollectionTag.class, NBTUtils::isTagCollection, NBTUtils::toTagCollection);
 		typeWrappers.register(ListTag.class, NBTUtils::isTagCollection, NBTUtils::toTagList);
@@ -59,10 +61,10 @@ public class RhinoTest {
 	}
 
 	public void test(String name, String script, String console) {
-		var cx = Context.enterWithNewFactory();
+		Context cx = Context.enterWithNewFactory();
 
 		try {
-			var scope = createScope(cx);
+			Scriptable scope = createScope(cx);
 			cx.evaluateString(scope, script, testName + "/" + name, 1, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();

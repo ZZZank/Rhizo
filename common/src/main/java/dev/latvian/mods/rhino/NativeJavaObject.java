@@ -660,7 +660,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper {
 						return Undefined.instance;
 					}
 
-					var contextData = SharedContextData.get(start);
+					SharedContextData contextData = SharedContextData.get(start);
 					Object r1 = contextData.getWrapFactory().wrap(contextData, this, r, r.getClass());
 
 					if (r1 instanceof Scriptable) {

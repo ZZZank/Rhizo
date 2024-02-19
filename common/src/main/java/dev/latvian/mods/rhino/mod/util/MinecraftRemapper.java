@@ -112,7 +112,7 @@ public class MinecraftRemapper implements Remapper {
 	}
 
 	public static MinecraftRemapper load(InputStream stream, boolean debug) throws Exception {
-		var m = new MinecraftRemapper(new HashMap<>(), new HashMap<>());
+		MinecraftRemapper m = new MinecraftRemapper(new HashMap<>(), new HashMap<>());
 		m.load0(stream, debug);
 		return m;
 	}
@@ -134,10 +134,10 @@ public class MinecraftRemapper implements Remapper {
 		RemappingHelper.LOGGER.info("Loading mappings for " + readUtf(stream));
 
 		int unmappedTypes = readVarInt(stream);
-		var mappedTypes = new RemappedType[readVarInt(stream)];
+		RemappedType[] mappedTypes = new RemappedType[readVarInt(stream)];
 		int arrayTypes = readVarInt(stream);
 
-		var types = new RemappedType[unmappedTypes + mappedTypes.length + arrayTypes];
+		RemappedType[] types = new RemappedType[unmappedTypes + mappedTypes.length + arrayTypes];
 
 		if (debug) {
 			RemappingHelper.LOGGER.info("Unmapped Types: " + unmappedTypes);
@@ -148,14 +148,14 @@ public class MinecraftRemapper implements Remapper {
 
 		for (int i = 0; i < unmappedTypes; i++) {
 			int index = readVarInt(stream);
-			var name = readUtf(stream);
+			String name = readUtf(stream);
 			types[index] = new RemappedType(new RemappedClass(name, name, false), 0);
 		}
 
 		for (int i = 0; i < mappedTypes.length; i++) {
 			int index = readVarInt(stream);
-			var realName = readUtf(stream);
-			var remappedName = readUtf(stream);
+			String realName = readUtf(stream);
+			String remappedName = readUtf(stream);
 			types[index] = new RemappedType(new RemappedClass(realName.isEmpty() ? remappedName : realName, remappedName, true), 0);
 			mappedTypes[i] = types[index];
 			classMap.put(types[index].parent.realName, types[index].parent);
@@ -173,11 +173,11 @@ public class MinecraftRemapper implements Remapper {
 			types[index] = new RemappedType(types[type].parent, array);
 		}
 
-		var sig = new String[readVarInt(stream)];
+		String[] sig = new String[readVarInt(stream)];
 
 		for (int i = 0; i < sig.length; i++) {
 			int params = readVarInt(stream);
-			var sb = new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 			sb.append('(');
 
 			for (int j = 0; j < params; j++) {
@@ -187,7 +187,7 @@ public class MinecraftRemapper implements Remapper {
 			sig[i] = sb.toString();
 		}
 
-		for (var c : mappedTypes) {
+		for (RemappedType c : mappedTypes) {
 			if (debug) {
 				RemappingHelper.LOGGER.info(String.format("- %s -> %s", c.parent.realName, c.parent.remappedName));
 			}
@@ -197,8 +197,8 @@ public class MinecraftRemapper implements Remapper {
 			int argN = readVarInt(stream);
 
 			for (int i = 0; i < fields; i++) {
-				var unmappedName = readUtf(stream);
-				var mmName = readUtf(stream);
+				String unmappedName = readUtf(stream);
+				String mmName = readUtf(stream);
 
 				if (unmappedName.isEmpty() || mmName.isEmpty() || unmappedName.equals(mmName)) {
 					continue;
@@ -216,8 +216,8 @@ public class MinecraftRemapper implements Remapper {
 			}
 
 			for (int i = 0; i < arg0; i++) {
-				var realName = readUtf(stream);
-				var remappedName = readUtf(stream);
+				String realName = readUtf(stream);
+				String remappedName = readUtf(stream);
 
 				if (realName.isEmpty() || remappedName.isEmpty() || realName.equals(remappedName)) {
 					continue;
@@ -235,8 +235,8 @@ public class MinecraftRemapper implements Remapper {
 			}
 
 			for (int i = 0; i < argN; i++) {
-				var realName = readUtf(stream);
-				var remappedName = readUtf(stream);
+				String realName = readUtf(stream);
+				String remappedName = readUtf(stream);
 
 				if (realName.isEmpty() || remappedName.isEmpty() || realName.equals(remappedName)) {
 					continue;
@@ -247,7 +247,7 @@ public class MinecraftRemapper implements Remapper {
 				}
 
 				int index = readVarInt(stream);
-				var key = realName + sig[index];
+				String key = realName + sig[index];
 				c.parent.methods.put(key, remappedName);
 
 				if (debug) {
@@ -264,7 +264,7 @@ public class MinecraftRemapper implements Remapper {
 
 	@Override
 	public String getMappedClass(Class<?> from) {
-		var c = classMap.get(from.getName());
+		RemappedClass c = classMap.get(from.getName());
 		return c == null ? "" : c.remappedName;
 	}
 
@@ -274,12 +274,12 @@ public class MinecraftRemapper implements Remapper {
 			return "";
 		}
 
-		var s = unmapClassMap.get(mmName);
+		String s = unmapClassMap.get(mmName);
 
 		if (s == null) {
 			s = "";
 
-			for (var c : classMap.values()) {
+			for (RemappedClass c : classMap.values()) {
 				if (c.remappedName.equals(mmName)) {
 					s = c.realName;
 				}
@@ -297,7 +297,7 @@ public class MinecraftRemapper implements Remapper {
 			return "";
 		}
 
-		var c = classMap.get(from.getName());
+		RemappedClass c = classMap.get(from.getName());
 		return c == null || c.fields == null ? "" : c.fields.getOrDefault(field.getName(), "");
 	}
 
@@ -307,7 +307,7 @@ public class MinecraftRemapper implements Remapper {
 			return "";
 		}
 
-		var c = classMap.get(from.getName());
+		RemappedClass c = classMap.get(from.getName());
 
 		if (c == null) {
 			return "";
@@ -317,11 +317,11 @@ public class MinecraftRemapper implements Remapper {
 			return "";
 		}
 
-		var sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		sb.append(method.getName());
 		sb.append('(');
 
-		for (var t : method.getParameterTypes()) {
+		for (Class<?> t : method.getParameterTypes()) {
 			sb.append(t.descriptorString());
 		}
 

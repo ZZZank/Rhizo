@@ -18,6 +18,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -478,7 +479,7 @@ public class JavaMembers {
 		// gets in the way.
 
 		for (MethodInfo methodInfo : getAccessibleMethods(includeProtected)) {
-			var method = methodInfo.method;
+			Method method = methodInfo.method;
 			int mods = method.getModifiers();
 			boolean isStatic = Modifier.isStatic(mods);
 			Map<String, Object> ht = isStatic ? staticMembers : members;
@@ -538,7 +539,7 @@ public class JavaMembers {
 
 		// Reflect fields.
 		for (FieldInfo fieldInfo : getAccessibleFields(includeProtected)) {
-			var field = fieldInfo.field;
+			Field field = fieldInfo.field;
 			String name = fieldInfo.name.isEmpty() ? field.getName() : fieldInfo.name;
 
 			int mods = field.getModifiers();
@@ -725,7 +726,7 @@ public class JavaMembers {
 
 							FieldInfo info = new FieldInfo(field);
 
-							var remap = field.getAnnotation(RemapForJS.class);
+							RemapForJS remap = field.getAnnotation(RemapForJS.class);
 
 							if (remap != null) {
 								info.name = remap.value().trim();
@@ -763,13 +764,13 @@ public class JavaMembers {
 	}
 
 	public Collection<MethodInfo> getAccessibleMethods(boolean includeProtected) {
-		var methodMap = new HashMap<MethodSignature, MethodInfo>();
+		Map<MethodSignature, MethodInfo> methodMap = new HashMap<MethodSignature, MethodInfo>();
 
-		var stack = new ArrayDeque<Class<?>>();
+		Deque<Class<?>> stack = new ArrayDeque<Class<?>>();
 		stack.add(cl);
 
 		while (!stack.isEmpty()) {
-			var currentClass = stack.pop();
+			Class<?> currentClass = stack.pop();
 			Set<String> remapPrefixes = new HashSet<>();
 
 			for (RemapPrefixForJS r : currentClass.getAnnotationsByType(RemapPrefixForJS.class)) {
@@ -780,13 +781,13 @@ public class JavaMembers {
 				}
 			}
 
-			for (var method : getDeclaredMethodsSafe(currentClass)) {
+			for (Method method : getDeclaredMethodsSafe(currentClass)) {
 				int mods = method.getModifiers();
 
 				if ((Modifier.isPublic(mods) || includeProtected && Modifier.isProtected(mods))) {
 					MethodSignature signature = new MethodSignature(method);
 
-					var info = methodMap.get(signature);
+					MethodInfo info = methodMap.get(signature);
 					boolean hidden = method.isAnnotationPresent(HideFromJS.class);
 
 					if (info == null) {
@@ -808,7 +809,7 @@ public class JavaMembers {
 							continue;
 						}
 
-						var remap = method.getAnnotation(RemapForJS.class);
+						RemapForJS remap = method.getAnnotation(RemapForJS.class);
 
 						if (remap != null) {
 							info.name = remap.value().trim();
@@ -832,7 +833,7 @@ public class JavaMembers {
 
 			stack.addAll(Arrays.asList(currentClass.getInterfaces()));
 
-			var parent = currentClass.getSuperclass();
+			Class<?> parent = currentClass.getSuperclass();
 
 			if (parent != null) {
 				stack.add(parent);
@@ -841,7 +842,7 @@ public class JavaMembers {
 
 		List<MethodInfo> list = new ArrayList<>(methodMap.size());
 
-		for (var m : methodMap.values()) {
+		for (MethodInfo m : methodMap.values()) {
 			if (!m.hidden) {
 				list.add(m);
 			}

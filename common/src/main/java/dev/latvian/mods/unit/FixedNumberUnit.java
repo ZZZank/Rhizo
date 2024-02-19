@@ -51,7 +51,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj == this || obj instanceof FixedNumberUnit u && value == u.value;
+		return obj == this || obj instanceof FixedNumberUnit && value == ((FixedNumberUnit) obj).value;
 	}
 
 	@Override

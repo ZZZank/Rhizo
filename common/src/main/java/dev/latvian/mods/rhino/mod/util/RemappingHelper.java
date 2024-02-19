@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.mod.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 // import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,10 +73,10 @@ public class RemappingHelper {
 		if (minecraftRemapper == null) {
 			LOGGER.info("Loading Rhino Minecraft remapper...");
 			long time = System.currentTimeMillis();
-			var configPath = RhinoProperties.getGameDir().resolve("config/mm.jsmappings");
+			Path configPath = RhinoProperties.getGameDir().resolve("config/mm.jsmappings");
 
 			if (Files.exists(configPath)) {
-				try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(Files.newInputStream(configPath))))) {
+				try (BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(Files.newInputStream(configPath))))) {
 					minecraftRemapper = MinecraftRemapper.load(in, debug);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -82,7 +84,7 @@ public class RemappingHelper {
 					minecraftRemapper = new MinecraftRemapper(Map.of(), Map.of());
 				}
 			} else {
-				try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource("mm.jsmappings"))))) {
+				try (BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource("mm.jsmappings"))))) {
 					minecraftRemapper = MinecraftRemapper.load(in, debug);
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -103,7 +105,7 @@ public class RemappingHelper {
 
 	public static Reader createReader(String url) throws Exception {
 		LOGGER.info("Fetching " + url + "...");
-		var connection = new URL(url).openConnection();
+		URLConnection connection = new URL(url).openConnection();
 		connection.setConnectTimeout(5000);
 		connection.setReadTimeout(10000);
 		return new InputStreamReader(new BufferedInputStream(connection.getInputStream()), StandardCharsets.UTF_8);
@@ -129,25 +131,25 @@ public class RemappingHelper {
 			return;
 		}
 
-		try (var metaInfoReader = createReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
-			for (var metaInfo : GSON.fromJson(metaInfoReader, JsonObject.class).get("versions").getAsJsonArray()) {
+		try (Reader metaInfoReader = createReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
+			for (JsonElement metaInfo : GSON.fromJson(metaInfoReader, JsonObject.class).get("versions").getAsJsonArray()) {
 				if (!metaInfo.getAsJsonObject().get("id").getAsString().equals(mcVersion)) {
 					continue;
 				}
 				String metaUrl = metaInfo.getAsJsonObject().get("url").getAsString();
 
-				try (var metaReader = createReader(metaUrl)) {
-					var meta = GSON.fromJson(metaReader, JsonObject.class);
+				try (Reader metaReader = createReader(metaUrl)) {
+					JsonObject meta = GSON.fromJson(metaReader, JsonObject.class);
 
 					if (meta.get("downloads") instanceof JsonObject o 
 						&& o.get("client_mappings") instanceof JsonObject cmap 
 						&& cmap.has("url")) {
-						try (var cmapReader = createReader(cmap.get("url").getAsString())) {
-							var mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
+						try (Reader cmapReader = createReader(cmap.get("url").getAsString())) {
+							MojangMappings mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
 							callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
 							mojangMappings.cleanup();
 
-							try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(Path.of("mm.jsmappings"))))) {
+							try (BufferedOutputStream out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(Path.of("mm.jsmappings"))))) {
 								mojangMappings.write(out);
 							}
 

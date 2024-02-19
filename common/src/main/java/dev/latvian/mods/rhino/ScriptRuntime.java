@@ -972,7 +972,7 @@ public class ScriptRuntime {
 			return result;
 		}
 
-		var contextData = SharedContextData.get(cx, scope);
+		SharedContextData contextData = SharedContextData.get(cx, scope);
 
 		// Extension: Wrap as a LiveConnect object.
 		Object wrapped = contextData.getWrapFactory().wrap(contextData, scope, val, null);
@@ -2108,7 +2108,7 @@ public class ScriptRuntime {
 			return false;
 		}
 		if (value instanceof ScriptableObject) {
-			var type = ((ScriptableObject) value).getTypeOf();
+			MemberType type = ((ScriptableObject) value).getTypeOf();
 			return type == MemberType.OBJECT || type == MemberType.FUNCTION;
 		}
 		if (value instanceof Scriptable) {
@@ -2749,7 +2749,7 @@ public class ScriptRuntime {
 		Object obj;
 		boolean cacheObj;
 
-		var contextData = SharedContextData.get(cx, scope);
+		SharedContextData contextData = SharedContextData.get(cx, scope);
 
 		getObj:
 		if (t instanceof JavaScriptException) {
@@ -2850,7 +2850,7 @@ public class ScriptRuntime {
 		String errorMsg;
 		Throwable javaException = null;
 
-		var contextData = SharedContextData.get(cx, scope);
+		SharedContextData contextData = SharedContextData.get(cx, scope);
 
 		if (t instanceof EcmaError) {
 		    EcmaError ee = (EcmaError) t;

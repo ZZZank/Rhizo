@@ -351,7 +351,7 @@ public class NativeJavaList extends NativeJavaObject {
 		Predicate predicate = (Predicate) args[0];
 
 		for (int i = list.size() - 1; i >= 0; i--) {
-			var o = list.get(i);
+			Object o = list.get(i);
 
 			if (predicate.test(o)) {
 				return o;

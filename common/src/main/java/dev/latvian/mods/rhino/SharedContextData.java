@@ -147,7 +147,7 @@ public class SharedContextData {
 			return null;
 		}
 
-		var provider = customScriptableWrapperCache.get(javaObject.getClass());
+		CustomJavaToJsWrapperProvider provider = customScriptableWrapperCache.get(javaObject.getClass());
 
 		if (provider == null) {
 			for (CustomJavaToJsWrapperProviderHolder wrapper : customScriptableWrappers) {
