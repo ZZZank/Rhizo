@@ -4,6 +4,7 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 import dev.latvian.mods.rhino.mod.util.MojangMappings.TypeDef;
+import dev.latvian.mods.rhino.util.BackportUtil;
 
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -184,7 +185,7 @@ public class MojangMappings {
 	}
 
 	private static boolean invalidLine(String s) {
-		return s.isBlank() || s.startsWith("#") || s.endsWith("init>") || s.contains(".package-info ");
+		return s.trim().isEmpty() || s.startsWith("#") || s.endsWith("init>") || s.contains(".package-info ");
 	}
 
 	private void parse0(List<String> lines) {
@@ -592,7 +593,7 @@ public class MojangMappings {
 		public String getRawDescriptor() {
 			if (rawDescriptor == null) {
 				if (array > 0) {
-					rawDescriptor = "[".repeat(array) + parent.getRawDescriptor();
+					rawDescriptor = BackportUtil.repeat("[", array) + parent.getRawDescriptor();
 				} else {
 					rawDescriptor = parent.getRawDescriptor();
 				}

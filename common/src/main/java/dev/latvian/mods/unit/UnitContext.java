@@ -1,5 +1,6 @@
 package dev.latvian.mods.unit;
 
+import dev.latvian.mods.rhino.util.BackportUtil;
 import dev.latvian.mods.unit.function.AbsFuncUnit;
 import dev.latvian.mods.unit.function.Atan2FuncUnit;
 import dev.latvian.mods.unit.function.AtanFuncUnit;
@@ -135,7 +136,7 @@ public class UnitContext {
 	public void debugInfo(String s) {
 		if (debug >= 0) {
 			if (debug >= 2) {
-				System.out.println("  ".repeat(debug - 1) + s);
+				System.out.println(BackportUtil.repeat("  ", debug-1) + s);
 			} else {
 				System.out.println(s);
 			}

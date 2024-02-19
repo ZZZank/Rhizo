@@ -20,7 +20,7 @@ public abstract class FuncUnit extends Unit {
 		builder.append(factory.name());
 		builder.append('(');
 
-		Unit args = getArguments();
+		Unit[] args = getArguments();
 
 		for (int i = 0; i < args.length; i++) {
 			if (i > 0) {

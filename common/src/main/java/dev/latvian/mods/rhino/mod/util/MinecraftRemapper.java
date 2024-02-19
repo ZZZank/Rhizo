@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.mod.util;
 
+import dev.latvian.mods.rhino.util.BackportUtil;
 import dev.latvian.mods.rhino.util.Remapper;
 
 import java.io.InputStream;
@@ -73,7 +74,7 @@ public class MinecraftRemapper implements Remapper {
 				return parent.toString();
 			}
 
-			return parent.toString() + "[]".repeat(array);
+			return parent.toString() + BackportUtil.repeat("[]", array);
 		}
 
 		public boolean isRemapped() {
@@ -93,7 +94,7 @@ public class MinecraftRemapper implements Remapper {
 		public String descriptorString() {
 			if (descriptorString == null) {
 				if (array > 0) {
-					descriptorString = "[".repeat(array) + parent.descriptorString();
+					descriptorString = BackportUtil.repeat("[", array) + parent.descriptorString();
 				} else {
 					descriptorString = parent.descriptorString();
 				}
@@ -293,7 +294,7 @@ public class MinecraftRemapper implements Remapper {
 
 	@Override
 	public String getMappedField(Class<?> from, Field field) {
-		if (from == null || from == Object.class || from.getPackageName().startsWith("java.")) {
+		if (from == null || from == Object.class || from.getPackage().getName().startsWith("java.")) {
 			return "";
 		}
 
@@ -303,7 +304,7 @@ public class MinecraftRemapper implements Remapper {
 
 	@Override
 	public String getMappedMethod(Class<?> from, Method method) {
-		if (from == null || from == Object.class || from.getPackageName().startsWith("java.")) {
+		if (from == null || from == Object.class || from.getPackage().getName().startsWith("java.")) {
 			return "";
 		}
 

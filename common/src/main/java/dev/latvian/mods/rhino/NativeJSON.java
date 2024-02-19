@@ -14,6 +14,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import dev.latvian.mods.rhino.json.JsonParser;
+import dev.latvian.mods.rhino.util.BackportUtil;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import dev.latvian.mods.rhino.util.Remapper;
 
@@ -259,7 +260,7 @@ public final class NativeJSON extends IdScriptableObject {
 		StringBuilder clName = new StringBuilder(mcl.isEmpty() ? cl.getName() : mcl);
 
 		if (array > 0) {
-			clName.append("[]".repeat(array));
+			clName.append(BackportUtil.repeat("[]", array));
 		}
 
 		JsonArray list = new JsonArray();

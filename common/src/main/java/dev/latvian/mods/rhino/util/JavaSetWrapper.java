@@ -15,7 +15,7 @@ public class JavaSetWrapper<T> extends AbstractList<T> {
 	@Override
 	public T get(int index) {
 		if (index < 0 || index >= size()) {
-			throw new IndexOutOfBoundsException(index);
+			throw new IndexOutOfBoundsException(String.valueOf(index));
 		} else if (index == 0) {
 			return set.iterator().next();
 		}
@@ -28,7 +28,7 @@ public class JavaSetWrapper<T> extends AbstractList<T> {
 			}
 		}
 
-		throw new IndexOutOfBoundsException(index);
+		throw new IndexOutOfBoundsException(String.valueOf(index));
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class JavaSetWrapper<T> extends AbstractList<T> {
 	@Override
 	public T remove(int index) {
 		if (index < 0 || index >= size()) {
-			throw new IndexOutOfBoundsException(index);
+			throw new IndexOutOfBoundsException(String.valueOf(index));
 		}
 
 		Iterator<T> iterator = set.iterator();
@@ -85,7 +85,7 @@ public class JavaSetWrapper<T> extends AbstractList<T> {
 			}
 		}
 
-		throw new IndexOutOfBoundsException(index);
+		throw new IndexOutOfBoundsException(String.valueOf(index));
 	}
 
 	@Override

@@ -26,7 +26,7 @@ public interface Remapper {
 			default: t = "L" + type.replace('.', '/') + ";";
 		};
 
-		return array == 0 ? t : ("[".repeat(array) + t);
+		return array == 0 ? t : (BackportUtil.repeat("[", array) + t);
 	}
 
 	default String getMappedClass(Class<?> from) {
