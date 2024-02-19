@@ -3,9 +3,57 @@ package dev.latvian.mods.unit.function;
 import dev.latvian.mods.unit.Unit;
 import dev.latvian.mods.unit.token.UnitInterpretException;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
-public record FunctionFactory(String name, int minArgs, int maxArgs, FuncSupplier supplier) {
+public class FunctionFactory {
+	
+	private final String name;
+	private final int minArgs;
+	private final int maxArgs;
+	private final FuncSupplier supplier;
+
+	public FunctionFactory(String name, int minArgs, int maxArgs, FuncSupplier supplier) {
+		this.name = name;
+		this.minArgs = minArgs;
+		this.maxArgs = maxArgs;
+		this.supplier = supplier;
+	}
+	public final String name() {
+		return this.name;
+	}
+	public final int minArgs() {
+		return this.minArgs;
+	}
+	public final int maxArgs() {
+		return this.maxArgs;
+	}
+	public final FuncSupplier supplier() {
+		return this.supplier;
+	}
+	@Override
+	public String toString() {
+		return String.format("MemberDef {%s, %s, %s, %s}", name, minArgs, maxArgs, supplier);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof FunctionFactory) {
+			FunctionFactory other = (FunctionFactory) obj;
+			return this.name == other.name &&
+				this.minArgs == other.minArgs &&
+				this.maxArgs == other.maxArgs &&
+				this.supplier == other.supplier;
+		}
+		return false;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, minArgs, maxArgs, supplier);
+	}
+
 	public static final class Arg0 implements FuncSupplier {
 		private final Supplier<Unit> unit;
 		private Unit cachedUnit;
