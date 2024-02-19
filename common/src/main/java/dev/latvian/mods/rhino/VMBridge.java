@@ -17,6 +17,15 @@ import java.lang.reflect.Proxy;
 public class VMBridge {
 	private static final ThreadLocal<Object[]> contextLocal = new ThreadLocal<>();
 
+	/**
+	 * Return a helper object to optimize {@link Context} access.
+	 * <p>
+	 * The runtime will pass the resulting helper object to the subsequent
+	 * calls to {@link #getContext(Object contextHelper)} and
+	 * {@link #setContext(Object contextHelper, Context cx)} methods.
+	 * In this way the implementation can use the helper to cache
+	 * information about current thread to make {@link Context} access faster.
+	 */
 	public static Object getThreadContextHelper() {
 		// To make subsequent batch calls to getContext/setContext faster
 		// associate permanently one element array with contextLocal
@@ -35,29 +44,63 @@ public class VMBridge {
 		return storage;
 	}
 
+	/**
+	 * Get {@link Context} instance associated with the current thread
+	 * or null if none.
+	 *
+	 * @param contextHelper The result of {@link #getThreadContextHelper()}
+	 *                      called from the current thread.
+	 */
 	public static Context getContext(Object contextHelper) {
 		Object[] storage = (Object[]) contextHelper;
 		return (Context) storage[0];
 	}
 
+	/**
+	 * Associate {@link Context} instance with the current thread or remove
+	 * the current association if <code>cx</code> is null.
+	 *
+	 * @param contextHelper The result of {@link #getThreadContextHelper()}
+	 *                      called from the current thread.
+	 */
 	public static void setContext(Object contextHelper, Context cx) {
 		Object[] storage = (Object[]) contextHelper;
 		storage[0] = cx;
 	}
 
+	/**
+	 * In many JVMSs, public methods in private
+	 * classes are not accessible by default (Sun Bug #4071593).
+	 * VMBridge instance should try to workaround that via, for example,
+	 * calling method.setAccessible(true) when it is available.
+	 * The implementation is responsible to catch all possible exceptions
+	 * like SecurityException if the workaround is not available.
+	 *
+	 * @return true if it was possible to make method accessible
+	 * or false otherwise.
+	 */
 	public static boolean tryToMakeAccessible(Object target, AccessibleObject accessible) {
-		if (accessible.canAccess(target)) {
-			return true;
-		}
+        if (accessible.isAccessible()) {
+            return true;
+        }
+        try {
+            accessible.setAccessible(true);
+        } catch (Exception ex) {}
 
-		try {
-			accessible.setAccessible(true);
-		} catch (Exception ex) {
-		}
-
-		return accessible.canAccess(target);
+        return accessible.isAccessible();
 	}
 
+	/**
+	 * Create helper object to create later proxies implementing the specified
+	 * interfaces later. Under JDK 1.3 the implementation can look like:
+	 * <pre>
+	 * return java.lang.reflect.Proxy.getProxyClass(..., interfaces).
+	 *     getConstructor(new Class[] {
+	 *         java.lang.reflect.InvocationHandler.class });
+	 * </pre>
+	 *
+	 * @param interfaces Array with one or more interface class objects.
+	 */
 	public static Object getInterfaceProxyHelper(ContextFactory cf, Class<?>[] interfaces) {
 		// XXX: How to handle interfaces array withclasses from different
 		// class loaders? Using cf.getApplicationClassLoader() ?
@@ -73,6 +116,16 @@ public class VMBridge {
 		return c;
 	}
 
+	/**
+	 * Create proxy object for {@link InterfaceAdapter}. The proxy should call
+	 * {@link InterfaceAdapter#invoke(ContextFactory, Object, Scriptable,
+	 * Object, Method, Object[])}
+	 * as implementation of interface methods associated with
+	 * <code>proxyHelper</code>. {@link Method}
+	 *
+	 * @param proxyHelper The result of the previous call to
+	 *                    {@link #getInterfaceProxyHelper(ContextFactory, Class[])}.
+	 */
 	public static Object newInterfaceProxy(Object proxyHelper, final ContextFactory cf, final InterfaceAdapter adapter, final Object target, final Scriptable topScope) {
 		Constructor<?> c = (Constructor<?>) proxyHelper;
 
