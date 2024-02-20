@@ -330,7 +330,7 @@ public class MinecraftRemapper implements Remapper {
 		sb.append('(');
 
 		for (Class<?> t : method.getParameterTypes()) {
-			sb.append(t.descriptorString());
+			sb.append(BackportUtil.descriptorString(t));
 		}
 
 		return c.methods.getOrDefault(sb.toString(), "");

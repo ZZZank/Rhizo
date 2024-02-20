@@ -1,6 +1,7 @@
 package dev.latvian.mods.rhino.classdata;
 
 import dev.latvian.mods.rhino.SharedContextData;
+import dev.latvian.mods.rhino.util.BackportUtil;
 
 public class MethodSignature {
 	public static final MethodSignature EMPTY = new MethodSignature();
@@ -85,7 +86,7 @@ public class MethodSignature {
 			sb.append('(');
 
 			for (Class<?> type : types) {
-				sb.append(type.descriptorString());
+				sb.append(BackportUtil.descriptorString(type));
 			}
 
 			sb.append(')');
