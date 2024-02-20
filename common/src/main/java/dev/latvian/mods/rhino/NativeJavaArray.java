@@ -16,7 +16,7 @@ import java.lang.reflect.Array;
  * @see NativeJavaObject
  */
 
-public class NativeJavaArray extends NativeJavaObject implements SymbolScriptable {
+public class NativeJavaArray extends NativeJavaObject {
 	public static NativeJavaArray wrap(SharedContextData data, Scriptable scope, Object array) {
 		return new NativeJavaArray(data, scope, array);
 	}

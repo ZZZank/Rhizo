@@ -3,7 +3,6 @@ package dev.latvian.mods.rhino.mod.util;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
-import dev.latvian.mods.rhino.mod.util.MojangMappings.TypeDef;
 import dev.latvian.mods.rhino.util.BackportUtil;
 
 import java.io.OutputStream;

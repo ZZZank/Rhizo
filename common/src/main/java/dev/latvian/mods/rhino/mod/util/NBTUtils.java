@@ -430,12 +430,14 @@ public interface NBTUtils {
 
 				byte b1 = stream.readByte();
 				if (b1 == 0) {
+					stream.close();
 					return null;
 				} else {
 					stream.readUTF();
 					TagType<?> tagType = convertType(TagTypes.getType(b1));
 
 					if (tagType != COMPOUND_TYPE) {
+						stream.close();
 						return null;
 					}
 
