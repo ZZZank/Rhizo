@@ -79,7 +79,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit add(Unit other) {
-		return other instanceof FixedNumberUnit u ? of(value + u.value) : super.add(other);
+		return other instanceof FixedNumberUnit ? of(value + ((FixedNumberUnit) other).value) : super.add(other);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit sub(Unit other) {
-		return other instanceof FixedNumberUnit u ? of(value - u.value) : super.sub(other);
+		return other instanceof FixedNumberUnit ? of(value - ((FixedNumberUnit) other).value) : super.sub(other);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit mul(Unit other) {
-		return other instanceof FixedNumberUnit u ? of(value * u.value) : super.mul(other);
+		return other instanceof FixedNumberUnit ? of(value * ((FixedNumberUnit) other).value) : super.mul(other);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit div(Unit other) {
-		return other instanceof FixedNumberUnit u ? of(value / u.value) : super.div(other);
+		return other instanceof FixedNumberUnit ? of(value / ((FixedNumberUnit) other).value) : super.div(other);
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit mod(Unit other) {
-		return other instanceof FixedNumberUnit u ? of(value % u.value) : super.mod(other);
+		return other instanceof FixedNumberUnit ? of(value % ((FixedNumberUnit) other).value) : super.mod(other);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit pow(Unit other) {
-		return other instanceof FixedNumberUnit u ? of(Math.pow(value, u.value)) : super.add(other);
+		return other instanceof FixedNumberUnit ? of(Math.pow(value, ((FixedNumberUnit) other).value)) : super.add(other);
 	}
 
 	// Functions

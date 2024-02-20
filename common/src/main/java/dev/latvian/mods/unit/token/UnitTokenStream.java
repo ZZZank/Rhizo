@@ -153,7 +153,12 @@ public final class UnitTokenStream {
 			postfix.infix().add(readSingleToken());
 		}
 
-		while (peekToken() instanceof UnitSymbol symbol && symbol.op != null) {
+		while (peekToken() instanceof UnitSymbol) {
+			UnitSymbol symbol = (UnitSymbol) peekToken();
+			if (symbol.op == null) {
+				break;
+			}
+
 			postfix.infix().add(nextToken());
 
 			if (peekToken() == UnitSymbol.LP) {
