@@ -33,7 +33,7 @@ public class RhinoModForge {
 
 		List<String> srg = new ArrayList<String>();
 
-		try (Reader reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
+		try (BufferedReader reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
 			String line;
 
 			while ((line = reader.readLine()) != null) {
