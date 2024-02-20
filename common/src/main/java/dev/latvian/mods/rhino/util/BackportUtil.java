@@ -1,7 +1,6 @@
 package dev.latvian.mods.rhino.util;
 
 import java.util.Collections;
-import sun.invoke.util.Wrapper;
 
 public abstract class BackportUtil {
     
@@ -10,8 +9,9 @@ public abstract class BackportUtil {
     }
 
     public static String descriptorString(Class<?> clazz) {
-        if (clazz.isPrimitive())
-            return Wrapper.forPrimitiveType(clazz).basicTypeString();
+        if (clazz.isPrimitive()) {
+            return String.valueOf(BackportWrapper.forPrimitiveType(clazz).basicTypeChar());
+        }
 
         if (clazz.isArray()) {
             return "[" + descriptorString(clazz.getComponentType());
