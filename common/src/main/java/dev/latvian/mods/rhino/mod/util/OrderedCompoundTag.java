@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class OrderedCompoundTag extends CompoundTag {
+public class OrderedCompoundTag extends WrappedCompoundTag {
 	public final Map<String, Tag> tagMap;
 
 	public OrderedCompoundTag(Map<String, Tag> map) {

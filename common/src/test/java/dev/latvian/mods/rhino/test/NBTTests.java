@@ -35,6 +35,7 @@ public class NBTTests {
 			"list",
 			String.join(
 				"\n",
+				"let listTagTest = NBT.listTag()",
 				"",
 				"listTagTest.push('a')",
 				"listTagTest.push('b')",

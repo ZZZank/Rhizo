@@ -36,7 +36,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -484,17 +483,8 @@ public interface NBTUtils {
 		}
 	};
 
-	public class WrappedCompoundTag extends CompoundTag {
-		public static WrappedCompoundTag of(CompoundTag tag) {
-			return (WrappedCompoundTag) tag;
-		}
-		public Map<String, Tag> entries() {
-			return super.entries();
-		}
-	}
-
 	static Map<String, Tag> accessTagMap(CompoundTag tag) {
-		return WrappedCompoundTag.of(tag).entries();
+		return WrappedCompoundTag.ofWrapped(tag).entries();
 	}
 
 	TagType<ListTag> LIST_TYPE = new TagType<ListTag>() {
