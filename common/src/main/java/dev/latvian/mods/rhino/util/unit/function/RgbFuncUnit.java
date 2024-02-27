@@ -2,7 +2,7 @@ package dev.latvian.mods.rhino.util.unit.function;
 
 import dev.latvian.mods.rhino.util.unit.EmptyVariableSet;
 import dev.latvian.mods.rhino.util.unit.FixedColorUnit;
-import dev.latvian.mods.rhino.util.unit.FixedNumberUnit;
+import dev.latvian.mods.rhino.util.unit.FixedUnit;
 import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 
@@ -13,7 +13,7 @@ public class RgbFuncUnit extends FuncUnit {
 		}
 
 		RgbFuncUnit c = new RgbFuncUnit();
-		c.a = FixedNumberUnit.ONE;
+		c.a = FixedUnit.ONE;
 
 		if (args.length == 3 || args.length == 4) {
 			c.r = args[0];
@@ -29,9 +29,9 @@ public class RgbFuncUnit extends FuncUnit {
 				if (args[1].isFixed()) {
 					return u.withAlpha(args[1]);
 				} else {
-					c.r = FixedNumberUnit.of(((u.color >> 16) & 0xFF) / 255D);
-					c.g = FixedNumberUnit.of(((u.color >> 8) & 0xFF) / 255D);
-					c.b = FixedNumberUnit.of(((u.color >> 0) & 0xFF) / 255D);
+					c.r = FixedUnit.of(((u.color >> 16) & 0xFF) / 255D);
+					c.g = FixedUnit.of(((u.color >> 8) & 0xFF) / 255D);
+					c.b = FixedUnit.of(((u.color >> 0) & 0xFF) / 255D);
 					c.a = args[1];
 				}
 			} else {
@@ -61,7 +61,7 @@ public class RgbFuncUnit extends FuncUnit {
 
 	@Override
 	protected Unit[] getArguments() {
-		if (a == FixedNumberUnit.ONE) {
+		if (a == FixedUnit.ONE) {
 			return new Unit[]{r, g, b};
 		}
 

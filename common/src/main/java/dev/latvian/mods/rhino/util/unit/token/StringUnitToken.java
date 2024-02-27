@@ -2,7 +2,7 @@ package dev.latvian.mods.rhino.util.unit.token;
 
 import java.util.Objects;
 
-import dev.latvian.mods.rhino.util.unit.FixedNumberUnit;
+import dev.latvian.mods.rhino.util.unit.FixedUnit;
 import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.VariableUnit;
 
@@ -37,7 +37,7 @@ public class StringUnitToken implements UnitToken {
 		}
 
 		try {
-			return FixedNumberUnit.of(Double.parseDouble(name));
+			return FixedUnit.of(Double.parseDouble(name));
 		} catch (Exception ex) {
 			return VariableUnit.of(name);
 		}

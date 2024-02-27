@@ -76,10 +76,10 @@ public class UnitContext {
 
 		DEFAULT.addConstant("true", FixedBooleanUnit.TRUE);
 		DEFAULT.addConstant("false", FixedBooleanUnit.FALSE);
-		DEFAULT.addConstant("PI", FixedNumberUnit.PI);
-		DEFAULT.addConstant("TWO_PI", FixedNumberUnit.TWO_PI);
-		DEFAULT.addConstant("HALF_PI", FixedNumberUnit.HALF_PI);
-		DEFAULT.addConstant("E", FixedNumberUnit.E);
+		DEFAULT.addConstant("PI", FixedUnit.PI);
+		DEFAULT.addConstant("TWO_PI", FixedUnit.TWO_PI);
+		DEFAULT.addConstant("HALF_PI", FixedUnit.HALF_PI);
+		DEFAULT.addConstant("E", FixedUnit.E);
 	}
 
 	public final Map<String, Unit> constants = new HashMap<>();

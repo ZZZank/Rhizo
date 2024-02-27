@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.util.unit.function;
 
-import dev.latvian.mods.rhino.util.unit.FixedNumberUnit;
+import dev.latvian.mods.rhino.util.unit.FixedUnit;
 import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 
@@ -13,12 +13,12 @@ public class HsvFuncUnit extends FuncUnit {
 		h = args[0];
 		s = args[1];
 		v = args[2];
-		a = args.length == 4 ? args[3] : FixedNumberUnit.ONE;
+		a = args.length == 4 ? args[3] : FixedUnit.ONE;
 	}
 
 	@Override
 	protected Unit[] getArguments() {
-		if (a == FixedNumberUnit.ONE) {
+		if (a == FixedUnit.ONE) {
 			return new Unit[]{h, s, v};
 		}
 

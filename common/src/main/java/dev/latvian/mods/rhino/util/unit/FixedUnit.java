@@ -1,18 +1,18 @@
 package dev.latvian.mods.rhino.util.unit;
 
-public final class FixedNumberUnit extends Unit {
-	public static final FixedNumberUnit ZERO = new FixedNumberUnit(0);
-	public static final FixedNumberUnit ONE = new FixedNumberUnit(1);
-	public static final FixedNumberUnit MINUS_ONE = new FixedNumberUnit(-1);
-	public static final FixedNumberUnit TEN = new FixedNumberUnit(10);
-	public static final FixedNumberUnit SIXTEEN = new FixedNumberUnit(16);
-	public static final FixedNumberUnit PI = new FixedNumberUnit(Math.PI);
-	public static final FixedNumberUnit TWO_PI = new FixedNumberUnit(Math.PI * 2D);
-	public static final FixedNumberUnit HALF_PI = new FixedNumberUnit(Math.PI / 2D);
-	public static final FixedNumberUnit E = new FixedNumberUnit(Math.E);
-	public static final FixedNumberUnit NaN = new FixedNumberUnit(Double.NaN);
+public final class FixedUnit extends Unit {
+	public static final FixedUnit ZERO = new FixedUnit(0);
+	public static final FixedUnit ONE = new FixedUnit(1);
+	public static final FixedUnit MINUS_ONE = new FixedUnit(-1);
+	public static final FixedUnit TEN = new FixedUnit(10);
+	public static final FixedUnit SIXTEEN = new FixedUnit(16);
+	public static final FixedUnit PI = new FixedUnit(Math.PI);
+	public static final FixedUnit TWO_PI = new FixedUnit(Math.PI * 2D);
+	public static final FixedUnit HALF_PI = new FixedUnit(Math.PI / 2D);
+	public static final FixedUnit E = new FixedUnit(Math.E);
+	public static final FixedUnit NaN = new FixedUnit(Double.NaN);
 
-	public static FixedNumberUnit of(double value) {
+	public static FixedUnit of(double value) {
 		if (value == 0D) {
 			return ZERO;
 		} else if (value == 1D) {
@@ -24,13 +24,13 @@ public final class FixedNumberUnit extends Unit {
 		} else if (value == 16D) {
 			return SIXTEEN;
 		} else {
-			return new FixedNumberUnit(value);
+			return new FixedUnit(value);
 		}
 	}
 
 	public final double value;
 
-	private FixedNumberUnit(double value) {
+	private FixedUnit(double value) {
 		this.value = value;
 	}
 
@@ -51,7 +51,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj == this || obj instanceof FixedNumberUnit && value == ((FixedNumberUnit) obj).value;
+		return obj == this || obj instanceof FixedUnit && value == ((FixedUnit) obj).value;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit add(Unit other) {
-		return other instanceof FixedNumberUnit ? of(value + ((FixedNumberUnit) other).value) : super.add(other);
+		return other instanceof FixedUnit ? of(value + ((FixedUnit) other).value) : super.add(other);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit sub(Unit other) {
-		return other instanceof FixedNumberUnit ? of(value - ((FixedNumberUnit) other).value) : super.sub(other);
+		return other instanceof FixedUnit ? of(value - ((FixedUnit) other).value) : super.sub(other);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit mul(Unit other) {
-		return other instanceof FixedNumberUnit ? of(value * ((FixedNumberUnit) other).value) : super.mul(other);
+		return other instanceof FixedUnit ? of(value * ((FixedUnit) other).value) : super.mul(other);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit div(Unit other) {
-		return other instanceof FixedNumberUnit ? of(value / ((FixedNumberUnit) other).value) : super.div(other);
+		return other instanceof FixedUnit ? of(value / ((FixedUnit) other).value) : super.div(other);
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit mod(Unit other) {
-		return other instanceof FixedNumberUnit ? of(value % ((FixedNumberUnit) other).value) : super.mod(other);
+		return other instanceof FixedUnit ? of(value % ((FixedUnit) other).value) : super.mod(other);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public final class FixedNumberUnit extends Unit {
 
 	@Override
 	public Unit pow(Unit other) {
-		return other instanceof FixedNumberUnit ? of(Math.pow(value, ((FixedNumberUnit) other).value)) : super.add(other);
+		return other instanceof FixedUnit ? of(Math.pow(value, ((FixedUnit) other).value)) : super.add(other);
 	}
 
 	// Functions

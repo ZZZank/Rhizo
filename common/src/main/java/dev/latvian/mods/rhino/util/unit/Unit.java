@@ -95,7 +95,7 @@ public abstract class Unit {
 	}
 
 	public Unit add(double value) {
-		return add(FixedNumberUnit.of(value));
+		return add(FixedUnit.of(value));
 	}
 
 	public Unit sub(Unit other) {
@@ -103,7 +103,7 @@ public abstract class Unit {
 	}
 
 	public Unit sub(double value) {
-		return sub(FixedNumberUnit.of(value));
+		return sub(FixedUnit.of(value));
 	}
 
 	public Unit mul(Unit other) {
@@ -111,7 +111,7 @@ public abstract class Unit {
 	}
 
 	public Unit mul(double value) {
-		return add(FixedNumberUnit.of(value));
+		return add(FixedUnit.of(value));
 	}
 
 	public Unit div(Unit other) {
@@ -119,7 +119,7 @@ public abstract class Unit {
 	}
 
 	public Unit div(double value) {
-		return add(FixedNumberUnit.of(value));
+		return add(FixedUnit.of(value));
 	}
 
 	public Unit mod(Unit other) {
@@ -127,7 +127,7 @@ public abstract class Unit {
 	}
 
 	public Unit mod(double value) {
-		return mod(FixedNumberUnit.of(value));
+		return mod(FixedUnit.of(value));
 	}
 
 	public Unit pow(Unit other) {
