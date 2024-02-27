@@ -1,12 +1,13 @@
-package dev.latvian.mods.rhino.util.unit.operator;
+package dev.latvian.mods.rhino.util.unit.operator.op;
 
 import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
+import dev.latvian.mods.rhino.util.unit.operator.OpUnit;
 
-public class BitNotOpUnit extends UnaryOpUnit {
-	public BitNotOpUnit(Unit unit) {
-		super(UnitSymbol.BIT_NOT, unit);
+public class OrUnit extends OpUnit {
+	public OrUnit(Unit left, Unit right) {
+		super(UnitSymbol.BIT_OR, left, right);
 	}
 
 	@Override
@@ -16,11 +17,11 @@ public class BitNotOpUnit extends UnaryOpUnit {
 
 	@Override
 	public int getInt(UnitVariables variables) {
-		return ~unit.getInt(variables);
+		return left.getInt(variables) | right.getInt(variables);
 	}
 
 	@Override
 	public boolean getBoolean(UnitVariables variables) {
-		return !unit.getBoolean(variables);
+		return left.getBoolean(variables) || right.getBoolean(variables);
 	}
 }

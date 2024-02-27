@@ -5,8 +5,8 @@ import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 import dev.latvian.mods.rhino.util.unit.operator.OpUnit;
 
-public class BitAndOpUnit extends OpUnit {
-	public BitAndOpUnit(Unit left, Unit right) {
+public class AndUnit extends OpUnit {
+	public AndUnit(Unit left, Unit right) {
 		super(UnitSymbol.BIT_AND, left, right);
 	}
 

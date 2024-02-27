@@ -22,29 +22,29 @@ import dev.latvian.mods.rhino.util.unit.function.SqFuncUnit;
 import dev.latvian.mods.rhino.util.unit.function.SqrtFuncUnit;
 import dev.latvian.mods.rhino.util.unit.function.TanFuncUnit;
 import dev.latvian.mods.rhino.util.unit.function.WithAlphaFuncUnit;
-import dev.latvian.mods.rhino.util.unit.operator.BitNotOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.BoolNotOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.NegateOpUnit;
+import dev.latvian.mods.rhino.util.unit.operator.BiNotUnit;
+import dev.latvian.mods.rhino.util.unit.operator.NotUnit;
+import dev.latvian.mods.rhino.util.unit.operator.NegUnit;
 import dev.latvian.mods.rhino.util.unit.operator.SetUnit;
 import dev.latvian.mods.rhino.util.unit.operator.cond.AndOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.EqOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.GtOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.GteOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.LtOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.LteOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.NeqOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.OrOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.AddOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.BitAndOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.BitOrOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.DivOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.LshOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.ModOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.MulOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.PowOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.RshOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.SubOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.XorOpUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.EqUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.GtUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.GteUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.LtUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.LteUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.NeqUnit;
+import dev.latvian.mods.rhino.util.unit.operator.cond.OrUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.AddUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.AndUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.OrUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.DivUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.LshUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.ModUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.MulUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.PowUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.RshUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.SubUnit;
+import dev.latvian.mods.rhino.util.unit.operator.op.XorUnit;
 
 public abstract class Unit {
 	public static Unit[] EMPTY_ARRAY = new Unit[0];
@@ -86,11 +86,11 @@ public abstract class Unit {
 	}
 
 	public Unit negate() {
-		return new NegateOpUnit(this);
+		return new NegUnit(this);
 	}
 
 	public Unit add(Unit other) {
-		return new AddOpUnit(this, other);
+		return new AddUnit(this, other);
 	}
 
 	public Unit add(double value) {
@@ -98,7 +98,7 @@ public abstract class Unit {
 	}
 
 	public Unit sub(Unit other) {
-		return new SubOpUnit(this, other);
+		return new SubUnit(this, other);
 	}
 
 	public Unit sub(double value) {
@@ -106,7 +106,7 @@ public abstract class Unit {
 	}
 
 	public Unit mul(Unit other) {
-		return new MulOpUnit(this, other);
+		return new MulUnit(this, other);
 	}
 
 	public Unit mul(double value) {
@@ -114,7 +114,7 @@ public abstract class Unit {
 	}
 
 	public Unit div(Unit other) {
-		return new DivOpUnit(this, other);
+		return new DivUnit(this, other);
 	}
 
 	public Unit div(double value) {
@@ -122,7 +122,7 @@ public abstract class Unit {
 	}
 
 	public Unit mod(Unit other) {
-		return new ModOpUnit(this, other);
+		return new ModUnit(this, other);
 	}
 
 	public Unit mod(double value) {
@@ -130,55 +130,55 @@ public abstract class Unit {
 	}
 
 	public Unit pow(Unit other) {
-		return new PowOpUnit(this, other);
+		return new PowUnit(this, other);
 	}
 
 	public Unit lsh(Unit other) {
-		return new LshOpUnit(this, other);
+		return new LshUnit(this, other);
 	}
 
 	public Unit rsh(Unit other) {
-		return new RshOpUnit(this, other);
+		return new RshUnit(this, other);
 	}
 
 	public Unit bitAnd(Unit other) {
-		return new BitAndOpUnit(this, other);
+		return new AndUnit(this, other);
 	}
 
 	public Unit bitOr(Unit other) {
-		return new BitOrOpUnit(this, other);
+		return new OrUnit(this, other);
 	}
 
 	public Unit xor(Unit other) {
-		return new XorOpUnit(this, other);
+		return new XorUnit(this, other);
 	}
 
 	public Unit bitNot() {
-		return new BitNotOpUnit(this);
+		return new BiNotUnit(this);
 	}
 
 	public Unit eq(Unit other) {
-		return new EqOpUnit(this, other);
+		return new EqUnit(this, other);
 	}
 
 	public Unit neq(Unit other) {
-		return new NeqOpUnit(this, other);
+		return new NeqUnit(this, other);
 	}
 
 	public Unit lt(Unit other) {
-		return new LtOpUnit(this, other);
+		return new LtUnit(this, other);
 	}
 
 	public Unit gt(Unit other) {
-		return new GtOpUnit(this, other);
+		return new GtUnit(this, other);
 	}
 
 	public Unit lte(Unit other) {
-		return new LteOpUnit(this, other);
+		return new LteUnit(this, other);
 	}
 
 	public Unit gte(Unit other) {
-		return new GteOpUnit(this, other);
+		return new GteUnit(this, other);
 	}
 
 	public Unit and(Unit other) {
@@ -186,11 +186,11 @@ public abstract class Unit {
 	}
 
 	public Unit or(Unit other) {
-		return new OrOpUnit(this, other);
+		return new OrUnit(this, other);
 	}
 
 	public Unit boolNot() {
-		return new BoolNotOpUnit(this);
+		return new NotUnit(this);
 	}
 
 	// Functions

@@ -4,19 +4,19 @@ import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 
-public class BoolNotOpUnit extends UnaryOpUnit {
-	public BoolNotOpUnit(Unit unit) {
-		super(UnitSymbol.BOOL_NOT, unit);
+public class BiNotUnit extends UnaryUnit {
+	public BiNotUnit(Unit unit) {
+		super(UnitSymbol.BIT_NOT, unit);
 	}
 
 	@Override
 	public double get(UnitVariables variables) {
-		return getBoolean(variables) ? 1.0D : 0.0D;
+		return getInt(variables);
 	}
 
 	@Override
 	public int getInt(UnitVariables variables) {
-		return getBoolean(variables) ? 1 : 0;
+		return ~unit.getInt(variables);
 	}
 
 	@Override

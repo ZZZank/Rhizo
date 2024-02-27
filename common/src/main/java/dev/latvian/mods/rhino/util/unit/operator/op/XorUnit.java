@@ -5,9 +5,9 @@ import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 import dev.latvian.mods.rhino.util.unit.operator.OpUnit;
 
-public class RshOpUnit extends OpUnit {
-	public RshOpUnit(Unit left, Unit right) {
-		super(UnitSymbol.RSH, left, right);
+public class XorUnit extends OpUnit {
+	public XorUnit(Unit left, Unit right) {
+		super(UnitSymbol.XOR, left, right);
 	}
 
 	@Override
@@ -17,6 +17,11 @@ public class RshOpUnit extends OpUnit {
 
 	@Override
 	public int getInt(UnitVariables variables) {
-		return left.getInt(variables) >> right.getInt(variables);
+		return left.getInt(variables) ^ right.getInt(variables);
+	}
+
+	@Override
+	public boolean getBoolean(UnitVariables variables) {
+		return left.getBoolean(variables) ^ right.getBoolean(variables);
 	}
 }

@@ -4,8 +4,8 @@ import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 
-public class LteOpUnit extends CondOpUnit {
-	public LteOpUnit(Unit left, Unit right) {
+public class LteUnit extends CondOpUnit {
+	public LteUnit(Unit left, Unit right) {
 		super(UnitSymbol.LTE, left, right);
 	}
 

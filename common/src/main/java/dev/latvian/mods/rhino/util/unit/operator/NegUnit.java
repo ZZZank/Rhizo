@@ -4,8 +4,8 @@ import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 
-public class NegateOpUnit extends UnaryOpUnit {
-	public NegateOpUnit(Unit unit) {
+public class NegUnit extends UnaryUnit {
+	public NegUnit(Unit unit) {
 		super(UnitSymbol.BIT_NOT, unit);
 	}
 
