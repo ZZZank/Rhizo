@@ -1,12 +1,13 @@
 package dev.latvian.mods.rhino.test;
 
-import dev.latvian.mods.unit.Unit;
-import dev.latvian.mods.unit.UnitContext;
-import dev.latvian.mods.unit.VariableSet;
-import dev.latvian.mods.unit.function.RoundedTimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import dev.latvian.mods.rhino.util.unit.Unit;
+import dev.latvian.mods.rhino.util.unit.UnitContext;
+import dev.latvian.mods.rhino.util.unit.VariableSet;
+import dev.latvian.mods.rhino.util.unit.function.RoundedTimeUnit;
 
 @SuppressWarnings("unused")
 public class UnitTests {

@@ -2,7 +2,7 @@ package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
-import dev.latvian.mods.unit.UnitContext;
+import dev.latvian.mods.rhino.util.unit.UnitContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
