@@ -12,6 +12,7 @@ import dev.latvian.mods.rhino.ast.AstRoot;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter.ClassFileFormatException;
 import dev.latvian.mods.rhino.regexp.RegExp;
+import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -307,69 +308,6 @@ public class Context {
 	 */
 	public static Object getUndefinedValue() {
 		return Undefined.instance;
-	}
-
-	/**
-	 * Convert the value to a JavaScript boolean value.
-	 * <p>
-	 * See ECMA 9.2.
-	 *
-	 * @param value a JavaScript value
-	 * @return the corresponding boolean value converted using
-	 * the ECMA rules
-	 */
-	public static boolean toBoolean(Object value) {
-		return ScriptRuntime.toBoolean(value);
-	}
-
-	/**
-	 * Convert the value to a JavaScript Number value.
-	 * <p>
-	 * Returns a Java double for the JavaScript Number.
-	 * <p>
-	 * See ECMA 9.3.
-	 *
-	 * @param value a JavaScript value
-	 * @return the corresponding double value converted using
-	 * the ECMA rules
-	 */
-	public static double toNumber(Object value) {
-		return ScriptRuntime.toNumber(value);
-	}
-
-	/**
-	 * Convert the value to a JavaScript String value.
-	 * <p>
-	 * See ECMA 9.8.
-	 * <p>
-	 *
-	 * @param value a JavaScript value
-	 * @return the corresponding String value converted using
-	 * the ECMA rules
-	 */
-	public static String toString(Object value) {
-		return ScriptRuntime.toString(value);
-	}
-
-	/**
-	 * Convert the value to an JavaScript object value.
-	 * <p>
-	 * Note that a scope must be provided to look up the constructors
-	 * for Number, Boolean, and String.
-	 * <p>
-	 * See ECMA 9.9.
-	 * <p>
-	 * Additionally, arbitrary Java objects and classes will be
-	 * wrapped in a Scriptable object with its Java fields and methods
-	 * reflected as JavaScript properties of the object.
-	 *
-	 * @param value any Java object
-	 * @param scope global scope containing constructors for Number,
-	 *              Boolean, and String
-	 * @return new JavaScript object
-	 */
-	public static Scriptable toObject(Object value, Scriptable scope) {
-		return ScriptRuntime.toObject(scope, value);
 	}
 
 	/**
@@ -1283,6 +1221,69 @@ public class Context {
 	}
 
 	/**
+	 * Convert the value to a JavaScript boolean value.
+	 * <p>
+	 * See ECMA 9.2.
+	 *
+	 * @param value a JavaScript value
+	 * @return the corresponding boolean value converted using
+	 * the ECMA rules
+	 */
+	public static boolean toBoolean(Object value) {
+		return ScriptRuntime.toBoolean(value);
+	}
+
+	/**
+	 * Convert the value to a JavaScript Number value.
+	 * <p>
+	 * Returns a Java double for the JavaScript Number.
+	 * <p>
+	 * See ECMA 9.3.
+	 *
+	 * @param value a JavaScript value
+	 * @return the corresponding double value converted using
+	 * the ECMA rules
+	 */
+	public static double toNumber(Object value) {
+		return ScriptRuntime.toNumber(value);
+	}
+
+	/**
+	 * Convert the value to a JavaScript String value.
+	 * <p>
+	 * See ECMA 9.8.
+	 * <p>
+	 *
+	 * @param value a JavaScript value
+	 * @return the corresponding String value converted using
+	 * the ECMA rules
+	 */
+	public static String toString(Object value) {
+		return ScriptRuntime.toString(value);
+	}
+
+	/**
+	 * Convert the value to an JavaScript object value.
+	 * <p>
+	 * Note that a scope must be provided to look up the constructors
+	 * for Number, Boolean, and String.
+	 * <p>
+	 * See ECMA 9.9.
+	 * <p>
+	 * Additionally, arbitrary Java objects and classes will be
+	 * wrapped in a Scriptable object with its Java fields and methods
+	 * reflected as JavaScript properties of the object.
+	 *
+	 * @param value any Java object
+	 * @param scope global scope containing constructors for Number,
+	 *              Boolean, and String
+	 * @return new JavaScript object
+	 */
+	public static Scriptable toObject(Object value, Scriptable scope) {
+		return ScriptRuntime.toObject(scope, value);
+	}
+
+	/**
 	 * Returns the maximum stack depth (in terms of number of call frames)
 	 * allowed in a single invocation of interpreter. If the set depth would be
 	 * exceeded, the interpreter will throw an EvaluatorException in the script.
@@ -1328,6 +1329,7 @@ public class Context {
 	}
 
 	/**
+	 * @deprecated only used for compatibility, please see SharedContextData <p>
 	 * Set the LiveConnect access filter for this context.
 	 * <p> {@link ClassShutter} may only be set if it is currently null.
 	 * Otherwise a SecurityException is thrown.
@@ -1337,21 +1339,14 @@ public class Context {
 	 *                           object for this Context
 	 */
 	public synchronized final void setClassShutter(ClassShutter shutter) {
-		if (sealed) {
-			onSealedMutation();
-		}
-		if (shutter == null) {
-			throw new IllegalArgumentException();
-		}
-		if (hasClassShutter) {
-			throw new SecurityException("Cannot overwrite existing " + "ClassShutter object");
-		}
-		classShutter = shutter;
-		hasClassShutter = true;
+		sharedContextData.setClassShutter(shutter);
 	}
 
+	/**
+	 * @deprecated only used for compatibility, please see SharedContextData <p>
+	 */
 	public final synchronized ClassShutter getClassShutter() {
-		return classShutter;
+		return sharedContextData.getClassShutter();
 	}
 
 	public interface ClassShutterSetter {
@@ -1360,21 +1355,24 @@ public class Context {
 		ClassShutter getClassShutter();
 	}
 
+	/**
+	 * @deprecated only used for compatibility, please see SharedContextData <p>
+	 */
 	public final synchronized ClassShutterSetter getClassShutterSetter() {
-		if (hasClassShutter) {
+		if (sharedContextData.hasClassShutter) {
 			return null;
 		}
-		hasClassShutter = true;
+		sharedContextData.hasClassShutter = true;
 		return new ClassShutterSetter() {
 
 			@Override
 			public void setClassShutter(ClassShutter shutter) {
-				classShutter = shutter;
+				sharedContextData.setClassShutter(shutter);
 			}
 
 			@Override
 			public ClassShutter getClassShutter() {
-				return classShutter;
+				return sharedContextData.getClassShutter();
 			}
 		};
 	}
@@ -1433,6 +1431,59 @@ public class Context {
 			return;
 		}
 		threadLocalMap.remove(key);
+	}
+
+	/**
+	 * @deprecated only used for compatibility, please see SharedContextData <p>
+	 * Set a WrapFactory for this Context.
+	 * <p>
+	 * The WrapFactory allows custom object wrapping behavior for
+	 * Java object manipulated with JavaScript.
+	 *
+	 * @see WrapFactory
+	 * @since 1.5 Release 4
+	 */
+	public final void setWrapFactory(WrapFactory wrapFactory) {
+		sharedContextData.setWrapFactory(wrapFactory);
+	}
+
+	/**
+	 * @deprecated only used for compatibility, please see SharedContextData <p>
+	 * Return the current WrapFactory, or null if none is defined.
+	 *
+	 * @see WrapFactory
+	 * @since 1.5 Release 4
+	 */
+	public final WrapFactory getWrapFactory() {
+		return sharedContextData.getWrapFactory();
+	}
+
+	/**
+	 * Controls certain aspects of script semantics.
+	 * Should be overwritten to alter default behavior.
+	 * <p>
+	 * The default implementation calls
+	 * {@link ContextFactory#hasFeature(Context cx, int featureIndex)}
+	 * that allows to customize Context behavior without introducing
+	 * Context subclasses.  {@link ContextFactory} documentation gives
+	 * an example of hasFeature implementation.
+	 *
+	 * @param featureIndex feature index to check
+	 * @return true if the <code>featureIndex</code> feature is turned on
+	 * @see #FEATURE_MEMBER_EXPR_AS_FUNCTION_NAME
+	 * @see #FEATURE_RESERVED_KEYWORD_AS_IDENTIFIER
+	 * @see #FEATURE_PARENT_PROTO_PROPERTIES
+	 * @see #FEATURE_DYNAMIC_SCOPE
+	 * @see #FEATURE_STRICT_VARS
+	 * @see #FEATURE_STRICT_EVAL
+	 * @see #FEATURE_LOCATION_INFORMATION_IN_ERROR
+	 * @see #FEATURE_STRICT_MODE
+	 * @see #FEATURE_WARNING_AS_ERROR
+	 * @see #FEATURE_ENHANCED_JAVA_ACCESS
+	 */
+	public boolean hasFeature(int featureIndex) {
+		ContextFactory f = getFactory();
+		return f.hasFeature(this, featureIndex);
 	}
 
 	/**
@@ -1653,6 +1704,12 @@ public class Context {
 	public final boolean isStrictMode() {
 		return isTopLevelStrict || (currentActivationCall != null && currentActivationCall.isStrict);
 	}
-	private boolean hasClassShutter;
-	private ClassShutter classShutter;
+
+	public TypeWrappers getTypeWrappers() {
+		return sharedContextData.getTypeWrappers();
+	}
+
+	public boolean hasTypeWrappers() {
+		return sharedContextData.hasTypeWrappers();
+	}
 }

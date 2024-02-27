@@ -67,6 +67,7 @@ public class SharedContextData {
 	private int generatedClassSerial;
 	private ClassDataCache classDataCache;
 	private ClassShutter classShutter;
+	public boolean hasClassShutter = false;
 	private WrapFactory wrapFactory;
 
 	public SharedContextData(Scriptable scope) {
