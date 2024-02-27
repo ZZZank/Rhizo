@@ -1328,6 +1328,58 @@ public class Context {
 	}
 
 	/**
+	 * Set the LiveConnect access filter for this context.
+	 * <p> {@link ClassShutter} may only be set if it is currently null.
+	 * Otherwise a SecurityException is thrown.
+	 *
+	 * @param shutter a ClassShutter object
+	 * @throws SecurityException if there is already a ClassShutter
+	 *                           object for this Context
+	 */
+	public synchronized final void setClassShutter(ClassShutter shutter) {
+		if (sealed) {
+			onSealedMutation();
+		}
+		if (shutter == null) {
+			throw new IllegalArgumentException();
+		}
+		if (hasClassShutter) {
+			throw new SecurityException("Cannot overwrite existing " + "ClassShutter object");
+		}
+		classShutter = shutter;
+		hasClassShutter = true;
+	}
+
+	public final synchronized ClassShutter getClassShutter() {
+		return classShutter;
+	}
+
+	public interface ClassShutterSetter {
+		void setClassShutter(ClassShutter shutter);
+
+		ClassShutter getClassShutter();
+	}
+
+	public final synchronized ClassShutterSetter getClassShutterSetter() {
+		if (hasClassShutter) {
+			return null;
+		}
+		hasClassShutter = true;
+		return new ClassShutterSetter() {
+
+			@Override
+			public void setClassShutter(ClassShutter shutter) {
+				classShutter = shutter;
+			}
+
+			@Override
+			public ClassShutter getClassShutter() {
+				return classShutter;
+			}
+		};
+	}
+
+	/**
 	 * Get a value corresponding to a key.
 	 * <p>
 	 * Since the Context is associated with a thread it can be
@@ -1601,4 +1653,6 @@ public class Context {
 	public final boolean isStrictMode() {
 		return isTopLevelStrict || (currentActivationCall != null && currentActivationCall.isStrict);
 	}
+	private boolean hasClassShutter;
+	private ClassShutter classShutter;
 }
