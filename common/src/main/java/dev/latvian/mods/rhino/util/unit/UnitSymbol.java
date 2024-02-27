@@ -1,8 +1,7 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import org.jetbrains.annotations.Nullable;
 
-import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.operator.OperatorFactory;
 import dev.latvian.mods.rhino.util.unit.operator.UnaryOperatorFactory;
 

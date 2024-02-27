@@ -45,7 +45,6 @@ import dev.latvian.mods.rhino.util.unit.operator.op.PowOpUnit;
 import dev.latvian.mods.rhino.util.unit.operator.op.RshOpUnit;
 import dev.latvian.mods.rhino.util.unit.operator.op.SubOpUnit;
 import dev.latvian.mods.rhino.util.unit.operator.op.XorOpUnit;
-import dev.latvian.mods.rhino.util.unit.token.UnitSymbol;
 
 public abstract class Unit {
 	public static Unit[] EMPTY_ARRAY = new Unit[0];

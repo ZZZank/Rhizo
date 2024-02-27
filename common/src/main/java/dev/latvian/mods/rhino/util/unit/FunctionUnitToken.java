@@ -1,9 +1,8 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import java.util.List;
 import java.util.Objects;
 
-import dev.latvian.mods.rhino.util.unit.Unit;
 import dev.latvian.mods.rhino.util.unit.function.FunctionFactory;
 
 public class FunctionUnitToken implements UnitToken{

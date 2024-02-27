@@ -1,9 +1,6 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import java.util.Objects;
-
-import dev.latvian.mods.rhino.util.unit.TernaryUnit;
-import dev.latvian.mods.rhino.util.unit.Unit;
 
 public class TernaryUnitToken implements UnitToken {
 

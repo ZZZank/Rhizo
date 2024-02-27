@@ -1,8 +1,8 @@
 package dev.latvian.mods.rhino.util.unit.operator;
 
 import dev.latvian.mods.rhino.util.unit.Unit;
+import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
-import dev.latvian.mods.rhino.util.unit.token.UnitSymbol;
 
 public class BitNotOpUnit extends UnaryOpUnit {
 	public BitNotOpUnit(Unit unit) {

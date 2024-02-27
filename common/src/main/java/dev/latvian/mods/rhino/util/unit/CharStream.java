@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 public class CharStream {
 	public final char[] chars;

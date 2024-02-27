@@ -1,9 +1,12 @@
 package dev.latvian.mods.rhino.util.unit;
 
-public final class MutableNumberUnit extends Unit {
+/**
+ * Mutable number
+ */
+public final class MutableUnit extends Unit {
 	public double value;
 
-	public MutableNumberUnit(double value) {
+	public MutableUnit(double value) {
 		this.value = value;
 	}
 

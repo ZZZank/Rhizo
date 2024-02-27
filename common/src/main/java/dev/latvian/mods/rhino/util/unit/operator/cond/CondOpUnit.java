@@ -1,9 +1,9 @@
 package dev.latvian.mods.rhino.util.unit.operator.cond;
 
 import dev.latvian.mods.rhino.util.unit.Unit;
+import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 import dev.latvian.mods.rhino.util.unit.UnitVariables;
 import dev.latvian.mods.rhino.util.unit.operator.OpUnit;
-import dev.latvian.mods.rhino.util.unit.token.UnitSymbol;
 
 public abstract class CondOpUnit extends OpUnit {
 	public CondOpUnit(UnitSymbol symbol, Unit left, Unit right) {

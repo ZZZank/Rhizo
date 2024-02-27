@@ -1,7 +1,7 @@
 package dev.latvian.mods.rhino.util.unit.operator;
 
 import dev.latvian.mods.rhino.util.unit.Unit;
-import dev.latvian.mods.rhino.util.unit.token.UnitSymbol;
+import dev.latvian.mods.rhino.util.unit.UnitSymbol;
 
 public abstract class OpUnit extends Unit {
 	public final UnitSymbol symbol;

@@ -1,8 +1,6 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import java.util.Stack;
-
-import dev.latvian.mods.rhino.util.unit.Unit;
 
 public interface UnitToken {
 	default Unit interpret(UnitTokenStream stream) {

@@ -30,7 +30,6 @@ import dev.latvian.mods.rhino.util.unit.function.SqrtFuncUnit;
 import dev.latvian.mods.rhino.util.unit.function.TanFuncUnit;
 import dev.latvian.mods.rhino.util.unit.function.TimeUnit;
 import dev.latvian.mods.rhino.util.unit.function.WithAlphaFuncUnit;
-import dev.latvian.mods.rhino.util.unit.token.UnitTokenStream;
 
 import org.jetbrains.annotations.Nullable;
 

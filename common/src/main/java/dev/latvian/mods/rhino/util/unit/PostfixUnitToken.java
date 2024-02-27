@@ -1,11 +1,9 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
-
-import dev.latvian.mods.rhino.util.unit.Unit;
 
 public class PostfixUnitToken implements UnitToken{
 

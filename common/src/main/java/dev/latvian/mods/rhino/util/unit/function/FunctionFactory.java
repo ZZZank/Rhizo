@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import dev.latvian.mods.rhino.util.unit.Unit;
-import dev.latvian.mods.rhino.util.unit.token.UnitInterpretException;
+import dev.latvian.mods.rhino.util.unit.UnitInterpretException;
 
 public class FunctionFactory {
 	

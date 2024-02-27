@@ -1,10 +1,6 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import java.util.Objects;
-
-import dev.latvian.mods.rhino.util.unit.FixedUnit;
-import dev.latvian.mods.rhino.util.unit.Unit;
-import dev.latvian.mods.rhino.util.unit.VariableUnit;
 
 public class StringUnitToken implements UnitToken {
 

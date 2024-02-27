@@ -1,11 +1,8 @@
-package dev.latvian.mods.rhino.util.unit.token;
+package dev.latvian.mods.rhino.util.unit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.latvian.mods.rhino.util.unit.FixedColorUnit;
-import dev.latvian.mods.rhino.util.unit.Unit;
-import dev.latvian.mods.rhino.util.unit.UnitContext;
 import dev.latvian.mods.rhino.util.unit.operator.GroupUnit;
 
 public final class UnitTokenStream {

@@ -1,7 +1,5 @@
 package dev.latvian.mods.rhino.util.unit;
 
-import dev.latvian.mods.rhino.util.unit.token.UnitToken;
-
 public class FixedColorUnit extends Unit implements UnitToken {
 	public static final FixedColorUnit WHITE = new FixedColorUnit(0xFFFFFFFF, true);
 	public static final FixedColorUnit BLACK = new FixedColorUnit(0xFF000000, true);
