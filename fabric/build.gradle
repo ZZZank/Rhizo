@@ -39,6 +39,10 @@ task copyAccessWidener(type: Copy) {
 	into generatedResources
 }
 
+sourcesJar {
+	dependsOn copyAccessWidener
+}
+
 processResources {
 	dependsOn copyAccessWidener
 
