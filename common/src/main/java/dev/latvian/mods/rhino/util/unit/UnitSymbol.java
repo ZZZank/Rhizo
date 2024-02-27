@@ -78,7 +78,7 @@ public enum UnitSymbol implements UnitToken {
 
 	public final String symbol;
 	public final int precedence;
-	public final OperatorFactory op;
+	public final OpSupplier op;
 	public final UnaryOperatorFactory unaryOp;
 
 	UnitSymbol(String s) {
@@ -88,7 +88,7 @@ public enum UnitSymbol implements UnitToken {
 		unaryOp = null;
 	}
 
-	UnitSymbol(String s, int p, OperatorFactory opUnit) {
+	UnitSymbol(String s, int p, OpSupplier opUnit) {
 		symbol = s;
 		precedence = p;
 		op = opUnit;

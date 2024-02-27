@@ -27,6 +27,10 @@ public abstract class Unit {
 		builder.append(this);
 	}
 
+	public Unit toBool() {
+		return new BoolUnit(this);
+	}
+
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		append(builder);
@@ -87,8 +91,16 @@ public abstract class Unit {
 		return new PowUnit(this, other);
 	}
 
+	public Unit shiftLeft(Unit other) {
+		return new ShiftLeftUnit(this, other);
+	}
+
 	public Unit lsh(Unit other) {
 		return new ShiftLeftUnit(this, other);
+	}
+
+	public Unit shiftRight(Unit other) {
+		return new ShiftRightUnit(this, other);
 	}
 
 	public Unit rsh(Unit other) {

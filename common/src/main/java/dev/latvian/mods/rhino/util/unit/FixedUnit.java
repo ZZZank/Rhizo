@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.util.unit;
 
-public final class FixedUnit extends Unit {
+public class FixedUnit extends Unit {
 	public static final FixedUnit ZERO = new FixedUnit(0);
 	public static final FixedUnit ONE = new FixedUnit(1);
 	public static final FixedUnit MINUS_ONE = new FixedUnit(-1);
@@ -30,7 +30,7 @@ public final class FixedUnit extends Unit {
 
 	public final double value;
 
-	private FixedUnit(double value) {
+	protected FixedUnit(double value) {
 		this.value = value;
 	}
 

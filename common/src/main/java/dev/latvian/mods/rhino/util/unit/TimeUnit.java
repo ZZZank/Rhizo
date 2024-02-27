@@ -1,6 +1,13 @@
 package dev.latvian.mods.rhino.util.unit;
 
 public class TimeUnit extends FuncUnit {
+	public static final FuncSupplier SUPPLIER = new FuncSupplier() {
+		@Override
+		public Unit create(Unit[] args) {
+			return new TimeUnit();
+		}
+	};
+
 	public static double time() {
 		return System.currentTimeMillis() / 1000D;
 	}
