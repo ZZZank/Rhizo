@@ -44,14 +44,14 @@ public class GroupUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		for (int i = 0; i < units.length; i++) {
 			if (i > 0) {
 				builder.append(';');
 				builder.append(' ');
 			}
 
-			units[i].toString(builder);
+			units[i].append(builder);
 		}
 	}
 }

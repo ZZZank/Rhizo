@@ -41,7 +41,7 @@ public class FixedColorUnit extends Unit implements UnitToken {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append(String.format(alpha ? "#%08X" : "#%06X", color));
 	}
 

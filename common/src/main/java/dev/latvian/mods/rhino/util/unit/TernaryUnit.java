@@ -25,13 +25,13 @@ public class TernaryUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append('(');
-		cond.toString(builder);
+		cond.append(builder);
 		builder.append(" ? ");
-		left.toString(builder);
+		left.append(builder);
 		builder.append(" : ");
-		right.toString(builder);
+		right.append(builder);
 		builder.append(')');
 	}
 }

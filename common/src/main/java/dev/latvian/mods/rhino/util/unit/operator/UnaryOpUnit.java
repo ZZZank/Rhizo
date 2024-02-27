@@ -13,10 +13,10 @@ public abstract class UnaryOpUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append('(');
 		builder.append(symbol);
-		unit.toString(builder);
+		unit.append(builder);
 		builder.append(')');
 	}
 }

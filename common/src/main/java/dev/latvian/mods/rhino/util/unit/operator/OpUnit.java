@@ -15,13 +15,13 @@ public abstract class OpUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append('(');
 
 		if (left == null) {
 			builder.append("null");
 		} else {
-			left.toString(builder);
+			left.append(builder);
 		}
 
 		builder.append(symbol);
@@ -29,7 +29,7 @@ public abstract class OpUnit extends Unit {
 		if (right == null) {
 			builder.append("null");
 		} else {
-			right.toString(builder);
+			right.append(builder);
 		}
 
 		builder.append(')');

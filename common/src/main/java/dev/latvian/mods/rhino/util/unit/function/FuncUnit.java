@@ -16,7 +16,7 @@ public abstract class FuncUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append(factory.name());
 		builder.append('(');
 
@@ -27,7 +27,7 @@ public abstract class FuncUnit extends Unit {
 				builder.append(',');
 			}
 
-			args[i].toString(builder);
+			args[i].append(builder);
 		}
 
 		builder.append(')');

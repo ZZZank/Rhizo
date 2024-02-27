@@ -31,7 +31,7 @@ public class VariableUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append(name);
 	}
 }

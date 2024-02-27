@@ -20,7 +20,7 @@ public final class MutableUnit extends Unit {
 	}
 
 	@Override
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		long r = Math.round(value);
 
 		if (Math.abs(r - value) < 0.00001D) {

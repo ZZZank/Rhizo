@@ -69,13 +69,13 @@ public abstract class Unit {
 		return get(variables) != 0D;
 	}
 
-	public void toString(StringBuilder builder) {
+	public void append(StringBuilder builder) {
 		builder.append(this);
 	}
 
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		toString(builder);
+		append(builder);
 		return builder.toString();
 	}
 
