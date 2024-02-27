@@ -2,9 +2,6 @@ package dev.latvian.mods.rhino.util.unit;
 
 import org.jetbrains.annotations.Nullable;
 
-import dev.latvian.mods.rhino.util.unit.operator.OperatorFactory;
-import dev.latvian.mods.rhino.util.unit.operator.UnaryOperatorFactory;
-
 import java.util.Stack;
 
 public enum UnitSymbol implements UnitToken {

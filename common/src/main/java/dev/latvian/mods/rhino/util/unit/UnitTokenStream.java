@@ -3,8 +3,6 @@ package dev.latvian.mods.rhino.util.unit;
 import java.util.ArrayList;
 import java.util.List;
 
-import dev.latvian.mods.rhino.util.unit.operator.GroupUnit;
-
 public final class UnitTokenStream {
 	private static boolean isHex(char c) {
 		return c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F';

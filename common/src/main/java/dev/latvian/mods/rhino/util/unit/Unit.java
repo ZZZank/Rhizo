@@ -1,51 +1,5 @@
 package dev.latvian.mods.rhino.util.unit;
 
-import dev.latvian.mods.rhino.util.unit.function.AbsFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.Atan2FuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.AtanFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.BoolFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.CeilFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.ClampFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.CosFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.DegFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.FloorFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.LerpFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.Log10FuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.Log1pFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.LogFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.MaxFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.MinFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.RadFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.SinFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.SmoothstepFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.SqFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.SqrtFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.TanFuncUnit;
-import dev.latvian.mods.rhino.util.unit.function.WithAlphaFuncUnit;
-import dev.latvian.mods.rhino.util.unit.operator.BiNotUnit;
-import dev.latvian.mods.rhino.util.unit.operator.NotUnit;
-import dev.latvian.mods.rhino.util.unit.operator.NegUnit;
-import dev.latvian.mods.rhino.util.unit.operator.SetUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.AndOpUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.EqUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.GtUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.GteUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.LtUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.LteUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.NeqUnit;
-import dev.latvian.mods.rhino.util.unit.operator.cond.OrUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.AddUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.AndUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.OrUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.DivUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.LshUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.ModUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.MulUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.PowUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.RshUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.SubUnit;
-import dev.latvian.mods.rhino.util.unit.operator.op.XorUnit;
-
 public abstract class Unit {
 	public static Unit[] EMPTY_ARRAY = new Unit[0];
 
@@ -146,7 +100,7 @@ public abstract class Unit {
 	}
 
 	public Unit bitOr(Unit other) {
-		return new OrUnit(this, other);
+		return new BoolOrOpUnit(this, other);
 	}
 
 	public Unit xor(Unit other) {
@@ -186,7 +140,7 @@ public abstract class Unit {
 	}
 
 	public Unit or(Unit other) {
-		return new OrUnit(this, other);
+		return new BoolOrOpUnit(this, other);
 	}
 
 	public Unit boolNot() {
@@ -196,75 +150,75 @@ public abstract class Unit {
 	// Functions
 
 	public Unit min(Unit other) {
-		return new MinFuncUnit(this, other);
+		return new MinUnit(this, other);
 	}
 
 	public Unit max(Unit other) {
-		return new MaxFuncUnit(this, other);
+		return new MaxUnit(this, other);
 	}
 
 	public Unit abs() {
-		return new AbsFuncUnit(this);
+		return new AbsUnit(this);
 	}
 
 	public Unit sin() {
-		return new SinFuncUnit(this);
+		return new SinUnit(this);
 	}
 
 	public Unit cos() {
-		return new CosFuncUnit(this);
+		return new CosUnit(this);
 	}
 
 	public Unit tan() {
-		return new TanFuncUnit(this);
+		return new TanUnit(this);
 	}
 
 	public Unit deg() {
-		return new DegFuncUnit(this);
+		return new DegUnit(this);
 	}
 
 	public Unit rad() {
-		return new RadFuncUnit(this);
+		return new RadUnit(this);
 	}
 
 	public Unit atan() {
-		return new AtanFuncUnit(this);
+		return new AtanUnit(this);
 	}
 
 	public Unit atan2(Unit other) {
-		return new Atan2FuncUnit(this, other);
+		return new Atan2Unit(this, other);
 	}
 
 	public Unit log() {
-		return new LogFuncUnit(this);
+		return new LogUnit(this);
 	}
 
 	public Unit log10() {
-		return new Log10FuncUnit(this);
+		return new Log10Unit(this);
 	}
 
 	public Unit log1p() {
-		return new Log1pFuncUnit(this);
+		return new Log1pUnit(this);
 	}
 
 	public Unit sqrt() {
-		return new SqrtFuncUnit(this);
+		return new SqrtUnit(this);
 	}
 
 	public Unit sq() {
-		return new SqFuncUnit(this);
+		return new SqUnit(this);
 	}
 
 	public Unit floor() {
-		return new FloorFuncUnit(this);
+		return new FloorUnit(this);
 	}
 
 	public Unit ceil() {
-		return new CeilFuncUnit(this);
+		return new CeilUnit(this);
 	}
 
 	public Unit bool() {
-		return new BoolFuncUnit(this);
+		return new BoolUnit(this);
 	}
 
 	public Unit clamp(Unit a, Unit b) {
