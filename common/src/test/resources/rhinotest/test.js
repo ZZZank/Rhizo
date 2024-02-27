@@ -2,13 +2,14 @@ let testScript = (text) => {
 	console.info(text)
 }
 
+let x = 1
 /*
 <!-- HTML Comment test -->
-
+*/
 let scopes2 = () => {
 	var scopes = [];
 	let testArray = ['a', 'b']
-	for (i of testArray) {
+	for (let i of testArray) {
 		console.info(`Iterating ${i}`)
 		scopes.push(function () {
 			return i;
@@ -21,7 +22,6 @@ let scopes2 = () => {
 }
 
 console.info(scopes2())
- */
 
 const test = ['abc', 'def', 'ghi']
 
