@@ -81,15 +81,15 @@ public class FunctionFactory {
 		return of(name, 0, new Arg0(supplier));
 	}
 
-	public static FunctionFactory of1(String name, Arg1 supplier) {
+	public static FunctionFactory of1(String name, FuncSupplier.Func1 supplier) {
 		return of(name, 1, supplier);
 	}
 
-	public static FunctionFactory of2(String name, Arg2 supplier) {
+	public static FunctionFactory of2(String name, FuncSupplier.Func2 supplier) {
 		return of(name, 2, supplier);
 	}
 
-	public static FunctionFactory of3(String name, Arg3 supplier) {
+	public static FunctionFactory of3(String name, FuncSupplier.Func3 supplier) {
 		return of(name, 3, supplier);
 	}
 
@@ -99,40 +99,5 @@ public class FunctionFactory {
 		}
 
 		return supplier.create(args);
-	}
-
-	@FunctionalInterface
-	public interface FuncSupplier {
-		Unit create(Unit[] args);
-	}
-
-	@FunctionalInterface
-	public interface Arg1 extends FuncSupplier {
-		Unit createArg(Unit a);
-
-		@Override
-		default Unit create(Unit[] args) {
-			return createArg(args[0]);
-		}
-	}
-
-	@FunctionalInterface
-	public interface Arg2 extends FuncSupplier {
-		Unit createArg(Unit a, Unit b);
-
-		@Override
-		default Unit create(Unit[] args) {
-			return createArg(args[0], args[1]);
-		}
-	}
-
-	@FunctionalInterface
-	public interface Arg3 extends FuncSupplier {
-		Unit createArg(Unit a, Unit b, Unit c);
-
-		@Override
-		default Unit create(Unit[] args) {
-			return createArg(args[0], args[1], args[2]);
-		}
 	}
 }

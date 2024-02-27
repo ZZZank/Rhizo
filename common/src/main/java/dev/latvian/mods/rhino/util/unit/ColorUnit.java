@@ -1,12 +1,16 @@
 package dev.latvian.mods.rhino.util.unit;
 
-public class RgbFuncUnit extends FuncUnit {
+/**
+ * RGBA color
+ * @see dev.latvian.mods.rhino.util.unit.HsvFuncUnit
+ */
+public class ColorUnit extends FuncUnit {
 	public static final FunctionFactory FACTORY = FunctionFactory.of("rgb", 1, 4, args -> {
 		if (args.length == 1 && args[0] instanceof FixedColorUnit) {
 			return args[0];
 		}
 
-		RgbFuncUnit c = new RgbFuncUnit();
+		ColorUnit c = new ColorUnit();
 		c.a = FixedUnit.ONE;
 
 		if (args.length == 3 || args.length == 4) {
@@ -49,7 +53,7 @@ public class RgbFuncUnit extends FuncUnit {
 
 	public Unit r, g, b, a;
 
-	private RgbFuncUnit() {
+	private ColorUnit() {
 		super(FACTORY);
 	}
 

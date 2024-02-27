@@ -17,7 +17,7 @@ public class UnitContext {
 		DEFAULT.addFunction(RoundedTimeUnit.FACTORY);
 		DEFAULT.addFunction(RandomUnit.FACTORY);
 		DEFAULT.addFunction(FunctionFactory.of3("if", TernaryUnit::new));
-		DEFAULT.addFunction(RgbFuncUnit.FACTORY);
+		DEFAULT.addFunction(ColorUnit.FACTORY);
 
 		DEFAULT.addFunction(MinUnit.FACTORY);
 		DEFAULT.addFunction(MaxUnit.FACTORY);

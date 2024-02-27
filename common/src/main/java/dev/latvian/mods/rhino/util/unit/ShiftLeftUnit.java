@@ -1,8 +1,8 @@
 package dev.latvian.mods.rhino.util.unit;
 
-public class RshUnit extends OpUnit {
-	public RshUnit(Unit left, Unit right) {
-		super(UnitSymbol.RSH, left, right);
+public class ShiftLeftUnit extends OpUnit {
+	public ShiftLeftUnit(Unit left, Unit right) {
+		super(UnitSymbol.LSH, left, right);
 	}
 
 	@Override
@@ -12,6 +12,6 @@ public class RshUnit extends OpUnit {
 
 	@Override
 	public int getInt(UnitVariables variables) {
-		return left.getInt(variables) >> right.getInt(variables);
+		return left.getInt(variables) << right.getInt(variables);
 	}
 }

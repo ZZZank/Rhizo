@@ -88,11 +88,11 @@ public abstract class Unit {
 	}
 
 	public Unit lsh(Unit other) {
-		return new LshUnit(this, other);
+		return new ShiftLeftUnit(this, other);
 	}
 
 	public Unit rsh(Unit other) {
-		return new RshUnit(this, other);
+		return new ShiftRightUnit(this, other);
 	}
 
 	public Unit bitAnd(Unit other) {
