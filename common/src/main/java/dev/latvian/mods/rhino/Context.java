@@ -1339,6 +1339,9 @@ public class Context {
 	 *                           object for this Context
 	 */
 	public synchronized final void setClassShutter(ClassShutter shutter) {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		sharedContextData.setClassShutter(shutter);
 	}
 
@@ -1346,6 +1349,9 @@ public class Context {
 	 * @deprecated only used for compatibility, please see SharedContextData <p>
 	 */
 	public final synchronized ClassShutter getClassShutter() {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		return sharedContextData.getClassShutter();
 	}
 
@@ -1359,6 +1365,9 @@ public class Context {
 	 * @deprecated only used for compatibility, please see SharedContextData <p>
 	 */
 	public final synchronized ClassShutterSetter getClassShutterSetter() {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		if (sharedContextData.hasClassShutter) {
 			return null;
 		}
@@ -1444,6 +1453,9 @@ public class Context {
 	 * @since 1.5 Release 4
 	 */
 	public final void setWrapFactory(WrapFactory wrapFactory) {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		sharedContextData.setWrapFactory(wrapFactory);
 	}
 
@@ -1455,6 +1467,9 @@ public class Context {
 	 * @since 1.5 Release 4
 	 */
 	public final WrapFactory getWrapFactory() {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		return sharedContextData.getWrapFactory();
 	}
 
@@ -1706,10 +1721,16 @@ public class Context {
 	}
 
 	public TypeWrappers getTypeWrappers() {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		return sharedContextData.getTypeWrappers();
 	}
 
 	public boolean hasTypeWrappers() {
+		if (sharedContextData == null) {
+			initSafeStandardObjects();
+		}
 		return sharedContextData.hasTypeWrappers();
 	}
 }
