@@ -53,17 +53,16 @@ public class VMBridge_jdk18 extends VMBridge {
 	}
 
 	@Override
-	protected boolean tryToMakeAccessible(Object target, AccessibleObject accessible) {
-		if (accessible.canAccess(target)) {
+	protected boolean tryToMakeAccessible(AccessibleObject accessible) {
+		if (accessible.isAccessible()) {
 			return true;
 		}
 
 		try {
 			accessible.setAccessible(true);
-		} catch (Exception ex) {
-		}
+		} catch (Exception ex) {}
 
-		return accessible.canAccess(target);
+		return accessible.isAccessible();
 	}
 
 	@Override
