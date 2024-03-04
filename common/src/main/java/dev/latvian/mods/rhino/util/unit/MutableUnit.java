@@ -10,7 +10,15 @@ public final class MutableUnit extends Unit {
 		this.value = value;
 	}
 
+	public MutableUnit(float value) {
+		this.value = value;
+	}
+
 	public void set(double value) {
+		this.value = value;
+	}
+
+	public void set(float value) {
 		this.value = value;
 	}
 

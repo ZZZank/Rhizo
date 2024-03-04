@@ -1284,6 +1284,62 @@ public class Context {
 	}
 
 	/**
+	 * Convenient method to convert java value to its closest representation
+	 * in JavaScript.
+	 * <p>
+	 * If value is an instance of String, Number, Boolean, Function or
+	 * Scriptable, it is returned as it and will be treated as the corresponding
+	 * JavaScript type of string, number, boolean, function and object.
+	 * <p>
+	 * Note that for Number instances during any arithmetic operation in
+	 * JavaScript the engine will always use the result of
+	 * <code>Number.doubleValue()</code> resulting in a precision loss if
+	 * the number can not fit into double.
+	 * <p>
+	 * If value is an instance of Character, it will be converted to string of
+	 * length 1 and its JavaScript type will be string.
+	 * <p>
+	 * The rest of values will be wrapped as LiveConnect objects
+	 * by calling {@link WrapFactory#wrap(Context cx, Scriptable scope,
+	 * Object obj, Class staticType)} as in:
+	 * <pre>
+	 *    Context cx = Context.getCurrentContext();
+	 *    return cx.getWrapFactory().wrap(cx, scope, value, null);
+	 * </pre>
+	 *
+	 * @param value any Java object
+	 * @param scope top scope object
+	 * @return value suitable to pass to any API that takes JavaScript values.
+	 */
+	public static Object javaToJS(Object value, Scriptable scope) {
+		if (value instanceof String || value instanceof Number || value instanceof Boolean || value instanceof Scriptable) {
+			return value;
+		} else if (value instanceof Character) {
+			return String.valueOf(((Character) value).charValue());
+		} else {
+			Context cx = Context.getContext();
+			return cx.getWrapFactory().wrap(cx.sharedContextData, scope, value, null);
+		}
+	}
+
+	/**
+	 * Convert a JavaScript value into the desired type.
+	 * Uses the semantics defined with LiveConnect3 and throws an
+	 * Illegal argument exception if the conversion cannot be performed.
+	 *
+	 * @param value       the JavaScript value to convert
+	 * @param desiredType the Java type to convert to. Primitive Java
+	 *                    types are represented using the TYPE fields in the corresponding
+	 *                    wrapper class in java.lang.
+	 * @return the converted value
+	 * @throws EvaluatorException if the conversion cannot be performed
+	 */
+	public static Object jsToJava(Object value, Class<?> desiredType) throws EvaluatorException {
+		Context cx = getCurrentContext();
+		return NativeJavaObject.coerceTypeImpl(cx.hasTypeWrappers() ? cx.getTypeWrappers() : null, desiredType, value);
+	}
+
+	/**
 	 * Returns the maximum stack depth (in terms of number of call frames)
 	 * allowed in a single invocation of interpreter. If the set depth would be
 	 * exceeded, the interpreter will throw an EvaluatorException in the script.
