@@ -11,7 +11,8 @@ public class DefaultRemapper implements Remapper {
 
 	@Override
 	public String remap(Class<?> from, Member member) {
-		if (member instanceof AnnotatedElement annotatedElement) {
+		if (member instanceof AnnotatedElement) {
+			AnnotatedElement annotatedElement = (AnnotatedElement) member;
 			RemapForJS remap = annotatedElement.getAnnotation(RemapForJS.class);
 
 			if (remap != null) {

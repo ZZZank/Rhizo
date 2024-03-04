@@ -21,17 +21,20 @@ class ParamInfo:
 
 
 class ClassInfo:
-    modifier: str
-    type: str
-    fields: list[ParamInfo]
-    additional: str
 
-    def __init__(self) -> None:
+    def __init__(
+        self, modifier: str, type: str, fields: list[ParamInfo], additional: str
+    ) -> None:
+        self.modifier: str = modifier
+        self.type: str = type
+        self.fields: list[ParamInfo] = fields
+        self.additional: str = additional
+
         pass
 
     def fromStr(line: str):
-        """Example format: 
-        
+        """Example format:
+
         `public record FunctionUnitToken(String name, List<UnitToken> args) implements UnitToken {`
         """
         idxAccess = line.index(" record ")
@@ -40,21 +43,20 @@ class ClassInfo:
         idxParams = line.index(")", idxFnName + 1)
         idxBack = len(line) - 1
 
-        info = ClassInfo()
-        info.modifier = line[0:idxAccess]
-        info.type = line[idxRecord:idxFnName].strip()
-        info.additional = line[idxParams + 1 : idxBack].strip()
-        info.fields = []
+        modifier = line[0:idxAccess]
+        type = line[idxRecord:idxFnName].strip()
+        additional = line[idxParams + 1 : idxBack].strip()
+        fields = []
 
         for param in line[idxFnName + 1 : idxParams].split(", "):
             i = param.rindex(" ")
-            info.fields.append(ParamInfo(param[0:i], param[i + 1 :]))
+            fields.append(ParamInfo(param[0:i], param[i + 1 :]))
 
-        return info
+        return ClassInfo(modifier, type, fields, additional)
 
     def format(self):
         lines = [f"{self.modifier} class {self.type} {self.additional} " + "{"]
-        lines.append("")
+        # lines.append("")
         tab = " " * 4
         # fields
         for field in self.fields:
@@ -84,7 +86,10 @@ class ClassInfo:
         tab = indent * " "
         step = stepIndent * " "
         fmtTarget = (
-            self.type + " {" + ", ".join(["%s" for _ in range(len(self.fields))]) + "}"
+            self.type
+            + " {"
+            + ", ".join([f"{field.name} = %s" for field in self.fields])
+            + "}"
         )
         lines = [
             "@Override",
@@ -100,7 +105,7 @@ class ClassInfo:
         step = stepIndent * " "
         cmpTarget = " &&\n".join(
             [
-                tab + step * 2 + f"this.{field.name} == other.{field.name}"
+                tab + step * 2 + f"this.{field.name}.equals(other.{field.name})"
                 for field in self.fields
             ]
         )
@@ -130,16 +135,16 @@ class ClassInfo:
 
 
 line = input()
-if line == 'f':
-    f = open('record1stLine.txt', 'r+')
+if line == "f":
+    f = open("record1stLine.txt", "r+")
     line = f.readline()
     info: ClassInfo = ClassInfo.fromStr(line)
-    f.write('------\n')
+    f.write("------\n")
     for line in info.format():
         f.write(line)
-        f.write('\n')
+        f.write("\n")
 else:
     info: ClassInfo = ClassInfo.fromStr(line)
-    print('------')
+    print("------")
     for line in info.format():
         print(line)
