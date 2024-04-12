@@ -5,7 +5,6 @@ import dev.latvian.mods.rhino.util.remapper.Remapper;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Map;
 
 public class JavaPortingHelper {
 
@@ -43,7 +42,7 @@ public class JavaPortingHelper {
         if (clazz == null) {
             return null;
         }
-        String pn = null;
+        String pn;
         Class<?> c = clazz.isArray() ? elementType(clazz) : clazz;
         if (c.isPrimitive()) {
             pn = "java.lang";

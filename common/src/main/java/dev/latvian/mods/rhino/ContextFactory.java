@@ -267,7 +267,7 @@ public class ContextFactory {
 	 * Create class loader for generated classes.
 	 * This method creates an instance of the default implementation
 	 * of {@link GeneratedClassLoader}. Rhino uses this interface to load
-	 * generated JVM classes when no {@link SecurityController}
+	 * generated JVM classes when no {@code SecurityController}
 	 * is installed.
 	 * Application can override the method to provide custom class loading.
 	 */

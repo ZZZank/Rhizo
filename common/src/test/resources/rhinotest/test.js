@@ -5,6 +5,15 @@ let testScript = (text) => {
 const sharedArr = [false, 0, "2nd", 3.0]
 
 const tests = {
+	"same name but different scope": () => {
+		let x = 1
+		console.info(`before: ${x}`)
+		{
+			const x = "wow"
+			console.info(`in scope: ${x}`)
+		}
+		console.info(`after: ${x}`)
+	},
 	"scopes": () => {
 		/*
 		<!-- HTML Comment test -->
