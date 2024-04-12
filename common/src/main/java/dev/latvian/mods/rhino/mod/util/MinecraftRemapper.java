@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.mod.util;
 
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
+import dev.latvian.mods.rhino.util.remapper.RemapperException;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;

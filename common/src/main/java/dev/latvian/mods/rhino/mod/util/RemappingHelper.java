@@ -3,7 +3,9 @@ package dev.latvian.mods.rhino.mod.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
+import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.logging.log4j.LogManager;

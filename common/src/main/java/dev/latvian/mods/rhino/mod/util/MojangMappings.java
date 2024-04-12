@@ -1,6 +1,7 @@
 package dev.latvian.mods.rhino.mod.util;
 
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
+import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 

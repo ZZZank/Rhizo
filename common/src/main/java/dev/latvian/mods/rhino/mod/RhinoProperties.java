@@ -1,6 +1,7 @@
-package dev.latvian.mods.rhino.mod.util;
+package dev.latvian.mods.rhino.mod;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import dev.latvian.mods.rhino.mod.util.RemappingHelper;
 
 import java.io.InputStream;
 import java.io.Reader;

@@ -1,31 +1,13 @@
 package dev.latvian.mods.rhino.util.remapper;
 
 
-import java.lang.reflect.AnnotatedElement;
+import dev.latvian.mods.rhino.util.JavaPortingHelper;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.util.Collections;
 
 public interface Remapper {
 
-	/**
-	 * @deprecated please use more concrete variants,
-	 * @param from the class that {@code member} belongs to
-	 * @param member a Java member, method/field
-	 * @return remapped name
-	 * @see Remapper#getMappedField(Class, Field)
-	 * @see Remapper#getMappedMethod(Class, Method)
-	 */
-	default String remap(Class<?> from, Member member) {
-		if (member instanceof AnnotatedElement annotatedElement) {
-            RemapForJS remap = annotatedElement.getAnnotation(RemapForJS.class);
-			if (remap != null) {
-				return remap.value();
-			}
-		}
-		return "";
-	}
 	static String getTypeName(String type) {
 		int array = 0;
 		while (type.endsWith("[]")) {
@@ -46,7 +28,7 @@ public interface Remapper {
 			default -> "L" + type.replace('.', '/') + ";";
 		};
 
-		return array == 0 ? t : (String.join("", Collections.nCopies(array, "[")) + t);
+		return array == 0 ? t : (JavaPortingHelper.repeat("[", array) + t);
 	}
 
 	/**
