@@ -2119,13 +2119,14 @@ public class Parser {
 				? definingScope.getSymbol(name)
 				: null;
 		int symDeclType = definedSymbol != null ? definedSymbol.getDeclType() : -1;
-		if (definedSymbol != null && definingScope == currentScope) {
+		boolean reDefining = (definingScope == currentScope) && (symDeclType == Token.LET || symDeclType == Token.CONST);
+		if (definedSymbol != null && reDefining) {
 			addError(symDeclType == Token.CONST ? "msg.const.redecl"
-							: symDeclType == Token.LET ? "msg.let.redecl"
-							: symDeclType == Token.VAR ? "msg.var.redecl"
-							: symDeclType == Token.FUNCTION ? "msg.fn.redecl"
-							: "msg.parm.redecl"
-				, name);
+						: symDeclType == Token.LET ? "msg.let.redecl"
+						: symDeclType == Token.VAR ? "msg.var.redecl"
+						: symDeclType == Token.FUNCTION ? "msg.fn.redecl"
+						: "msg.parm.redecl"
+					, name);
 			return;
 		}
 		switch (declType) {
