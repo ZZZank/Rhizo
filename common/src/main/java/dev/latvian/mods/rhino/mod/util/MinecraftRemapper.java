@@ -275,19 +275,15 @@ public class MinecraftRemapper implements Remapper {
 		}
 
 		var s = unmapClassMap.get(mmName);
-
 		if (s == null) {
 			s = "";
-
 			for (var c : classMap.values()) {
 				if (c.remappedName.equals(mmName)) {
 					s = c.realName;
 				}
 			}
-
 			unmapClassMap.put(mmName, s);
 		}
-
 		return s;
 	}
 
