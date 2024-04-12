@@ -31,7 +31,11 @@ public class DefaultRemapper implements Remapper {
 		if (!remapped.isEmpty()) {
 			return remapped;
 		}
-		return this.minecraft.getMappedClass(from);
+		remapped = this.minecraft.getMappedClass(from);
+		if (!remapped.isEmpty()) {
+			return remapped;
+		}
+		return from.getName();
 	}
 
 	@Override
@@ -40,7 +44,11 @@ public class DefaultRemapper implements Remapper {
 		if (!remapped.isEmpty()) {
 			return remapped;
 		}
-		return this.minecraft.getMappedField(from, field);
+		remapped = this.minecraft.getMappedField(from, field);
+		if (!remapped.isEmpty()) {
+			return remapped;
+		}
+		return field.getName();
 	}
 
 	@Override
@@ -49,6 +57,10 @@ public class DefaultRemapper implements Remapper {
 		if (!remapped.isEmpty()) {
 			return remapped;
 		}
-		return this.minecraft.getMappedMethod(from, method);
+		remapped = this.minecraft.getMappedMethod(from, method);
+		if (!remapped.isEmpty()) {
+			return remapped;
+		}
+		return method.getName();
 	}
 }
