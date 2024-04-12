@@ -8,8 +8,8 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.util.DefaultRemapper;
-import dev.latvian.mods.rhino.util.Remapper;
+import dev.latvian.mods.rhino.util.remapper.DefaultRemapper;
+import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 
 /**

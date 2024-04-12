@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.mod.core.mixin.common;
 
-import dev.latvian.mods.rhino.util.RemapForJS;
+import dev.latvian.mods.rhino.util.remapper.RemapForJS;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

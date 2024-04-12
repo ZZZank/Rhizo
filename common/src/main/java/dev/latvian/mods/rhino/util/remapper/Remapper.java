@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.util;
+package dev.latvian.mods.rhino.util.remapper;
 
 
 import java.lang.reflect.AnnotatedElement;
@@ -13,8 +13,8 @@ public interface Remapper {
 	 * @param from the class that {@code member} belongs to
 	 * @param member a Java member, method/field
 	 * @return remapped name
-	 * @see dev.latvian.mods.rhino.util.Remapper#getMappedField(Class, Field)
-	 * @see dev.latvian.mods.rhino.util.Remapper#getMappedMethod(Class, Method)
+	 * @see Remapper#getMappedField(Class, Field)
+	 * @see Remapper#getMappedMethod(Class, Method)
 	 */
 	default String remap(Class<?> from, Member member) {
 		if (member instanceof AnnotatedElement annotatedElement) {

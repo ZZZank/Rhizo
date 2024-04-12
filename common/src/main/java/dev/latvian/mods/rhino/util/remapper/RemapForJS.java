@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.util;
+package dev.latvian.mods.rhino.util.remapper;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

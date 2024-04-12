@@ -2,7 +2,7 @@ package dev.latvian.mods.rhino.mod.test;
 
 import dev.latvian.mods.rhino.util.DataObject;
 import dev.latvian.mods.rhino.util.DynamicMap;
-import dev.latvian.mods.rhino.util.RemapForJS;
+import dev.latvian.mods.rhino.util.remapper.RemapForJS;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;

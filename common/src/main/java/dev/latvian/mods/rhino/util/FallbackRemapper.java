@@ -1,5 +1,7 @@
 package dev.latvian.mods.rhino.util;
 
+import dev.latvian.mods.rhino.util.remapper.Remapper;
+
 import java.lang.reflect.Member;
 
 public class FallbackRemapper implements Remapper {

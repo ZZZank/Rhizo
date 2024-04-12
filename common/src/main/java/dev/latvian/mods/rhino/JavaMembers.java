@@ -6,7 +6,7 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
+import dev.latvian.mods.rhino.util.remapper.HideFromJS;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -78,9 +78,8 @@ class JavaMembers {
 		Object rval;
 		Class<?> type;
 		try {
-			if (member instanceof BeanProperty) {
-				BeanProperty bp = (BeanProperty) member;
-				if (bp.getter == null) {
+			if (member instanceof BeanProperty bp) {
+                if (bp.getter == null) {
 					return Scriptable.NOT_FOUND;
 				}
 				rval = bp.getter.invoke(javaObject, Context.emptyArgs);
@@ -114,9 +113,8 @@ class JavaMembers {
 		}
 
 		// Is this a bean property "set"?
-		if (member instanceof BeanProperty) {
-			BeanProperty bp = (BeanProperty) member;
-			if (bp.setter == null) {
+		if (member instanceof BeanProperty bp) {
+            if (bp.setter == null) {
 				throw reportMemberNotFound(name);
 			}
 			// If there's only one setter or if the value is null, use the
@@ -135,12 +133,11 @@ class JavaMembers {
 				bp.setters.call(Context.getContext(), ScriptableObject.getTopLevelScope(scope), scope, args);
 			}
 		} else {
-			if (!(member instanceof Field)) {
+			if (!(member instanceof Field field)) {
 				String str = (member == null) ? "msg.java.internal.private" : "msg.java.method.assign";
 				throw Context.reportRuntimeError1(str, name);
 			}
-			Field field = (Field) member;
-			int fieldModifiers = field.getModifiers();
+            int fieldModifiers = field.getModifiers();
 
 			if (Modifier.isFinal(fieldModifiers)) {
 				// treat Java final the same as JavaScript [[READONLY]]
@@ -225,9 +222,8 @@ class JavaMembers {
 				// Try to get static member from instance (LC3)
 				obj = staticMembers.get(trueName);
 			}
-			if (obj instanceof NativeJavaMethod) {
-				NativeJavaMethod njm = (NativeJavaMethod) obj;
-				methodsOrCtors = njm.methods;
+			if (obj instanceof NativeJavaMethod njm) {
+                methodsOrCtors = njm.methods;
 			}
 		}
 
@@ -399,7 +395,7 @@ class JavaMembers {
 			int mods = method.getModifiers();
 			boolean isStatic = Modifier.isStatic(mods);
 			Map<String, Object> ht = isStatic ? staticMembers : members;
-			String remap = cx.getRemapper().remap(cl, method);
+			String remap = cx.getRemapper().getMappedMethod(cl, method);
 			String name = remap.isEmpty() ? method.getName() : remap;
 
 			Object value = ht.get(name);
@@ -456,8 +452,8 @@ class JavaMembers {
 
 		// Reflect fields.
 		for (Field field : getAccessibleFields(includeProtected, includePrivate)) {
-			String remap = cx.getRemapper().remap(cl, field);
-			String name = remap.isEmpty() ? field.getName() : remap;
+			String remap = cx.getRemapper().getMappedField(cl, field);
+            String name = remap.isEmpty() ? field.getName() : remap;
 
 			int mods = field.getModifiers();
 			try {
@@ -466,9 +462,8 @@ class JavaMembers {
 				Object member = ht.get(name);
 				if (member == null) {
 					ht.put(name, field);
-				} else if (member instanceof NativeJavaMethod) {
-					NativeJavaMethod method = (NativeJavaMethod) member;
-					FieldAndMethods fam = new FieldAndMethods(scope, method.methods, field);
+				} else if (member instanceof NativeJavaMethod method) {
+                    FieldAndMethods fam = new FieldAndMethods(scope, method.methods, field);
 					Map<String, FieldAndMethods> fmht = isStatic ? staticFieldAndMethods : fieldAndMethods;
 					if (fmht == null) {
 						fmht = new HashMap<>();
@@ -480,9 +475,8 @@ class JavaMembers {
 					}
 					fmht.put(name, fam);
 					ht.put(name, fam);
-				} else if (member instanceof Field) {
-					Field oldField = (Field) member;
-					// If this newly reflected field shadows an inherited field,
+				} else if (member instanceof Field oldField) {
+                    // If this newly reflected field shadows an inherited field,
 					// then replace it. Otherwise, since access to the field
 					// would be ambiguous from Java, no field should be
 					// reflected.
@@ -518,7 +512,7 @@ class JavaMembers {
 				if (memberIsGetMethod || memberIsIsMethod || memberIsSetMethod) {
 					// Double check name component.
 					String nameComponent = name.substring(memberIsIsMethod ? 2 : 3);
-					if (nameComponent.length() == 0) {
+					if (nameComponent.isEmpty()) {
 						continue;
 					}
 
@@ -566,9 +560,8 @@ class JavaMembers {
 					if (ht.containsKey(setterName)) {
 						// Is this value a method?
 						Object member = ht.get(setterName);
-						if (member instanceof NativeJavaMethod) {
-							NativeJavaMethod njmSet = (NativeJavaMethod) member;
-							if (getter != null) {
+						if (member instanceof NativeJavaMethod njmSet) {
+                            if (getter != null) {
 								// We have a getter. Now, do we have a matching
 								// setter?
 								Class<?> type = getter.method().getReturnType();
@@ -664,9 +657,8 @@ class JavaMembers {
 		if (ht.containsKey(getterName)) {
 			// Check that the getter is a method.
 			Object member = ht.get(getterName);
-			if (member instanceof NativeJavaMethod) {
-				NativeJavaMethod njmGet = (NativeJavaMethod) member;
-				return extractGetMethod(njmGet.methods, isStatic);
+			if (member instanceof NativeJavaMethod njmGet) {
+                return extractGetMethod(njmGet.methods, isStatic);
 			}
 		}
 		return null;

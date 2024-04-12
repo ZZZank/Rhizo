@@ -14,7 +14,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import dev.latvian.mods.rhino.json.JsonParser;
-import dev.latvian.mods.rhino.util.HideFromJS;
+import dev.latvian.mods.rhino.util.remapper.HideFromJS;
 
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -402,7 +402,7 @@ public final class NativeJSON extends IdScriptableObject {
 			type(builder, field.getType());
 			builder.append(' ');
 
-			String remap = cx.getRemapper().remap(cl, field);
+			String remap = cx.getRemapper().getMappedField(cl, field);
 
 			if (remap.isEmpty()) {
 				builder.append(field.getName());
@@ -433,7 +433,7 @@ public final class NativeJSON extends IdScriptableObject {
 			type(builder, method.getReturnType());
 			builder.append(' ');
 
-			String remap = cx.getRemapper().remap(cl, method);
+			String remap = cx.getRemapper().getMappedMethod(cl, method);
 
 			if (remap.isEmpty()) {
 				builder.append(method.getName());

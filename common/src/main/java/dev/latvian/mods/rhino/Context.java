@@ -11,7 +11,7 @@ package dev.latvian.mods.rhino;
 import dev.latvian.mods.rhino.ast.AstRoot;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter.ClassFileFormatException;
-import dev.latvian.mods.rhino.util.Remapper;
+import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 
 import java.beans.PropertyChangeEvent;
