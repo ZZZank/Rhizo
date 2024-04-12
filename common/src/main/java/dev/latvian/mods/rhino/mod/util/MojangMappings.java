@@ -442,26 +442,44 @@ public class MojangMappings {
 		}
 	}
 
-	public record NamedSignature(String name, @Nullable MethodDefSignature signature) {
-		@Override
-		public String toString() {
-			if (signature == null) {
-				return name;
-			}
+    public static final class NamedSignature {
+        private final String name;
+        private final @Nullable MethodDefSignature signature;
 
-			return name + "(" + signature + ")";
-		}
+        public NamedSignature(String name, @Nullable MethodDefSignature signature) {
+            this.name = name;
+            this.signature = signature;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			return obj == this || obj instanceof NamedSignature other && name.equals(other.name) && Objects.equals(signature, other.signature);
-		}
+        @Override
+        public String toString() {
+            if (signature == null) {
+                return name;
+            }
 
-		@Override
-		public int hashCode() {
-			return name.hashCode() * 31 + (signature == null ? 0 : signature.hashCode());
-		}
-	}
+            return name + "(" + signature + ")";
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj == this || obj instanceof NamedSignature other && name.equals(other.name) && Objects.equals(signature, other.signature);
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public @Nullable MethodDefSignature signature() {
+            return signature;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, signature);
+        }
+
+
+    }
 
 	public static final class ClassDef {
 		public final MojangMappings mappings;
@@ -611,9 +629,75 @@ public class MojangMappings {
 
 	}
 
-	public record MemberDef(ClassDef parent, NamedSignature rawName, String mmName, TypeDef type, MutableObject<String> unmappedName) {
-		public boolean cleanup() {
-			return unmappedName.getValue().isEmpty();
-		}
-	}
+    public static final class MemberDef {
+        private final ClassDef parent;
+        private final NamedSignature rawName;
+        private final String mmName;
+        private final TypeDef type;
+        private final MutableObject<String> unmappedName;
+
+        public MemberDef(ClassDef parent, NamedSignature rawName, String mmName, TypeDef type, MutableObject<String> unmappedName) {
+            this.parent = parent;
+            this.rawName = rawName;
+            this.mmName = mmName;
+            this.type = type;
+            this.unmappedName = unmappedName;
+        }
+
+        public boolean cleanup() {
+            return unmappedName.getValue().isEmpty();
+        }
+
+        public ClassDef parent() {
+            return parent;
+        }
+
+        public NamedSignature rawName() {
+            return rawName;
+        }
+
+        public String mmName() {
+            return mmName;
+        }
+
+        public TypeDef type() {
+            return type;
+        }
+
+        public MutableObject<String> unmappedName() {
+            return unmappedName;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj == null || obj.getClass() != this.getClass()) {
+                return false;
+            }
+            var that = (MemberDef) obj;
+            return Objects.equals(this.parent, that.parent) &&
+                Objects.equals(this.rawName, that.rawName) &&
+                Objects.equals(this.mmName, that.mmName) &&
+                Objects.equals(this.type, that.type) &&
+                Objects.equals(this.unmappedName, that.unmappedName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(parent, rawName, mmName, type, unmappedName);
+        }
+
+        @Override
+        public String toString() {
+            return "MemberDef[" +
+                "parent=" + parent + ", " +
+                "rawName=" + rawName + ", " +
+                "mmName=" + mmName + ", " +
+                "type=" + type + ", " +
+                "unmappedName=" + unmappedName + ']';
+        }
+
+    }
 }

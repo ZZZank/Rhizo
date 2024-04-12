@@ -54,8 +54,49 @@ public class RemappingHelper {
 		return CLASS_CACHE.computeIfAbsent(name, RemappingHelper::loadClass);
 	}
 
-	public record MappingContext(String mcVersion, MojangMappings mappings) {
-	}
+    public static final class MappingContext {
+        private final String mcVersion;
+        private final MojangMappings mappings;
+
+        public MappingContext(String mcVersion, MojangMappings mappings) {
+            this.mcVersion = mcVersion;
+            this.mappings = mappings;
+        }
+
+        public String mcVersion() {
+            return mcVersion;
+        }
+
+        public MojangMappings mappings() {
+            return mappings;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj == null || obj.getClass() != this.getClass()) {
+                return false;
+            }
+            var that = (MappingContext) obj;
+            return Objects.equals(this.mcVersion, that.mcVersion) &&
+                Objects.equals(this.mappings, that.mappings);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(mcVersion, mappings);
+        }
+
+        @Override
+        public String toString() {
+            return "MappingContext[" +
+                "mcVersion=" + mcVersion + ", " +
+                "mappings=" + mappings + ']';
+        }
+
+    }
 
 	public interface Callback {
 		void generateMappings(MappingContext context) throws Exception;

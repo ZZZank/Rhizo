@@ -61,7 +61,8 @@ public class JavaPortingHelper {
         }
 
         if (clazz.isArray()) {
-            return "[" + clazz.getComponentType().descriptorString();
+            return "[" + JavaPortingHelper.descriptorString(clazz.getComponentType());
+        /*hidden class only exists after Java15
         } else if (clazz.isHidden()) {
             String name = clazz.getName();
             int index = name.indexOf('/');
@@ -72,6 +73,7 @@ public class JavaPortingHelper {
                 .append(name, index + 1, name.length())
                 .append(';')
                 .toString();
+        */
         } else {
             String name = clazz.getName().replace('.', '/');
             return new StringBuilder(name.length() + 2)
