@@ -297,9 +297,7 @@ public class Parser {
 	void reportError(String messageId, String messageArg, int position, int length) {
 		addError(messageId, messageArg, position, length);
 
-		if (!compilerEnv.recoverFromErrors()) {
-			throw new ParserException();
-		}
+		throw new ParserException();
 	}
 
 	// Computes the absolute end offset of node N.
@@ -314,11 +312,6 @@ public class Parser {
 			scannedComments = new ArrayList<>();
 		}
 		Comment commentNode = new Comment(ts.tokenBeg, ts.getTokenLength(), ts.commentType, comment);
-		if (ts.commentType == Token.CommentType.JSDOC && compilerEnv.isRecordingLocalJsDocComments()) {
-			Comment jsDocCommentNode = new Comment(ts.tokenBeg, ts.getTokenLength(), ts.commentType, comment);
-			currentJsDocComment = jsDocCommentNode;
-			currentJsDocComment.setLineno(lineno);
-		}
 		commentNode.setLineno(lineno);
 		scannedComments.add(commentNode);
 	}
@@ -365,11 +358,6 @@ public class Parser {
 				sawEOL = true;
 				tt = ts.getToken();
 			} else {
-				if (compilerEnv.isRecordingComments()) {
-					String comment = ts.getAndResetCurrentComment();
-					recordComment(lineno, comment);
-					break;
-				}
 				tt = ts.getToken();
 			}
 		}
@@ -513,9 +501,6 @@ public class Parser {
 			throw new IllegalStateException("parser reused");
 		}
 		this.sourceURI = sourceURI;
-		if (compilerEnv.isIdeMode()) {
-			this.sourceChars = sourceString.toCharArray();
-		}
 		this.ts = new TokenStream(this, null, sourceString, lineno);
 		try {
 			return parse();
@@ -579,9 +564,7 @@ public class Parser {
 			}
 		} catch (StackOverflowError ex) {
 			String msg = lookupMessage("msg.too.deep.parser.recursion");
-			if (!compilerEnv.isIdeMode()) {
-				throw Context.reportRuntimeError(msg, sourceURI, ts.lineno, null, 0);
-			}
+			throw Context.reportRuntimeError(msg, sourceURI, ts.lineno, null, 0);
 		} finally {
 			inUseStrictDirective = savedStrictMode;
 		}
@@ -589,9 +572,7 @@ public class Parser {
 		if (this.syntaxErrorCount != 0) {
 			String msg = String.valueOf(this.syntaxErrorCount);
 			msg = lookupMessage("msg.got.syntax.errors", msg);
-			if (!compilerEnv.isIdeMode()) {
-				throw errorReporter.runtimeError(msg, sourceURI, baseLineno, null, 0);
-			}
+			throw errorReporter.runtimeError(msg, sourceURI, baseLineno, null, 0);
 		}
 
 		// add comments to root in lexical order
@@ -868,9 +849,6 @@ public class Parser {
 		// Have to wait until after parsing the function to set its parent
 		// scope, since defineSymbol needs the defining-scope check to stop
 		// at the function boundary when checking for redeclarations.
-		if (compilerEnv.isIdeMode()) {
-			fnNode.setParentScope(currentScope);
-		}
 		return fnNode;
 	}
 
@@ -969,7 +947,7 @@ public class Parser {
 
 	private AstNode statements(AstNode parent) throws IOException {
 		if (currentToken != Token.LC  // assertion can be invalid in bad code
-				&& !compilerEnv.isIdeMode()) {
+				) {
 			codeBug();
 		}
 		int pos = ts.tokenBeg;
@@ -1930,10 +1908,6 @@ public class Parser {
 		} else {
 			LabeledStatement ls = labelSet.get(name);
 			if (ls != null) {
-				if (compilerEnv.isIdeMode()) {
-					Label dup = ls.getLabelByName(name);
-					reportError("msg.dup.label", dup.getAbsolutePosition(), dup.getLength());
-				}
 				reportError("msg.dup.label", label.getPosition(), label.getLength());
 			}
 		}
@@ -2138,9 +2112,6 @@ public class Parser {
 
 	void defineSymbol(int declType, String name, boolean ignoreNotInBlock) {
 		if (name == null) {
-			if (compilerEnv.isIdeMode()) {  // be robust in IDE-mode
-				return;
-			}
 			codeBug();
 		}
 		Scope definingScope = currentScope.getDefiningScope(name);
@@ -2170,7 +2141,7 @@ public class Parser {
 			case Token.VAR:
 			case Token.CONST:
 			case Token.FUNCTION:
-				if (symbol != null) {
+				if (definedSymbol != null) {
 					if (symDeclType == Token.VAR) {
 						addStrictWarning("msg.var.redecl", name);
 					} else if (symDeclType == Token.LP) {
@@ -2182,7 +2153,7 @@ public class Parser {
 				return;
 
 			case Token.LP:
-				if (symbol != null) {
+				if (definedSymbol != null) {
 					// must be duplicate parameter. Second parameter hides the
 					// first, so go ahead and add the second parameter
 					addWarning("msg.dup.parms", name);
@@ -3345,11 +3316,7 @@ public class Parser {
 			prevNameTokenLineno = 0;
 		}
 		if (s == null) {
-			if (compilerEnv.isIdeMode()) {
-				s = "";
-			} else {
-				codeBug();
-			}
+			codeBug();
 		}
 		Name name = new Name(beg, s);
 		name.setLineno(lineno);
@@ -3506,12 +3473,11 @@ public class Parser {
 			// this code originally called lineBeginningFor() and in order to
 			// preserve its different line-offset handling, we need to special
 			// case ide-mode here
-			int beg = compilerEnv.isIdeMode() ? Math.max(pos, end - linep[1]) : pos;
-			if (line != null) {
-				addStrictWarning("msg.missing.semi", "", beg, end - beg, linep[0], line, linep[1]);
+            if (line != null) {
+				addStrictWarning("msg.missing.semi", "", pos, end - pos, linep[0], line, linep[1]);
 			} else {
 				// no line information available, report warning at current line
-				addStrictWarning("msg.missing.semi", "", beg, end - beg);
+				addStrictWarning("msg.missing.semi", "", pos, end - pos);
 			}
 		}
 	}

@@ -158,15 +158,16 @@ public class CompilerEnvirons {
 	}
 
 	/**
+	 * @deprecated "IDE" mode is removed
+	 * <p>
 	 * Puts the parser in "IDE" mode.  This enables some slightly more expensive
 	 * computations, such as figuring out helpful error bounds.
 	 */
 	public void setIdeMode(boolean ide) {
-		ideMode = ide;
 	}
 
 	public boolean isIdeMode() {
-		return ideMode;
+		return false;
 	}
 
 	public Set<String> getActivationNames() {
@@ -218,7 +219,6 @@ public class CompilerEnvirons {
 	private boolean recordingLocalJsDocComments;
 	private boolean recoverFromErrors;
 	private boolean warnTrailingComma;
-	private boolean ideMode;
 	private boolean allowSharpComments;
 	Set<String> activationNames;
 }
