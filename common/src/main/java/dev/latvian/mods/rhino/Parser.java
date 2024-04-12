@@ -330,22 +330,24 @@ public class Parser {
 	}
 
 
-	// Returns the next token without consuming it.
-	// If previous token was consumed, calls scanner to get new token.
-	// If previous token was -not- consumed, returns it (idempotent).
-	//
-	// This function will not return a newline (Token.EOL - instead, it
-	// gobbles newlines until it finds a non-newline token, and flags
-	// that token as appearing just after a newline.
-	//
-	// This function will also not return a Token.COMMENT.  Instead, it
-	// records comments in the scannedComments list.  If the token
-	// returned by this function immediately follows a jsdoc comment,
-	// the token is flagged as such.
-	//
-	// Note that this function always returned the un-flagged token!
-	// The flags, if any, are saved in currentFlaggedToken.
-	private int peekToken() throws IOException {
+	/**
+	 * Returns the next token without consuming it.
+	 * If previous token was consumed, calls scanner to get new token.
+	 * If previous token was -not- consumed, returns it (idempotent).
+	 * <p>
+	 * This function will not return a newline (Token.EOL - instead, it
+	 * gobbles newlines until it finds a non-newline token, and flags
+	 * that token as appearing just after a newline.
+	 * <p>
+	 * This function will also not return a Token.COMMENT.  Instead, it
+	 * records comments in the scannedComments list.  If the token
+	 * returned by this function immediately follows a jsdoc comment,
+	 * the token is flagged as such.
+	 * <p>
+	 * Note that this function always returned the un-flagged token!
+	 * The flags, if any, are saved in currentFlaggedToken.
+	 */
+    private int peekToken() throws IOException {
 		// By far the most common case:  last token hasn't been consumed,
 		// so return already-peeked token.
 		if (currentFlaggedToken != Token.EOF) {
@@ -1500,17 +1502,42 @@ public class Parser {
 			if (tt == Token.SEMI) {
 				init = new EmptyExpression(ts.tokenBeg, 1);
 				init.setLineno(ts.lineno);
-			} else if (tt == Token.VAR || tt == Token.LET) {
+			} else if (tt == Token.VAR || tt == Token.LET || tt == Token.CONST) {
 				consumeToken();
+				//TODO: actually declare it as CONST
 				init = variables(tt, ts.tokenBeg, false);
 			} else {
 				init = expr();
+				if (init instanceof Name n){
+					return nameToVariableDeclaration(n, ts.tokenBeg, false);
+				}
 				markDestructuring(init);
 			}
 			return init;
 		} finally {
 			inForInit = false;
 		}
+	}
+
+	private AstNode nameToVariableDeclaration(Name name, int pos, boolean isStatement) throws IOException {
+		/*
+		int end = ts.tokenEnd;
+		VariableDeclaration pn = new VariableDeclaration(pos);
+		pn.setType(Token.LET);
+		pn.setLineno(ts.lineno);
+		int lineno = ts.lineno;
+		VariableInitializer vi = new VariableInitializer(pos, end - pos);
+		vi.setTarget(name);
+		vi.setType(Token.LET);
+		vi.setLineno(lineno);
+		pn.addVariable(vi);
+		pn.setLength(end - pos);
+		pn.setIsStatement(isStatement);
+		return pn;
+		 */
+
+		markDestructuring(name);
+		return name;
 	}
 
 	private TryStatement tryStatement() throws IOException {
@@ -1994,9 +2021,9 @@ public class Parser {
 		VariableDeclaration pn = new VariableDeclaration(pos);
 		pn.setType(declType);
 		pn.setLineno(ts.lineno);
-		Comment varjsdocNode = getAndResetJsDoc();
-		if (varjsdocNode != null) {
-			pn.setJsDocNode(varjsdocNode);
+		Comment varJsdocNode = getAndResetJsDoc();
+		if (varJsdocNode != null) {
+			pn.setJsDocNode(varJsdocNode);
 		}
 		// Example:
 		// var foo = {a: 1, b: 2}, bar = [3, 4];
@@ -2117,10 +2144,18 @@ public class Parser {
 			codeBug();
 		}
 		Scope definingScope = currentScope.getDefiningScope(name);
-		dev.latvian.mods.rhino.ast.Symbol symbol = definingScope != null ? definingScope.getSymbol(name) : null;
-		int symDeclType = symbol != null ? symbol.getDeclType() : -1;
-		if (symbol != null && (symDeclType == Token.CONST || declType == Token.CONST || (definingScope == currentScope && symDeclType == Token.LET))) {
-			addError(symDeclType == Token.CONST ? "msg.const.redecl" : symDeclType == Token.LET ? "msg.let.redecl" : symDeclType == Token.VAR ? "msg.var.redecl" : symDeclType == Token.FUNCTION ? "msg.fn.redecl" : "msg.parm.redecl", name);
+		dev.latvian.mods.rhino.ast.Symbol definedSymbol = definingScope != null
+				? definingScope.getSymbol(name)
+				: null;
+		int symDeclType = definedSymbol != null ? definedSymbol.getDeclType() : -1;
+		boolean reDefining = (definingScope == currentScope) && (symDeclType == Token.LET || symDeclType == Token.CONST);
+		if (definedSymbol != null && reDefining) {
+			addError(symDeclType == Token.CONST ? "msg.const.redecl"
+						: symDeclType == Token.LET ? "msg.let.redecl"
+						: symDeclType == Token.VAR ? "msg.var.redecl"
+						: symDeclType == Token.FUNCTION ? "msg.fn.redecl"
+						: "msg.parm.redecl"
+					, name);
 			return;
 		}
 		switch (declType) {

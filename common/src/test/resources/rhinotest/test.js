@@ -2,7 +2,6 @@ let testScript = (text) => {
 	console.info(text)
 }
 
-let x = 1
 /*
 <!-- HTML Comment test -->
 */
@@ -24,15 +23,28 @@ let scopes2 = () => {
 console.info(scopes2())
 
 const test = ['abc', 'def', 'ghi']
+let x = 1
 
+for (const x = 1; x != 10; ) {
+	console.info("Test const; once")
+	break
+}
 for (const x of test) {
-	console.info(`Test: ${x}`)
+	x=x+"const"
+	console.info(`Test const of: ${x}`)
 }
 for (let x of test) {
-	console.info(`Test: ${x}`)
+	console.info(`Test let: ${x}`)
 }
+for (var x of test) {
+	x=x+"var"
+	console.info(`Test vaar: ${x}`)
+}
+/**leaking references
 for (x of test) {
-	console.info(`Test: ${x}`)
+	x=x+"nope"
+	console.info(`Test "nope": ${x}`)
 }
+*/
 
 console.info(`Var: ${x}`)
