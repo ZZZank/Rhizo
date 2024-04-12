@@ -1480,9 +1480,8 @@ public class Parser {
 			if (tt == Token.SEMI) {
 				init = new EmptyExpression(ts.tokenBeg, 1);
 				init.setLineno(ts.lineno);
-			} else if (tt == Token.VAR || tt == Token.LET || tt == Token.CONST) {
+			} else if (tt == Token.VAR || tt == Token.LET) {
 				consumeToken();
-				//TODO: actually declare it as CONST
 				init = variables(tt, ts.tokenBeg, false);
 			} else {
 				init = expr();
