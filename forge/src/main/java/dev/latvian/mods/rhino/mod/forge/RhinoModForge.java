@@ -2,21 +2,25 @@ package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.mod.util.MojangMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 @Mod("rhino")
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class RhinoModForge {
+
+    public RhinoModForge() {
+        FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
+    }
 
     @SubscribeEvent
     public static void loaded(FMLCommonSetupEvent event) {
+        RemappingHelper.LOGGER.info("generating for borge");
         if (RemappingHelper.GENERATE) {
             RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }

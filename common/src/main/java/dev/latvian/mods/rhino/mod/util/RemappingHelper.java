@@ -26,6 +26,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class RemappingHelper {
     public static final boolean GENERATE = System.getProperty("generaterhinomappings", "0").equals("1");
+//    public static final boolean GENERATE = true;
     private static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().disableHtmlEscaping().create();
     public static final Logger LOGGER = LogManager.getLogger("Rhino Script Remapper");
     private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new HashMap<>();
