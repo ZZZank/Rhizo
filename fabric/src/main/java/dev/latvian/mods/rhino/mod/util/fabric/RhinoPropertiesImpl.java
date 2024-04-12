@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.fabric.util.fabric;
+package dev.latvian.mods.rhino.mod.util.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
 

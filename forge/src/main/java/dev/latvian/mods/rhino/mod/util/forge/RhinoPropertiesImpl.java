@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.forge.util.forge;
+package dev.latvian.mods.rhino.mod.util.forge;
 
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
