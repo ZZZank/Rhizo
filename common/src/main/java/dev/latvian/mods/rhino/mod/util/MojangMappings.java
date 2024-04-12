@@ -1,18 +1,12 @@
 package dev.latvian.mods.rhino.mod.util;
 
+import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.OutputStream;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class MojangMappings {
 	private final String mcVersion;
@@ -182,7 +176,7 @@ public class MojangMappings {
 	}
 
 	private static boolean invalidLine(String s) {
-		return s.isBlank() || s.startsWith("#") || s.endsWith("init>") || s.contains(".package-info ");
+		return JavaPortingHelper.isBlank(s) || s.startsWith("#") || s.endsWith("init>") || s.contains(".package-info ");
 	}
 
 	private void parse0(List<String> lines) {
@@ -497,7 +491,7 @@ public class MojangMappings {
 		}
 
 		public ClassDef(MojangMappings mappings, String name) {
-			this(mappings, name, "", Map.of(), Set.of());
+			this(mappings, name, "", Collections.emptyMap(), Collections.emptySet());
 		}
 
 		public ClassDef descriptor(String s) {
@@ -578,7 +572,7 @@ public class MojangMappings {
 		public String getRawDescriptor() {
 			if (rawDescriptor == null) {
 				if (array > 0) {
-					rawDescriptor = "[".repeat(array) + parent.getRawDescriptor();
+					rawDescriptor = JavaPortingHelper.repeat("[", array) + parent.getRawDescriptor();
 				} else {
 					rawDescriptor = parent.getRawDescriptor();
 				}

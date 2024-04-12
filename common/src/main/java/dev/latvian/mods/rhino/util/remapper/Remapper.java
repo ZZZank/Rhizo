@@ -5,6 +5,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.util.Collections;
 
 public interface Remapper {
 
@@ -45,7 +46,7 @@ public interface Remapper {
 			default -> "L" + type.replace('.', '/') + ";";
 		};
 
-		return array == 0 ? t : ("[".repeat(array) + t);
+		return array == 0 ? t : (String.join("", Collections.nCopies(array, "[")) + t);
 	}
 
 	/**

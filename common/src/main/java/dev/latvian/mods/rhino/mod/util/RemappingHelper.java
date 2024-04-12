@@ -3,6 +3,7 @@ package dev.latvian.mods.rhino.mod.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import org.apache.commons.io.IOUtils;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,10 +19,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -77,7 +75,7 @@ public class RemappingHelper {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					LOGGER.error("Failed to load Rhino Minecraft remapper from config/mm.jsmappings!", ex);
-					minecraftRemapper = new MinecraftRemapper(Map.of(), Map.of());
+					minecraftRemapper = new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
 				}
 			} else {
 				try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource("mm.jsmappings"))))) {
@@ -85,7 +83,7 @@ public class RemappingHelper {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					LOGGER.error("Failed to load Rhino Minecraft remapper from mod jar!", ex);
-					minecraftRemapper = new MinecraftRemapper(Map.of(), Map.of());
+					minecraftRemapper = new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
 				}
 			}
 
@@ -141,7 +139,7 @@ public class RemappingHelper {
 								callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
 								mojangMappings.cleanup();
 
-								try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(Path.of("mm.jsmappings"))))) {
+								try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(JavaPortingHelper.ofPath("mm.jsmappings"))))) {
 									mojangMappings.write(out);
 								}
 
