@@ -2026,7 +2026,7 @@ class TokenStream {
 	}
 
 	private void markCommentStart(String prefix) {
-		if (parser.compilerEnv.isRecordingComments() && sourceReader != null) {
+		if (sourceReader != null) {
 			commentPrefix = prefix;
 			commentCursor = sourceCursor - 1;
 		}

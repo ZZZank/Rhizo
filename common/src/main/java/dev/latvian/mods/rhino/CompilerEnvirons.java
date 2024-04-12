@@ -18,7 +18,6 @@ public class CompilerEnvirons {
 		generatingSource = true;
 		strictMode = false;
 		warningAsError = false;
-		generateObserverCount = false;
 		allowSharpComments = false;
 	}
 
@@ -33,7 +32,7 @@ public class CompilerEnvirons {
 		activationNames = cx.activationNames;
 
 		// Observer code generation in compiled code :
-		generateObserverCount = cx.generateObserverCount;
+//		generateObserverCount = cx.generateObserverCount;
 	}
 
 	public final ErrorReporter getErrorReporter() {
@@ -109,10 +108,11 @@ public class CompilerEnvirons {
 	 * instruction thresholds
 	 */
 	public boolean isGenerateObserverCount() {
-		return generateObserverCount;
+		return false;
 	}
 
 	/**
+	 * @deprecated
 	 * Turn on or off generation of code with callbacks to
 	 * track the count of executed instructions.
 	 * Currently only affects JVM byte code generation: this slows down the
@@ -125,36 +125,51 @@ public class CompilerEnvirons {
 	 *                              calls to accumulate an estimate of the instructions executed.
 	 */
 	public void setGenerateObserverCount(boolean generateObserverCount) {
-		this.generateObserverCount = generateObserverCount;
-	}
-
-	public boolean isRecordingComments() {
-		return recordingComments;
-	}
-
-	public void setRecordingComments(boolean record) {
-		recordingComments = record;
-	}
-
-	public boolean isRecordingLocalJsDocComments() {
-		return recordingLocalJsDocComments;
-	}
-
-	public void setRecordingLocalJsDocComments(boolean record) {
-		recordingLocalJsDocComments = record;
 	}
 
 	/**
+	 * @deprecated
+	 * @return false
+	 */
+	public boolean isRecordingComments() {
+		return false;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public void setRecordingComments(boolean record) {
+	}
+
+	/**
+	 * @deprecated
+	 * @return false
+	 */
+	public boolean isRecordingLocalJsDocComments() {
+		return false;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	public void setRecordingLocalJsDocComments(boolean record) {
+	}
+
+	/**
+	 * @deprecated
 	 * Turn on or off full error recovery.  In this mode, parse errors do not
 	 * throw an exception, and the parser attempts to build a full syntax tree
 	 * from the input.  Useful for IDEs and other frontends.
 	 */
 	public void setRecoverFromErrors(boolean recover) {
-		recoverFromErrors = recover;
 	}
 
+	/**
+	 * @deprecated
+	 * @return false
+	 */
 	public boolean recoverFromErrors() {
-		return recoverFromErrors;
+		return false;
 	}
 
 	/**
@@ -166,6 +181,10 @@ public class CompilerEnvirons {
 	public void setIdeMode(boolean ide) {
 	}
 
+	/**
+	 * @deprecated
+	 * @return false
+	 */
 	public boolean isIdeMode() {
 		return false;
 	}
@@ -190,20 +209,14 @@ public class CompilerEnvirons {
 	}
 
 	/**
+	 * @deprecated "IDE" mode is removed
+	 * <p>
 	 * Returns a {@code CompilerEnvirons} suitable for using Rhino
 	 * in an IDE environment.  Most features are enabled by default.
 	 * The {@link ErrorReporter} is set to an {@link ErrorCollector}.
 	 */
 	public static CompilerEnvirons ideEnvirons() {
-		CompilerEnvirons env = new CompilerEnvirons();
-		env.setRecoverFromErrors(true);
-		env.setRecordingComments(true);
-		env.setStrictMode(true);
-		env.setWarnTrailingComma(true);
-		env.setReservedKeywordAsIdentifier(true);
-		env.setIdeMode(true);
-		env.setErrorReporter(new ErrorCollector());
-		return env;
+        return new CompilerEnvirons();
 	}
 
 	private ErrorReporter errorReporter;
@@ -214,10 +227,6 @@ public class CompilerEnvirons {
 	private boolean generatingSource;
 	private boolean strictMode;
 	private boolean warningAsError;
-	private boolean generateObserverCount;
-	private boolean recordingComments;
-	private boolean recordingLocalJsDocComments;
-	private boolean recoverFromErrors;
 	private boolean warnTrailingComma;
 	private boolean allowSharpComments;
 	Set<String> activationNames;
