@@ -48,8 +48,8 @@ public class ArrowFunction extends BaseFunction {
 
 	@Override
 	public boolean hasInstance(Scriptable instance) {
-		if (targetFunction instanceof Function) {
-			return ((Function) targetFunction).hasInstance(instance);
+		if (targetFunction instanceof Function fn) {
+			return fn.hasInstance(instance);
 		}
 		throw ScriptRuntime.typeError0("msg.not.ctor");
 	}
