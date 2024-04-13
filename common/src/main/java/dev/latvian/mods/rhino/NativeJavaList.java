@@ -6,10 +6,12 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.util.Deletable;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class NativeJavaList extends NativeJavaObject {
+public class NativeJavaList extends NativeJavaObject implements Iterable<Object> {
 
 	private final List<Object> list;
 
@@ -106,5 +108,11 @@ public class NativeJavaList extends NativeJavaObject {
 			Object obj = list.remove(index);
 			Deletable.deleteObject(obj);
 		}
+	}
+
+	@NotNull
+	@Override
+	public Iterator<Object> iterator() {
+		return this.list.iterator();
 	}
 }
