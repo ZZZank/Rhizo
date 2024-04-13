@@ -9,7 +9,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Mod("rhino")
 public class RhinoModForge {
@@ -20,7 +22,6 @@ public class RhinoModForge {
 
     @SubscribeEvent
     public static void loaded(FMLCommonSetupEvent event) {
-        RemappingHelper.LOGGER.info("generating for borge");
         if (RemappingHelper.GENERATE) {
             RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }
@@ -29,13 +30,9 @@ public class RhinoModForge {
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
         MojangMappings.ClassDef current = null;
 
-        var srg = new ArrayList<String>();
-
+        List<String> srg = new ArrayList<>(0);
         try (var reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                srg.add(line);
-            }
+            srg = reader.lines().collect(Collectors.toList());
         }
 
         var pattern = Pattern.compile("[\t ]");
@@ -52,9 +49,9 @@ public class RhinoModForge {
                 current = context.mappings().getClass(s[0]);
 
                 if (current != null) {
-                    RemappingHelper.LOGGER.info("- Checking class " + s[0] + " ; " + current.displayName);
+                    RemappingHelper.LOGGER.info("- Checking class {} ; {}", s[0], current.displayName);
                 } else {
-                    RemappingHelper.LOGGER.info("- Skipping class " + s[0]);
+                    RemappingHelper.LOGGER.info("- Skipping class {}", s[0]);
                 }
             } else if (current != null) {
                 if (s.length == 5) {
@@ -68,9 +65,9 @@ public class RhinoModForge {
 
                     if (m != null && !m.mmName().equals(s[3])) {
                         m.unmappedName().setValue(s[3]);
-                        RemappingHelper.LOGGER.info("Remapped method " + s[3] + sigs + " to " + m.mmName());
+                        RemappingHelper.LOGGER.info("Remapped method {}{} to {}", s[3], sigs, m.mmName());
                     } else if (m == null && !current.ignoredMembers.contains(sig)) {
-                        RemappingHelper.LOGGER.info("Method " + s[3] + " [" + sig + "] not found!");
+                        RemappingHelper.LOGGER.info("Method {} [{}] not found!", s[3], sig);
                     }
                 } else if (s.length == 4) {
                     var sig = new MojangMappings.NamedSignature(s[1], null);
@@ -79,10 +76,10 @@ public class RhinoModForge {
                     if (m != null) {
                         if (!m.mmName().equals(s[2])) {
                             m.unmappedName().setValue(s[2]);
-                            RemappingHelper.LOGGER.info("Remapped field " + s[2] + " [" + m.rawName() + "] to " + m.mmName());
+                            RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}", s[2], m.rawName(), m.mmName());
                         }
                     } else if (!current.ignoredMembers.contains(sig)) {
-                        RemappingHelper.LOGGER.info("Field " + s[2] + " [" + s[1] + "] not found!");
+                        RemappingHelper.LOGGER.info("Field {} [{}] not found!", s[2], s[1]);
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.mod.test;
 
-import dev.latvian.mods.rhino.util.remapper.HideFromJS;
+import dev.latvian.mods.rhino.util.HideFromJS;
 import dev.latvian.mods.rhino.util.remapper.RemapForJS;
 
 public class TestConsole {

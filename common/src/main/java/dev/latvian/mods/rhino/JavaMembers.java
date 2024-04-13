@@ -6,7 +6,7 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.util.remapper.HideFromJS;
+import dev.latvian.mods.rhino.util.HideFromJS;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

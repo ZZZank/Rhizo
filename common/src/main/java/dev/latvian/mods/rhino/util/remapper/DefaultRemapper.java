@@ -11,56 +11,56 @@ import java.lang.reflect.Method;
  * {@code MinecraftRemapper} is applied only after {@code AnnotatedRemapper} fails to remap
  */
 public class DefaultRemapper implements Remapper {
-	public static final DefaultRemapper INSTANCE = new DefaultRemapper();
-	private final AnnotatedRemapper annotated;
-	private final MinecraftRemapper minecraft;
+    public static final DefaultRemapper INSTANCE = new DefaultRemapper();
+    private final AnnotatedRemapper annotated;
+    private final MinecraftRemapper minecraft;
 
-	private DefaultRemapper() {
-		this.annotated = AnnotatedRemapper.INSTANCE;
-		this.minecraft = RemappingHelper.getMinecraftRemapper();
-	}
+    private DefaultRemapper() {
+        this.annotated = AnnotatedRemapper.INSTANCE;
+        this.minecraft = RemappingHelper.getMinecraftRemapper();
+    }
 
-	@Override
-	public String getUnmappedClass(String from) {
-		return this.minecraft.getUnmappedClass(from);
-	}
+    @Override
+    public String getUnmappedClass(String from) {
+        return this.minecraft.getUnmappedClass(from);
+    }
 
-	@Override
-	public String getMappedClass(Class<?> from) {
-		String remapped = this.annotated.getMappedClass(from);
-		if (!remapped.isEmpty()) {
-			return remapped;
-		}
-		remapped = this.minecraft.getMappedClass(from);
-		if (!remapped.isEmpty()) {
-			return remapped;
-		}
-		return "";
-	}
+    @Override
+    public String getMappedClass(Class<?> from) {
+        String remapped = this.annotated.getMappedClass(from);
+        if (!remapped.isEmpty()) {
+            return remapped;
+        }
+        remapped = this.minecraft.getMappedClass(from);
+        if (!remapped.isEmpty()) {
+            return remapped;
+        }
+        return "";
+    }
 
-	@Override
-	public String getMappedField(Class<?> from, Field field) {
-		String remapped = this.annotated.getMappedField(from, field);
-		if (!remapped.isEmpty()) {
-			return remapped;
-		}
-		remapped = this.minecraft.getMappedField(from, field);
-		if (!remapped.isEmpty()) {
-			return remapped;
-		}
-		return "";
-	}
+    @Override
+    public String getMappedField(Class<?> from, Field field) {
+        String remapped = this.annotated.getMappedField(from, field);
+        if (!remapped.isEmpty()) {
+            return remapped;
+        }
+        remapped = this.minecraft.getMappedField(from, field);
+        if (!remapped.isEmpty()) {
+            return remapped;
+        }
+        return "";
+    }
 
-	@Override
-	public String getMappedMethod(Class<?> from, Method method) {
-		String remapped = this.annotated.getMappedMethod(from, method);
-		if (!remapped.isEmpty()) {
+    @Override
+    public String getMappedMethod(Class<?> from, Method method) {
+        String remapped = this.annotated.getMappedMethod(from, method);
+        if (!remapped.isEmpty()) {
+            return remapped;
+        }
+        remapped = this.minecraft.getMappedMethod(from, method);
+        if (!remapped.isEmpty()) {
 			return remapped;
-		}
-		remapped = this.minecraft.getMappedMethod(from, method);
-		if (!remapped.isEmpty()) {
-			return remapped;
-		}
-		return "";
-	}
+        }
+        return "";
+    }
 }

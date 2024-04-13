@@ -113,6 +113,7 @@ public class RemappingHelper {
             var configPath = RhinoProperties.getGameDir().resolve("config/mm.jsmappings");
 
             if (Files.exists(configPath)) {
+                LOGGER.info("Loading Rhino Minecraft remapper from config/mm.jsmappings.");
                 try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(Files.newInputStream(configPath))))) {
                     minecraftRemapper = MinecraftRemapper.load(in, debug);
                 } catch (Exception ex) {
@@ -121,6 +122,7 @@ public class RemappingHelper {
                     minecraftRemapper = new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
                 }
             } else {
+                LOGGER.info("Loading Rhino Minecraft remapper from Rhino jar file.");
                 try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource("mm.jsmappings"))))) {
                     minecraftRemapper = MinecraftRemapper.load(in, debug);
                 } catch (Exception ex) {

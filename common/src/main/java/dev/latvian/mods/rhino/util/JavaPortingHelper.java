@@ -42,16 +42,16 @@ public class JavaPortingHelper {
         if (clazz == null) {
             return null;
         }
-        String pn;
         Class<?> c = clazz.isArray() ? elementType(clazz) : clazz;
         if (c.isPrimitive()) {
-            pn = "java.lang";
-        } else {
-            String cn = c.getName();
-            int dot = cn.lastIndexOf('.');
-            pn = (dot != -1) ? cn.substring(0, dot).intern() : "";
+            return "java.lang";
         }
-        return pn;
+        String cn = c.getName();
+        int dot = cn.lastIndexOf('.');
+        if (dot == -1) {
+            return "";
+        }
+        return cn.substring(0, dot).intern();
     }
 
     public static String descriptorString(Class<?> clazz) {

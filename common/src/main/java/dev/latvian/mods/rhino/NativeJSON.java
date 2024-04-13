@@ -14,7 +14,7 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import dev.latvian.mods.rhino.json.JsonParser;
-import dev.latvian.mods.rhino.util.remapper.HideFromJS;
+import dev.latvian.mods.rhino.util.HideFromJS;
 
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -325,11 +325,9 @@ public final class NativeJSON extends IdScriptableObject {
 			return new JsonPrimitive(ScriptRuntime.toNumber(v));
 		} else if (v instanceof Map) {
 			JsonObject json = new JsonObject();
-
 			for (Map.Entry<?, ?> entry : ((Map<?, ?>) v).entrySet()) {
 				json.add(entry.getKey().toString(), stringify0(cx, scope, entry.getValue()));
 			}
-
 			return json;
 		} else if (v instanceof Iterable) {
 			JsonArray json = new JsonArray();
@@ -344,32 +342,31 @@ public final class NativeJSON extends IdScriptableObject {
 		}
 
 		Class<?> cl = v.getClass();
-		StringBuilder clName = new StringBuilder(cl.getName());
+		StringBuilder className = new StringBuilder(cl.getName());
 
 		while (cl.isArray()) {
 			cl = cl.getComponentType();
-			clName.append("[]");
+			className.append("[]");
 		}
 
 		JsonArray list = new JsonArray();
 
 		if (cl.isInterface()) {
-			clName.insert(0, "interface ");
+			className.insert(0, "interface ");
 		} else if (cl.isAnnotation()) {
-			clName.insert(0, "annotation ");
+			className.insert(0, "annotation ");
 		} else if (cl.isEnum()) {
-			clName.insert(0, "enum ");
+			className.insert(0, "enum ");
 		} else {
-			clName.insert(0, "class ");
+			className.insert(0, "class ");
 		}
 
-		list.add(clName.toString());
+		list.add(className.toString());
 
 		for (Constructor<?> constructor : cl.getConstructors()) {
 			if (constructor.isAnnotationPresent(HideFromJS.class)) {
 				continue;
 			}
-
 			StringBuilder builder = new StringBuilder("new ");
 			builder.append(cl.getSimpleName());
 			params(builder, constructor.getParameterTypes());
@@ -378,36 +375,29 @@ public final class NativeJSON extends IdScriptableObject {
 
 		for (Field field : cl.getFields()) {
 			int mod = field.getModifiers();
-
 			if (Modifier.isTransient(mod) || field.isAnnotationPresent(HideFromJS.class)) {
 				continue;
 			}
 
-			StringBuilder builder = new StringBuilder();
-
+			StringBuilder fName = new StringBuilder();
 			if (Modifier.isStatic(mod)) {
-				builder.append("static ");
+				fName.append("static ");
 			}
-
 			if (Modifier.isFinal(mod)) {
-				builder.append("final ");
+				fName.append("final ");
 			}
-
 			if (Modifier.isNative(mod)) {
-				builder.append("native ");
+				fName.append("native ");
 			}
-
-			type(builder, field.getType());
-			builder.append(' ');
-
+			type(fName, field.getType());
+			fName.append(' ');
 			String mappedField = cx.getRemapper().getMappedField(cl, field);
 			if (mappedField.isEmpty()) {
-				builder.append(field.getName());
+				fName.append(field.getName());
 			}else{
-				builder.append(mappedField);
+				fName.append(mappedField);
 			}
-
-			list.add(builder.toString());
+			list.add(fName.toString());
 		}
 
 		for (Method method : cl.getMethods()) {
