@@ -35,7 +35,7 @@ public class DefaultRemapper implements Remapper {
 		if (!remapped.isEmpty()) {
 			return remapped;
 		}
-		return from.getName();
+		return "";
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class DefaultRemapper implements Remapper {
 		if (!remapped.isEmpty()) {
 			return remapped;
 		}
-		return field.getName();
+		return "";
 	}
 
 	@Override
@@ -61,6 +61,6 @@ public class DefaultRemapper implements Remapper {
 		if (!remapped.isEmpty()) {
 			return remapped;
 		}
-		return method.getName();
+		return "";
 	}
 }

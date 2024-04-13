@@ -32,10 +32,10 @@ public interface Remapper {
 	}
 
 	/**
-	 * @return a string holding remapped class name, or {@code from.getName()} if not remapped
+	 * @return a string holding remapped class name, or an empty string if not remapped
 	 */
 	default String getMappedClass(Class<?> from) {
-		return from.getName();
+		return "";
 	}
 
 	/**
@@ -47,17 +47,17 @@ public interface Remapper {
 	}
 
 	/**
-	 * @return a string holding remapped field name, or {@code field.getName()} if not remapped
+	 * @return a string holding remapped field name, or an empty string if not remapped
 	 */
 	default String getMappedField(Class<?> from, Field field) {
-		return field.getName();
+		return "";
 	}
 
 	/**
-	 * @return a string holding remapped method name, or {@code method.getName()} if not remapped
+	 * @return a string holding remapped method name, or an empty string if not remapped
 	 */
 	default String getMappedMethod(Class<?> from, Method method) {
-		return method.getName();
+		return "";
 	}
 }
 

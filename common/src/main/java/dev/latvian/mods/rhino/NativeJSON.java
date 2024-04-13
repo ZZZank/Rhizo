@@ -402,7 +402,12 @@ public final class NativeJSON extends IdScriptableObject {
 			type(builder, field.getType());
 			builder.append(' ');
 
-			builder.append(cx.getRemapper().getMappedField(cl, field));
+			String mappedField = cx.getRemapper().getMappedField(cl, field);
+			if (mappedField.isEmpty()) {
+				builder.append(field.getName());
+			}else{
+				builder.append(mappedField);
+			}
 
 			list.add(builder.toString());
 		}
@@ -427,7 +432,8 @@ public final class NativeJSON extends IdScriptableObject {
 			type(builder, method.getReturnType());
 			builder.append(' ');
 
-			builder.append(cx.getRemapper().getMappedMethod(cl, method));
+			final String mappedMethod = cx.getRemapper().getMappedMethod(cl, method);
+			builder.append(mappedMethod.isEmpty()?method.getName():mappedMethod);
 
 			params(builder, method.getParameterTypes());
 

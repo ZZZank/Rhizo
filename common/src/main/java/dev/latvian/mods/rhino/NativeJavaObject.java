@@ -31,7 +31,6 @@ import java.util.Map;
  * @see NativeJavaPackage
  * @see NativeJavaClass
  */
-
 public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, Serializable {
 	private static final long serialVersionUID = -6948590651130498591L;
 
