@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.*;
 
-public class MojangMappings {
+public class MojMappings {
 	private final String mcVersion;
 	private final Map<String, ClassDef> classes;
 	private final Map<String, ClassDef> classesMM;
@@ -28,7 +28,7 @@ public class MojangMappings {
 
 	private final MethodDefSignature SIG_EMPTY = new MethodDefSignature();
 
-	private MojangMappings(String mc) {
+	private MojMappings(String mc) {
 		mcVersion = mc;
 		classes = new HashMap<>();
 		classesMM = new HashMap<>();
@@ -85,7 +85,6 @@ public class MojangMappings {
 			}
 
 			int array = 0;
-
 			while (c == '[') {
 				array++;
 				c = reader.read();
@@ -181,7 +180,7 @@ public class MojangMappings {
 	}
 
 	private void parse0(List<String> lines) {
-		lines.removeIf(MojangMappings::invalidLine);
+		lines.removeIf(MojMappings::invalidLine);
 
 		for (var line : lines) {
 			if (line.charAt(line.length() - 1) == ':') {
@@ -312,11 +311,11 @@ public class MojangMappings {
 			sigList.get(i).index = i;
 		}
 
-		RemappingHelper.LOGGER.info("Total Types: " + typeDefList.size());
-		RemappingHelper.LOGGER.info("Total Signatures: " + sigList.size());
-		RemappingHelper.LOGGER.info("Unmapped Types: " + unmappedTypes.size());
-		RemappingHelper.LOGGER.info("Mapped Types: " + mappedTypes.size());
-		RemappingHelper.LOGGER.info("Array Types: " + arrayTypes.size());
+        RemappingHelper.LOGGER.info("Total Types: {}", typeDefList.size());
+        RemappingHelper.LOGGER.info("Total Signatures: {}", sigList.size());
+        RemappingHelper.LOGGER.info("Unmapped Types: {}", unmappedTypes.size());
+        RemappingHelper.LOGGER.info("Mapped Types: {}", mappedTypes.size());
+        RemappingHelper.LOGGER.info("Array Types: {}", arrayTypes.size());
 
 		stream.write(0); // Binary indicator
 		stream.write(1); // Version
@@ -390,8 +389,8 @@ public class MojangMappings {
 		}
 	}
 
-	public static MojangMappings parse(String mcVersion, List<String> lines) throws Exception {
-		var mappings = new MojangMappings(mcVersion);
+	public static MojMappings parse(String mcVersion, List<String> lines) throws Exception {
+		var mappings = new MojMappings(mcVersion);
 		mappings.parse0(lines);
 		return mappings;
 	}
@@ -483,7 +482,7 @@ public class MojangMappings {
     }
 
 	public static final class ClassDef {
-		public final MojangMappings mappings;
+		public final MojMappings mappings;
 		public final String rawName;
 		public final String mmName;
 		public final String displayName;
@@ -495,7 +494,7 @@ public class MojangMappings {
 		public TypeDef noArrayType;
 		public String rawDescriptor;
 
-		public ClassDef(MojangMappings mappings, String rawName, String mmName, Map<NamedSignature, MemberDef> members, Set<NamedSignature> ignoredMembers) {
+		public ClassDef(MojMappings mappings, String rawName, String mmName, Map<NamedSignature, MemberDef> members, Set<NamedSignature> ignoredMembers) {
 			this.mappings = mappings;
 			this.rawName = rawName;
 			this.mmName = mmName;
@@ -509,7 +508,7 @@ public class MojangMappings {
 			this.noArrayType = new TypeDef(this, 0);
 		}
 
-		public ClassDef(MojangMappings mappings, String name) {
+		public ClassDef(MojMappings mappings, String name) {
 			this(mappings, name, "", Collections.emptyMap(), Collections.emptySet());
 		}
 

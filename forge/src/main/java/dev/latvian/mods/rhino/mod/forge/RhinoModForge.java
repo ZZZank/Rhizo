@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.mod.forge;
 
-import dev.latvian.mods.rhino.mod.util.MojangMappings;
+import dev.latvian.mods.rhino.mod.util.MojMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,7 +28,7 @@ public class RhinoModForge {
     }
 
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
-        MojangMappings.ClassDef current = null;
+        MojMappings.ClassDef current = null;
 
         List<String> srg = new ArrayList<>(0);
         try (var reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
@@ -60,7 +60,7 @@ public class RhinoModForge {
                     }
 
                     var sigs = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
-                    var sig = new MojangMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigs));
+                    var sig = new MojMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigs));
                     var m = current.members.get(sig);
 
                     if (m != null && !m.mmName().equals(s[3])) {
@@ -70,7 +70,7 @@ public class RhinoModForge {
                         RemappingHelper.LOGGER.info("Method {} [{}] not found!", s[3], sig);
                     }
                 } else if (s.length == 4) {
-                    var sig = new MojangMappings.NamedSignature(s[1], null);
+                    var sig = new MojMappings.NamedSignature(s[1], null);
                     var m = current.members.get(sig);
 
                     if (m != null) {

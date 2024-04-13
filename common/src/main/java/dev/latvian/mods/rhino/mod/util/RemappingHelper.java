@@ -26,7 +26,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class RemappingHelper {
     public static final boolean GENERATE = System.getProperty("generaterhinomappings", "0").equals("1");
-//    public static final boolean GENERATE = true;
+    //    public static final boolean GENERATE = true;
     private static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().disableHtmlEscaping().create();
     public static final Logger LOGGER = LogManager.getLogger("Rhino Script Remapper");
     private static final Map<String, Optional<Class<?>>> CLASS_CACHE = new HashMap<>();
@@ -58,9 +58,9 @@ public class RemappingHelper {
 
     public static final class MappingContext {
         private final String mcVersion;
-        private final MojangMappings mappings;
+        private final MojMappings mappings;
 
-        public MappingContext(String mcVersion, MojangMappings mappings) {
+        public MappingContext(String mcVersion, MojMappings mappings) {
             this.mcVersion = mcVersion;
             this.mappings = mappings;
         }
@@ -69,7 +69,7 @@ public class RemappingHelper {
             return mcVersion;
         }
 
-        public MojangMappings mappings() {
+        public MojMappings mappings() {
             return mappings;
         }
 
@@ -169,10 +169,10 @@ public class RemappingHelper {
             throw new RuntimeException("Invalid Minecraft version!");
         }
 
-		if (RhinoProperties.isDev()) {
-			getMinecraftRemapper(true);
-			return;
-		}
+        if (RhinoProperties.isDev()) {
+            getMinecraftRemapper(true);
+            return;
+        }
 
         try (var metaInfoReader = createReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
             for (var metaInfo : GSON.fromJson(metaInfoReader, JsonObject.class).get("versions").getAsJsonArray()) {
@@ -184,7 +184,7 @@ public class RemappingHelper {
                     var meta = GSON.fromJson(metaReader, JsonObject.class);
                     if (meta.get("downloads") instanceof JsonObject o && o.get("client_mappings") instanceof JsonObject cmap && cmap.has("url")) {
                         try (var cmapReader = createReader(cmap.get("url").getAsString())) {
-                            var mojangMappings = MojangMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
+                            var mojangMappings = MojMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
                             callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
                             mojangMappings.cleanup();
 

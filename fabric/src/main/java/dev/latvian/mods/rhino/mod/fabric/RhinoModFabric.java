@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
-import dev.latvian.mods.rhino.mod.util.MojangMappings;
+import dev.latvian.mods.rhino.mod.util.MojMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -44,7 +44,7 @@ public class RhinoModFabric implements ModInitializer {
 
                 for (var fieldDef : classDef.getFields()) {
                     var rawFieldName = fieldDef.getName(rawNamespace);
-                    var sig = new MojangMappings.NamedSignature(rawFieldName, null);
+                    var sig = new MojMappings.NamedSignature(rawFieldName, null);
                     var mmField = mmClass.members.get(sig);
 
                     if (mmField != null) {
@@ -62,7 +62,7 @@ public class RhinoModFabric implements ModInitializer {
                 for (var methodDef : classDef.getMethods()) {
                     var rawMethodName = methodDef.getName(rawNamespace);
                     var rawMethodDesc = methodDef.getDesc(tinyTree.getNamespaceId(rawNamespace));
-                    var sig = new MojangMappings.NamedSignature(rawMethodName, context.mappings()
+                    var sig = new MojMappings.NamedSignature(rawMethodName, context.mappings()
                         .readSignatureFromDescriptor(rawMethodDesc));
                     var mmMethod = mmClass.members.get(sig);
 
