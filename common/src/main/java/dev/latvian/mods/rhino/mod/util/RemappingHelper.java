@@ -110,32 +110,40 @@ public class RemappingHelper {
         if (minecraftRemapper == null) {
             LOGGER.info("Loading Rhino Minecraft remapper...");
             long time = System.currentTimeMillis();
-            var configPath = RhinoProperties.getGameDir().resolve("config/mm.jsmappings");
-
-            if (Files.exists(configPath)) {
-                LOGGER.info("Loading Rhino Minecraft remapper from config/mm.jsmappings.");
-                try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(Files.newInputStream(configPath))))) {
-                    minecraftRemapper = MinecraftRemapper.load(in, debug);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    LOGGER.error("Failed to load Rhino Minecraft remapper from config/mm.jsmappings!", ex);
-                    minecraftRemapper = new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
-                }
-            } else {
-                LOGGER.info("Loading Rhino Minecraft remapper from Rhino jar file.");
-                try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource("mm.jsmappings"))))) {
-                    minecraftRemapper = MinecraftRemapper.load(in, debug);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                    LOGGER.error("Failed to load Rhino Minecraft remapper from mod jar!", ex);
-                    minecraftRemapper = new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
-                }
-            }
-
+            minecraftRemapper = buildMinecraftRemapper(debug);
             LOGGER.info(String.format("Done in %.03f s", (System.currentTimeMillis() - time) / 1000F));
         }
 
         return minecraftRemapper;
+    }
+
+    /**
+     * build a remapper via "mm.jsmappings" file from either rhino.jar or "config" folder
+     */
+    public static MinecraftRemapper buildMinecraftRemapper(boolean debug) {
+        var configPath = RhinoProperties.getGameDir().resolve("config/mm.jsmappings");
+
+        if (Files.exists(configPath)) {
+            LOGGER.info("Loading Rhino Minecraft remapper from config/mm.jsmappings.");
+            try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(Files.newInputStream(
+                configPath))))) {
+                return MinecraftRemapper.load(in, debug);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                LOGGER.error("Failed to load Rhino Minecraft remapper from config/mm.jsmappings!", ex);
+                return new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
+            }
+        } else {
+            LOGGER.info("Loading Rhino Minecraft remapper from Rhino jar file.");
+            try (var in = new BufferedInputStream(new GZIPInputStream(Objects.requireNonNull(RhinoProperties.openResource(
+                "mm.jsmappings"))))) {
+                return MinecraftRemapper.load(in, debug);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                LOGGER.error("Failed to load Rhino Minecraft remapper from mod jar!", ex);
+                return new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
+            }
+        }
     }
 
     public static MinecraftRemapper getMinecraftRemapper() {
@@ -170,7 +178,7 @@ public class RemappingHelper {
         }
 
         if (RhinoProperties.isDev()) {
-            getMinecraftRemapper(true);
+            buildMinecraftRemapper(true);
             return;
         }
 
@@ -182,13 +190,15 @@ public class RemappingHelper {
                 String metaUrl = metaInfo.getAsJsonObject().get("url").getAsString();
                 try (var metaReader = createReader(metaUrl)) {
                     var meta = GSON.fromJson(metaReader, JsonObject.class);
-                    if (meta.get("downloads") instanceof JsonObject o && o.get("client_mappings") instanceof JsonObject cmap && cmap.has("url")) {
+                    if (meta.get("downloads") instanceof JsonObject o
+                        && o.get("client_mappings") instanceof JsonObject cmap && cmap.has("url")) {
                         try (var cmapReader = createReader(cmap.get("url").getAsString())) {
                             var mojangMappings = MojMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
                             callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
                             mojangMappings.cleanup();
 
-                            try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(JavaPortingHelper.ofPath("mm.jsmappings"))))) {
+                            try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(
+                                JavaPortingHelper.ofPath("mm.jsmappings"))))) {
                                 mojangMappings.write(out);
                             }
 

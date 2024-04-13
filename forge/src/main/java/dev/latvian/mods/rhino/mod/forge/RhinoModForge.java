@@ -8,7 +8,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.BufferedReader;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class RhinoModForge {
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
         MojMappings.ClassDef current = null;
 
-        List<String> srg = new ArrayList<>(0);
+        List<String> srg = Collections.emptyList();
         try (var reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
             srg = reader.lines().collect(Collectors.toList());
         }

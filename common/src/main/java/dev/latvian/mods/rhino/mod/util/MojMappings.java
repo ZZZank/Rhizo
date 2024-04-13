@@ -498,8 +498,8 @@ public class MojMappings {
 			this.mappings = mappings;
 			this.rawName = rawName;
 			this.mmName = mmName;
-			var dn = mmName.isEmpty() ? rawName : mmName;
-			var dni = dn.lastIndexOf('.');
+			String dn = mmName.isEmpty() ? rawName : mmName;
+			int dni = dn.lastIndexOf('.');
 			this.displayName = dni == -1 ? dn : dn.substring(dni + 1);
 			this.members = members;
 			this.ignoredMembers = ignoredMembers;

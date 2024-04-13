@@ -293,13 +293,11 @@ public class MinecraftRemapper implements Remapper {
 		if (from == null || from == Object.class || JavaPortingHelper.getPackageName(from).startsWith("java.")) {
 			return "";
 		}
-//		RemappingHelper.LOGGER.info("remapping {}", field.getName());
 		var c = classMap.get(from.getName());
 		if (c == null || c.fields == null) {
 			return "";
 		}
-		String t = c.fields.getOrDefault(field.getName(), "");
-		return t;
+        return c.fields.getOrDefault(field.getName(), "");
 	}
 
 	@Override
@@ -307,7 +305,6 @@ public class MinecraftRemapper implements Remapper {
 		if (from == null || from == Object.class || JavaPortingHelper.getPackageName(from).startsWith("java.")) {
 			return "";
 		}
-//		RemappingHelper.LOGGER.info("remapping {}", method.getName());
 		var c = classMap.get(from.getName());
 
 		if (c == null) {
@@ -321,11 +318,9 @@ public class MinecraftRemapper implements Remapper {
 		var sb = new StringBuilder();
 		sb.append(method.getName());
 		sb.append('(');
-
 		for (var t : method.getParameterTypes()) {
 			sb.append(JavaPortingHelper.descriptorString(t));
 		}
-
-		return c.methods.getOrDefault(sb.toString(), "");
+        return c.methods.getOrDefault(sb.toString(), "");
 	}
 }

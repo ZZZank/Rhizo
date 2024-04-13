@@ -52,7 +52,11 @@ public class RhinoModFabric implements ModInitializer {
 
                         if (!unmappedFieldName.equals(mmField.mmName())) {
                             mmField.unmappedName().setValue(unmappedFieldName);
-                            RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}", unmappedFieldName, mmField.rawName(), mmField.mmName());
+                            RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}",
+                                unmappedFieldName,
+                                mmField.rawName(),
+                                mmField.mmName()
+                            );
                         }
                     } else if (!mmClass.ignoredMembers.contains(sig)) {
                         RemappingHelper.LOGGER.info("Field {} not found!", sig);
@@ -71,7 +75,11 @@ public class RhinoModFabric implements ModInitializer {
 
                         if (!unmappedMethodName.equals(mmMethod.mmName())) {
                             mmMethod.unmappedName().setValue(unmappedMethodName);
-                            RemappingHelper.LOGGER.info("Remapped method {}{} to {}", unmappedMethodName, rawMethodDesc, mmMethod.mmName());
+                            RemappingHelper.LOGGER.info("Remapped method {}{} to {}",
+                                unmappedMethodName,
+                                rawMethodDesc,
+                                mmMethod.mmName()
+                            );
                         }
                     } else if (!mmClass.ignoredMembers.contains(sig)) {
                         RemappingHelper.LOGGER.info("Method {} not found!", sig);

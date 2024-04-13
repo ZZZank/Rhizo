@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.mod;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import org.jetbrains.annotations.Contract;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -15,16 +16,19 @@ public enum RhinoProperties {
 	INSTANCE;
 
 	@ExpectPlatform
+	@Contract(value = " -> _", pure = true)
 	public static Path getGameDir() {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
+	@Contract(value = " -> _", pure = true)
 	public static boolean isDev() {
 		throw new AssertionError();
 	}
 
 	@ExpectPlatform
+	@Contract(value = " -> _", pure = true)
 	public static InputStream openResource(String path) throws Exception {
 		throw new AssertionError();
 	}
