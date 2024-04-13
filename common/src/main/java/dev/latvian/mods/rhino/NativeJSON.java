@@ -333,12 +333,10 @@ public final class NativeJSON extends IdScriptableObject {
 			return json;
 		} else if (v instanceof Iterable) {
 			JsonArray json = new JsonArray();
-
 			for (Object o : (Iterable<?>) v) {
 				json.add(stringify0(cx, scope, o));
-
-				return json;
 			}
+			return json;
 		}
 
 		if (v instanceof Wrapper) {
