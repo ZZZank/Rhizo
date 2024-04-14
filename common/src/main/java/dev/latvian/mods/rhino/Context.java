@@ -1982,7 +1982,7 @@ public class Context {
 		ContextFactory.remapper = remapper;
 	}
 
-	public Remapper getRemapper() {
+	public static Remapper getRemapper() {
 		return ContextFactory.remapper;
 	}
 

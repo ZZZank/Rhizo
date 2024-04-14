@@ -391,7 +391,7 @@ public final class NativeJSON extends IdScriptableObject {
 			}
 			type(fName, field.getType());
 			fName.append(' ');
-			String mappedField = cx.getRemapper().getMappedField(cl, field);
+			String mappedField = Context.getRemapper().getMappedField(cl, field);
 			if (mappedField.isEmpty()) {
 				fName.append(field.getName());
 			}else{
@@ -420,7 +420,7 @@ public final class NativeJSON extends IdScriptableObject {
 			type(builder, method.getReturnType());
 			builder.append(' ');
 
-			final String mappedMethod = cx.getRemapper().getMappedMethod(cl, method);
+			final String mappedMethod = Context.getRemapper().getMappedMethod(cl, method);
 			builder.append(mappedMethod.isEmpty()?method.getName():mappedMethod);
 
 			params(builder, method.getParameterTypes());

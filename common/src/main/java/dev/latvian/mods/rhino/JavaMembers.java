@@ -396,7 +396,7 @@ class JavaMembers {
 			int mods = method.getModifiers();
 			boolean isStatic = Modifier.isStatic(mods);
 			Map<String, Object> ht = isStatic ? staticMembers : members;
-			final String mappedMethod = cx.getRemapper().getMappedMethod(cl, method);
+			final String mappedMethod = Context.getRemapper().getMappedMethod(cl, method);
 			String name = mappedMethod.isEmpty()?method.getName():mappedMethod;
 
 			Object value = ht.get(name);
@@ -453,7 +453,7 @@ class JavaMembers {
 
 		// Reflect fields.
 		for (Field field : getAccessibleFields(includeProtected, includePrivate)) {
-			String mappedField = cx.getRemapper().getMappedField(cl, field);
+			String mappedField = Context.getRemapper().getMappedField(cl, field);
 			String name = mappedField.isEmpty() ? field.getName() : mappedField;
 
 			int mods = field.getModifiers();
