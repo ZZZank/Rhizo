@@ -10,31 +10,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * a Remapper impl based on file
+ * a {@link Remapper} impl based on file
  */
 public class FileRemapper implements Remapper {
 
+    private static final int VERSION = 1;
+    private static final int MARK = 27;
+
     public static final FileRemapper INSTANCE = new FileRemapper();
 
-    private final Map<String,String> fields;
-    private final Map<String,String> methods;
+    private final Map<String, String> fields;
+    private final Map<String, String> methods;
 
     private FileRemapper() {
         this.fields = load("fields.jsmappings");
         this.methods = load("methods.jsmappings");
-        RemappingHelper.LOGGER.info("CsvRemapper loaded");
+        RemappingHelper.LOGGER.info("FileRemapper loaded");
     }
 
-    private static Map<String,String> load(String fileName) {
-        try (var in = RhinoProperties.openResource(fileName)){
-            if (in.read() != 27) {
-                throw new Exception("Invalid jsmappings file for: "+fileName);
+    private static Map<String, String> load(String fileName) {
+        try (var in = RhinoProperties.openResource(fileName)) {
+            if (in.read() != MARK) {
+                throw new Exception("Invalid jsmappings file for: " + fileName);
             }
             int version = in.read();
-            if (version != 1) {
-                throw new Exception("Invalid jsmappings file version for: "+fileName);
+            if (version != VERSION) {
+                throw new Exception("Invalid jsmappings file version for: " + fileName);
             }
-            Map<String,String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             final int size = RemappingHelper.readVarInt(in);
             for (int i = 0; i < size; i++) {
                 map.put(RemappingHelper.readUtf(in), RemappingHelper.readUtf(in));
