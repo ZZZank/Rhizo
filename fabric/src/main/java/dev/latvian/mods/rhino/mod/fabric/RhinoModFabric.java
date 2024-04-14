@@ -15,7 +15,7 @@ import net.fabricmc.loader.api.ModContainer;
 public class RhinoModFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        Context.getContext().setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RemappingHelper.getMinecraftRemapper()));
+        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RemappingHelper.getMinecraftRemapper()));
         if (RemappingHelper.GENERATE) {
             RemappingHelper.run(FabricLoader.getInstance()
                 .getModContainer("minecraft")

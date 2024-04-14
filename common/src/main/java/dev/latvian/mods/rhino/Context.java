@@ -1979,12 +1979,12 @@ public class Context {
 		return factory.typeWrappers != null;
 	}
 
-	public void setRemapper(Remapper remapper) {
-		factory.remapper = remapper;
+	public static void setRemapper(Remapper remapper) {
+		ContextFactory.remapper = remapper;
 	}
 
 	public Remapper getRemapper() {
-		return factory.remapper;
+		return ContextFactory.remapper;
 	}
 
 	private final ContextFactory factory;

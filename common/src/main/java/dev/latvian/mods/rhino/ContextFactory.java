@@ -113,7 +113,7 @@ public class ContextFactory {
 	private volatile Object listeners;
 	private boolean disabledListening;
 	TypeWrappers typeWrappers;
-	Remapper remapper = DummyRemapper.INSTANCE;
+	static Remapper remapper = DummyRemapper.INSTANCE;
 
 	/**
 	 * Listener of {@link Context} creation and release events.
