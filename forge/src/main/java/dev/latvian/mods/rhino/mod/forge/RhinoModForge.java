@@ -4,12 +4,11 @@ import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.util.MojMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
-import dev.latvian.mods.rhino.util.remapper.CsvRemapper;
+import dev.latvian.mods.rhino.util.remapper.FileRemapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.BufferedReader;
@@ -27,6 +26,7 @@ public class RhinoModForge {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
+        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, FileRemapper.INSTANCE));
         if (RemappingHelper.GENERATE) {
             RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }
