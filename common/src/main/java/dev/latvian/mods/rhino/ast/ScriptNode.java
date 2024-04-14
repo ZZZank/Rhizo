@@ -19,10 +19,7 @@ import java.util.List;
  */
 public class ScriptNode extends Scope {
 
-	private int encodedSourceStart = -1;
-	private int encodedSourceEnd = -1;
 	private String sourceName;
-	private String encodedSource;
 	private int endLineno = -1;
 
 	private List<FunctionNode> functions;
@@ -73,52 +70,52 @@ public class ScriptNode extends Scope {
 	 * Only valid if {@link #getEncodedSource} returns non-{@code null}.
 	 */
 	public int getEncodedSourceStart() {
-		return encodedSourceStart;
+		return -1;
 	}
 
 	/**
+	 * @deprecated
 	 * Used by code generator.
 	 *
 	 * @see #getEncodedSource
 	 */
 	public void setEncodedSourceStart(int start) {
-		this.encodedSourceStart = start;
 	}
 
 	/**
+	 * @deprecated
 	 * Returns the end offset of the encoded source.
 	 * Only valid if {@link #getEncodedSource} returns non-{@code null}.
 	 */
 	public int getEncodedSourceEnd() {
-		return encodedSourceEnd;
+		return -1;
 	}
 
 	/**
+	 * @deprecated
 	 * Used by code generator.
 	 *
 	 * @see #getEncodedSource
 	 */
 	public void setEncodedSourceEnd(int end) {
-		this.encodedSourceEnd = end;
 	}
 
 	/**
+	 * @deprecated
 	 * Used by code generator.
 	 *
 	 * @see #getEncodedSource
 	 */
 	public void setEncodedSourceBounds(int start, int end) {
-		this.encodedSourceStart = start;
-		this.encodedSourceEnd = end;
 	}
 
 	/**
+	 * @deprecated
 	 * Used by the code generator.
 	 *
 	 * @see #getEncodedSource
 	 */
 	public void setEncodedSource(String encodedSource) {
-		this.encodedSource = encodedSource;
 	}
 
 	/**
@@ -137,7 +134,7 @@ public class ScriptNode extends Scope {
 	 * @return the encoded source, or {@code null} if it was not recorded.
 	 */
 	public String getEncodedSource() {
-		return encodedSource;
+		return null;
 	}
 
 	public int getBaseLineno() {

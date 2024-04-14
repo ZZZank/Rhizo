@@ -815,7 +815,6 @@ public class Parser {
 		try {
 			parseFunctionParams(fnNode);
 			fnNode.setBody(parseFunctionBody(type, fnNode));
-			fnNode.setEncodedSourceBounds(functionSourceStart, ts.tokenEnd);
 			fnNode.setLength(ts.tokenEnd - functionSourceStart);
 
 			if (compilerEnv.isStrictMode() && !fnNode.getBody().hasConsistentReturnUsage()) {
@@ -889,7 +888,6 @@ public class Parser {
 			}
 
 			fnNode.setBody(parseFunctionBody(FunctionNode.ARROW_FUNCTION, fnNode));
-			fnNode.setEncodedSourceBounds(functionSourceStart, ts.tokenEnd);
 			fnNode.setLength(ts.tokenEnd - functionSourceStart);
 		} finally {
 			savedVars.restore();

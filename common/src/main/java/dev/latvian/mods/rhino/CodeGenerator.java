@@ -169,9 +169,6 @@ class CodeGenerator extends Icode {
 		itsData.argIsConst = scriptOrFn.getParamAndVarConst();
 		itsData.argCount = scriptOrFn.getParamCount();
 
-		itsData.encodedSourceStart = scriptOrFn.getEncodedSourceStart();
-		itsData.encodedSourceEnd = scriptOrFn.getEncodedSourceEnd();
-
 		if (literalIds.size() != 0) {
 			itsData.literalIds = literalIds.toArray();
 		}
