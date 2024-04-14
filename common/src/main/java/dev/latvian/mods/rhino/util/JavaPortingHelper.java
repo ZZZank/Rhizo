@@ -56,7 +56,18 @@ public class JavaPortingHelper {
 
     public static String descriptorString(Class<?> clazz) {
         if (clazz.isPrimitive()) {
-            return Remapper.getTypeName(clazz.getName());
+            return switch (clazz.getName()) {
+                case "boolean" -> "Z";
+                case "byte" -> "B";
+                case "short" -> "S";
+                case "int" -> "I";
+                case "long" -> "J";
+                case "float" -> "F";
+                case "double" -> "D";
+                case "char" -> "C";
+                case "void" -> "V";
+                default -> throw new IllegalStateException("'clazz' is Primitive Class, but not mapped to a predefined descriptor");
+            };
         }
 
         if (clazz.isArray()) {

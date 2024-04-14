@@ -30,7 +30,8 @@ public class CsvRemapper implements Remapper {
     private static CsvRemapper load() {
         CsvRemapper remapper = new CsvRemapper();
         remapper.fields.putAll(loadCsv("fields.csv"));
-        remapper.methods.putAll(loadCsv("method.csv"));
+        remapper.methods.putAll(loadCsv("methods.csv"));
+        RemappingHelper.LOGGER.info("CsvRemapper loaded");
         return remapper;
     }
 

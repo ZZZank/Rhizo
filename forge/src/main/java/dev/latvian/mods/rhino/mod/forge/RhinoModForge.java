@@ -32,11 +32,6 @@ public class RhinoModForge {
         }
     }
 
-    @SubscribeEvent
-    public static void onLoadComplete(FMLLoadCompleteEvent event) {
-        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, CsvRemapper.INSTANCE));
-    }
-
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
         MojMappings.ClassDef current = null;
 
