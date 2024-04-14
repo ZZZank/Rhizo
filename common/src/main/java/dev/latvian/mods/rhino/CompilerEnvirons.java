@@ -28,7 +28,6 @@ public class CompilerEnvirons {
 		strictMode = cx.hasFeature(Context.FEATURE_STRICT_MODE);
 		warningAsError = cx.hasFeature(Context.FEATURE_WARNING_AS_ERROR);
 
-		generatingSource = cx.isGeneratingSource();
 		activationNames = cx.activationNames;
 
 		// Observer code generation in compiled code :

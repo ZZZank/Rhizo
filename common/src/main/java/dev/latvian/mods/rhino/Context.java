@@ -1421,7 +1421,7 @@ public class Context {
 	 * @since 1.3
 	 */
 	public final boolean isGeneratingSource() {
-		return generatingSource;
+		return false;
 	}
 
 	/**
@@ -1439,7 +1439,6 @@ public class Context {
 		if (sealed) {
 			onSealedMutation();
 		}
-		this.generatingSource = generatingSource;
 	}
 
 	/**
@@ -2006,7 +2005,6 @@ public class Context {
 	private ErrorReporter errorReporter;
 	RegExpProxy regExpProxy;
 	private Locale locale;
-	private boolean generatingSource = true;
 	boolean useDynamicScope;
 	private int maximumInterpreterStackDepth;
 	private WrapFactory wrapFactory;
