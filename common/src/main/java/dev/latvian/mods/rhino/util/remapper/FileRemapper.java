@@ -3,45 +3,41 @@ package dev.latvian.mods.rhino.util.remapper;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * a Remapper impl based on CSV file
+ * a Remapper impl based on file
  */
-public class CsvRemapper implements Remapper {
+public class FileRemapper implements Remapper {
 
-    public static final CsvRemapper INSTANCE = CsvRemapper.load();
+    public static final FileRemapper INSTANCE = new FileRemapper();
 
     private final Map<String,String> fields;
     private final Map<String,String> methods;
 
-    private CsvRemapper() {
-        this.fields = new HashMap<>();
-        this.methods = new HashMap<>();
-    }
-
-    private static CsvRemapper load() {
-        CsvRemapper remapper = new CsvRemapper();
-        remapper.fields.putAll(loadCsv("fields.csv"));
-        remapper.methods.putAll(loadCsv("methods.csv"));
+    private FileRemapper() {
+        this.fields = load("fields.jsmappings");
+        this.methods = load("methods.jsmappings");
         RemappingHelper.LOGGER.info("CsvRemapper loaded");
-        return remapper;
     }
 
-    private static Map<String,String> loadCsv(String fileName) {
-        try (var reader = new BufferedReader(new InputStreamReader(RhinoProperties.openResource(fileName)))) {
+    private static Map<String,String> load(String fileName) {
+        try (var in = RhinoProperties.openResource(fileName)){
+            if (in.read() != 27) {
+                throw new Exception("Invalid jsmappings file for: "+fileName);
+            }
+            int version = in.read();
+            if (version != 1) {
+                throw new Exception("Invalid jsmappings file version for: "+fileName);
+            }
             Map<String,String> map = new HashMap<>();
-            var lines = reader.lines().collect(Collectors.toList());
-            for (var line : lines) {
-                var split = line.split(",");
-                map.put(split[0], split[1]);
+            int size = in.read();
+            for (int i = 0; i < size; i++) {
+                map.put(RemappingHelper.readUtf(in), RemappingHelper.readUtf(in));
             }
             return map;
         } catch (Exception e) {
