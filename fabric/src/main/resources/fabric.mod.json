@@ -2,9 +2,10 @@
 	"schemaVersion": 1,
 	"id": "rhino",
 	"version": "${version}",
-	"name": "Rhino",
+	"name": "Rhizo",
 	"description": "A fork of Mozilla's Rhino library, modified for use in mods",
 	"authors": [
+		"ZZZank",
 		"LatvianModder",
 		"Mozilla"
 	],
