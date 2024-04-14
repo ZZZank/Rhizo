@@ -1,7 +1,11 @@
 package dev.latvian.mods.rhino.mod.forge;
 
+import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.util.MojMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
+import dev.latvian.mods.rhino.util.remapper.CsvRemapper;
+import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,6 +26,7 @@ public class RhinoModForge {
 
     @SubscribeEvent
     public static void loaded(FMLCommonSetupEvent event) {
+        Context.getContext().setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, CsvRemapper.INSTANCE));
         if (RemappingHelper.GENERATE) {
             RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }
@@ -50,6 +55,7 @@ public class RhinoModForge {
 
                 if (current != null) {
                     RemappingHelper.LOGGER.info("- Checking class {} ; {}", s[0], current.displayName);
+                    RemappingHelper.LOGGER.info("- class rawName: {}, mmName: {}", current.rawName, current.mmName);
                 } else {
                     RemappingHelper.LOGGER.info("- Skipping class {}", s[0]);
                 }
