@@ -19,7 +19,7 @@ public class mmjs {
             var out = new FileOutputStream(fileName + ".jsmappings");
             out.write(27); // mark
             out.write(1); // version
-            out.write(lines.size());
+            writeVarInt(out, lines);
             for (String line : lines) {
                 var spl = line.split(",");
                 writeUtf(out, spl[0]);

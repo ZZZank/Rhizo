@@ -35,7 +35,7 @@ public class FileRemapper implements Remapper {
                 throw new Exception("Invalid jsmappings file version for: "+fileName);
             }
             Map<String,String> map = new HashMap<>();
-            int size = in.read();
+            final int size = RemappingHelper.readVarInt(in);
             for (int i = 0; i < size; i++) {
                 map.put(RemappingHelper.readUtf(in), RemappingHelper.readUtf(in));
             }
