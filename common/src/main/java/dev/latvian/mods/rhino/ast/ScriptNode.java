@@ -6,7 +6,6 @@
 
 package dev.latvian.mods.rhino.ast;
 
-import dev.latvian.mods.rhino.Decompiler;
 import dev.latvian.mods.rhino.Node;
 import dev.latvian.mods.rhino.Token;
 
