@@ -1,7 +1,7 @@
 package dev.latvian.mods.rhino.mod.test;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
-import dev.latvian.mods.rhino.util.remapper.RemapForJS;
+import dev.latvian.mods.rhino.util.RemapForJS;
 
 public class RhinoRect {
 	public final int width;

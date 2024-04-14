@@ -2,7 +2,7 @@ package dev.latvian.mods.rhino.mod.core.mixin.common;
 
 import dev.latvian.mods.rhino.mod.util.NBTWrapper;
 import dev.latvian.mods.rhino.util.MapLike;
-import dev.latvian.mods.rhino.util.remapper.RemapForJS;
+import dev.latvian.mods.rhino.util.RemapForJS;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.spongepowered.asm.mixin.Final;

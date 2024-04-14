@@ -1,5 +1,7 @@
 package dev.latvian.mods.rhino.util.remapper;
 
+import dev.latvian.mods.rhino.util.RemapForJS;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
