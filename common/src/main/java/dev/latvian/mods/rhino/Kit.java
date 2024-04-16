@@ -37,9 +37,7 @@ public class Kit {
 	public static Class<?> classOrNull(ClassLoader loader, String className) {
 		try {
 			return loader.loadClass(className);
-		} catch (ClassNotFoundException ex) {
-		} catch (SecurityException ex) {
-		} catch (LinkageError ex) {
+		} catch (ClassNotFoundException | SecurityException | LinkageError ignored) {
 		} catch (IllegalArgumentException e) {
 			// Can be thrown if name has characters that a class name
 			// can not contain
@@ -50,12 +48,8 @@ public class Kit {
 	static Object newInstanceOrNull(Class<?> cl) {
 		try {
 			return cl.newInstance();
-		} catch (SecurityException x) {
-		} catch (LinkageError ex) {
-		} catch (InstantiationException x) {
-		} catch (IllegalAccessException x) {
-		}
-		return null;
+		} catch (SecurityException | LinkageError | InstantiationException | IllegalAccessException ignored) {}
+        return null;
 	}
 
 	/**
