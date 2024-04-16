@@ -291,7 +291,7 @@ public class Context {
         }
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
-        optimizationLevel = 0;
+        optimizationLevel = 1;
     }
 
     /**

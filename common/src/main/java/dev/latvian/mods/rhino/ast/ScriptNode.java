@@ -121,19 +121,6 @@ public class ScriptNode extends Scope {
 
 	/**
 	 * @deprecated
-	 * Returns a canonical version of the source for this script or function,
-	 * for use in implementing the {@code Object.toSource} method of
-	 * JavaScript objects.  This source encoding is only recorded during code
-	 * generation.  It must be passed back to
-	 * {@link Decompiler#decompile} to construct the
-	 * human-readable source string.<p>
-	 * <p>
-	 * Given a parsed AST, you can always convert it to source code using the
-	 * {@link AstNode#toSource} method, although it's not guaranteed to produce
-	 * exactly the same results as {@code Object.toSource} with respect to
-	 * formatting, parenthesization and other details.
-	 *
-	 * @return the encoded source, or {@code null} if it was not recorded.
 	 */
 	@Contract(value = "-> null")
 	public String getEncodedSource() {
