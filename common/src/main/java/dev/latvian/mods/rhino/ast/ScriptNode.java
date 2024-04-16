@@ -8,6 +8,7 @@ package dev.latvian.mods.rhino.ast;
 
 import dev.latvian.mods.rhino.Node;
 import dev.latvian.mods.rhino.Token;
+import org.jetbrains.annotations.Contract;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,6 +120,7 @@ public class ScriptNode extends Scope {
 	}
 
 	/**
+	 * @deprecated
 	 * Returns a canonical version of the source for this script or function,
 	 * for use in implementing the {@code Object.toSource} method of
 	 * JavaScript objects.  This source encoding is only recorded during code
@@ -133,6 +135,7 @@ public class ScriptNode extends Scope {
 	 *
 	 * @return the encoded source, or {@code null} if it was not recorded.
 	 */
+	@Contract(value = "-> null")
 	public String getEncodedSource() {
 		return null;
 	}
