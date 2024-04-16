@@ -2,13 +2,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.javascript.optimizer;
 
-import org.mozilla.javascript.Kit;
-import org.mozilla.javascript.Node;
-import org.mozilla.javascript.Token;
-import org.mozilla.javascript.ast.FunctionNode;
-import org.mozilla.javascript.ast.ScriptNode;
+package dev.latvian.mods.rhino.optimizer;
+
+import dev.latvian.mods.rhino.Kit;
+import dev.latvian.mods.rhino.Node;
+import dev.latvian.mods.rhino.Token;
+import dev.latvian.mods.rhino.ast.FunctionNode;
+import dev.latvian.mods.rhino.ast.ScriptNode;
 
 public final class OptFunctionNode {
     OptFunctionNode(FunctionNode fnode) {
@@ -35,7 +36,9 @@ public final class OptFunctionNode {
 
     void setDirectTargetIndex(int directTargetIndex) {
         // One time action
-        if (directTargetIndex < 0 || this.directTargetIndex >= 0) Kit.codeBug();
+        if (directTargetIndex < 0 || this.directTargetIndex >= 0) {
+            Kit.codeBug();
+        }
         this.directTargetIndex = directTargetIndex;
     }
 
@@ -66,7 +69,9 @@ public final class OptFunctionNode {
     void setIsNumberVar(int varIndex) {
         varIndex -= fnode.getParamCount();
         // Can only be used with non-parameters
-        if (varIndex < 0) Kit.codeBug();
+        if (varIndex < 0) {
+            Kit.codeBug();
+        }
         if (numberVarFlags == null) {
             int size = fnode.getParamAndVarCount() - fnode.getParamCount();
             numberVarFlags = new boolean[size];
@@ -81,13 +86,16 @@ public final class OptFunctionNode {
             int type = n.getType();
             if (type == Token.GETVAR) {
                 node = n;
-            } else if (type == Token.SETVAR || type == Token.SETCONSTVAR) {
+            } else if (type == Token.SETVAR ||
+                type == Token.SETCONSTVAR) {
                 node = n.getFirstChild();
             } else {
                 throw Kit.codeBug();
             }
             index = fnode.getIndexForNameNode(node);
-            if (index < 0) throw Kit.codeBug();
+            if (index < 0) {
+                throw Kit.codeBug();
+            }
             n.putIntProp(Node.VARIABLE_PROP, index);
         }
         return index;

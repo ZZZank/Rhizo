@@ -2,22 +2,25 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.javascript.optimizer;
+
+package dev.latvian.mods.rhino.optimizer;
+
+import dev.latvian.mods.rhino.Kit;
+import dev.latvian.mods.rhino.Node;
+import dev.latvian.mods.rhino.NodeTransformer;
+import dev.latvian.mods.rhino.ObjArray;
+import dev.latvian.mods.rhino.Token;
+import dev.latvian.mods.rhino.ast.ScriptNode;
 
 import java.util.Map;
-import org.mozilla.javascript.Kit;
-import org.mozilla.javascript.Node;
-import org.mozilla.javascript.NodeTransformer;
-import org.mozilla.javascript.ObjArray;
-import org.mozilla.javascript.Token;
-import org.mozilla.javascript.ast.ScriptNode;
 
 /**
  * This class performs node transforms to prepare for optimization.
  *
- * @see NodeTransformer
  * @author Norris Boyd
+ * @see NodeTransformer
  */
+
 class OptTransformer extends NodeTransformer {
 
     OptTransformer(Map<String, OptFunctionNode> possibleDirectCalls, ObjArray directCallTargets) {
@@ -43,12 +46,10 @@ class OptTransformer extends NodeTransformer {
 
             // count the arguments
             int argCount = 0;
-            if (left != null) {
-                Node arg = left.getNext();
-                while (arg != null) {
-                    arg = arg.getNext();
-                    argCount++;
-                }
+            Node arg = left.getNext();
+            while (arg != null) {
+                arg = arg.getNext();
+                argCount++;
             }
 
             if (argCount == 0) {
@@ -80,8 +81,8 @@ class OptTransformer extends NodeTransformer {
                     OptFunctionNode ofn;
                     ofn = possibleDirectCalls.get(targetName);
                     if (ofn != null
-                            && argCount == ofn.fnode.getParamCount()
-                            && !ofn.fnode.requiresActivation()) {
+                        && argCount == ofn.fnode.getParamCount()
+                        && !ofn.fnode.requiresActivation()) {
                         // Refuse to directCall any function with more
                         // than 32 parameters - prevent code explosion
                         // for wacky test cases
@@ -99,6 +100,6 @@ class OptTransformer extends NodeTransformer {
         }
     }
 
-    private Map<String, OptFunctionNode> possibleDirectCalls;
-    private ObjArray directCallTargets;
+    private final Map<String, OptFunctionNode> possibleDirectCalls;
+    private final ObjArray directCallTargets;
 }

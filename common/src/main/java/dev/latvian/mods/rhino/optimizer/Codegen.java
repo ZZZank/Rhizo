@@ -4,39 +4,33 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.javascript.optimizer;
+package dev.latvian.mods.rhino.optimizer;
 
-import static org.mozilla.classfile.ClassFileWriter.ACC_FINAL;
-import static org.mozilla.classfile.ClassFileWriter.ACC_PRIVATE;
-import static org.mozilla.classfile.ClassFileWriter.ACC_PROTECTED;
-import static org.mozilla.classfile.ClassFileWriter.ACC_PUBLIC;
-import static org.mozilla.classfile.ClassFileWriter.ACC_STATIC;
-import static org.mozilla.classfile.ClassFileWriter.ACC_VOLATILE;
+import dev.latvian.mods.rhino.CompilerEnvirons;
+import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.Evaluator;
+import dev.latvian.mods.rhino.Function;
+import dev.latvian.mods.rhino.GeneratedClassLoader;
+import dev.latvian.mods.rhino.Kit;
+import dev.latvian.mods.rhino.NativeFunction;
+import dev.latvian.mods.rhino.ObjArray;
+import dev.latvian.mods.rhino.ObjToIntMap;
+import dev.latvian.mods.rhino.RhinoException;
+import dev.latvian.mods.rhino.Script;
+import dev.latvian.mods.rhino.Scriptable;
+import dev.latvian.mods.rhino.SecurityController;
+import dev.latvian.mods.rhino.Token;
+import dev.latvian.mods.rhino.ast.FunctionNode;
+import dev.latvian.mods.rhino.ast.Name;
+import dev.latvian.mods.rhino.ast.ScriptNode;
+import dev.latvian.mods.rhino.ast.TemplateCharacters;
+import dev.latvian.mods.rhino.classfile.ByteCode;
+import dev.latvian.mods.rhino.classfile.ClassFileWriter;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.mozilla.classfile.ByteCode;
-import org.mozilla.classfile.ClassFileWriter;
-import org.mozilla.javascript.CompilerEnvirons;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Evaluator;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.GeneratedClassLoader;
-import org.mozilla.javascript.Kit;
-import org.mozilla.javascript.NativeFunction;
-import org.mozilla.javascript.ObjArray;
-import org.mozilla.javascript.ObjToIntMap;
-import org.mozilla.javascript.RhinoException;
-import org.mozilla.javascript.Script;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.SecurityController;
-import org.mozilla.javascript.Token;
-import org.mozilla.javascript.ast.FunctionNode;
-import org.mozilla.javascript.ast.Name;
-import org.mozilla.javascript.ast.ScriptNode;
-import org.mozilla.javascript.ast.TemplateCharacters;
 
 /**
  * This class generates code for a given IR tree.
@@ -44,6 +38,7 @@ import org.mozilla.javascript.ast.TemplateCharacters;
  * @author Norris Boyd
  * @author Roger Lawrence
  */
+
 public class Codegen implements Evaluator {
     @Override
     public void captureStackInfo(RhinoException ex) {
@@ -71,11 +66,10 @@ public class Codegen implements Evaluator {
     }
 
     @Override
-    public Object compile(
-            CompilerEnvirons compilerEnv,
-            ScriptNode tree,
-            String encodedSource,
-            boolean returnFunction) {
+    public Object compile(CompilerEnvirons compilerEnv,
+        ScriptNode tree,
+        String encodedSource,
+        boolean returnFunction) {
         int serial;
         synchronized (globalLock) {
             serial = ++globalSerialClassCounter;
@@ -89,44 +83,51 @@ public class Codegen implements Evaluator {
             }
         }
 
-        String mainClassName = "org.mozilla.javascript.gen." + baseName + "_" + serial;
+        String mainClassName = "dev.latvian.mods.rhino.gen." + baseName + "_" + serial;
 
-        byte[] mainClassBytes =
-                compileToClassFile(compilerEnv, mainClassName, tree, encodedSource, returnFunction);
+        byte[] mainClassBytes = compileToClassFile(compilerEnv, mainClassName,
+            tree, encodedSource,
+            returnFunction
+        );
 
-        return new Object[] {mainClassName, mainClassBytes};
+        return new Object[]{mainClassName, mainClassBytes};
     }
 
     @Override
-    public Script createScriptObject(Object bytecode, Object staticSecurityDomain) {
+    public Script createScriptObject(Object bytecode,
+        Object staticSecurityDomain) {
         Class<?> cl = defineClass(bytecode, staticSecurityDomain);
 
         Script script;
         try {
-            script = (Script) cl.getDeclaredConstructor().newInstance();
+            script = (Script) cl.newInstance();
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to instantiate compiled class:" + ex.toString());
+            throw new RuntimeException
+                ("Unable to instantiate compiled class:" + ex.toString());
         }
         return script;
     }
 
     @Override
-    public Function createFunctionObject(
-            Context cx, Scriptable scope, Object bytecode, Object staticSecurityDomain) {
+    public Function createFunctionObject(Context cx, Scriptable scope,
+        Object bytecode,
+        Object staticSecurityDomain) {
         Class<?> cl = defineClass(bytecode, staticSecurityDomain);
 
         NativeFunction f;
         try {
             Constructor<?> ctor = cl.getConstructors()[0];
-            Object[] initArgs = {scope, cx, Integer.valueOf(0)};
+            Object[] initArgs = {scope, cx, 0};
             f = (NativeFunction) ctor.newInstance(initArgs);
         } catch (Exception ex) {
-            throw new RuntimeException("Unable to instantiate compiled class:" + ex.toString());
+            throw new RuntimeException
+                ("Unable to instantiate compiled class:" + ex.toString());
         }
         return f;
     }
 
-    private Class<?> defineClass(Object bytecode, Object staticSecurityDomain) {
+    private Class<?> defineClass(Object bytecode,
+        Object staticSecurityDomain) {
         Object[] nameBytesPair = (Object[]) bytecode;
         String className = (String) nameBytesPair[0];
         byte[] classBytes = (byte[]) nameBytesPair[1];
@@ -135,7 +136,9 @@ public class Codegen implements Evaluator {
         // which must be accessible through this class loader
         ClassLoader rhinoLoader = getClass().getClassLoader();
         GeneratedClassLoader loader;
-        loader = SecurityController.createLoader(rhinoLoader, staticSecurityDomain);
+        loader = SecurityController.createLoader(rhinoLoader,
+            staticSecurityDomain
+        );
         Exception e;
         try {
             Class<?> cl = loader.defineClass(className, classBytes);
@@ -149,12 +152,11 @@ public class Codegen implements Evaluator {
         throw new RuntimeException("Malformed optimizer package " + e);
     }
 
-    public byte[] compileToClassFile(
-            CompilerEnvirons compilerEnv,
-            String mainClassName,
-            ScriptNode scriptOrFn,
-            String encodedSource,
-            boolean returnFunction) {
+    public byte[] compileToClassFile(CompilerEnvirons compilerEnv,
+        String mainClassName,
+        ScriptNode scriptOrFn,
+        String encodedSource,
+        boolean returnFunction) {
         this.compilerEnv = compilerEnv;
 
         transform(scriptOrFn);
@@ -191,7 +193,8 @@ public class Codegen implements Evaluator {
                 int functionCount = tree.getFunctionCount();
                 for (int i = 0; i != functionCount; ++i) {
                     OptFunctionNode ofn = OptFunctionNode.get(tree, i);
-                    if (ofn.fnode.getFunctionType() == FunctionNode.FUNCTION_STATEMENT) {
+                    if (ofn.fnode.getFunctionType()
+                        == FunctionNode.FUNCTION_STATEMENT) {
                         String name = ofn.fnode.getName();
                         if (name.length() != 0) {
                             if (possibleDirectCalls == null) {
@@ -208,7 +211,9 @@ public class Codegen implements Evaluator {
             directCallTargets = new ObjArray();
         }
 
-        OptTransformer ot = new OptTransformer(possibleDirectCalls, directCallTargets);
+        OptTransformer ot = new OptTransformer(possibleDirectCalls,
+            directCallTargets
+        );
         ot.transform(tree, compilerEnv);
 
         if (optLevel > 0) {
@@ -238,7 +243,8 @@ public class Codegen implements Evaluator {
         }
     }
 
-    private static void collectScriptNodes_r(ScriptNode n, ObjArray x) {
+    private static void collectScriptNodes_r(ScriptNode n,
+        ObjArray x) {
         x.add(n);
         int nestedCount = n.getFunctionCount();
         for (int i = 0; i != nestedCount; ++i) {
@@ -256,15 +262,18 @@ public class Codegen implements Evaluator {
             sourceFile = scriptOrFnNodes[0].getSourceName();
         }
 
-        ClassFileWriter cfw = new ClassFileWriter(mainClassName, SUPER_CLASS_NAME, sourceFile);
-        cfw.addField(ID_FIELD_NAME, "I", ACC_PRIVATE);
+        ClassFileWriter cfw = new ClassFileWriter(mainClassName,
+            SUPER_CLASS_NAME,
+            sourceFile
+        );
+        cfw.addField(ID_FIELD_NAME, "I", ClassFileWriter.ACC_PRIVATE);
 
         if (hasFunctions) {
             generateFunctionConstructor(cfw);
         }
 
         if (hasScript) {
-            cfw.addInterface("org/mozilla/javascript/Script");
+            cfw.addInterface("dev/latvian/mods/rhino/Script");
             generateScriptCtor(cfw);
             generateMain(cfw);
             generateExecute(cfw);
@@ -304,22 +313,23 @@ public class Codegen implements Evaluator {
         return cfw.toByteArray();
     }
 
-    private void emitDirectConstructor(ClassFileWriter cfw, OptFunctionNode ofn) {
-        /*
-            we generate ..
-                Scriptable directConstruct(<directCallArgs>) {
-                    Scriptable newInstance = createObject(cx, scope);
-                    Object val = <body-name>(cx, scope, newInstance, <directCallArgs>);
-                    if (val instanceof Scriptable) {
-                        return (Scriptable) val;
-                    }
-                    return newInstance;
-                }
-        */
-        cfw.startMethod(
-                getDirectCtorName(ofn.fnode),
-                getBodyMethodSignature(ofn.fnode),
-                (short) (ACC_STATIC | ACC_PRIVATE));
+    private void emitDirectConstructor(ClassFileWriter cfw,
+        OptFunctionNode ofn) {
+/*
+    we generate ..
+        Scriptable directConstruct(<directCallArgs>) {
+            Scriptable newInstance = createObject(cx, scope);
+            Object val = <body-name>(cx, scope, newInstance, <directCallArgs>);
+            if (val instanceof Scriptable) {
+                return (Scriptable) val;
+            }
+            return newInstance;
+        }
+*/
+        cfw.startMethod(getDirectCtorName(ofn.fnode),
+            getBodyMethodSignature(ofn.fnode),
+            (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
+        );
 
         int argCount = ofn.fnode.getParamCount();
         int firstLocal = (4 + argCount * 3) + 1;
@@ -327,13 +337,13 @@ public class Codegen implements Evaluator {
         cfw.addALoad(0); // this
         cfw.addALoad(1); // cx
         cfw.addALoad(2); // scope
-        cfw.addInvoke(
-                ByteCode.INVOKEVIRTUAL,
-                "org/mozilla/javascript/BaseFunction",
-                "createObject",
-                "(Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + ")Lorg/mozilla/javascript/Scriptable;");
+        cfw.addInvoke(ByteCode.INVOKEVIRTUAL,
+            "dev/latvian/mods/rhino/BaseFunction",
+            "createObject",
+            "(Ldev/latvian/mods/rhino/Context;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + ")Ldev/latvian/mods/rhino/Scriptable;"
+        );
         cfw.addAStore(firstLocal);
 
         cfw.addALoad(0);
@@ -345,17 +355,17 @@ public class Codegen implements Evaluator {
             cfw.addDLoad(5 + (i * 3));
         }
         cfw.addALoad(4 + argCount * 3);
-        cfw.addInvoke(
-                ByteCode.INVOKESTATIC,
-                mainClassName,
-                getBodyMethodName(ofn.fnode),
-                getBodyMethodSignature(ofn.fnode));
+        cfw.addInvoke(ByteCode.INVOKESTATIC,
+            mainClassName,
+            getBodyMethodName(ofn.fnode),
+            getBodyMethodSignature(ofn.fnode)
+        );
         int exitLabel = cfw.acquireLabel();
         cfw.add(ByteCode.DUP); // make a copy of direct call result
-        cfw.add(ByteCode.INSTANCEOF, "org/mozilla/javascript/Scriptable");
+        cfw.add(ByteCode.INSTANCEOF, "dev/latvian/mods/rhino/Scriptable");
         cfw.add(ByteCode.IFEQ, exitLabel);
         // cast direct call result
-        cfw.add(ByteCode.CHECKCAST, "org/mozilla/javascript/Scriptable");
+        cfw.add(ByteCode.CHECKCAST, "dev/latvian/mods/rhino/Scriptable");
         cfw.add(ByteCode.ARETURN);
         cfw.markLabel(exitLabel);
 
@@ -366,7 +376,8 @@ public class Codegen implements Evaluator {
     }
 
     static boolean isGenerator(ScriptNode node) {
-        return (node.getType() == Token.FUNCTION) && ((FunctionNode) node).isGenerator();
+        return (node.getType() == Token.FUNCTION) &&
+            ((FunctionNode) node).isGenerator();
     }
 
     // How dispatch to generators works:
@@ -383,21 +394,25 @@ public class Codegen implements Evaluator {
     // appended by "_gen".
     private void generateResumeGenerator(ClassFileWriter cfw) {
         boolean hasGenerators = false;
-        for (ScriptNode scriptOrFnNode : scriptOrFnNodes) {
-            if (isGenerator(scriptOrFnNode)) hasGenerators = true;
+        for (int i = 0; i < scriptOrFnNodes.length; i++) {
+            if (isGenerator(scriptOrFnNodes[i])) {
+                hasGenerators = true;
+            }
         }
 
         // if there are no generators defined, we don't implement a
         // resumeGenerator(). The base class provides a default implementation.
-        if (!hasGenerators) return;
+        if (!hasGenerators) {
+            return;
+        }
 
-        cfw.startMethod(
-                "resumeGenerator",
-                "(Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "ILjava/lang/Object;"
-                        + "Ljava/lang/Object;)Ljava/lang/Object;",
-                (short) (ACC_PUBLIC | ACC_FINAL));
+        cfw.startMethod("resumeGenerator",
+            "(Ldev/latvian/mods/rhino/Context;" +
+                "Ldev/latvian/mods/rhino/Scriptable;" +
+                "ILjava/lang/Object;" +
+                "Ljava/lang/Object;)Ljava/lang/Object;",
+            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
+        );
 
         // load arguments for dispatch to the corresponding *_gen method
         cfw.addALoad(0);
@@ -418,15 +433,17 @@ public class Codegen implements Evaluator {
             ScriptNode n = scriptOrFnNodes[i];
             cfw.markTableSwitchCase(startSwitch, i, (short) 6);
             if (isGenerator(n)) {
-                String type =
-                        "("
-                                + mainClassSignature
-                                + "Lorg/mozilla/javascript/Context;"
-                                + "Lorg/mozilla/javascript/Scriptable;"
-                                + "Ljava/lang/Object;"
-                                + "Ljava/lang/Object;I)Ljava/lang/Object;";
-                cfw.addInvoke(
-                        ByteCode.INVOKESTATIC, mainClassName, getBodyMethodName(n) + "_gen", type);
+                String type = "(" +
+                    mainClassSignature +
+                    "Ldev/latvian/mods/rhino/Context;" +
+                    "Ldev/latvian/mods/rhino/Scriptable;" +
+                    "Ljava/lang/Object;" +
+                    "Ljava/lang/Object;I)Ljava/lang/Object;";
+                cfw.addInvoke(ByteCode.INVOKESTATIC,
+                    mainClassName,
+                    getBodyMethodName(n) + "_gen",
+                    type
+                );
                 cfw.add(ByteCode.ARETURN);
             } else {
                 cfw.add(ByteCode.GOTO, endlabel);
@@ -437,18 +454,19 @@ public class Codegen implements Evaluator {
         pushUndefined(cfw);
         cfw.add(ByteCode.ARETURN);
 
+
         // this method uses as many locals as there are arguments (hence 6)
         cfw.stopMethod((short) 6);
     }
 
     private void generateCallMethod(ClassFileWriter cfw, boolean isStrictMode) {
-        cfw.startMethod(
-                "call",
-                "(Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "[Ljava/lang/Object;)Ljava/lang/Object;",
-                (short) (ACC_PUBLIC | ACC_FINAL));
+        cfw.startMethod("call",
+            "(Ldev/latvian/mods/rhino/Context;" +
+                "Ldev/latvian/mods/rhino/Scriptable;" +
+                "Ldev/latvian/mods/rhino/Scriptable;" +
+                "[Ljava/lang/Object;)Ljava/lang/Object;",
+            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
+        );
 
         // Generate code for:
         // if (!ScriptRuntime.hasTopCall(cx)) {
@@ -456,12 +474,13 @@ public class Codegen implements Evaluator {
         // }
 
         int nonTopCallLabel = cfw.acquireLabel();
-        cfw.addALoad(1); // cx
-        cfw.addInvoke(
-                ByteCode.INVOKESTATIC,
-                "org/mozilla/javascript/ScriptRuntime",
-                "hasTopCall",
-                "(Lorg/mozilla/javascript/Context;" + ")Z");
+        cfw.addALoad(1); //cx
+        cfw.addInvoke(ByteCode.INVOKESTATIC,
+            "dev/latvian/mods/rhino/ScriptRuntime",
+            "hasTopCall",
+            "(Ldev/latvian/mods/rhino/Context;"
+                + ")Z"
+        );
         cfw.add(ByteCode.IFNE, nonTopCallLabel);
         cfw.addALoad(0);
         cfw.addALoad(1);
@@ -469,17 +488,17 @@ public class Codegen implements Evaluator {
         cfw.addALoad(3);
         cfw.addALoad(4);
         cfw.addPush(isStrictMode);
-        cfw.addInvoke(
-                ByteCode.INVOKESTATIC,
-                "org/mozilla/javascript/ScriptRuntime",
-                "doTopCall",
-                "(Lorg/mozilla/javascript/Callable;"
-                        + "Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "[Ljava/lang/Object;"
-                        + "Z"
-                        + ")Ljava/lang/Object;");
+        cfw.addInvoke(ByteCode.INVOKESTATIC,
+            "dev/latvian/mods/rhino/ScriptRuntime",
+            "doTopCall",
+            "(Ldev/latvian/mods/rhino/Callable;"
+                + "Ldev/latvian/mods/rhino/Context;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + "[Ljava/lang/Object;"
+                + "Z"
+                + ")Ljava/lang/Object;"
+        );
         cfw.add(ByteCode.ARETURN);
         cfw.markLabel(nonTopCallLabel);
 
@@ -510,7 +529,9 @@ public class Codegen implements Evaluator {
                     cfw.markTableSwitchDefault(switchStart);
                     switchStackTop = cfw.getStackTop();
                 } else {
-                    cfw.markTableSwitchCase(switchStart, i - 1, switchStackTop);
+                    cfw.markTableSwitchCase(switchStart, i - 1,
+                        switchStackTop
+                    );
                 }
             }
             if (n.getType() == Token.FUNCTION) {
@@ -543,11 +564,11 @@ public class Codegen implements Evaluator {
                     }
                 }
             }
-            cfw.addInvoke(
-                    ByteCode.INVOKESTATIC,
-                    mainClassName,
-                    getBodyMethodName(n),
-                    getBodyMethodSignature(n));
+            cfw.addInvoke(ByteCode.INVOKESTATIC,
+                mainClassName,
+                getBodyMethodName(n),
+                getBodyMethodSignature(n)
+            );
             cfw.add(ByteCode.ARETURN);
         }
         cfw.stopMethod((short) 5);
@@ -555,32 +576,36 @@ public class Codegen implements Evaluator {
     }
 
     private void generateMain(ClassFileWriter cfw) {
-        cfw.startMethod("main", "([Ljava/lang/String;)V", (short) (ACC_PUBLIC | ACC_STATIC));
+        cfw.startMethod("main", "([Ljava/lang/String;)V",
+            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_STATIC)
+        );
 
         // load new ScriptImpl()
         cfw.add(ByteCode.NEW, cfw.getClassName());
         cfw.add(ByteCode.DUP);
-        cfw.addInvoke(ByteCode.INVOKESPECIAL, cfw.getClassName(), "<init>", "()V");
+        cfw.addInvoke(ByteCode.INVOKESPECIAL, cfw.getClassName(),
+            "<init>", "()V"
+        );
         // load 'args'
         cfw.add(ByteCode.ALOAD_0);
         // Call mainMethodClass.main(Script script, String[] args)
-        cfw.addInvoke(
-                ByteCode.INVOKESTATIC,
-                mainMethodClass,
-                "main",
-                "(Lorg/mozilla/javascript/Script;[Ljava/lang/String;)V");
+        cfw.addInvoke(ByteCode.INVOKESTATIC,
+            mainMethodClass,
+            "main",
+            "(Ldev/latvian/mods/rhino/Script;[Ljava/lang/String;)V"
+        );
         cfw.add(ByteCode.RETURN);
         // 1 = String[] args
         cfw.stopMethod((short) 1);
     }
 
     private static void generateExecute(ClassFileWriter cfw) {
-        cfw.startMethod(
-                "exec",
-                "(Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + ")Ljava/lang/Object;",
-                (short) (ACC_PUBLIC | ACC_FINAL));
+        cfw.startMethod("exec",
+            "(Ldev/latvian/mods/rhino/Context;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + ")Ljava/lang/Object;",
+            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
+        );
 
         final int CONTEXT_ARG = 1;
         final int SCOPE_ARG = 2;
@@ -590,22 +615,15 @@ public class Codegen implements Evaluator {
         cfw.addALoad(SCOPE_ARG);
         cfw.add(ByteCode.DUP);
         cfw.add(ByteCode.ACONST_NULL);
-        cfw.addInvoke(
-                ByteCode.INVOKEVIRTUAL,
-                cfw.getClassName(),
-                "call",
-                "(Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "[Ljava/lang/Object;"
-                        + ")Ljava/lang/Object;");
-
-        cfw.addALoad(CONTEXT_ARG);
-        cfw.addInvoke(
-                ByteCode.INVOKEVIRTUAL,
-                "org.mozilla.javascript.Context",
-                "processMicrotasks",
-                "()V");
+        cfw.addInvoke(ByteCode.INVOKEVIRTUAL,
+            cfw.getClassName(),
+            "call",
+            "(Ldev/latvian/mods/rhino/Context;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + "[Ljava/lang/Object;"
+                + ")Ljava/lang/Object;"
+        );
 
         cfw.add(ByteCode.ARETURN);
         // 3 = this + context + scope
@@ -613,10 +631,12 @@ public class Codegen implements Evaluator {
     }
 
     private static void generateScriptCtor(ClassFileWriter cfw) {
-        cfw.startMethod("<init>", "()V", ACC_PUBLIC);
+        cfw.startMethod("<init>", "()V", ClassFileWriter.ACC_PUBLIC);
 
         cfw.addLoadThis();
-        cfw.addInvoke(ByteCode.INVOKESPECIAL, SUPER_CLASS_NAME, "<init>", "()V");
+        cfw.addInvoke(ByteCode.INVOKESPECIAL, SUPER_CLASS_NAME,
+            "<init>", "()V"
+        );
         // set id to 0
         cfw.addLoadThis();
         cfw.addPush(0);
@@ -632,9 +652,11 @@ public class Codegen implements Evaluator {
         final int CONTEXT_ARG = 2;
         final int ID_ARG = 3;
 
-        cfw.startMethod("<init>", FUNCTION_CONSTRUCTOR_SIGNATURE, ACC_PUBLIC);
+        cfw.startMethod("<init>", FUNCTION_CONSTRUCTOR_SIGNATURE, ClassFileWriter.ACC_PUBLIC);
         cfw.addALoad(0);
-        cfw.addInvoke(ByteCode.INVOKESPECIAL, SUPER_CLASS_NAME, "<init>", "()V");
+        cfw.addInvoke(ByteCode.INVOKESPECIAL, SUPER_CLASS_NAME,
+            "<init>", "()V"
+        );
 
         cfw.addLoadThis();
         cfw.addILoad(ID_ARG);
@@ -646,7 +668,9 @@ public class Codegen implements Evaluator {
 
         int start = (scriptOrFnNodes[0].getType() == Token.SCRIPT) ? 1 : 0;
         int end = scriptOrFnNodes.length;
-        if (start == end) throw badTree();
+        if (start == end) {
+            throw badTree();
+        }
         boolean generateSwitch = (2 <= end - start);
 
         int switchStart = 0;
@@ -664,15 +688,17 @@ public class Codegen implements Evaluator {
                     cfw.markTableSwitchDefault(switchStart);
                     switchStackTop = cfw.getStackTop();
                 } else {
-                    cfw.markTableSwitchCase(switchStart, i - 1 - start, switchStackTop);
+                    cfw.markTableSwitchCase(switchStart, i - 1 - start,
+                        switchStackTop
+                    );
                 }
             }
             OptFunctionNode ofn = OptFunctionNode.get(scriptOrFnNodes[i]);
-            cfw.addInvoke(
-                    ByteCode.INVOKESPECIAL,
-                    mainClassName,
-                    getFunctionInitMethodName(ofn),
-                    FUNCTION_INIT_SIGNATURE);
+            cfw.addInvoke(ByteCode.INVOKESPECIAL,
+                mainClassName,
+                getFunctionInitMethodName(ofn),
+                FUNCTION_INIT_SIGNATURE
+            );
             cfw.add(ByteCode.RETURN);
         }
 
@@ -680,40 +706,40 @@ public class Codegen implements Evaluator {
         cfw.stopMethod((short) 4);
     }
 
-    private void generateFunctionInit(ClassFileWriter cfw, OptFunctionNode ofn) {
+    private void generateFunctionInit(ClassFileWriter cfw,
+        OptFunctionNode ofn) {
         final int CONTEXT_ARG = 1;
         final int SCOPE_ARG = 2;
-        cfw.startMethod(
-                getFunctionInitMethodName(ofn),
-                FUNCTION_INIT_SIGNATURE,
-                (short) (ACC_PRIVATE | ACC_FINAL));
+        cfw.startMethod(getFunctionInitMethodName(ofn),
+            FUNCTION_INIT_SIGNATURE,
+            (short) (ClassFileWriter.ACC_PRIVATE | ClassFileWriter.ACC_FINAL)
+        );
 
         // Call NativeFunction.initScriptFunction
         cfw.addLoadThis();
         cfw.addALoad(CONTEXT_ARG);
         cfw.addALoad(SCOPE_ARG);
-        cfw.addInvoke(
-                ByteCode.INVOKEVIRTUAL,
-                "org/mozilla/javascript/NativeFunction",
-                "initScriptFunction",
-                "(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + ")V");
+        cfw.addInvoke(ByteCode.INVOKEVIRTUAL,
+            "dev/latvian/mods/rhino/NativeFunction",
+            "initScriptFunction",
+            "(Ldev/latvian/mods/rhino/Context;"
+                + "Ldev/latvian/mods/rhino/Scriptable;"
+                + ")V"
+        );
 
         // precompile all regexp literals
         if (ofn.fnode.getRegexpCount() != 0) {
             cfw.addALoad(CONTEXT_ARG);
-            cfw.addInvoke(
-                    ByteCode.INVOKESTATIC,
-                    mainClassName,
-                    REGEXP_INIT_METHOD_NAME,
-                    REGEXP_INIT_METHOD_SIGNATURE);
+            cfw.addInvoke(ByteCode.INVOKESTATIC, mainClassName,
+                REGEXP_INIT_METHOD_NAME, REGEXP_INIT_METHOD_SIGNATURE
+            );
         }
+
         // emit all template literals
         if (ofn.fnode.getTemplateLiteralCount() != 0) {
-            cfw.addInvoke(
-                    ByteCode.INVOKESTATIC,
-                    mainClassName,
-                    TEMPLATE_LITERAL_INIT_METHOD_NAME,
-                    TEMPLATE_LITERAL_INIT_METHOD_SIGNATURE);
+            cfw.addInvoke(ByteCode.INVOKESTATIC, mainClassName,
+                TEMPLATE_LITERAL_INIT_METHOD_NAME, TEMPLATE_LITERAL_INIT_METHOD_SIGNATURE
+            );
         }
 
         cfw.add(ByteCode.RETURN);
@@ -721,11 +747,12 @@ public class Codegen implements Evaluator {
         cfw.stopMethod((short) 3);
     }
 
-    private void generateNativeFunctionOverrides(ClassFileWriter cfw, String encodedSource) {
+    private void generateNativeFunctionOverrides(ClassFileWriter cfw,
+        String encodedSource) {
         // Override NativeFunction.getLanguageVersion() with
         // public int getLanguageVersion() { return <version-constant>; }
 
-        cfw.startMethod("getLanguageVersion", "()I", ACC_PUBLIC);
+        cfw.startMethod("getLanguageVersion", "()I", ClassFileWriter.ACC_PUBLIC);
 
         cfw.addPush(compilerEnv.getLanguageVersion());
         cfw.add(ByteCode.IRETURN);
@@ -759,32 +786,46 @@ public class Codegen implements Evaluator {
             switch (methodIndex) {
                 case Do_getFunctionName:
                     methodLocals = 1; // Only this
-                    cfw.startMethod("getFunctionName", "()Ljava/lang/String;", ACC_PUBLIC);
+                    cfw.startMethod("getFunctionName", "()Ljava/lang/String;",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
                     break;
                 case Do_getParamCount:
                     methodLocals = 1; // Only this
-                    cfw.startMethod("getParamCount", "()I", ACC_PUBLIC);
+                    cfw.startMethod("getParamCount", "()I",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
                     break;
                 case Do_getParamAndVarCount:
                     methodLocals = 1; // Only this
-                    cfw.startMethod("getParamAndVarCount", "()I", ACC_PUBLIC);
+                    cfw.startMethod("getParamAndVarCount", "()I",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
                     break;
                 case Do_getParamOrVarName:
                     methodLocals = 1 + 1; // this + paramOrVarIndex
-                    cfw.startMethod("getParamOrVarName", "(I)Ljava/lang/String;", ACC_PUBLIC);
+                    cfw.startMethod("getParamOrVarName", "(I)Ljava/lang/String;",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
                     break;
                 case Do_getParamOrVarConst:
                     methodLocals = 1 + 1 + 1; // this + paramOrVarName
-                    cfw.startMethod("getParamOrVarConst", "(I)Z", ACC_PUBLIC);
+                    cfw.startMethod("getParamOrVarConst", "(I)Z",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
                     break;
                 case Do_getEncodedSource:
                     methodLocals = 1; // Only this
-                    cfw.startMethod("getEncodedSource", "()Ljava/lang/String;", ACC_PUBLIC);
+                    cfw.startMethod("getEncodedSource", "()Ljava/lang/String;",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
                     cfw.addPush(encodedSource);
                     break;
                 case Do_isGeneratorFunction:
                     methodLocals = 1; // Only this
-                    cfw.startMethod("isGeneratorFunction", "()Z", ACC_PROTECTED);
+                    cfw.startMethod("isGeneratorFunction", "()Z",
+                        ClassFileWriter.ACC_PROTECTED
+                    );
                     break;
                 default:
                     throw Kit.codeBug();
@@ -798,7 +839,9 @@ public class Codegen implements Evaluator {
                 // Generate switch but only if there is more then one
                 // script/function
                 cfw.addLoadThis();
-                cfw.add(ByteCode.GETFIELD, cfw.getClassName(), ID_FIELD_NAME, "I");
+                cfw.add(ByteCode.GETFIELD, cfw.getClassName(),
+                    ID_FIELD_NAME, "I"
+                );
 
                 // do switch from 1 .. count - 1 mapping 0 to the default case
                 switchStart = cfw.addTableSwitch(1, count - 1);
@@ -812,7 +855,9 @@ public class Codegen implements Evaluator {
                         switchStackTop = cfw.getStackTop();
                     }
                 } else {
-                    cfw.markTableSwitchCase(switchStart, i - 1, switchStackTop);
+                    cfw.markTableSwitchCase(switchStart, i - 1,
+                        switchStackTop
+                    );
                 }
 
                 // Impelemnet method-specific switch code
@@ -860,14 +905,19 @@ public class Codegen implements Evaluator {
                             cfw.addILoad(1); // param or var index
                             // do switch from 1 .. paramAndVarCount - 1 mapping 0
                             // to the default case
-                            int paramSwitchStart = cfw.addTableSwitch(1, paramAndVarCount - 1);
+                            int paramSwitchStart = cfw.addTableSwitch(
+                                1, paramAndVarCount - 1);
                             for (int j = 0; j != paramAndVarCount; ++j) {
-                                if (cfw.getStackTop() != 0) Kit.codeBug();
+                                if (cfw.getStackTop() != 0) {
+                                    Kit.codeBug();
+                                }
                                 String s = n.getParamOrVarName(j);
                                 if (j == 0) {
                                     cfw.markTableSwitchDefault(paramSwitchStart);
                                 } else {
-                                    cfw.markTableSwitchCase(paramSwitchStart, j - 1, 0);
+                                    cfw.markTableSwitchCase(paramSwitchStart, j - 1,
+                                        0
+                                    );
                                 }
                                 cfw.addPush(s);
                                 cfw.add(ByteCode.ARETURN);
@@ -896,13 +946,18 @@ public class Codegen implements Evaluator {
                             cfw.addILoad(1); // param or var index
                             // do switch from 1 .. paramAndVarCount - 1 mapping 0
                             // to the default case
-                            int paramSwitchStart = cfw.addTableSwitch(1, paramAndVarCount - 1);
+                            int paramSwitchStart = cfw.addTableSwitch(
+                                1, paramAndVarCount - 1);
                             for (int j = 0; j != paramAndVarCount; ++j) {
-                                if (cfw.getStackTop() != 0) Kit.codeBug();
+                                if (cfw.getStackTop() != 0) {
+                                    Kit.codeBug();
+                                }
                                 if (j == 0) {
                                     cfw.markTableSwitchDefault(paramSwitchStart);
                                 } else {
-                                    cfw.markTableSwitchCase(paramSwitchStart, j - 1, 0);
+                                    cfw.markTableSwitchCase(paramSwitchStart, j - 1,
+                                        0
+                                    );
                                 }
                                 cfw.addPush(constness[j]);
                                 cfw.add(ByteCode.IRETURN);
@@ -925,11 +980,11 @@ public class Codegen implements Evaluator {
                         // to prepare for encodedSource.substring(start, end)
                         cfw.addPush(n.getEncodedSourceStart());
                         cfw.addPush(n.getEncodedSourceEnd());
-                        cfw.addInvoke(
-                                ByteCode.INVOKEVIRTUAL,
-                                "java/lang/String",
-                                "substring",
-                                "(II)Ljava/lang/String;");
+                        cfw.addInvoke(ByteCode.INVOKEVIRTUAL,
+                            "java/lang/String",
+                            "substring",
+                            "(II)Ljava/lang/String;"
+                        );
                         cfw.add(ByteCode.ARETURN);
                         break;
 
@@ -953,11 +1008,12 @@ public class Codegen implements Evaluator {
             return;
         }
 
-        cfw.startMethod(
-                REGEXP_INIT_METHOD_NAME,
-                REGEXP_INIT_METHOD_SIGNATURE,
-                (short) (ACC_STATIC | ACC_PRIVATE));
-        cfw.addField("_reInitDone", "Z", (short) (ACC_STATIC | ACC_PRIVATE | ACC_VOLATILE));
+        cfw.startMethod(REGEXP_INIT_METHOD_NAME, REGEXP_INIT_METHOD_SIGNATURE,
+            (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
+        );
+        cfw.addField("_reInitDone", "Z",
+            (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE | ClassFileWriter.ACC_VOLATILE)
+        );
         cfw.add(ByteCode.GETSTATIC, mainClassName, "_reInitDone", "Z");
         int doInit = cfw.acquireLabel();
         cfw.add(ByteCode.IFEQ, doInit);
@@ -966,11 +1022,12 @@ public class Codegen implements Evaluator {
 
         // get regexp proxy and store it in local slot 1
         cfw.addALoad(0); // context
-        cfw.addInvoke(
-                ByteCode.INVOKESTATIC,
-                "org/mozilla/javascript/ScriptRuntime",
-                "checkRegExpProxy",
-                "(Lorg/mozilla/javascript/Context;" + ")Lorg/mozilla/javascript/RegExpProxy;");
+        cfw.addInvoke(ByteCode.INVOKESTATIC,
+            "dev/latvian/mods/rhino/ScriptRuntime",
+            "checkRegExpProxy",
+            "(Ldev/latvian/mods/rhino/Context;"
+                + ")Ldev/latvian/mods/rhino/RegExpProxy;"
+        );
         cfw.addAStore(1); // proxy
 
         // We could apply double-checked locking here but concurrency
@@ -983,7 +1040,9 @@ public class Codegen implements Evaluator {
                 String reFieldType = "Ljava/lang/Object;";
                 String reString = n.getRegexpString(j);
                 String reFlags = n.getRegexpFlags(j);
-                cfw.addField(reFieldName, reFieldType, (short) (ACC_STATIC | ACC_PRIVATE));
+                cfw.addField(reFieldName, reFieldType,
+                    (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
+                );
                 cfw.addALoad(1); // proxy
                 cfw.addALoad(0); // context
                 cfw.addPush(reString);
@@ -992,14 +1051,16 @@ public class Codegen implements Evaluator {
                 } else {
                     cfw.addPush(reFlags);
                 }
-                cfw.addInvoke(
-                        ByteCode.INVOKEINTERFACE,
-                        "org/mozilla/javascript/RegExpProxy",
-                        "compileRegExp",
-                        "(Lorg/mozilla/javascript/Context;"
-                                + "Ljava/lang/String;Ljava/lang/String;"
-                                + ")Ljava/lang/Object;");
-                cfw.add(ByteCode.PUTSTATIC, mainClassName, reFieldName, reFieldType);
+                cfw.addInvoke(ByteCode.INVOKEINTERFACE,
+                    "dev/latvian/mods/rhino/RegExpProxy",
+                    "compileRegExp",
+                    "(Ldev/latvian/mods/rhino/Context;"
+                        + "Ljava/lang/String;Ljava/lang/String;"
+                        + ")Ljava/lang/Object;"
+                );
+                cfw.add(ByteCode.PUTSTATIC, mainClassName,
+                    reFieldName, reFieldType
+                );
             }
         }
 
@@ -1011,7 +1072,6 @@ public class Codegen implements Evaluator {
 
     /**
      * Overview:
-     *
      * <pre>
      * for each fn in functions(script) do
      *   let field = []
@@ -1034,11 +1094,12 @@ public class Codegen implements Evaluator {
             return;
         }
 
-        cfw.startMethod(
-                TEMPLATE_LITERAL_INIT_METHOD_NAME,
-                TEMPLATE_LITERAL_INIT_METHOD_SIGNATURE,
-                (short) (ACC_STATIC | ACC_PRIVATE));
-        cfw.addField("_qInitDone", "Z", (short) (ACC_STATIC | ACC_PRIVATE | ACC_VOLATILE));
+        cfw.startMethod(TEMPLATE_LITERAL_INIT_METHOD_NAME, TEMPLATE_LITERAL_INIT_METHOD_SIGNATURE,
+            (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
+        );
+        cfw.addField("_qInitDone", "Z",
+            (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE | ClassFileWriter.ACC_VOLATILE)
+        );
 
         cfw.add(ByteCode.GETSTATIC, mainClassName, "_qInitDone", "Z");
         int doInit = cfw.acquireLabel();
@@ -1050,10 +1111,14 @@ public class Codegen implements Evaluator {
         // shouldn't be a problem in practice
         for (ScriptNode n : scriptOrFnNodes) {
             int qCount = n.getTemplateLiteralCount();
-            if (qCount == 0) continue;
+            if (qCount == 0) {
+                continue;
+            }
             String qFieldName = getTemplateLiteralName(n);
             String qFieldType = "[Ljava/lang/Object;";
-            cfw.addField(qFieldName, qFieldType, (short) (ACC_STATIC | ACC_PRIVATE));
+            cfw.addField(qFieldName, qFieldType,
+                (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
+            );
             cfw.addPush(qCount);
             cfw.add(ByteCode.ANEWARRAY, "java/lang/Object");
             for (int j = 0; j < qCount; ++j) {
@@ -1067,11 +1132,7 @@ public class Codegen implements Evaluator {
                     // cooked value
                     cfw.add(ByteCode.DUP);
                     cfw.addPush(k++);
-                    if (s.getValue() != null) {
-                        cfw.addPush(s.getValue());
-                    } else {
-                        cfw.add(ByteCode.ACONST_NULL);
-                    }
+                    cfw.addPush(s.getValue());
                     cfw.add(ByteCode.AASTORE);
                     // raw value
                     cfw.add(ByteCode.DUP);
@@ -1081,7 +1142,9 @@ public class Codegen implements Evaluator {
                 }
                 cfw.add(ByteCode.AASTORE);
             }
-            cfw.add(ByteCode.PUTSTATIC, mainClassName, qFieldName, qFieldType);
+            cfw.add(ByteCode.PUTSTATIC, mainClassName,
+                qFieldName, qFieldType
+            );
         }
 
         cfw.addPush(true);
@@ -1092,29 +1155,33 @@ public class Codegen implements Evaluator {
 
     private void emitConstantDudeInitializers(ClassFileWriter cfw) {
         int N = itsConstantListSize;
-        if (N == 0) return;
+        if (N == 0) {
+            return;
+        }
 
-        cfw.startMethod("<clinit>", "()V", (short) (ACC_STATIC | ACC_FINAL));
+        cfw.startMethod("<clinit>", "()V", (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_FINAL));
 
         double[] array = itsConstantList;
         for (int i = 0; i != N; ++i) {
             double num = array[i];
             String constantName = "_k" + i;
             String constantType = getStaticConstantWrapperType(num);
-            cfw.addField(constantName, constantType, (short) (ACC_STATIC | ACC_PRIVATE));
+            cfw.addField(constantName, constantType,
+                (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
+            );
             int inum = (int) num;
             if (inum == num) {
                 cfw.addPush(inum);
-                cfw.addInvoke(
-                        ByteCode.INVOKESTATIC,
-                        "java/lang/Integer",
-                        "valueOf",
-                        "(I)Ljava/lang/Integer;");
+                cfw.addInvoke(ByteCode.INVOKESTATIC, "java/lang/Integer",
+                    "valueOf", "(I)Ljava/lang/Integer;"
+                );
             } else {
                 cfw.addPush(num);
                 addDoubleWrap(cfw);
             }
-            cfw.add(ByteCode.PUTSTATIC, mainClassName, constantName, constantType);
+            cfw.add(ByteCode.PUTSTATIC, mainClassName,
+                constantName, constantType
+            );
         }
 
         cfw.add(ByteCode.RETURN);
@@ -1125,37 +1192,33 @@ public class Codegen implements Evaluator {
         if (num == 0.0) {
             if (1 / num > 0) {
                 // +0.0
-                cfw.add(
-                        ByteCode.GETSTATIC,
-                        "org/mozilla/javascript/ScriptRuntime",
-                        "zeroObj",
-                        "Ljava/lang/Double;");
+                cfw.add(ByteCode.GETSTATIC,
+                    "dev/latvian/mods/rhino/ScriptRuntime",
+                    "zeroObj", "Ljava/lang/Double;"
+                );
             } else {
                 cfw.addPush(num);
                 addDoubleWrap(cfw);
             }
 
         } else if (num == 1.0) {
-            cfw.add(
-                    ByteCode.GETSTATIC,
-                    "org/mozilla/javascript/optimizer/OptRuntime",
-                    "oneObj",
-                    "Ljava/lang/Double;");
+            cfw.add(ByteCode.GETSTATIC,
+                "dev/latvian/mods/rhino/optimizer/OptRuntime",
+                "oneObj", "Ljava/lang/Double;"
+            );
             return;
 
         } else if (num == -1.0) {
-            cfw.add(
-                    ByteCode.GETSTATIC,
-                    "org/mozilla/javascript/optimizer/OptRuntime",
-                    "minusOneObj",
-                    "Ljava/lang/Double;");
+            cfw.add(ByteCode.GETSTATIC,
+                "dev/latvian/mods/rhino/optimizer/OptRuntime",
+                "minusOneObj", "Ljava/lang/Double;"
+            );
 
         } else if (Double.isNaN(num)) {
-            cfw.add(
-                    ByteCode.GETSTATIC,
-                    "org/mozilla/javascript/ScriptRuntime",
-                    "NaNobj",
-                    "Ljava/lang/Double;");
+            cfw.add(ByteCode.GETSTATIC,
+                "dev/latvian/mods/rhino/ScriptRuntime",
+                "NaNobj", "Ljava/lang/Double;"
+            );
 
         } else if (itsConstantListSize >= 2000) {
             // There appears to be a limit in the JVM on either the number
@@ -1187,16 +1250,17 @@ public class Codegen implements Evaluator {
             }
             String constantName = "_k" + index;
             String constantType = getStaticConstantWrapperType(num);
-            cfw.add(ByteCode.GETSTATIC, mainClassName, constantName, constantType);
+            cfw.add(ByteCode.GETSTATIC, mainClassName,
+                constantName, constantType
+            );
         }
     }
 
     private static void addDoubleWrap(ClassFileWriter cfw) {
-        cfw.addInvoke(
-                ByteCode.INVOKESTATIC,
-                "org/mozilla/javascript/optimizer/OptRuntime",
-                "wrapDouble",
-                "(D)Ljava/lang/Double;");
+        cfw.addInvoke(ByteCode.INVOKESTATIC,
+            "dev/latvian/mods/rhino/optimizer/OptRuntime",
+            "wrapDouble", "(D)Ljava/lang/Double;"
+        );
     }
 
     private static String getStaticConstantWrapperType(double num) {
@@ -1208,11 +1272,9 @@ public class Codegen implements Evaluator {
     }
 
     static void pushUndefined(ClassFileWriter cfw) {
-        cfw.add(
-                ByteCode.GETSTATIC,
-                "org/mozilla/javascript/Undefined",
-                "instance",
-                "Ljava/lang/Object;");
+        cfw.add(ByteCode.GETSTATIC, "dev/latvian/mods/rhino/Undefined",
+            "instance", "Ljava/lang/Object;"
+        );
     }
 
     int getIndex(ScriptNode n) {
@@ -1227,7 +1289,9 @@ public class Codegen implements Evaluator {
         return "_c_" + cleanName(n) + "_" + getIndex(n);
     }
 
-    /** Gets a Java-compatible "informative" name for the the ScriptOrFnNode */
+    /**
+     * Gets a Java-compatible "informative" name for the the ScriptOrFnNode
+     */
     String cleanName(final ScriptNode n) {
         String result = "";
         if (n instanceof FunctionNode) {
@@ -1247,10 +1311,9 @@ public class Codegen implements Evaluator {
         StringBuilder sb = new StringBuilder();
         sb.append('(');
         sb.append(mainClassSignature);
-        sb.append(
-                "Lorg/mozilla/javascript/Context;"
-                        + "Lorg/mozilla/javascript/Scriptable;"
-                        + "Lorg/mozilla/javascript/Scriptable;");
+        sb.append("Ldev/latvian/mods/rhino/Context;"
+            + "Ldev/latvian/mods/rhino/Scriptable;"
+            + "Ldev/latvian/mods/rhino/Scriptable;");
         if (n.getType() == Token.FUNCTION) {
             OptFunctionNode ofn = OptFunctionNode.get(n);
             if (ofn.isTargetOfDirectCall()) {
@@ -1284,23 +1347,30 @@ public class Codegen implements Evaluator {
         mainMethodClass = className;
     }
 
-    static final String DEFAULT_MAIN_METHOD_CLASS = "org.mozilla.javascript.optimizer.OptRuntime";
+    static final String DEFAULT_MAIN_METHOD_CLASS
+        = "dev.latvian.mods.rhino.optimizer.OptRuntime";
 
-    private static final String SUPER_CLASS_NAME = "org.mozilla.javascript.NativeFunction";
+    private static final String SUPER_CLASS_NAME
+        = "dev.latvian.mods.rhino.NativeFunction";
 
     static final String ID_FIELD_NAME = "_id";
 
     static final String REGEXP_INIT_METHOD_NAME = "_reInit";
-    static final String REGEXP_INIT_METHOD_SIGNATURE = "(Lorg/mozilla/javascript/Context;)V";
+    static final String REGEXP_INIT_METHOD_SIGNATURE
+        = "(Ldev/latvian/mods/rhino/Context;)V";
 
     static final String TEMPLATE_LITERAL_INIT_METHOD_NAME = "_qInit";
-    static final String TEMPLATE_LITERAL_INIT_METHOD_SIGNATURE = "()V";
+    static final String TEMPLATE_LITERAL_INIT_METHOD_SIGNATURE
+        = "()V";
 
-    static final String FUNCTION_INIT_SIGNATURE =
-            "(Lorg/mozilla/javascript/Context;" + "Lorg/mozilla/javascript/Scriptable;" + ")V";
+    static final String FUNCTION_INIT_SIGNATURE
+        = "(Ldev/latvian/mods/rhino/Context;"
+        + "Ldev/latvian/mods/rhino/Scriptable;"
+        + ")V";
 
-    static final String FUNCTION_CONSTRUCTOR_SIGNATURE =
-            "(Lorg/mozilla/javascript/Scriptable;" + "Lorg/mozilla/javascript/Context;I)V";
+    static final String FUNCTION_CONSTRUCTOR_SIGNATURE
+        = "(Ldev/latvian/mods/rhino/Scriptable;"
+        + "Ldev/latvian/mods/rhino/Context;I)V";
 
     private static final Object globalLock = new Object();
     private static int globalSerialClassCounter;
