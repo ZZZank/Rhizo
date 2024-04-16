@@ -38,6 +38,19 @@ public class CompilerEnvirons {
 //		generateObserverCount = cx.generateObserverCount;
 	}
 
+	/**
+	 * @deprecated
+	 * Get the current language version.
+	 * <p>
+	 * The language version number affects JavaScript semantics as detailed
+	 * in the overview documentation.
+	 *
+	 * @return an integer that is one of VERSION_1_0, VERSION_1_1, etc.
+	 */
+	public final int getLanguageVersion() {
+		return Context.VERSION_ES6;
+	}
+
 	public final int getOptimizationLevel() {
 		return optimizationLevel;
 	}

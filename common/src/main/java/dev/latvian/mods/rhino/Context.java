@@ -52,6 +52,8 @@ import java.util.Set;
 
 @SuppressWarnings("ThrowableNotThrown")
 public class Context {
+
+    public static final int VERSION_ES6 = 200;
     /**
      * Control if member expression as function name extension is available.
      * If <code>hasFeature(FEATURE_MEMBER_EXPR_AS_FUNCTION_NAME)</code> returns
@@ -768,6 +770,18 @@ public class Context {
         }
 
         return null;
+    }
+
+    /**
+     * Get the current language version.
+     * <p>
+     * The language version number affects JavaScript semantics as detailed
+     * in the overview documentation.
+     *
+     * @return an integer that is one of VERSION_1_0, VERSION_1_1, etc.
+     */
+    public final int getLanguageVersion() {
+        return Context.VERSION_ES6;
     }
 
     public static Remapper getRemapper() {
