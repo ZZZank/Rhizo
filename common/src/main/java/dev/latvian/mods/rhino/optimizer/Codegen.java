@@ -730,6 +730,225 @@ public class Codegen implements Evaluator {
 
         // 1: this and no argument or locals
         cfw.stopMethod((short) 1);
+
+        // The rest of NativeFunction overrides require specific code for each
+        // script/function id
+
+        final int Do_getFunctionName = 0;
+        final int Do_getParamCount = 1;
+        final int Do_getParamAndVarCount = 2;
+        final int Do_getParamOrVarName = 3;
+        final int Do_getEncodedSource = 4;
+        final int Do_getParamOrVarConst = 5;
+        final int Do_isGeneratorFunction = 6;
+        final int SWITCH_COUNT = 7;
+
+        for (int methodIndex = 0; methodIndex != SWITCH_COUNT; ++methodIndex) {
+            if (methodIndex == Do_getEncodedSource) {
+                continue;
+            }
+
+            // Generate:
+            //   prologue;
+            //   switch over function id to implement function-specific action
+            //   epilogue
+
+            short methodLocals;
+            switch (methodIndex) {
+                case Do_getFunctionName:
+                    methodLocals = 1; // Only this
+                    cfw.startMethod("getFunctionName", "()Ljava/lang/String;",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
+                    break;
+                case Do_getParamCount:
+                    methodLocals = 1; // Only this
+                    cfw.startMethod("getParamCount", "()I",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
+                    break;
+                case Do_getParamAndVarCount:
+                    methodLocals = 1; // Only this
+                    cfw.startMethod("getParamAndVarCount", "()I",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
+                    break;
+                case Do_getParamOrVarName:
+                    methodLocals = 1 + 1; // this + paramOrVarIndex
+                    cfw.startMethod("getParamOrVarName", "(I)Ljava/lang/String;",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
+                    break;
+                case Do_getParamOrVarConst:
+                    methodLocals = 1 + 1 + 1; // this + paramOrVarName
+                    cfw.startMethod("getParamOrVarConst", "(I)Z",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
+                    break;
+                case Do_isGeneratorFunction:
+                    methodLocals = 1; // Only this
+                    cfw.startMethod("isGeneratorFunction", "()Z",
+                        ClassFileWriter.ACC_PROTECTED
+                    );
+                    break;
+                default:
+                    throw Kit.codeBug();
+            }
+
+            int count = scriptOrFnNodes.length;
+
+            int switchStart = 0;
+            int switchStackTop = 0;
+            if (count > 1) {
+                // Generate switch but only if there is more then one
+                // script/function
+                cfw.addLoadThis();
+                cfw.add(ByteCode.GETFIELD, cfw.getClassName(),
+                    ID_FIELD_NAME, "I"
+                );
+
+                // do switch from 1 .. count - 1 mapping 0 to the default case
+                switchStart = cfw.addTableSwitch(1, count - 1);
+            }
+
+            for (int i = 0; i != count; ++i) {
+                ScriptNode n = scriptOrFnNodes[i];
+                if (i == 0) {
+                    if (count > 1) {
+                        cfw.markTableSwitchDefault(switchStart);
+                        switchStackTop = cfw.getStackTop();
+                    }
+                } else {
+                    cfw.markTableSwitchCase(switchStart, i - 1,
+                        switchStackTop
+                    );
+                }
+
+                // Impelemnet method-specific switch code
+                switch (methodIndex) {
+                    case Do_getFunctionName:
+                        // Push function name
+                        if (n.getType() == Token.SCRIPT) {
+                            cfw.addPush("");
+                        } else {
+                            String name = ((FunctionNode) n).getName();
+                            cfw.addPush(name);
+                        }
+                        cfw.add(ByteCode.ARETURN);
+                        break;
+
+                    case Do_getParamCount:
+                        // Push number of defined parameters
+                        cfw.addPush(n.getParamCount());
+                        cfw.add(ByteCode.IRETURN);
+                        break;
+
+                    case Do_getParamAndVarCount:
+                        // Push number of defined parameters and declared variables
+                        cfw.addPush(n.getParamAndVarCount());
+                        cfw.add(ByteCode.IRETURN);
+                        break;
+
+                    case Do_getParamOrVarName:
+                        // Push name of parameter using another switch
+                        // over paramAndVarCount
+                        int paramAndVarCount = n.getParamAndVarCount();
+                        if (paramAndVarCount == 0) {
+                            // The runtime should never call the method in this
+                            // case but to make bytecode verifier happy return null
+                            // as throwing execption takes more code
+                            cfw.add(ByteCode.ACONST_NULL);
+                            cfw.add(ByteCode.ARETURN);
+                        } else if (paramAndVarCount == 1) {
+                            // As above do not check for valid index but always
+                            // return the name of the first param
+                            cfw.addPush(n.getParamOrVarName(0));
+                            cfw.add(ByteCode.ARETURN);
+                        } else {
+                            // Do switch over getParamOrVarName
+                            cfw.addILoad(1); // param or var index
+                            // do switch from 1 .. paramAndVarCount - 1 mapping 0
+                            // to the default case
+                            int paramSwitchStart = cfw.addTableSwitch(
+                                1, paramAndVarCount - 1);
+                            for (int j = 0; j != paramAndVarCount; ++j) {
+                                if (cfw.getStackTop() != 0) {
+                                    Kit.codeBug();
+                                }
+                                String s = n.getParamOrVarName(j);
+                                if (j == 0) {
+                                    cfw.markTableSwitchDefault(paramSwitchStart);
+                                } else {
+                                    cfw.markTableSwitchCase(paramSwitchStart, j - 1,
+                                        0
+                                    );
+                                }
+                                cfw.addPush(s);
+                                cfw.add(ByteCode.ARETURN);
+                            }
+                        }
+                        break;
+
+                    case Do_getParamOrVarConst:
+                        // Push name of parameter using another switch
+                        // over paramAndVarCount
+                        paramAndVarCount = n.getParamAndVarCount();
+                        boolean[] constness = n.getParamAndVarConst();
+                        if (paramAndVarCount == 0) {
+                            // The runtime should never call the method in this
+                            // case but to make bytecode verifier happy return null
+                            // as throwing execption takes more code
+                            cfw.add(ByteCode.ICONST_0);
+                            cfw.add(ByteCode.IRETURN);
+                        } else if (paramAndVarCount == 1) {
+                            // As above do not check for valid index but always
+                            // return the name of the first param
+                            cfw.addPush(constness[0]);
+                            cfw.add(ByteCode.IRETURN);
+                        } else {
+                            // Do switch over getParamOrVarName
+                            cfw.addILoad(1); // param or var index
+                            // do switch from 1 .. paramAndVarCount - 1 mapping 0
+                            // to the default case
+                            int paramSwitchStart = cfw.addTableSwitch(
+                                1, paramAndVarCount - 1);
+                            for (int j = 0; j != paramAndVarCount; ++j) {
+                                if (cfw.getStackTop() != 0) {
+                                    Kit.codeBug();
+                                }
+                                if (j == 0) {
+                                    cfw.markTableSwitchDefault(paramSwitchStart);
+                                } else {
+                                    cfw.markTableSwitchCase(paramSwitchStart, j - 1,
+                                        0
+                                    );
+                                }
+                                cfw.addPush(constness[j]);
+                                cfw.add(ByteCode.IRETURN);
+                            }
+                        }
+                        break;
+
+                    case Do_isGeneratorFunction:
+                        // Push a boolean if it's a generator
+                        if (n instanceof FunctionNode) {
+                            cfw.addPush(((FunctionNode) n).isES6Generator());
+                        } else {
+                            cfw.addPush(false);
+                        }
+                        cfw.add(ByteCode.IRETURN);
+                        break;
+
+                    // Push number encoded source start and end
+                    // to prepare for encodedSource.substring(start, end)
+
+                    default:
+                        throw Kit.codeBug();
+                }
+            }
+
+            cfw.stopMethod(methodLocals);
+        }
     }
 
     private void emitRegExpInit(ClassFileWriter cfw) {
