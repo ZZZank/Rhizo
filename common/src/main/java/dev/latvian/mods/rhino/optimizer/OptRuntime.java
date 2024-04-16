@@ -9,17 +9,13 @@ import dev.latvian.mods.rhino.ArrowFunction;
 import dev.latvian.mods.rhino.Callable;
 import dev.latvian.mods.rhino.ConsString;
 import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.ContextFactory;
 import dev.latvian.mods.rhino.ES6Generator;
 import dev.latvian.mods.rhino.Function;
 import dev.latvian.mods.rhino.JavaScriptException;
 import dev.latvian.mods.rhino.NativeFunction;
-import dev.latvian.mods.rhino.NativeGenerator;
 import dev.latvian.mods.rhino.NativeIterator;
-import dev.latvian.mods.rhino.Script;
 import dev.latvian.mods.rhino.ScriptRuntime;
 import dev.latvian.mods.rhino.Scriptable;
-import dev.latvian.mods.rhino.ScriptableObject;
 import dev.latvian.mods.rhino.Undefined;
 
 public final class OptRuntime extends ScriptRuntime {
@@ -203,6 +199,7 @@ public final class OptRuntime extends ScriptRuntime {
         return newArrayLiteral(objects, skipIndexces, cx, scope);
     }
 
+	/*
     public static void main(final Script script, final String[] args) {
         ContextFactory.getGlobal().call(cx -> {
             ScriptableObject global = getGlobal(cx);
@@ -219,6 +216,7 @@ public final class OptRuntime extends ScriptRuntime {
             return null;
         });
     }
+	 */
 
     public static void throwStopIteration(Object scope, Object genState) {
         Object value = getGeneratorReturnValue(genState);
@@ -235,11 +233,7 @@ public final class OptRuntime extends ScriptRuntime {
         int maxLocals,
         int maxStack) {
         GeneratorState gs = new GeneratorState(thisObj, maxLocals, maxStack);
-        if (Context.getCurrentContext().getLanguageVersion() >= Context.VERSION_ES6) {
-            return new ES6Generator(scope, funObj, gs);
-        } else {
-            return new NativeGenerator(scope, funObj, gs);
-        }
+		return new ES6Generator(scope, funObj, gs);
     }
 
     public static Object[] getGeneratorStackState(Object obj) {

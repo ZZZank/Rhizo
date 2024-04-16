@@ -6,26 +6,14 @@
 
 package dev.latvian.mods.rhino.optimizer;
 
-import dev.latvian.mods.rhino.CompilerEnvirons;
-import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.Evaluator;
-import dev.latvian.mods.rhino.Function;
-import dev.latvian.mods.rhino.GeneratedClassLoader;
-import dev.latvian.mods.rhino.Kit;
-import dev.latvian.mods.rhino.NativeFunction;
-import dev.latvian.mods.rhino.ObjArray;
-import dev.latvian.mods.rhino.ObjToIntMap;
-import dev.latvian.mods.rhino.RhinoException;
-import dev.latvian.mods.rhino.Script;
-import dev.latvian.mods.rhino.Scriptable;
-import dev.latvian.mods.rhino.SecurityController;
-import dev.latvian.mods.rhino.Token;
+import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.ast.FunctionNode;
 import dev.latvian.mods.rhino.ast.Name;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.ast.TemplateCharacters;
 import dev.latvian.mods.rhino.classfile.ByteCode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter;
+import dev.latvian.mods.rhino.util.JavaPortingHelper;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -76,7 +64,7 @@ public class Codegen implements Evaluator {
         }
 
         String baseName = "c";
-        if (tree.getSourceName().length() > 0) {
+        if (!tree.getSourceName().isEmpty()) {
             baseName = tree.getSourceName().replaceAll("\\W", "_");
             if (!Character.isJavaIdentifierStart(baseName.charAt(0))) {
                 baseName = "_" + baseName;
@@ -100,10 +88,9 @@ public class Codegen implements Evaluator {
 
         Script script;
         try {
-            script = (Script) cl.newInstance();
+            script = (Script) cl.getDeclaredConstructor().newInstance();
         } catch (Exception ex) {
-            throw new RuntimeException
-                ("Unable to instantiate compiled class:" + ex.toString());
+            throw new RuntimeException("Unable to instantiate compiled class:" + ex);
         }
         return script;
     }
@@ -120,8 +107,7 @@ public class Codegen implements Evaluator {
             Object[] initArgs = {scope, cx, 0};
             f = (NativeFunction) ctor.newInstance(initArgs);
         } catch (Exception ex) {
-            throw new RuntimeException
-                ("Unable to instantiate compiled class:" + ex.toString());
+            throw new RuntimeException("Unable to instantiate compiled class:" + ex);
         }
         return f;
     }
@@ -135,18 +121,13 @@ public class Codegen implements Evaluator {
         // The generated classes in this case refer only to Rhino classes
         // which must be accessible through this class loader
         ClassLoader rhinoLoader = getClass().getClassLoader();
-        GeneratedClassLoader loader;
-        loader = SecurityController.createLoader(rhinoLoader,
-            staticSecurityDomain
-        );
+        GeneratedClassLoader loader = new DefiningClassLoader();
         Exception e;
         try {
             Class<?> cl = loader.defineClass(className, classBytes);
             loader.linkClass(cl);
             return cl;
-        } catch (SecurityException x) {
-            e = x;
-        } catch (IllegalArgumentException x) {
+        } catch (SecurityException | IllegalArgumentException x) {
             e = x;
         }
         throw new RuntimeException("Malformed optimizer package " + e);
@@ -174,7 +155,7 @@ public class Codegen implements Evaluator {
         this.mainClassName = mainClassName;
         this.mainClassSignature = ClassFileWriter.classNameToSignature(mainClassName);
 
-        return generateCode(encodedSource);
+        return generateCode();
     }
 
     private void transform(ScriptNode tree) {
@@ -185,7 +166,7 @@ public class Codegen implements Evaluator {
         Map<String, OptFunctionNode> possibleDirectCalls = null;
         if (optLevel > 0) {
             /*
-             * Collect all of the contained functions into a hashtable
+             * Collect all the contained functions into a hashtable
              * so that the call optimizer can access the class name & parameter
              * count for any call it encounters
              */
@@ -193,10 +174,9 @@ public class Codegen implements Evaluator {
                 int functionCount = tree.getFunctionCount();
                 for (int i = 0; i != functionCount; ++i) {
                     OptFunctionNode ofn = OptFunctionNode.get(tree, i);
-                    if (ofn.fnode.getFunctionType()
-                        == FunctionNode.FUNCTION_STATEMENT) {
+                    if (ofn.fnode.getFunctionType() == FunctionNode.FUNCTION_STATEMENT) {
                         String name = ofn.fnode.getName();
-                        if (name.length() != 0) {
+                        if (!name.isEmpty()) {
                             if (possibleDirectCalls == null) {
                                 possibleDirectCalls = new HashMap<>();
                             }
@@ -211,9 +191,7 @@ public class Codegen implements Evaluator {
             directCallTargets = new ObjArray();
         }
 
-        OptTransformer ot = new OptTransformer(possibleDirectCalls,
-            directCallTargets
-        );
+        OptTransformer ot = new OptTransformer(possibleDirectCalls, directCallTargets);
         ot.transform(tree, compilerEnv);
 
         if (optLevel > 0) {
@@ -243,8 +221,7 @@ public class Codegen implements Evaluator {
         }
     }
 
-    private static void collectScriptNodes_r(ScriptNode n,
-        ObjArray x) {
+    private static void collectScriptNodes_r(ScriptNode n, ObjArray x) {
         x.add(n);
         int nestedCount = n.getFunctionCount();
         for (int i = 0; i != nestedCount; ++i) {
@@ -252,19 +229,14 @@ public class Codegen implements Evaluator {
         }
     }
 
-    private byte[] generateCode(String encodedSource) {
+    private byte[] generateCode() {
         boolean hasScript = (scriptOrFnNodes[0].getType() == Token.SCRIPT);
         boolean hasFunctions = (scriptOrFnNodes.length > 1 || !hasScript);
         boolean isStrictMode = scriptOrFnNodes[0].isInStrictMode();
 
-        String sourceFile = null;
-        if (compilerEnv.isGenerateDebugInfo()) {
-            sourceFile = scriptOrFnNodes[0].getSourceName();
-        }
-
         ClassFileWriter cfw = new ClassFileWriter(mainClassName,
             SUPER_CLASS_NAME,
-            sourceFile
+            null
         );
         cfw.addField(ID_FIELD_NAME, "I", ClassFileWriter.ACC_PRIVATE);
 
@@ -282,7 +254,7 @@ public class Codegen implements Evaluator {
         generateCallMethod(cfw, isStrictMode);
         generateResumeGenerator(cfw);
 
-        generateNativeFunctionOverrides(cfw, encodedSource);
+        generateNativeFunctionOverrides(cfw);
 
         int count = scriptOrFnNodes.length;
         for (int i = 0; i != count; ++i) {
@@ -394,8 +366,8 @@ public class Codegen implements Evaluator {
     // appended by "_gen".
     private void generateResumeGenerator(ClassFileWriter cfw) {
         boolean hasGenerators = false;
-        for (int i = 0; i < scriptOrFnNodes.length; i++) {
-            if (isGenerator(scriptOrFnNodes[i])) {
+        for (ScriptNode scriptOrFnNode : scriptOrFnNodes) {
+            if (isGenerator(scriptOrFnNode)) {
                 hasGenerators = true;
             }
         }
@@ -747,8 +719,7 @@ public class Codegen implements Evaluator {
         cfw.stopMethod((short) 3);
     }
 
-    private void generateNativeFunctionOverrides(ClassFileWriter cfw,
-        String encodedSource) {
+    private void generateNativeFunctionOverrides(ClassFileWriter cfw) {
         // Override NativeFunction.getLanguageVersion() with
         // public int getLanguageVersion() { return <version-constant>; }
 
@@ -970,7 +941,6 @@ public class Codegen implements Evaluator {
                 "dev/latvian/mods/rhino/optimizer/OptRuntime",
                 "oneObj", "Ljava/lang/Double;"
             );
-            return;
 
         } else if (num == -1.0) {
             cfw.add(ByteCode.GETSTATIC,
@@ -1082,9 +1052,7 @@ public class Codegen implements Evaluator {
             OptFunctionNode ofn = OptFunctionNode.get(n);
             if (ofn.isTargetOfDirectCall()) {
                 int pCount = ofn.fnode.getParamCount();
-                for (int i = 0; i != pCount; i++) {
-                    sb.append("Ljava/lang/Object;D");
-                }
+                sb.append(JavaPortingHelper.repeat("Ljava/lang/Object;D", pCount));
             }
         }
         sb.append("[Ljava/lang/Object;)Ljava/lang/Object;");

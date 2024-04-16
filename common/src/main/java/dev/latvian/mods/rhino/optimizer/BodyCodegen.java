@@ -3,7 +3,6 @@ package dev.latvian.mods.rhino.optimizer;
 import dev.latvian.mods.rhino.CompilerEnvirons;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.Kit;
-import dev.latvian.mods.rhino.NativeGenerator;
 import dev.latvian.mods.rhino.Node;
 import dev.latvian.mods.rhino.ScriptRuntime;
 import dev.latvian.mods.rhino.Token;
@@ -387,31 +386,17 @@ class BodyCodegen {
                     }
                     varRegisters[i] = reg;
                 }
-
-                // Add debug table entry if we're generating debug info
-                if (compilerEnv.isGenerateDebugInfo()) {
-                    String name = fnCurrent.fnode.getParamOrVarName(i);
-                    String type = fnCurrent.isNumberVar(i)
-                        ? "D" : "Ljava/lang/Object;";
-                    int startPC = cfw.getCurrentCodeOffset();
-                    if (reg < 0) {
-                        reg = varRegisters[i];
-                    }
-                    cfw.addVariableDescriptor(name, type, startPC, reg);
-                }
             }
 
             // Skip creating activation object.
             return;
         }
 
-        String debugVariableName;
         boolean isArrow = false;
         if (scriptOrFn instanceof FunctionNode) {
             isArrow = ((FunctionNode) scriptOrFn).getFunctionType() == FunctionNode.ARROW_FUNCTION;
         }
         if (fnCurrent != null) {
-            debugVariableName = "activation";
             cfw.addALoad(funObjLocal);
             cfw.addALoad(variableObjectLocal);
             cfw.addALoad(argsLocal);
@@ -433,7 +418,6 @@ class BodyCodegen {
                     + ")V"
             );
         } else {
-            debugVariableName = "global";
             cfw.addALoad(funObjLocal);
             cfw.addALoad(thisObjLocal);
             cfw.addALoad(contextLocal);
@@ -454,14 +438,6 @@ class BodyCodegen {
         cfw.markLabel(enterAreaStartLabel);
 
         generateNestedFunctionInits();
-
-        // default is to generate debug info
-        if (compilerEnv.isGenerateDebugInfo()) {
-            cfw.addVariableDescriptor(debugVariableName,
-                "Ldev/latvian/mods/rhino/Scriptable;",
-                cfw.getCurrentCodeOffset(), variableObjectLocal
-            );
-        }
 
         if (fnCurrent == null) {
             // OPT: use dataflow to prove that this assignment is dead
@@ -527,8 +503,7 @@ class BodyCodegen {
             Map<Node, int[]> liveLocals = ((FunctionNode) scriptOrFn).getLiveLocals();
             if (liveLocals != null) {
                 List<Node> nodes = ((FunctionNode) scriptOrFn).getResumptionPoints();
-                for (int i = 0; i < nodes.size(); i++) {
-                    Node node = nodes.get(i);
+                for (Node node : nodes) {
                     int[] live = liveLocals.get(node);
                     if (live != null) {
                         cfw.markTableSwitchCase(generatorSwitch,
@@ -950,9 +925,6 @@ class BodyCodegen {
                 cfw.markLabel(finallyEnd);
             }
             break;
-
-            case Token.DEBUGGER:
-                break;
 
             default:
                 throw Codegen.badTree();
@@ -1651,7 +1623,7 @@ class BodyCodegen {
 
         // save stack state from the top to the bottom
         final int top = cfw.getStackTop();
-        maxStack = maxStack > top ? maxStack : top;
+        maxStack = Math.max(maxStack, top);
         if (top != 0) {
             generateGetGeneratorStackState();
             for (int i = 0; i < top; i++) {
@@ -1744,10 +1716,10 @@ class BodyCodegen {
 
         // see if we need to dispatch for .close() or .throw()
         cfw.addILoad(operationLocal);
-        cfw.addLoadConstant(NativeGenerator.GENERATOR_CLOSE);
+        cfw.addLoadConstant(GENERATOR_CLOSE);
         cfw.add(ByteCode.IF_ICMPEQ, closeLabel);
         cfw.addILoad(operationLocal);
-        cfw.addLoadConstant(NativeGenerator.GENERATOR_THROW);
+        cfw.addLoadConstant(GENERATOR_THROW);
         cfw.add(ByteCode.IF_ICMPEQ, throwLabel);
     }
 
@@ -2911,7 +2883,7 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
          *                      exception type
          * @param endLabel      a label representing the end of the last bytecode
          *                      that should be handled by the exception
-         * @returns the label of the exception handler associated with the
+         * @return the label of the exception handler associated with the
          * exception type
          */
         int removeHandler(int exceptionType, int endLabel) {
@@ -3131,7 +3103,7 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
         }
 
         // calculate the max locals
-        maxLocals = maxLocals > count ? maxLocals : count;
+        maxLocals = Math.max(maxLocals, count);
 
         // create a locals list
         int[] ls = new int[count];
@@ -3758,27 +3730,25 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
             generateExpression(rChild, node);
 
             String name;
-            int testCode;
-            switch (type) {
-                case Token.EQ:
+            int testCode = switch (type) {
+                case Token.EQ -> {
                     name = "eq";
-                    testCode = ByteCode.IFNE;
-                    break;
-                case Token.NE:
+                    yield ByteCode.IFNE;
+                }
+                case Token.NE -> {
                     name = "eq";
-                    testCode = ByteCode.IFEQ;
-                    break;
-                case Token.SHEQ:
+                    yield ByteCode.IFEQ;
+                }
+                case Token.SHEQ -> {
                     name = "shallowEq";
-                    testCode = ByteCode.IFNE;
-                    break;
-                case Token.SHNE:
+                    yield ByteCode.IFNE;
+                }
+                case Token.SHNE -> {
                     name = "shallowEq";
-                    testCode = ByteCode.IFEQ;
-                    break;
-                default:
-                    throw Codegen.badTree();
-            }
+                    yield ByteCode.IFEQ;
+                }
+                default -> throw Codegen.badTree();
+            };
             addScriptRuntimeInvoke(name,
                 "(Ljava/lang/Object;"
                     + "Ljava/lang/Object;"
@@ -4381,6 +4351,8 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
         locals[local] = 0;
     }
 
+    static final int GENERATOR_CLOSE = 2;
+    static final int GENERATOR_THROW = 1;
 
     static final int GENERATOR_TERMINATE = -1;
     static final int GENERATOR_START = 0;

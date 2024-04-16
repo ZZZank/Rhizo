@@ -855,11 +855,6 @@ public class Context {
 
     @Deprecated
     public void setLanguageVersion(int version) {
-        if (sealed) {
-            onSealedMutation();
-        }
-
-        System.out.println("Context#setLanguageVersion(v) is deprecated!");
     }
 
     /**
@@ -1001,8 +996,7 @@ public class Context {
             if (l == null) {
                 break;
             }
-            if (l instanceof PropertyChangeListener) {
-                PropertyChangeListener pcl = (PropertyChangeListener) l;
+            if (l instanceof PropertyChangeListener pcl) {
                 pcl.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
             }
         }
@@ -2101,8 +2095,7 @@ public class Context {
         }
 
         IRFactory irf = new IRFactory(compilerEnv, compilationErrorReporter);
-        ScriptNode tree = irf.transformTree(ast);
-        return tree;
+        return irf.transformTree(ast);
     }
 
     private Evaluator createCompiler() {

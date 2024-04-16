@@ -150,8 +150,7 @@ public class ClassCompiler {
 
         Codegen codegen = new Codegen();
         codegen.setMainMethodClass(mainMethodClassName);
-        byte[] scriptClassBytes
-            = codegen.compileToClassFile(compilerEnv, scriptClassName,
+        byte[] scriptClassBytes = codegen.compileToClassFile(compilerEnv, scriptClassName,
             tree, tree.getEncodedSource(),
             false
         );
