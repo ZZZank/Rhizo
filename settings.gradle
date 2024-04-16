@@ -9,4 +9,4 @@ pluginManagement {
 
 include "common", "fabric", "forge"
 
-rootProject.name = 'Rhino'
+rootProject.name = 'Rhizo'
