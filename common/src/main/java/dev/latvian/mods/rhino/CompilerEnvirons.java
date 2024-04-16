@@ -11,14 +11,16 @@ import dev.latvian.mods.rhino.ast.ErrorCollector;
 import java.util.Set;
 
 public class CompilerEnvirons {
+
 	public CompilerEnvirons() {
-		errorReporter = DefaultErrorReporter.instance;
-		reservedKeywordAsIdentifier = true;
-		allowMemberExprAsFunctionName = false;
-		generatingSource = true;
-		strictMode = false;
-		warningAsError = false;
-		allowSharpComments = false;
+		this.errorReporter = DefaultErrorReporter.instance;
+		this.reservedKeywordAsIdentifier = true;
+		this.allowMemberExprAsFunctionName = false;
+		this.generatingSource = true;
+		this.strictMode = false;
+		this.warningAsError = false;
+		this.allowSharpComments = false;
+		this.optimizationLevel = 0;
 	}
 
 	public void initFromContext(Context cx) {
@@ -30,8 +32,19 @@ public class CompilerEnvirons {
 
 		activationNames = cx.activationNames;
 
+		optimizationLevel = cx.getOptimizationLevel();
+
 		// Observer code generation in compiled code :
 //		generateObserverCount = cx.generateObserverCount;
+	}
+
+	public final int getOptimizationLevel() {
+		return optimizationLevel;
+	}
+
+	public void setOptimizationLevel(int level) {
+		Context.checkOptimizationLevel(level);
+		this.optimizationLevel = level;
 	}
 
 	public final ErrorReporter getErrorReporter() {
@@ -220,7 +233,7 @@ public class CompilerEnvirons {
 
 	private ErrorReporter errorReporter;
 
-	private int languageVersion;
+	private int optimizationLevel;
 	private boolean reservedKeywordAsIdentifier;
 	private boolean allowMemberExprAsFunctionName;
 	private boolean generatingSource;
