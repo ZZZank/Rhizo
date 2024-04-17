@@ -15,6 +15,10 @@ public enum RhinoProperties {
 
 	INSTANCE;
 
+	public boolean generateMapping;
+	public boolean enableCompiler;
+	public int optimizationLevel;
+
 	@ExpectPlatform
 	@Contract(value = " -> _", pure = true)
 	public static Path getGameDir() {
@@ -53,6 +57,9 @@ public enum RhinoProperties {
 			}
 
 			// forceLocalMappings = get("forceLocalMappings", false);
+			this.generateMapping = get("generateMapping", false);
+			this.enableCompiler = get("enableCompiler", false);
+			this.optimizationLevel = Integer.parseInt(get("optimizationLevel", "1"));
 
 			if (writeProperties) {
 				try (Writer writer = Files.newBufferedWriter(propertiesFile)) {
@@ -60,6 +67,7 @@ public enum RhinoProperties {
 				}
 			}
 		} catch (Exception ex) {
+			RemappingHelper.LOGGER.info("Error happened during Rhino properties loading.");
 			ex.printStackTrace();
 		}
 

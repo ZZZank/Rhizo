@@ -11,6 +11,7 @@ package dev.latvian.mods.rhino;
 import dev.latvian.mods.rhino.ast.AstRoot;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter.ClassFileFormatException;
+import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.optimizer.Codegen;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
@@ -292,7 +293,7 @@ public class Context {
         }
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
-        optimizationLevel = 1;
+        optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
     }
 
     /**
@@ -2100,12 +2101,15 @@ public class Context {
     }
 
     private Evaluator createCompiler() {
+        if(!RhinoProperties.INSTANCE.enableCompiler) {
+            return createInterpreter();
+        }
         Evaluator result = null;
         if (optimizationLevel >= 0) {
             result = new Codegen();;
         }
         if (result == null) {
-            result = new Interpreter();
+            result = createInterpreter();
         }
         return result;
     }
