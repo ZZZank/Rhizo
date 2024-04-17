@@ -472,9 +472,8 @@ public class NativeGlobal implements Serializable, IdFunctionCall {
 	}
 
 	static boolean isEvalFunction(Object functionObj) {
-		if (functionObj instanceof IdFunctionObject) {
-			IdFunctionObject function = (IdFunctionObject) functionObj;
-			return function.hasTag(FTAG) && function.methodId() == Id_eval;
+		if (functionObj instanceof IdFunctionObject function) {
+            return function.hasTag(FTAG) && function.methodId() == Id_eval;
 		}
 		return false;
 	}

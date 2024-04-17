@@ -1024,11 +1024,9 @@ public class Node implements Iterable<Node> {
 					sb.append("]");
 				}
 			} else if (this instanceof Scope) {
-				if (this instanceof ScriptNode) {
-					ScriptNode sof = (ScriptNode) this;
-					if (this instanceof FunctionNode) {
-						FunctionNode fn = (FunctionNode) this;
-						sb.append(' ');
+				if (this instanceof ScriptNode sof) {
+                    if (this instanceof FunctionNode fn) {
+                        sb.append(' ');
 						sb.append(fn.getName());
 					}
 					sb.append(" [source name: ");
@@ -1052,9 +1050,8 @@ public class Node implements Iterable<Node> {
 					}
 					sb.append("]");
 				}
-			} else if (this instanceof Jump) {
-				Jump jump = (Jump) this;
-				if (type == Token.BREAK || type == Token.CONTINUE) {
+			} else if (this instanceof Jump jump) {
+                if (type == Token.BREAK || type == Token.CONTINUE) {
 					sb.append(" [label: ");
 					appendPrintId(jump.getJumpStatement(), printIds, sb);
 					sb.append(']');

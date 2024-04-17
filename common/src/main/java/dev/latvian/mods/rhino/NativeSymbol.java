@@ -251,12 +251,11 @@ public class NativeSymbol extends IdScriptableObject implements Symbol {
 
 	private Object js_keyFor(Context cx, Scriptable scope, Object[] args) {
 		Object s = (args.length > 0 ? args[0] : Undefined.instance);
-		if (!(s instanceof NativeSymbol)) {
+		if (!(s instanceof NativeSymbol sym)) {
 			throw ScriptRuntime.throwCustomError(cx, scope, "TypeError", "Not a Symbol");
 		}
-		NativeSymbol sym = (NativeSymbol) s;
 
-		Map<String, NativeSymbol> table = getGlobalMap();
+        Map<String, NativeSymbol> table = getGlobalMap();
 		for (Map.Entry<String, NativeSymbol> e : table.entrySet()) {
 			if (e.getValue().key == sym.key) {
 				return e.getKey();

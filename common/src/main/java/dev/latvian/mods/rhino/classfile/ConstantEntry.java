@@ -29,11 +29,10 @@ final class ConstantEntry {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof ConstantEntry)) {
+		if (!(obj instanceof ConstantEntry entry)) {
 			return false;
 		}
-		ConstantEntry entry = (ConstantEntry) obj;
-		if (type != entry.type) {
+        if (type != entry.type) {
 			return false;
 		}
         return switch (type) {

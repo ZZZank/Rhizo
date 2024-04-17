@@ -91,12 +91,11 @@ public final class ES6Generator extends IdScriptableObject {
 		}
 		int id = f.methodId();
 
-		if (!(thisObj instanceof ES6Generator)) {
+		if (!(thisObj instanceof ES6Generator generator)) {
 			throw incompatibleCallError(f);
 		}
 
-		ES6Generator generator = (ES6Generator) thisObj;
-		Object value = args.length >= 1 ? args[0] : Undefined.instance;
+        Object value = args.length >= 1 ? args[0] : Undefined.instance;
 
         return switch (id) {
             case Id_return -> {
@@ -230,11 +229,10 @@ public final class ES6Generator extends IdScriptableObject {
 		try {
 			Object r = function.resumeGenerator(cx, scope, GeneratorState.GENERATOR_SEND, savedState, value);
 
-			if (r instanceof YieldStarResult) {
+			if (r instanceof YieldStarResult ysResult) {
 				// This special result tells us that we are executing a "yield *"
 				state = State.SUSPENDED_YIELD;
-				YieldStarResult ysResult = (YieldStarResult) r;
-				try {
+                try {
 					delegee = ScriptRuntime.callIterator(ysResult.getResult(), cx, scope);
 				} catch (RhinoException re) {
 					// Need to handle exceptions if the iterator cannot be called.

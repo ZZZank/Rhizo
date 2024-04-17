@@ -66,13 +66,11 @@ public class NativeDataView extends NativeArrayBufferView {
 	}
 
 	private static NativeDataView js_constructor(Object[] args) {
-		if (!isArg(args, 0) || !(args[0] instanceof NativeArrayBuffer)) {
+		if (!isArg(args, 0) || !(args[0] instanceof NativeArrayBuffer ab)) {
 			throw ScriptRuntime.constructError("TypeError", "Missing parameters");
 		}
 
-		NativeArrayBuffer ab = (NativeArrayBuffer) args[0];
-
-		int pos;
+        int pos;
 		if (isArg(args, 1)) {
 			double doublePos = ScriptRuntime.toNumber(args[1]);
 			if (Double.isInfinite(doublePos)) {

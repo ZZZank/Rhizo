@@ -316,11 +316,10 @@ final class NativeDate extends IdScriptableObject {
 
 		// The rest of Date.prototype methods require thisObj to be Date
 
-		if (!(thisObj instanceof NativeDate)) {
+		if (!(thisObj instanceof NativeDate realThis)) {
 			throw incompatibleCallError(f);
 		}
-		NativeDate realThis = (NativeDate) thisObj;
-		double t = realThis.date;
+        double t = realThis.date;
 
 		switch (id) {
 

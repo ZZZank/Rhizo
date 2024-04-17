@@ -818,8 +818,7 @@ public class JavaMembers {
 
         @Override
         public boolean equals(Object o) {
-            if (o instanceof MethodSignature) {
-                MethodSignature ms = (MethodSignature) o;
+            if (o instanceof MethodSignature ms) {
                 return ms.name.equals(name) && Arrays.equals(args, ms.args);
             }
             return false;

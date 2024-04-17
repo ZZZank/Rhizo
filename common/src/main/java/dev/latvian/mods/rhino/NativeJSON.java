@@ -168,9 +168,8 @@ public final class NativeJSON extends IdScriptableObject {
 			property = holder.get(((String) name), holder);
 		}
 
-		if (property instanceof Scriptable) {
-			Scriptable val = ((Scriptable) property);
-			if (val instanceof NativeArray) {
+		if (property instanceof Scriptable val) {
+            if (val instanceof NativeArray) {
 				long len = ((NativeArray) val).getLength();
 				for (long i = 0; i < len; i++) {
 					// indices greater than MAX_INT are represented as strings

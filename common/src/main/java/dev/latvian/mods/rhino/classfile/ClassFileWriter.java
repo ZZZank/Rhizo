@@ -3830,11 +3830,10 @@ public class ClassFileWriter {
 			if (obj == this) {
 				return true;
 			}
-			if (!(obj instanceof MHandle)) {
+			if (!(obj instanceof MHandle mh)) {
 				return false;
 			}
-			MHandle mh = (MHandle) obj;
-			return tag == mh.tag && owner.equals(mh.owner) && name.equals(mh.name) && desc.equals(mh.desc);
+            return tag == mh.tag && owner.equals(mh.owner) && name.equals(mh.name) && desc.equals(mh.desc);
 		}
 
 		@Override

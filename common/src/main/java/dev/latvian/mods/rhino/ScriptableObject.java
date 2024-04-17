@@ -274,9 +274,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 				}
 			} else {
 				Context cx = Context.getContext();
-				if (setter instanceof MemberBox) {
-					MemberBox nativeSetter = (MemberBox) setter;
-					Class<?>[] pTypes = nativeSetter.argTypes;
+				if (setter instanceof MemberBox nativeSetter) {
+                    Class<?>[] pTypes = nativeSetter.argTypes;
 					// XXX: cache tag since it is already calculated in
 					// defineProperty ?
 					Class<?> valueType = pTypes[pTypes.length - 1];
@@ -292,9 +291,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 						args = new Object[]{start, actualArg};
 					}
 					nativeSetter.invoke(setterThis, args);
-				} else if (setter instanceof Function) {
-					Function f = (Function) setter;
-					f.call(cx, f.getParentScope(), start, new Object[]{value});
+				} else if (setter instanceof Function f) {
+                    f.call(cx, f.getParentScope(), start, new Object[]{value});
 				}
 				return true;
 			}
@@ -304,9 +302,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		@Override
 		Object getValue(Scriptable start) {
 			if (getter != null) {
-				if (getter instanceof MemberBox) {
-					MemberBox nativeGetter = (MemberBox) getter;
-					Object getterThis;
+				if (getter instanceof MemberBox nativeGetter) {
+                    Object getterThis;
 					Object[] args;
 					if (nativeGetter.delegateTo == null) {
 						getterThis = start;
@@ -316,16 +313,14 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 						args = new Object[]{start};
 					}
 					return nativeGetter.invoke(getterThis, args);
-				} else if (getter instanceof Function) {
-					Function f = (Function) getter;
-					Context cx = Context.getContext();
+				} else if (getter instanceof Function f) {
+                    Context cx = Context.getContext();
 					return f.call(cx, f.getParentScope(), start, ScriptRuntime.emptyArgs);
 				}
 			}
 			Object val = this.value;
-			if (val instanceof LazilyLoadedCtor) {
-				LazilyLoadedCtor initializer = (LazilyLoadedCtor) val;
-				try {
+			if (val instanceof LazilyLoadedCtor initializer) {
+                try {
 					initializer.init();
 				} finally {
 					this.value = val = initializer.getValue();
@@ -800,9 +795,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		if (slot == null) {
 			return null;
 		}
-		if (slot instanceof GetterSlot) {
-			GetterSlot gslot = (GetterSlot) slot;
-			Object result = isSetter ? gslot.setter : gslot.getter;
+		if (slot instanceof GetterSlot gslot) {
+            Object result = isSetter ? gslot.setter : gslot.getter;
 			return result != null ? result : Undefined.instance;
 		}
 		return Undefined.instance;
@@ -977,11 +971,10 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 				methodName = "valueOf";
 			}
 			Object v = getProperty(object, methodName);
-			if (!(v instanceof Function)) {
+			if (!(v instanceof Function fun)) {
 				continue;
 			}
-			Function fun = (Function) v;
-			if (cx == null) {
+            if (cx == null) {
 				cx = Context.getContext();
 			}
 			v = fun.call(cx, fun.getParentScope(), object, ScriptRuntime.emptyArgs);
@@ -1527,12 +1520,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @param attributes   the attributes of the JavaScript property
 	 */
 	public static void defineProperty(Scriptable destination, String propertyName, Object value, int attributes) {
-		if (!(destination instanceof ScriptableObject)) {
+		if (!(destination instanceof ScriptableObject so)) {
 			destination.put(propertyName, destination, value);
 			return;
 		}
-		ScriptableObject so = (ScriptableObject) destination;
-		so.defineProperty(propertyName, value, attributes);
+        so.defineProperty(propertyName, value, attributes);
 	}
 
 	/**
@@ -1545,9 +1537,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @param propertyName the name of the property to define.
 	 */
 	public static void defineConstProperty(Scriptable destination, String propertyName) {
-		if (destination instanceof ConstProperties) {
-			ConstProperties cp = (ConstProperties) destination;
-			cp.defineConst(propertyName, destination);
+		if (destination instanceof ConstProperties cp) {
+            cp.defineConst(propertyName, destination);
 		} else {
 			defineProperty(destination, propertyName, Undefined.instance, CONST);
 		}
@@ -2058,9 +2049,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		Object proto;
 		if (ctor instanceof BaseFunction) {
 			proto = ((BaseFunction) ctor).getPrototypeProperty();
-		} else if (ctor instanceof Scriptable) {
-			Scriptable ctorObj = (Scriptable) ctor;
-			proto = ctorObj.get("prototype", ctorObj);
+		} else if (ctor instanceof Scriptable ctorObj) {
+            proto = ctorObj.get("prototype", ctorObj);
 		} else {
 			return null;
 		}
@@ -2112,9 +2102,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			try {
 				for (Slot slot : slotMap) {
 					Object value = slot.value;
-					if (value instanceof LazilyLoadedCtor) {
-						LazilyLoadedCtor initializer = (LazilyLoadedCtor) value;
-						try {
+					if (value instanceof LazilyLoadedCtor initializer) {
+                        try {
 							initializer.init();
 						} finally {
 							slot.value = initializer.getValue();
@@ -2302,10 +2291,9 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		if (base == null) {
 			return;
 		}
-		if (base instanceof ConstProperties) {
-			ConstProperties cp = (ConstProperties) base;
+		if (base instanceof ConstProperties cp) {
 
-			if (cp.isConst(name)) {
+            if (cp.isConst(name)) {
 				throw ScriptRuntime.typeError1("msg.const.redecl", name);
 			}
 		}
@@ -2532,11 +2520,10 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 */
 	public static Object callMethod(Context cx, Scriptable obj, String methodName, Object[] args) {
 		Object funObj = getProperty(obj, methodName);
-		if (!(funObj instanceof Function)) {
+		if (!(funObj instanceof Function fun)) {
 			throw ScriptRuntime.notFunctionError(obj, methodName);
 		}
-		Function fun = (Function) funObj;
-		// XXX: What should be the scope when calling funObj?
+        // XXX: What should be the scope when calling funObj?
 		// The following favor scope stored in the object on the assumption
 		// that is more useful especially under dynamic scope setup.
 		// An alternative is to check for dynamic scope flag
@@ -2608,9 +2595,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	public static Object getTopScopeValue(Scriptable scope, Object key) {
 		scope = ScriptableObject.getTopLevelScope(scope);
 		for (; ; ) {
-			if (scope instanceof ScriptableObject) {
-				ScriptableObject so = (ScriptableObject) scope;
-				Object value = so.getAssociatedValue(key);
+			if (scope instanceof ScriptableObject so) {
+                Object value = so.getAssociatedValue(key);
 				if (value != null) {
 					return value;
 				}

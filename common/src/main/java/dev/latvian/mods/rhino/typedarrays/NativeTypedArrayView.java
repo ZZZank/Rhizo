@@ -132,10 +132,9 @@ public abstract class NativeTypedArrayView<T> extends NativeArrayBufferView impl
 			return v;
 		}
 
-		if (arg0 instanceof NativeArrayBuffer) {
+		if (arg0 instanceof NativeArrayBuffer na) {
 			// Make a slice of an existing buffer, with shared storage
-			NativeArrayBuffer na = (NativeArrayBuffer) arg0;
-			int byteOff = isArg(args, 1) ? ScriptRuntime.toInt32(args[1]) : 0;
+            int byteOff = isArg(args, 1) ? ScriptRuntime.toInt32(args[1]) : 0;
 
 			int byteLen;
 			if (isArg(args, 2)) {
@@ -160,11 +159,10 @@ public abstract class NativeTypedArrayView<T> extends NativeArrayBufferView impl
 			return construct(na, byteOff, byteLen / getBytesPerElement());
 		}
 
-		if (arg0 instanceof NativeArray) {
+		if (arg0 instanceof NativeArray array) {
 			// Copy elements of the array and convert them to the correct type
-			NativeArray array = (NativeArray) arg0;
 
-			NativeArrayBuffer na = makeArrayBuffer(cx, scope, array.size());
+            NativeArrayBuffer na = makeArrayBuffer(cx, scope, array.size());
 			NativeTypedArrayView<T> v = construct(na, 0, array.size());
 			for (int i = 0; i < array.size(); i++) {
 				// we have to call this here to get the raw value;

@@ -187,9 +187,8 @@ public class NativeWith implements Scriptable, SymbolScriptable, IdFunctionCall,
 	}
 
 	static boolean isWithFunction(Object functionObj) {
-		if (functionObj instanceof IdFunctionObject) {
-			IdFunctionObject f = (IdFunctionObject) functionObj;
-			return f.hasTag(FTAG) && f.methodId() == Id_constructor;
+		if (functionObj instanceof IdFunctionObject f) {
+            return f.hasTag(FTAG) && f.methodId() == Id_constructor;
 		}
 		return false;
 	}

@@ -168,13 +168,12 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 	}
 
 	Scriptable compile(Context cx, Scriptable scope, Object[] args) {
-		if (args.length > 0 && args[0] instanceof NativeRegExp) {
+		if (args.length > 0 && args[0] instanceof NativeRegExp thatObj) {
 			if (args.length > 1 && args[1] != Undefined.instance) {
 				// report error
 				throw ScriptRuntime.typeError0("msg.bad.regexp.compile");
 			}
-			NativeRegExp thatObj = (NativeRegExp) args[0];
-			this.re = thatObj.re;
+            this.re = thatObj.re;
 			setLastIndex(thatObj.lastIndex);
 			return this;
 		}

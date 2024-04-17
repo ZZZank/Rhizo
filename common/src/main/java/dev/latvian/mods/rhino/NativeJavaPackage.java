@@ -147,9 +147,8 @@ public class NativeJavaPackage extends ScriptableObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof NativeJavaPackage) {
-			NativeJavaPackage njp = (NativeJavaPackage) obj;
-			return packageName.equals(njp.packageName) && classLoader == njp.classLoader;
+		if (obj instanceof NativeJavaPackage njp) {
+            return packageName.equals(njp.packageName) && classLoader == njp.classLoader;
 		}
 		return false;
 	}

@@ -60,9 +60,8 @@ public class ConsString implements CharSequence, Serializable {
 
 			CharSequence next = right;
 			do {
-				if (next instanceof ConsString) {
-					ConsString casted = (ConsString) next;
-					if (casted.isFlat) {
+				if (next instanceof ConsString casted) {
+                    if (casted.isFlat) {
 						next = casted.left;
 					} else {
 						stack.addFirst(casted.left);

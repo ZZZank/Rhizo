@@ -853,10 +853,9 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				Object[] e = getIds(); // will only find in object itself
 				for (int i = 0; i < e.length; i++) {
 					Object id = e[i];
-					if (id instanceof String) {
+					if (id instanceof String strId) {
 						// > MAXINT will appear as string
-						String strId = (String) id;
-						long index = toArrayIndex(strId);
+                        long index = toArrayIndex(strId);
 						if (index >= longVal) {
 							delete(strId);
 						}
@@ -1071,9 +1070,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		}
 		// if no args, use "," as separator
 		String separator = (args.length < 1 || args[0] == Undefined.instance) ? "," : ScriptRuntime.toString(args[0]);
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly) {
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < length; i++) {
 					if (i != 0) {
@@ -1123,9 +1121,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Scriptable js_reverse(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly) {
 				for (int i = 0, j = ((int) na.length) - 1; i < j; i++, j--) {
 					Object temp = na.dense[i];
 					na.dense[i] = na.dense[j];
@@ -1201,9 +1198,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Object js_push(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly && na.ensureCapacity((int) na.length + args.length)) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly && na.ensureCapacity((int) na.length + args.length)) {
 				for (int i = 0; i < args.length; i++) {
 					na.dense[(int) na.length++] = args[i];
 				}
@@ -1224,9 +1220,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
 		Object result;
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly && na.length > 0) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly && na.length > 0) {
 				na.length--;
 				result = na.dense[(int) na.length];
 				na.dense[(int) na.length] = NOT_FOUND;
@@ -1256,9 +1251,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Object js_shift(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly && na.length > 0) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly && na.length > 0) {
 				na.length--;
 				Object result = na.dense[0];
 				System.arraycopy(na.dense, 1, na.dense, 0, (int) na.length);
@@ -1298,9 +1292,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	private static Object js_unshift(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly && na.ensureCapacity((int) na.length + args.length)) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly && na.ensureCapacity((int) na.length + args.length)) {
 				System.arraycopy(na.dense, 0, na.dense, args.length, (int) na.length);
 				for (int i = 0; i < args.length; i++) {
 					na.dense[i] = args[i];
@@ -1460,11 +1453,9 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		long newlen = srclen + offset;
 
 		// First, optimize for a pair of native, dense arrays
-		if ((newlen <= Integer.MAX_VALUE) && (result instanceof NativeArray)) {
-			final NativeArray denseResult = (NativeArray) result;
-			if (denseResult.denseOnly && (arg instanceof NativeArray)) {
-				final NativeArray denseArg = (NativeArray) arg;
-				if (denseArg.denseOnly) {
+		if ((newlen <= Integer.MAX_VALUE) && (result instanceof NativeArray denseResult)) {
+            if (denseResult.denseOnly && (arg instanceof NativeArray denseArg)) {
+                if (denseArg.denseOnly) {
 					// Now we can optimize
 					denseResult.ensureCapacity((int) newlen);
 					System.arraycopy(denseArg.dense, 0, denseResult.dense, (int) offset, (int) srclen);
@@ -1591,9 +1582,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				return NEGATIVE_ONE;
 			}
 		}
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly) {
 				Scriptable proto = na.getPrototype();
 				for (int i = (int) start; i < length; i++) {
 					Object val = na.dense[i];
@@ -1647,9 +1637,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				return NEGATIVE_ONE;
 			}
 		}
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly) {
 				Scriptable proto = na.getPrototype();
 				for (int i = (int) start; i >= 0; i--) {
 					Object val = na.dense[i];
@@ -1699,9 +1688,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 				return Boolean.FALSE;
 			}
 		}
-		if (o instanceof NativeArray) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly) {
+		if (o instanceof NativeArray na) {
+            if (na.denseOnly) {
 				Scriptable proto = na.getPrototype();
 				for (int i = (int) k; i < len; i++) {
 					Object elementK = na.dense[i];
@@ -1807,9 +1795,8 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		// Optimize for a native array. If properties were overridden with setters
 		// and other non-default options then we won't get here.
-		if ((o instanceof NativeArray) && (count <= Integer.MAX_VALUE)) {
-			NativeArray na = (NativeArray) o;
-			if (na.denseOnly) {
+		if ((o instanceof NativeArray na) && (count <= Integer.MAX_VALUE)) {
+            if (na.denseOnly) {
 				for (; count > 0; count--) {
 					na.dense[(int) to] = na.dense[(int) from];
 					from += direction;
@@ -1852,7 +1839,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		long length = getLengthProperty(cx, o, id == Id_map);
 		Object callbackArg = args.length > 0 ? args[0] : Undefined.instance;
-		if (callbackArg == null || !(callbackArg instanceof Function)) {
+		if (callbackArg == null || !(callbackArg instanceof Function f)) {
 			throw ScriptRuntime.notFunctionError(callbackArg);
 		}
 		if (callbackArg instanceof NativeRegExp) {
@@ -1864,8 +1851,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 			throw ScriptRuntime.notFunctionError(callbackArg);
 		}
 
-		Function f = (Function) callbackArg;
-		Scriptable parent = getTopLevelScope(f);
+        Scriptable parent = getTopLevelScope(f);
 		Scriptable thisArg;
 		if (args.length < 2 || args[1] == null || args[1] == Undefined.instance) {
 			thisArg = parent;
@@ -1943,11 +1929,10 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		long length = getLengthProperty(cx, o, false);
 		Object callbackArg = args.length > 0 ? args[0] : Undefined.instance;
-		if (callbackArg == null || !(callbackArg instanceof Function)) {
+		if (callbackArg == null || !(callbackArg instanceof Function f)) {
 			throw ScriptRuntime.notFunctionError(callbackArg);
 		}
-		Function f = (Function) callbackArg;
-		Scriptable parent = getTopLevelScope(f);
+        Scriptable parent = getTopLevelScope(f);
 		// hack to serve both reduce and reduceRight with the same loop
 		boolean movingLeft = id == Id_reduce;
 		Object value = args.length > 1 ? args[1] : NOT_FOUND;

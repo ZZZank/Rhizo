@@ -124,12 +124,11 @@ public class NativeMap extends IdScriptableObject {
 	}
 
 	private Object js_forEach(Context cx, Scriptable scope, Object arg1, Object arg2) {
-		if (!(arg1 instanceof Callable)) {
+		if (!(arg1 instanceof Callable f)) {
 			throw ScriptRuntime.typeError2("msg.isnt.function", arg1, ScriptRuntime.typeof(arg1));
 		}
-		final Callable f = (Callable) arg1;
 
-		boolean isStrict = cx.isStrictMode();
+        boolean isStrict = cx.isStrictMode();
 		Iterator<Hashtable.Entry> i = entries.iterator();
 		while (i.hasNext()) {
 			// Per spec must convert every time so that primitives are always regenerated...

@@ -44,10 +44,9 @@ public class NBTUtils {
 			return StringTag.valueOf(o.toString());
 		} else if (o instanceof Boolean) {
 			return ByteTag.valueOf((Boolean) o ? (byte) 1 : (byte) 0);
-		} else if (o instanceof Number) {
-			Number number = (Number) o;
+		} else if (o instanceof Number number) {
 
-			if (number instanceof Byte) {
+            if (number instanceof Byte) {
 				return ByteTag.valueOf(number.byteValue());
 			} else if (number instanceof Short) {
 				return ShortTag.valueOf(number.shortValue());

@@ -555,11 +555,10 @@ class ResolvedOverload {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof ResolvedOverload)) {
+		if (!(other instanceof ResolvedOverload ovl)) {
 			return false;
 		}
-		ResolvedOverload ovl = (ResolvedOverload) other;
-		return Arrays.equals(types, ovl.types) && index == ovl.index;
+        return Arrays.equals(types, ovl.types) && index == ovl.index;
 	}
 
 	@Override
