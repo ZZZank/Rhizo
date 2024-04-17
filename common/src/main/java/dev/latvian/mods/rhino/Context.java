@@ -755,7 +755,7 @@ public class Context {
                 return evaluator.getSourcePositionFromStack(cx, linep);
             }
         }
-        /**
+        /*
          * A bit of a hack, but the only way to get filename and line
          * number from an enclosing frame.
          */
@@ -2075,7 +2075,7 @@ public class Context {
         int lineno,
         CompilerEnvirons compilerEnv,
         ErrorReporter compilationErrorReporter,
-        boolean returnFunction) throws IOException {
+        boolean returnFunction) {
         Parser p = new Parser(compilerEnv, compilationErrorReporter);
         if (returnFunction) {
             p.calledByCompileFunction = true;
@@ -2106,7 +2106,7 @@ public class Context {
         }
         Evaluator result = null;
         if (optimizationLevel >= 0) {
-            result = new Codegen();;
+            result = new Codegen();
         }
         if (result == null) {
             result = createInterpreter();

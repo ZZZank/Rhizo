@@ -105,9 +105,23 @@ public class ByteIo {
 
 	public static long readUint64Primitive(byte[] buf, int offset, boolean littleEndian) {
 		if (littleEndian) {
-			return ((buf[offset] & 0xffL) | ((buf[offset + 1] & 0xffL) << 8L) | ((buf[offset + 2] & 0xffL) << 16L) | ((buf[offset + 3] & 0xffL) << 24L) | ((buf[offset + 4] & 0xffL) << 32L) | ((buf[offset + 5] & 0xffL) << 40L) | ((buf[offset + 6] & 0xffL) << 48L) | ((buf[offset + 7] & 0xffL) << 56L));
+			return ((buf[offset] & 0xffL)
+				| ((buf[offset + 1] & 0xffL) << 8L)
+				| ((buf[offset + 2] & 0xffL) << 16L)
+				| ((buf[offset + 3] & 0xffL) << 24L)
+				| ((buf[offset + 4] & 0xffL) << 32L)
+				| ((buf[offset + 5] & 0xffL) << 40L)
+				| ((buf[offset + 6] & 0xffL) << 48L)
+				| ((buf[offset + 7] & 0xffL) << 56L));
 		}
-		return (((buf[offset] & 0xffL) << 56L) | ((buf[offset + 1] & 0xffL) << 48L) | ((buf[offset + 2] & 0xffL) << 40L) | ((buf[offset + 3] & 0xffL) << 32L) | ((buf[offset + 4] & 0xffL) << 24L) | ((buf[offset + 5] & 0xffL) << 16L) | ((buf[offset + 6] & 0xffL) << 8L) | ((buf[offset + 7] & 0xffL) << 0L));
+		return (((buf[offset] & 0xffL) << 56L)
+			| ((buf[offset + 1] & 0xffL) << 48L)
+			| ((buf[offset + 2] & 0xffL) << 40L)
+			| ((buf[offset + 3] & 0xffL) << 32L)
+			| ((buf[offset + 4] & 0xffL) << 24L)
+			| ((buf[offset + 5] & 0xffL) << 16L)
+			| ((buf[offset + 6] & 0xffL) << 8L)
+			| ((buf[offset + 7] & 0xffL) << 0L));
 	}
 
 	public static void writeUint64(byte[] buf, int offset, long val, boolean littleEndian) {
