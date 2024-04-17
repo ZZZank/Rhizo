@@ -1,10 +1,12 @@
 package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.util.MojMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
 import dev.latvian.mods.rhino.util.remapper.FileRemapper;
+import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,17 +28,18 @@ public class RhinoModForge {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, FileRemapper.INSTANCE));
-        if (RemappingHelper.GENERATE) {
+        Context.setRemapper(RemappingHelper.getMinecraftRemapper());
+        if (RhinoProperties.INSTANCE.generateMapping) {
             RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }
     }
 
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
         MojMappings.ClassDef current = null;
-
+        //using an old, hardcoded link because the newest is using official mapping, while 1.16.5 is still using MCP
+        String link = "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/0cdc6055297f0b30cf3e27e59317f229a30863a6/versions/release/1.16.5/joined.tsrg";
         List<String> srg = Collections.emptyList();
-        try (var reader = new BufferedReader(RemappingHelper.createReader("https://raw.githubusercontent.com/MinecraftForge/MCPConfig/master/versions/release/" + context.mcVersion() + "/joined.tsrg"))) {
+        try (var reader = new BufferedReader(RemappingHelper.createReader(link))) {
             srg = reader.lines().collect(Collectors.toList());
         }
 
