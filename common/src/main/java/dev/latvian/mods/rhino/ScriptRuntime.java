@@ -674,7 +674,7 @@ public class ScriptRuntime {
                 case 0xb -> 'v'; // Java lacks \v.
                 case ' ' -> ' ';
                 case '\\' -> '\\';
-                default -> escape;
+                default -> -1;
             };
             if (escape >= 0) {
 				// an \escaped sort of character

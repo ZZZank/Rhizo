@@ -36,15 +36,15 @@ public class MojMappings {
 		methodSignatures = new HashMap<>();
 
 		for (var c : new ClassDef[]{
-				VOID,
-				BOOLEAN,
-				CHAR,
-				BYTE,
-				SHORT,
-				INT,
-				LONG,
-				FLOAT,
-				DOUBLE,
+			VOID,
+			BOOLEAN,
+			CHAR,
+			BYTE,
+			SHORT,
+			INT,
+			LONG,
+			FLOAT,
+			DOUBLE,
 		}) {
 			classes.put(c.rawName, c);
 			allTypes.put(c.noArrayType, c.noArrayType);
@@ -96,10 +96,8 @@ public class MojMappings {
 
 			if (c == 'L') {
 				var sb = new StringBuilder();
-
 				while (true) {
 					c = reader.read();
-
 					if (c == -1) {
 						throw new RemapperException("Invalid descriptor: " + descriptor);
 					} else if (c == ';') {
@@ -110,7 +108,6 @@ public class MojMappings {
 						sb.append((char) c);
 					}
 				}
-
 				types.add(getType(sb.toString()).parent.array(array));
 			} else if (c == 'Z') {
 				types.add(BOOLEAN.array(array));
@@ -185,11 +182,11 @@ public class MojMappings {
 		for (var line : lines) {
 			if (line.charAt(line.length() - 1) == ':') {
 				var s = line.split(" -> ", 2); // replace with faster, last index of space check
-				var c = new ClassDef(this, s[1].substring(0, s[1].length() - 1), s[0], new HashMap<>(0), new HashSet<>(0));
-				c.mapped = true;
-				classes.put(c.rawName, c);
-				classesMM.put(c.mmName, c);
-				allTypes.put(c.noArrayType, c.noArrayType);
+				var clazzDef = new ClassDef(this, s[1].substring(0, s[1].length() - 1), s[0], new HashMap<>(0), new HashSet<>(0));
+				clazzDef.mapped = true;
+				classes.put(clazzDef.rawName, clazzDef);
+				classesMM.put(clazzDef.mmName, clazzDef);
+				allTypes.put(clazzDef.noArrayType, clazzDef.noArrayType);
 			}
 		}
 
