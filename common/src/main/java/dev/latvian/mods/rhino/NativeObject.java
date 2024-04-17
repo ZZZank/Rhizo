@@ -99,58 +99,57 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
     protected void initPrototypeId(int id) {
         String s;
         int arity;
-        switch (id) {
-            case Id_constructor:
+        s = switch (id) {
+            case Id_constructor -> {
                 arity = 1;
-                s = "constructor";
-                break;
-            case Id_toString:
+                yield "constructor";
+            }
+            case Id_toString -> {
                 arity = 0;
-                s = "toString";
-                break;
-            case Id_toLocaleString:
+                yield "toString";
+            }
+            case Id_toLocaleString -> {
                 arity = 0;
-                s = "toLocaleString";
-                break;
-            case Id_valueOf:
+                yield "toLocaleString";
+            }
+            case Id_valueOf -> {
                 arity = 0;
-                s = "valueOf";
-                break;
-            case Id_hasOwnProperty:
+                yield "valueOf";
+            }
+            case Id_hasOwnProperty -> {
                 arity = 1;
-                s = "hasOwnProperty";
-                break;
-            case Id_propertyIsEnumerable:
+                yield "hasOwnProperty";
+            }
+            case Id_propertyIsEnumerable -> {
                 arity = 1;
-                s = "propertyIsEnumerable";
-                break;
-            case Id_isPrototypeOf:
+                yield "propertyIsEnumerable";
+            }
+            case Id_isPrototypeOf -> {
                 arity = 1;
-                s = "isPrototypeOf";
-                break;
-            case Id_toSource:
+                yield "isPrototypeOf";
+            }
+            case Id_toSource -> {
                 arity = 0;
-                s = "toSource";
-                break;
-            case Id___defineGetter__:
+                yield "toSource";
+            }
+            case Id___defineGetter__ -> {
                 arity = 2;
-                s = "__defineGetter__";
-                break;
-            case Id___defineSetter__:
+                yield "__defineGetter__";
+            }
+            case Id___defineSetter__ -> {
                 arity = 2;
-                s = "__defineSetter__";
-                break;
-            case Id___lookupGetter__:
+                yield "__defineSetter__";
+            }
+            case Id___lookupGetter__ -> {
                 arity = 1;
-                s = "__lookupGetter__";
-                break;
-            case Id___lookupSetter__:
+                yield "__lookupGetter__";
+            }
+            case Id___lookupSetter__ -> {
                 arity = 1;
-                s = "__lookupSetter__";
-                break;
-            default:
-                throw new IllegalArgumentException(String.valueOf(id));
-        }
+                yield "__lookupSetter__";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
         initPrototypeMethod(OBJECT_TAG, id, s, arity);
     }
 

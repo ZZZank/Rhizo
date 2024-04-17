@@ -69,26 +69,25 @@ class NativeScript extends BaseFunction {
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 1;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_exec:
-				arity = 0;
-				s = "exec";
-				break;
-			case Id_compile:
-				arity = 1;
-				s = "compile";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 1;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_exec -> {
+                arity = 0;
+                yield "exec";
+            }
+            case Id_compile -> {
+                arity = 1;
+                yield "compile";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(SCRIPT_TAG, id, s, arity);
 	}
 
@@ -154,25 +153,25 @@ class NativeScript extends BaseFunction {
 		{
 			id = 0;
 			String X = null;
-			L:
-			switch (s.length()) {
-				case 4:
-					X = "exec";
-					id = Id_exec;
-					break L;
-				case 7:
-					X = "compile";
-					id = Id_compile;
-					break L;
-				case 8:
-					X = "toString";
-					id = Id_toString;
-					break L;
-				case 11:
-					X = "constructor";
-					id = Id_constructor;
-					break L;
-			}
+            id = switch (s.length()) {
+                case 4 -> {
+                    X = "exec";
+                    yield Id_exec;
+                }
+                case 7 -> {
+                    X = "compile";
+                    yield Id_compile;
+                }
+                case 8 -> {
+                    X = "toString";
+                    yield Id_toString;
+                }
+                case 11 -> {
+                    X = "constructor";
+                    yield Id_constructor;
+                }
+                default -> id;
+            };
 			if (X != null && X != s && !X.equals(s)) {
 				id = 0;
 			}

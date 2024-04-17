@@ -78,22 +78,21 @@ public final class NativeJSON extends IdScriptableObject {
 		if (id <= LAST_METHOD_ID) {
 			String name;
 			int arity;
-			switch (id) {
-				case Id_toSource:
-					arity = 0;
-					name = "toSource";
-					break;
-				case Id_parse:
-					arity = 2;
-					name = "parse";
-					break;
-				case Id_stringify:
-					arity = 3;
-					name = "stringify";
-					break;
-				default:
-					throw new IllegalStateException(String.valueOf(id));
-			}
+            name = switch (id) {
+                case Id_toSource -> {
+                    arity = 0;
+                    yield "toSource";
+                }
+                case Id_parse -> {
+                    arity = 2;
+                    yield "parse";
+                }
+                case Id_stringify -> {
+                    arity = 3;
+                    yield "stringify";
+                }
+                default -> throw new IllegalStateException(String.valueOf(id));
+            };
 			initPrototypeMethod(JSON_TAG, id, name, arity);
 		} else {
 			throw new IllegalStateException(String.valueOf(id));
@@ -444,21 +443,21 @@ public final class NativeJSON extends IdScriptableObject {
 		{
 			id = 0;
 			String X = null;
-			L:
-			switch (s.length()) {
-				case 5:
-					X = "parse";
-					id = Id_parse;
-					break L;
-				case 8:
-					X = "toSource";
-					id = Id_toSource;
-					break L;
-				case 9:
-					X = "stringify";
-					id = Id_stringify;
-					break L;
-			}
+            id = switch (s.length()) {
+                case 5 -> {
+                    X = "parse";
+                    yield Id_parse;
+                }
+                case 8 -> {
+                    X = "toSource";
+                    yield Id_toSource;
+                }
+                case 9 -> {
+                    X = "stringify";
+                    yield Id_stringify;
+                }
+                default -> id;
+            };
 			if (X != null && X != s && !X.equals(s)) {
 				id = 0;
 			}

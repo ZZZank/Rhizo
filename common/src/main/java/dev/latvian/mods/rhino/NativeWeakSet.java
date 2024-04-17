@@ -43,26 +43,24 @@ public class NativeWeakSet extends IdScriptableObject {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		switch (id) {
-			case Id_constructor:
-				if (thisObj == null) {
-					NativeWeakSet ns = new NativeWeakSet();
-					ns.instanceOfWeakSet = true;
-					if (args.length > 0) {
-						NativeSet.loadFromIterable(cx, scope, ns, args[0]);
-					}
-					return ns;
-				}
-				throw ScriptRuntime.typeError1("msg.no.new", "WeakSet");
-			case Id_add:
-				return realThis(thisObj, f).js_add(args.length > 0 ? args[0] : Undefined.instance);
-			case Id_delete:
-				return realThis(thisObj, f).js_delete(args.length > 0 ? args[0] : Undefined.instance);
-			case Id_has:
-				return realThis(thisObj, f).js_has(args.length > 0 ? args[0] : Undefined.instance);
-		}
-		throw new IllegalArgumentException("WeakMap.prototype has no method: " + f.getFunctionName());
-	}
+        return switch (id) {
+            case Id_constructor -> {
+                if (thisObj == null) {
+                    NativeWeakSet ns = new NativeWeakSet();
+                    ns.instanceOfWeakSet = true;
+                    if (args.length > 0) {
+                        NativeSet.loadFromIterable(cx, scope, ns, args[0]);
+                    }
+                    yield ns;
+                }
+                throw ScriptRuntime.typeError1("msg.no.new", "WeakSet");
+            }
+            case Id_add -> realThis(thisObj, f).js_add(args.length > 0 ? args[0] : Undefined.instance);
+            case Id_delete -> realThis(thisObj, f).js_delete(args.length > 0 ? args[0] : Undefined.instance);
+            case Id_has -> realThis(thisObj, f).js_has(args.length > 0 ? args[0] : Undefined.instance);
+            default -> throw new IllegalArgumentException("WeakMap.prototype has no method: " + f.getFunctionName());
+        };
+    }
 
 	private Object js_add(Object key) {
 		// As the spec says, only a true "Object" can be the key to a WeakSet.
@@ -117,26 +115,25 @@ public class NativeWeakSet extends IdScriptableObject {
 
 		String s, fnName = null;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 0;
-				s = "constructor";
-				break;
-			case Id_add:
-				arity = 1;
-				s = "add";
-				break;
-			case Id_delete:
-				arity = 1;
-				s = "delete";
-				break;
-			case Id_has:
-				arity = 1;
-				s = "has";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 0;
+                yield "constructor";
+            }
+            case Id_add -> {
+                arity = 1;
+                yield "add";
+            }
+            case Id_delete -> {
+                arity = 1;
+                yield "delete";
+            }
+            case Id_has -> {
+                arity = 1;
+                yield "has";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(MAP_TAG, id, s, fnName, arity);
 	}
 

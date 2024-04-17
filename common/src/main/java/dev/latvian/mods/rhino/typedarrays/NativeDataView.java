@@ -135,14 +135,11 @@ public class NativeDataView extends NativeArrayBufferView {
 
 		boolean littleEndian = isArg(args, 1) && (bytes > 1) && ScriptRuntime.toBoolean(args[1]);
 
-		switch (bytes) {
-			case 4:
-				return ByteIo.readFloat32(arrayBuffer.buffer, offset + pos, littleEndian);
-			case 8:
-				return ByteIo.readFloat64(arrayBuffer.buffer, offset + pos, littleEndian);
-			default:
-				throw new AssertionError();
-		}
+        return switch (bytes) {
+            case 4 -> ByteIo.readFloat32(arrayBuffer.buffer, offset + pos, littleEndian);
+            case 8 -> ByteIo.readFloat64(arrayBuffer.buffer, offset + pos, littleEndian);
+            default -> throw new AssertionError();
+        };
 	}
 
 	private void js_setInt(int bytes, boolean signed, Object[] args) {
@@ -246,129 +243,127 @@ public class NativeDataView extends NativeArrayBufferView {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		switch (id) {
-			case Id_constructor:
-				return js_constructor(args);
-			case Id_getInt8:
-				return realThis(thisObj, f).js_getInt(1, true, args);
-			case Id_getUint8:
-				return realThis(thisObj, f).js_getInt(1, false, args);
-			case Id_getInt16:
-				return realThis(thisObj, f).js_getInt(2, true, args);
-			case Id_getUint16:
-				return realThis(thisObj, f).js_getInt(2, false, args);
-			case Id_getInt32:
-				return realThis(thisObj, f).js_getInt(4, true, args);
-			case Id_getUint32:
-				return realThis(thisObj, f).js_getInt(4, false, args);
-			case Id_getFloat32:
-				return realThis(thisObj, f).js_getFloat(4, args);
-			case Id_getFloat64:
-				return realThis(thisObj, f).js_getFloat(8, args);
-			case Id_setInt8:
-				realThis(thisObj, f).js_setInt(1, true, args);
-				return Undefined.instance;
-			case Id_setUint8:
-				realThis(thisObj, f).js_setInt(1, false, args);
-				return Undefined.instance;
-			case Id_setInt16:
-				realThis(thisObj, f).js_setInt(2, true, args);
-				return Undefined.instance;
-			case Id_setUint16:
-				realThis(thisObj, f).js_setInt(2, false, args);
-				return Undefined.instance;
-			case Id_setInt32:
-				realThis(thisObj, f).js_setInt(4, true, args);
-				return Undefined.instance;
-			case Id_setUint32:
-				realThis(thisObj, f).js_setInt(4, false, args);
-				return Undefined.instance;
-			case Id_setFloat32:
-				realThis(thisObj, f).js_setFloat(4, args);
-				return Undefined.instance;
-			case Id_setFloat64:
-				realThis(thisObj, f).js_setFloat(8, args);
-				return Undefined.instance;
-		}
-		throw new IllegalArgumentException(String.valueOf(id));
-	}
+        return switch (id) {
+            case Id_constructor -> js_constructor(args);
+            case Id_getInt8 -> realThis(thisObj, f).js_getInt(1, true, args);
+            case Id_getUint8 -> realThis(thisObj, f).js_getInt(1, false, args);
+            case Id_getInt16 -> realThis(thisObj, f).js_getInt(2, true, args);
+            case Id_getUint16 -> realThis(thisObj, f).js_getInt(2, false, args);
+            case Id_getInt32 -> realThis(thisObj, f).js_getInt(4, true, args);
+            case Id_getUint32 -> realThis(thisObj, f).js_getInt(4, false, args);
+            case Id_getFloat32 -> realThis(thisObj, f).js_getFloat(4, args);
+            case Id_getFloat64 -> realThis(thisObj, f).js_getFloat(8, args);
+            case Id_setInt8 -> {
+                realThis(thisObj, f).js_setInt(1, true, args);
+                yield Undefined.instance;
+            }
+            case Id_setUint8 -> {
+                realThis(thisObj, f).js_setInt(1, false, args);
+                yield Undefined.instance;
+            }
+            case Id_setInt16 -> {
+                realThis(thisObj, f).js_setInt(2, true, args);
+                yield Undefined.instance;
+            }
+            case Id_setUint16 -> {
+                realThis(thisObj, f).js_setInt(2, false, args);
+                yield Undefined.instance;
+            }
+            case Id_setInt32 -> {
+                realThis(thisObj, f).js_setInt(4, true, args);
+                yield Undefined.instance;
+            }
+            case Id_setUint32 -> {
+                realThis(thisObj, f).js_setInt(4, false, args);
+                yield Undefined.instance;
+            }
+            case Id_setFloat32 -> {
+                realThis(thisObj, f).js_setFloat(4, args);
+                yield Undefined.instance;
+            }
+            case Id_setFloat64 -> {
+                realThis(thisObj, f).js_setFloat(8, args);
+                yield Undefined.instance;
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
+    }
 
 	@Override
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 3;
-				s = "constructor";
-				break;
-			case Id_getInt8:
-				arity = 1;
-				s = "getInt8";
-				break;
-			case Id_getUint8:
-				arity = 1;
-				s = "getUint8";
-				break;
-			case Id_getInt16:
-				arity = 1;
-				s = "getInt16";
-				break;
-			case Id_getUint16:
-				arity = 1;
-				s = "getUint16";
-				break;
-			case Id_getInt32:
-				arity = 1;
-				s = "getInt32";
-				break;
-			case Id_getUint32:
-				arity = 1;
-				s = "getUint32";
-				break;
-			case Id_getFloat32:
-				arity = 1;
-				s = "getFloat32";
-				break;
-			case Id_getFloat64:
-				arity = 1;
-				s = "getFloat64";
-				break;
-			case Id_setInt8:
-				arity = 2;
-				s = "setInt8";
-				break;
-			case Id_setUint8:
-				arity = 2;
-				s = "setUint8";
-				break;
-			case Id_setInt16:
-				arity = 2;
-				s = "setInt16";
-				break;
-			case Id_setUint16:
-				arity = 2;
-				s = "setUint16";
-				break;
-			case Id_setInt32:
-				arity = 2;
-				s = "setInt32";
-				break;
-			case Id_setUint32:
-				arity = 2;
-				s = "setUint32";
-				break;
-			case Id_setFloat32:
-				arity = 2;
-				s = "setFloat32";
-				break;
-			case Id_setFloat64:
-				arity = 2;
-				s = "setFloat64";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 3;
+                yield "constructor";
+            }
+            case Id_getInt8 -> {
+                arity = 1;
+                yield "getInt8";
+            }
+            case Id_getUint8 -> {
+                arity = 1;
+                yield "getUint8";
+            }
+            case Id_getInt16 -> {
+                arity = 1;
+                yield "getInt16";
+            }
+            case Id_getUint16 -> {
+                arity = 1;
+                yield "getUint16";
+            }
+            case Id_getInt32 -> {
+                arity = 1;
+                yield "getInt32";
+            }
+            case Id_getUint32 -> {
+                arity = 1;
+                yield "getUint32";
+            }
+            case Id_getFloat32 -> {
+                arity = 1;
+                yield "getFloat32";
+            }
+            case Id_getFloat64 -> {
+                arity = 1;
+                yield "getFloat64";
+            }
+            case Id_setInt8 -> {
+                arity = 2;
+                yield "setInt8";
+            }
+            case Id_setUint8 -> {
+                arity = 2;
+                yield "setUint8";
+            }
+            case Id_setInt16 -> {
+                arity = 2;
+                yield "setInt16";
+            }
+            case Id_setUint16 -> {
+                arity = 2;
+                yield "setUint16";
+            }
+            case Id_setInt32 -> {
+                arity = 2;
+                yield "setInt32";
+            }
+            case Id_setUint32 -> {
+                arity = 2;
+                yield "setUint32";
+            }
+            case Id_setFloat32 -> {
+                arity = 2;
+                yield "setFloat32";
+            }
+            case Id_setFloat64 -> {
+                arity = 2;
+                yield "setFloat64";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(getClassName(), id, s, arity);
 	}
 

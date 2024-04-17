@@ -66,42 +66,41 @@ final class NativeNumber extends IdScriptableObject {
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 1;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 1;
-				s = "toString";
-				break;
-			case Id_toLocaleString:
-				arity = 1;
-				s = "toLocaleString";
-				break;
-			case Id_toSource:
-				arity = 0;
-				s = "toSource";
-				break;
-			case Id_valueOf:
-				arity = 0;
-				s = "valueOf";
-				break;
-			case Id_toFixed:
-				arity = 1;
-				s = "toFixed";
-				break;
-			case Id_toExponential:
-				arity = 1;
-				s = "toExponential";
-				break;
-			case Id_toPrecision:
-				arity = 1;
-				s = "toPrecision";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 1;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 1;
+                yield "toString";
+            }
+            case Id_toLocaleString -> {
+                arity = 1;
+                yield "toLocaleString";
+            }
+            case Id_toSource -> {
+                arity = 0;
+                yield "toSource";
+            }
+            case Id_valueOf -> {
+                arity = 0;
+                yield "valueOf";
+            }
+            case Id_toFixed -> {
+                arity = 1;
+                yield "toFixed";
+            }
+            case Id_toExponential -> {
+                arity = 1;
+                yield "toExponential";
+            }
+            case Id_toPrecision -> {
+                arity = 1;
+                yield "toPrecision";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(NUMBER_TAG, id, s, arity);
 	}
 

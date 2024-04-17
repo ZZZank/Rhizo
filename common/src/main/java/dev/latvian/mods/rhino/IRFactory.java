@@ -1898,19 +1898,17 @@ public final class IRFactory extends Parser {
 
 	private static Node makeReference(Node node) {
 		int type = node.getType();
-		switch (type) {
-			case Token.NAME:
-			case Token.GETPROP:
-			case Token.GETELEM:
-			case Token.GET_REF:
-				return node;
-			case Token.CALL:
-				node.setType(Token.REF_CALL);
-				return new Node(Token.GET_REF, node);
-		}
-		// Signal caller to report error
-		return null;
-	}
+        return switch (type) {
+            case Token.NAME, Token.GETPROP, Token.GETELEM, Token.GET_REF -> node;
+            case Token.CALL -> {
+                node.setType(Token.REF_CALL);
+                yield new Node(Token.GET_REF, node);
+            }
+            default ->
+                // Signal caller to report error
+                null;
+        };
+    }
 
 	// Check if Node always mean true or false in boolean context
 	private static int isAlwaysDefinedBoolean(Node node) {

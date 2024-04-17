@@ -66,22 +66,21 @@ public final class ES6Generator extends IdScriptableObject {
 
 		String s;
 		int arity;
-		switch (id) {
-			case Id_next:
-				arity = 1;
-				s = "next";
-				break;
-			case Id_return:
-				arity = 1;
-				s = "return";
-				break;
-			case Id_throw:
-				arity = 1;
-				s = "throw";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_next -> {
+                arity = 1;
+                yield "next";
+            }
+            case Id_return -> {
+                arity = 1;
+                yield "return";
+            }
+            case Id_throw -> {
+                arity = 1;
+                yield "throw";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(GENERATOR_TAG, id, s, arity);
 	}
 
@@ -99,27 +98,28 @@ public final class ES6Generator extends IdScriptableObject {
 		ES6Generator generator = (ES6Generator) thisObj;
 		Object value = args.length >= 1 ? args[0] : Undefined.instance;
 
-		switch (id) {
-			case Id_return:
-				if (generator.delegee == null) {
-					return generator.resumeAbruptLocal(cx, scope, GeneratorState.GENERATOR_CLOSE, value);
-				}
-				return generator.resumeDelegeeReturn(cx, scope, value);
-			case Id_next:
-				if (generator.delegee == null) {
-					return generator.resumeLocal(cx, scope, value);
-				}
-				return generator.resumeDelegee(cx, scope, value);
-			case Id_throw:
-				if (generator.delegee == null) {
-					return generator.resumeAbruptLocal(cx, scope, GeneratorState.GENERATOR_THROW, value);
-				}
-				return generator.resumeDelegeeThrow(cx, scope, value);
-			case SymbolId_iterator:
-				return thisObj;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        return switch (id) {
+            case Id_return -> {
+                if (generator.delegee == null) {
+                    yield generator.resumeAbruptLocal(cx, scope, GeneratorState.GENERATOR_CLOSE, value);
+                }
+                yield generator.resumeDelegeeReturn(cx, scope, value);
+            }
+            case Id_next -> {
+                if (generator.delegee == null) {
+                    yield generator.resumeLocal(cx, scope, value);
+                }
+                yield generator.resumeDelegee(cx, scope, value);
+            }
+            case Id_throw -> {
+                if (generator.delegee == null) {
+                    yield generator.resumeAbruptLocal(cx, scope, GeneratorState.GENERATOR_THROW, value);
+                }
+                yield generator.resumeDelegeeThrow(cx, scope, value);
+            }
+            case SymbolId_iterator -> thisObj;
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 	}
 
 	private Scriptable resumeDelegee(Context cx, Scriptable scope, Object value) {

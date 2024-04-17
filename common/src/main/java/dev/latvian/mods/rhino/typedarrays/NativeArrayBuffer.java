@@ -150,18 +150,17 @@ public class NativeArrayBuffer extends IdScriptableObject {
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 1;
-				s = "constructor";
-				break;
-			case Id_slice:
-				arity = 2;
-				s = "slice";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 1;
+                yield "constructor";
+            }
+            case Id_slice -> {
+                arity = 2;
+                yield "slice";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(CLASS_NAME, id, s, arity);
 	}
 

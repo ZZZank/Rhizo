@@ -327,30 +327,29 @@ public abstract class NativeTypedArrayView<T> extends NativeArrayBufferView impl
 
 		String s, fnName = null;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 3;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_get:
-				arity = 1;
-				s = "get";
-				break;
-			case Id_set:
-				arity = 2;
-				s = "set";
-				break;
-			case Id_subarray:
-				arity = 2;
-				s = "subarray";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 3;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_get -> {
+                arity = 1;
+                yield "get";
+            }
+            case Id_set -> {
+                arity = 2;
+                yield "set";
+            }
+            case Id_subarray -> {
+                arity = 2;
+                yield "subarray";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(getClassName(), id, s, fnName, arity);
 	}
 
@@ -434,26 +433,20 @@ public abstract class NativeTypedArrayView<T> extends NativeArrayBufferView impl
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		switch (id) {
-			case Id_length:
-				return "length";
-			case Id_BYTES_PER_ELEMENT:
-				return "BYTES_PER_ELEMENT";
-			default:
-				return super.getInstanceIdName(id);
-		}
+        return switch (id) {
+            case Id_length -> "length";
+            case Id_BYTES_PER_ELEMENT -> "BYTES_PER_ELEMENT";
+            default -> super.getInstanceIdName(id);
+        };
 	}
 
 	@Override
 	protected Object getInstanceIdValue(int id) {
-		switch (id) {
-			case Id_length:
-				return ScriptRuntime.wrapInt(length);
-			case Id_BYTES_PER_ELEMENT:
-				return ScriptRuntime.wrapInt(getBytesPerElement());
-			default:
-				return super.getInstanceIdValue(id);
-		}
+        return switch (id) {
+            case Id_length -> ScriptRuntime.wrapInt(length);
+            case Id_BYTES_PER_ELEMENT -> ScriptRuntime.wrapInt(getBytesPerElement());
+            default -> super.getInstanceIdValue(id);
+        };
 	}
 
 	// #string_id_map#

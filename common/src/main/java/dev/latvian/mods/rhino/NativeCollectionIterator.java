@@ -46,16 +46,12 @@ public class NativeCollectionIterator extends ES6Iterator {
 	@Override
 	protected Object nextValue(Context cx, Scriptable scope) {
 		final Hashtable.Entry e = iterator.next();
-		switch (type) {
-			case KEYS:
-				return e.key;
-			case VALUES:
-				return e.value;
-			case BOTH:
-				return cx.newArray(scope, new Object[]{e.key, e.value});
-			default:
-				throw new AssertionError();
-		}
+        return switch (type) {
+            case KEYS -> e.key;
+            case VALUES -> e.value;
+            case BOTH -> cx.newArray(scope, new Object[]{e.key, e.value});
+            default -> throw new AssertionError();
+        };
 	}
 
 	private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {

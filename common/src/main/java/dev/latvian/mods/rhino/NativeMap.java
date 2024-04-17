@@ -45,40 +45,37 @@ public class NativeMap extends IdScriptableObject {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		switch (id) {
-			case Id_constructor:
-				if (thisObj == null) {
-					NativeMap nm = new NativeMap();
-					nm.instanceOfMap = true;
-					if (args.length > 0) {
-						loadFromIterable(cx, scope, nm, args[0]);
-					}
-					return nm;
-				}
-				throw ScriptRuntime.typeError1("msg.no.new", "Map");
-			case Id_set:
-				return realThis(thisObj, f).js_set(args.length > 0 ? args[0] : Undefined.instance, args.length > 1 ? args[1] : Undefined.instance);
-			case Id_delete:
-				return realThis(thisObj, f).js_delete(args.length > 0 ? args[0] : Undefined.instance);
-			case Id_get:
-				return realThis(thisObj, f).js_get(args.length > 0 ? args[0] : Undefined.instance);
-			case Id_has:
-				return realThis(thisObj, f).js_has(args.length > 0 ? args[0] : Undefined.instance);
-			case Id_clear:
-				return realThis(thisObj, f).js_clear();
-			case Id_keys:
-				return realThis(thisObj, f).js_iterator(scope, NativeCollectionIterator.Type.KEYS);
-			case Id_values:
-				return realThis(thisObj, f).js_iterator(scope, NativeCollectionIterator.Type.VALUES);
-			case Id_entries:
-				return realThis(thisObj, f).js_iterator(scope, NativeCollectionIterator.Type.BOTH);
-			case Id_forEach:
-				return realThis(thisObj, f).js_forEach(cx, scope, args.length > 0 ? args[0] : Undefined.instance, args.length > 1 ? args[1] : Undefined.instance);
-			case SymbolId_getSize:
-				return realThis(thisObj, f).js_getSize();
-		}
-		throw new IllegalArgumentException("Map.prototype has no method: " + f.getFunctionName());
-	}
+        return switch (id) {
+            case Id_constructor -> {
+                if (thisObj == null) {
+                    NativeMap nm = new NativeMap();
+                    nm.instanceOfMap = true;
+                    if (args.length > 0) {
+                        loadFromIterable(cx, scope, nm, args[0]);
+                    }
+                    yield nm;
+                }
+                throw ScriptRuntime.typeError1("msg.no.new", "Map");
+            }
+            case Id_set -> realThis(thisObj, f).js_set(args.length > 0 ? args[0] : Undefined.instance,
+                args.length > 1 ? args[1] : Undefined.instance
+            );
+            case Id_delete -> realThis(thisObj, f).js_delete(args.length > 0 ? args[0] : Undefined.instance);
+            case Id_get -> realThis(thisObj, f).js_get(args.length > 0 ? args[0] : Undefined.instance);
+            case Id_has -> realThis(thisObj, f).js_has(args.length > 0 ? args[0] : Undefined.instance);
+            case Id_clear -> realThis(thisObj, f).js_clear();
+            case Id_keys -> realThis(thisObj, f).js_iterator(scope, NativeCollectionIterator.Type.KEYS);
+            case Id_values -> realThis(thisObj, f).js_iterator(scope, NativeCollectionIterator.Type.VALUES);
+            case Id_entries -> realThis(thisObj, f).js_iterator(scope, NativeCollectionIterator.Type.BOTH);
+            case Id_forEach -> realThis(thisObj, f).js_forEach(cx,
+                scope,
+                args.length > 0 ? args[0] : Undefined.instance,
+                args.length > 1 ? args[1] : Undefined.instance
+            );
+            case SymbolId_getSize -> realThis(thisObj, f).js_getSize();
+            default -> throw new IllegalArgumentException("Map.prototype has no method: " + f.getFunctionName());
+        };
+    }
 
 	private Object js_set(Object k, Object v) {
 		// Map.get() does not distinguish between "not found" and a null value. So,
@@ -229,50 +226,49 @@ public class NativeMap extends IdScriptableObject {
 
 		String s, fnName = null;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 0;
-				s = "constructor";
-				break;
-			case Id_set:
-				arity = 2;
-				s = "set";
-				break;
-			case Id_get:
-				arity = 1;
-				s = "get";
-				break;
-			case Id_delete:
-				arity = 1;
-				s = "delete";
-				break;
-			case Id_has:
-				arity = 1;
-				s = "has";
-				break;
-			case Id_clear:
-				arity = 0;
-				s = "clear";
-				break;
-			case Id_keys:
-				arity = 0;
-				s = "keys";
-				break;
-			case Id_values:
-				arity = 0;
-				s = "values";
-				break;
-			case Id_entries:
-				arity = 0;
-				s = "entries";
-				break;
-			case Id_forEach:
-				arity = 1;
-				s = "forEach";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 0;
+                yield "constructor";
+            }
+            case Id_set -> {
+                arity = 2;
+                yield "set";
+            }
+            case Id_get -> {
+                arity = 1;
+                yield "get";
+            }
+            case Id_delete -> {
+                arity = 1;
+                yield "delete";
+            }
+            case Id_has -> {
+                arity = 1;
+                yield "has";
+            }
+            case Id_clear -> {
+                arity = 0;
+                yield "clear";
+            }
+            case Id_keys -> {
+                arity = 0;
+                yield "keys";
+            }
+            case Id_values -> {
+                arity = 0;
+                yield "values";
+            }
+            case Id_entries -> {
+                arity = 0;
+                yield "entries";
+            }
+            case Id_forEach -> {
+                arity = 1;
+                yield "forEach";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(MAP_TAG, id, s, fnName, arity);
 	}
 

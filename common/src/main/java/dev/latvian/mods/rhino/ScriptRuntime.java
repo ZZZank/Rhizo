@@ -240,21 +240,19 @@ public class ScriptRuntime {
 	 * <BOM>
 	 */
 	static boolean isStrWhiteSpaceChar(int c) {
-		switch (c) {
-			case ' ': // <SP>
-			case '\n': // <LF>
-			case '\r': // <CR>
-			case '\t': // <TAB>
-			case '\u00A0': // <NBSP>
-			case '\u000C': // <FF>
-			case '\u000B': // <VT>
-			case '\u2028': // <LS>
-			case '\u2029': // <PS>
-			case '\uFEFF': // <BOM>
-				return true;
-			default:
-				return Character.getType(c) == Character.SPACE_SEPARATOR;
-		}
+        return switch (c) { // <SP>
+            // <LF>
+            // <CR>
+            // <TAB>
+            // <NBSP>
+            // <FF>
+            // <VT>
+            // <LS>
+            // <PS>
+            case ' ', '\n', '\r', '\t', '\u00A0', '\u000C', '\u000B', '\u2028', '\u2029', '\uFEFF' -> // <BOM>
+                true;
+            default -> Character.getType(c) == Character.SPACE_SEPARATOR;
+        };
 	}
 
 	public static Boolean wrapBoolean(boolean b) {
@@ -667,34 +665,18 @@ public class ScriptRuntime {
 				sb.setLength(i);
 			}
 
-			int escape = -1;
-			switch (c) {
-				case '\b':
-					escape = 'b';
-					break;
-				case '\f':
-					escape = 'f';
-					break;
-				case '\n':
-					escape = 'n';
-					break;
-				case '\r':
-					escape = 'r';
-					break;
-				case '\t':
-					escape = 't';
-					break;
-				case 0xb:
-					escape = 'v';
-					break; // Java lacks \v.
-				case ' ':
-					escape = ' ';
-					break;
-				case '\\':
-					escape = '\\';
-					break;
-			}
-			if (escape >= 0) {
+			int escape = switch (c) {
+                case '\b' -> 'b';
+                case '\f' -> 'f';
+                case '\n' -> 'n';
+                case '\r' -> 'r';
+                case '\t' -> 't';
+                case 0xb -> 'v'; // Java lacks \v.
+                case ' ' -> ' ';
+                case '\\' -> '\\';
+                default -> escape;
+            };
+            if (escape >= 0) {
 				// an \escaped sort of character
 				sb.append('\\');
 				sb.append((char) escape);
@@ -1846,20 +1828,15 @@ public class ScriptRuntime {
 		if (x.iterator != null) {
 			return x.currentId;
 		}
-		switch (x.enumType) {
-			case ENUMERATE_KEYS:
-			case ENUMERATE_KEYS_NO_ITERATOR:
-				return x.currentId;
-			case ENUMERATE_VALUES:
-			case ENUMERATE_VALUES_NO_ITERATOR:
-				return enumValue(enumObj, cx);
-			case ENUMERATE_ARRAY:
-			case ENUMERATE_ARRAY_NO_ITERATOR:
-				Object[] elements = {x.currentId, enumValue(enumObj, cx)};
-				return cx.newArray(ScriptableObject.getTopLevelScope(x.obj), elements);
-			default:
-				throw Kit.codeBug();
-		}
+        return switch (x.enumType) {
+            case ENUMERATE_KEYS, ENUMERATE_KEYS_NO_ITERATOR -> x.currentId;
+            case ENUMERATE_VALUES, ENUMERATE_VALUES_NO_ITERATOR -> enumValue(enumObj, cx);
+            case ENUMERATE_ARRAY, ENUMERATE_ARRAY_NO_ITERATOR -> {
+                Object[] elements = {x.currentId, enumValue(enumObj, cx)};
+                yield cx.newArray(ScriptableObject.getTopLevelScope(x.obj), elements);
+            }
+            default -> throw Kit.codeBug();
+        };
 	}
 
 	public static Object enumValue(Object enumObj, Context cx) {

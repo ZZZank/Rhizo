@@ -200,37 +200,26 @@ final class Arguments extends IdScriptableObject {
 			return super.findInstanceIdInfo(s);
 		}
 
-		int attr;
-		switch (id) {
-			case Id_callee:
-				attr = calleeAttr;
-				break;
-			case Id_caller:
-				attr = callerAttr;
-				break;
-			case Id_length:
-				attr = lengthAttr;
-				break;
-			default:
-				throw new IllegalStateException();
-		}
-		return instanceIdInfo(attr, id);
+		int attr = switch (id) {
+            case Id_callee -> calleeAttr;
+            case Id_caller -> callerAttr;
+            case Id_length -> lengthAttr;
+            default -> throw new IllegalStateException();
+        };
+        return instanceIdInfo(attr, id);
 	}
 
 	// #/string_id_map#
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		switch (id) {
-			case Id_callee:
-				return "callee";
-			case Id_length:
-				return "length";
-			case Id_caller:
-				return "caller";
-		}
-		return null;
-	}
+        return switch (id) {
+            case Id_callee -> "callee";
+            case Id_length -> "length";
+            case Id_caller -> "caller";
+            default -> null;
+        };
+    }
 
 	@Override
 	protected Object getInstanceIdValue(int id) {

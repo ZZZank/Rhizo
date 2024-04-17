@@ -66,198 +66,197 @@ final class NativeDate extends IdScriptableObject {
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 7;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_toTimeString:
-				arity = 0;
-				s = "toTimeString";
-				break;
-			case Id_toDateString:
-				arity = 0;
-				s = "toDateString";
-				break;
-			case Id_toLocaleString:
-				arity = 0;
-				s = "toLocaleString";
-				break;
-			case Id_toLocaleTimeString:
-				arity = 0;
-				s = "toLocaleTimeString";
-				break;
-			case Id_toLocaleDateString:
-				arity = 0;
-				s = "toLocaleDateString";
-				break;
-			case Id_toUTCString:
-				arity = 0;
-				s = "toUTCString";
-				break;
-			case Id_toSource:
-				arity = 0;
-				s = "toSource";
-				break;
-			case Id_valueOf:
-				arity = 0;
-				s = "valueOf";
-				break;
-			case Id_getTime:
-				arity = 0;
-				s = "getTime";
-				break;
-			case Id_getYear:
-				arity = 0;
-				s = "getYear";
-				break;
-			case Id_getFullYear:
-				arity = 0;
-				s = "getFullYear";
-				break;
-			case Id_getUTCFullYear:
-				arity = 0;
-				s = "getUTCFullYear";
-				break;
-			case Id_getMonth:
-				arity = 0;
-				s = "getMonth";
-				break;
-			case Id_getUTCMonth:
-				arity = 0;
-				s = "getUTCMonth";
-				break;
-			case Id_getDate:
-				arity = 0;
-				s = "getDate";
-				break;
-			case Id_getUTCDate:
-				arity = 0;
-				s = "getUTCDate";
-				break;
-			case Id_getDay:
-				arity = 0;
-				s = "getDay";
-				break;
-			case Id_getUTCDay:
-				arity = 0;
-				s = "getUTCDay";
-				break;
-			case Id_getHours:
-				arity = 0;
-				s = "getHours";
-				break;
-			case Id_getUTCHours:
-				arity = 0;
-				s = "getUTCHours";
-				break;
-			case Id_getMinutes:
-				arity = 0;
-				s = "getMinutes";
-				break;
-			case Id_getUTCMinutes:
-				arity = 0;
-				s = "getUTCMinutes";
-				break;
-			case Id_getSeconds:
-				arity = 0;
-				s = "getSeconds";
-				break;
-			case Id_getUTCSeconds:
-				arity = 0;
-				s = "getUTCSeconds";
-				break;
-			case Id_getMilliseconds:
-				arity = 0;
-				s = "getMilliseconds";
-				break;
-			case Id_getUTCMilliseconds:
-				arity = 0;
-				s = "getUTCMilliseconds";
-				break;
-			case Id_getTimezoneOffset:
-				arity = 0;
-				s = "getTimezoneOffset";
-				break;
-			case Id_setTime:
-				arity = 1;
-				s = "setTime";
-				break;
-			case Id_setMilliseconds:
-				arity = 1;
-				s = "setMilliseconds";
-				break;
-			case Id_setUTCMilliseconds:
-				arity = 1;
-				s = "setUTCMilliseconds";
-				break;
-			case Id_setSeconds:
-				arity = 2;
-				s = "setSeconds";
-				break;
-			case Id_setUTCSeconds:
-				arity = 2;
-				s = "setUTCSeconds";
-				break;
-			case Id_setMinutes:
-				arity = 3;
-				s = "setMinutes";
-				break;
-			case Id_setUTCMinutes:
-				arity = 3;
-				s = "setUTCMinutes";
-				break;
-			case Id_setHours:
-				arity = 4;
-				s = "setHours";
-				break;
-			case Id_setUTCHours:
-				arity = 4;
-				s = "setUTCHours";
-				break;
-			case Id_setDate:
-				arity = 1;
-				s = "setDate";
-				break;
-			case Id_setUTCDate:
-				arity = 1;
-				s = "setUTCDate";
-				break;
-			case Id_setMonth:
-				arity = 2;
-				s = "setMonth";
-				break;
-			case Id_setUTCMonth:
-				arity = 2;
-				s = "setUTCMonth";
-				break;
-			case Id_setFullYear:
-				arity = 3;
-				s = "setFullYear";
-				break;
-			case Id_setUTCFullYear:
-				arity = 3;
-				s = "setUTCFullYear";
-				break;
-			case Id_setYear:
-				arity = 1;
-				s = "setYear";
-				break;
-			case Id_toISOString:
-				arity = 0;
-				s = "toISOString";
-				break;
-			case Id_toJSON:
-				arity = 1;
-				s = "toJSON";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 7;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_toTimeString -> {
+                arity = 0;
+                yield "toTimeString";
+            }
+            case Id_toDateString -> {
+                arity = 0;
+                yield "toDateString";
+            }
+            case Id_toLocaleString -> {
+                arity = 0;
+                yield "toLocaleString";
+            }
+            case Id_toLocaleTimeString -> {
+                arity = 0;
+                yield "toLocaleTimeString";
+            }
+            case Id_toLocaleDateString -> {
+                arity = 0;
+                yield "toLocaleDateString";
+            }
+            case Id_toUTCString -> {
+                arity = 0;
+                yield "toUTCString";
+            }
+            case Id_toSource -> {
+                arity = 0;
+                yield "toSource";
+            }
+            case Id_valueOf -> {
+                arity = 0;
+                yield "valueOf";
+            }
+            case Id_getTime -> {
+                arity = 0;
+                yield "getTime";
+            }
+            case Id_getYear -> {
+                arity = 0;
+                yield "getYear";
+            }
+            case Id_getFullYear -> {
+                arity = 0;
+                yield "getFullYear";
+            }
+            case Id_getUTCFullYear -> {
+                arity = 0;
+                yield "getUTCFullYear";
+            }
+            case Id_getMonth -> {
+                arity = 0;
+                yield "getMonth";
+            }
+            case Id_getUTCMonth -> {
+                arity = 0;
+                yield "getUTCMonth";
+            }
+            case Id_getDate -> {
+                arity = 0;
+                yield "getDate";
+            }
+            case Id_getUTCDate -> {
+                arity = 0;
+                yield "getUTCDate";
+            }
+            case Id_getDay -> {
+                arity = 0;
+                yield "getDay";
+            }
+            case Id_getUTCDay -> {
+                arity = 0;
+                yield "getUTCDay";
+            }
+            case Id_getHours -> {
+                arity = 0;
+                yield "getHours";
+            }
+            case Id_getUTCHours -> {
+                arity = 0;
+                yield "getUTCHours";
+            }
+            case Id_getMinutes -> {
+                arity = 0;
+                yield "getMinutes";
+            }
+            case Id_getUTCMinutes -> {
+                arity = 0;
+                yield "getUTCMinutes";
+            }
+            case Id_getSeconds -> {
+                arity = 0;
+                yield "getSeconds";
+            }
+            case Id_getUTCSeconds -> {
+                arity = 0;
+                yield "getUTCSeconds";
+            }
+            case Id_getMilliseconds -> {
+                arity = 0;
+                yield "getMilliseconds";
+            }
+            case Id_getUTCMilliseconds -> {
+                arity = 0;
+                yield "getUTCMilliseconds";
+            }
+            case Id_getTimezoneOffset -> {
+                arity = 0;
+                yield "getTimezoneOffset";
+            }
+            case Id_setTime -> {
+                arity = 1;
+                yield "setTime";
+            }
+            case Id_setMilliseconds -> {
+                arity = 1;
+                yield "setMilliseconds";
+            }
+            case Id_setUTCMilliseconds -> {
+                arity = 1;
+                yield "setUTCMilliseconds";
+            }
+            case Id_setSeconds -> {
+                arity = 2;
+                yield "setSeconds";
+            }
+            case Id_setUTCSeconds -> {
+                arity = 2;
+                yield "setUTCSeconds";
+            }
+            case Id_setMinutes -> {
+                arity = 3;
+                yield "setMinutes";
+            }
+            case Id_setUTCMinutes -> {
+                arity = 3;
+                yield "setUTCMinutes";
+            }
+            case Id_setHours -> {
+                arity = 4;
+                yield "setHours";
+            }
+            case Id_setUTCHours -> {
+                arity = 4;
+                yield "setUTCHours";
+            }
+            case Id_setDate -> {
+                arity = 1;
+                yield "setDate";
+            }
+            case Id_setUTCDate -> {
+                arity = 1;
+                yield "setUTCDate";
+            }
+            case Id_setMonth -> {
+                arity = 2;
+                yield "setMonth";
+            }
+            case Id_setUTCMonth -> {
+                arity = 2;
+                yield "setUTCMonth";
+            }
+            case Id_setFullYear -> {
+                arity = 3;
+                yield "setFullYear";
+            }
+            case Id_setUTCFullYear -> {
+                arity = 3;
+                yield "setUTCFullYear";
+            }
+            case Id_setYear -> {
+                arity = 1;
+                yield "setYear";
+            }
+            case Id_toISOString -> {
+                arity = 0;
+                yield "toISOString";
+            }
+            case Id_toJSON -> {
+                arity = 1;
+                yield "toJSON";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(DATE_TAG, id, s, arity);
 	}
 
@@ -1001,11 +1000,10 @@ final class NativeDate extends IdScriptableObject {
 
 			if (i == len) {
 				// reached EOF, check for end state
-				switch (state) {
-					case HOUR:
-					case TZHOUR:
-						state = ERROR;
-				}
+                state = switch (state) {
+                    case HOUR, TZHOUR -> ERROR;
+                    default -> state;
+                };
 				break;
 			}
 
@@ -1026,39 +1024,25 @@ final class NativeDate extends IdScriptableObject {
 			}
 
 			// state transition
-			switch (state) {
-				case YEAR:
-				case MONTH:
-					state = (c == '-' ? state + 1 : c == 'T' ? HOUR : ERROR);
-					break;
-				case DAY:
-					state = (c == 'T' ? HOUR : ERROR);
-					break;
-				case HOUR:
-					state = (c == ':' ? MIN : ERROR);
-					break;
-				case TZHOUR:
-					// state = (c == ':' ? state + 1 : ERROR);
-					// Non-standard extension, https://bugzilla.mozilla.org/show_bug.cgi?id=682754
-					if (c != ':') {
-						// back off by one and try to read without ':' separator
-						i -= 1;
-					}
-					state = TZMIN;
-					break;
-				case MIN:
-					state = (c == ':' ? SEC : c == '+' || c == '-' ? TZHOUR : ERROR);
-					break;
-				case SEC:
-					state = (c == '.' ? MSEC : c == '+' || c == '-' ? TZHOUR : ERROR);
-					break;
-				case MSEC:
-					state = (c == '+' || c == '-' ? TZHOUR : ERROR);
-					break;
-				case TZMIN:
-					state = ERROR;
-					break;
-			}
+            state = switch (state) {
+                case YEAR, MONTH -> (c == '-' ? state + 1 : c == 'T' ? HOUR : ERROR);
+                case DAY -> (c == 'T' ? HOUR : ERROR);
+                case HOUR -> (c == ':' ? MIN : ERROR);
+                case TZHOUR -> {
+                    // state = (c == ':' ? state + 1 : ERROR);
+                    // Non-standard extension, https://bugzilla.mozilla.org/show_bug.cgi?id=682754
+                    if (c != ':') {
+                        // back off by one and try to read without ':' separator
+                        i -= 1;
+                    }
+                    yield TZMIN;
+                }
+                case MIN -> (c == ':' ? SEC : c == '+' || c == '-' ? TZHOUR : ERROR);
+                case SEC -> (c == '.' ? MSEC : c == '+' || c == '-' ? TZHOUR : ERROR);
+                case MSEC -> (c == '+' || c == '-' ? TZHOUR : ERROR);
+                case TZMIN -> ERROR;
+                default -> state;
+            };
 			if (state == TZHOUR) {
 				// save timezone modificator
 				tzmod = (c == '-') ? -1 : 1;
@@ -1454,22 +1438,14 @@ final class NativeDate extends IdScriptableObject {
 	}
 
 	private static String toLocale_helper(double t, int methodId) {
-		DateFormat formatter;
-		switch (methodId) {
-			case Id_toLocaleString:
-				formatter = localeDateTimeFormatter;
-				break;
-			case Id_toLocaleTimeString:
-				formatter = localeTimeFormatter;
-				break;
-			case Id_toLocaleDateString:
-				formatter = localeDateFormatter;
-				break;
-			default:
-				throw new AssertionError(); // unreachable
-		}
+		DateFormat formatter = switch (methodId) {
+            case Id_toLocaleString -> localeDateTimeFormatter;
+            case Id_toLocaleTimeString -> localeTimeFormatter;
+            case Id_toLocaleDateString -> localeDateFormatter;
+            default -> throw new AssertionError(); // unreachable
+        };
 
-		synchronized (formatter) {
+        synchronized (formatter) {
 			return formatter.format(new Date((long) t));
 		}
 	}

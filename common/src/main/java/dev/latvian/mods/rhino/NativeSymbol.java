@@ -182,31 +182,26 @@ public class NativeSymbol extends IdScriptableObject implements Symbol {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		switch (id) {
-			case ConstructorId_for:
-				return js_for(cx, scope, args);
-			case ConstructorId_keyFor:
-				return js_keyFor(cx, scope, args);
-
-			case Id_constructor:
-				if (thisObj == null) {
-					if (cx.getThreadLocal(CONSTRUCTOR_SLOT) == null) {
-						// We should never get to this via "new".
-						throw ScriptRuntime.typeError0("msg.no.symbol.new");
-					}
-					// Unless we are being called by our own internal "new"
-					return js_constructor(args);
-				}
-				return construct(cx, scope, args);
-
-			case Id_toString:
-				return getSelf(thisObj).toString();
-			case Id_valueOf:
-			case SymbolId_toPrimitive:
-				return getSelf(thisObj).js_valueOf();
-			default:
-				return super.execIdCall(f, cx, scope, thisObj, args);
-		}
+        return switch (id) {
+            case ConstructorId_for -> js_for(cx, scope, args);
+            case ConstructorId_keyFor -> js_keyFor(cx, scope, args);
+            case Id_constructor -> {
+                if (thisObj == null) {
+                    if (cx.getThreadLocal(CONSTRUCTOR_SLOT) == null) {
+                        // We should never get to this via "new".
+                        throw ScriptRuntime.typeError0("msg.no.symbol.new");
+                    }
+                    // Unless we are being called by our own internal "new"
+                    yield js_constructor(args);
+                }
+                yield construct(cx, scope, args);
+                // We should never get to this via "new".
+                // Unless we are being called by our own internal "new"
+            }
+            case Id_toString -> getSelf(thisObj).toString();
+            case Id_valueOf, SymbolId_toPrimitive -> getSelf(thisObj).js_valueOf();
+            default -> super.execIdCall(f, cx, scope, thisObj, args);
+        };
 	}
 
 	private static NativeSymbol getSelf(Object thisObj) {

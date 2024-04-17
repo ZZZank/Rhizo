@@ -197,42 +197,41 @@ public class NativeSet extends IdScriptableObject {
 
 		String s, fnName = null;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 0;
-				s = "constructor";
-				break;
-			case Id_add:
-				arity = 1;
-				s = "add";
-				break;
-			case Id_delete:
-				arity = 1;
-				s = "delete";
-				break;
-			case Id_has:
-				arity = 1;
-				s = "has";
-				break;
-			case Id_clear:
-				arity = 0;
-				s = "clear";
-				break;
-			case Id_entries:
-				arity = 0;
-				s = "entries";
-				break;
-			case Id_values:
-				arity = 0;
-				s = "values";
-				break;
-			case Id_forEach:
-				arity = 1;
-				s = "forEach";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 0;
+                yield "constructor";
+            }
+            case Id_add -> {
+                arity = 1;
+                yield "add";
+            }
+            case Id_delete -> {
+                arity = 1;
+                yield "delete";
+            }
+            case Id_has -> {
+                arity = 1;
+                yield "has";
+            }
+            case Id_clear -> {
+                arity = 0;
+                yield "clear";
+            }
+            case Id_entries -> {
+                arity = 0;
+                yield "entries";
+            }
+            case Id_values -> {
+                arity = 0;
+                yield "values";
+            }
+            case Id_forEach -> {
+                arity = 1;
+                yield "forEach";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(SET_TAG, id, s, fnName, arity);
 	}
 

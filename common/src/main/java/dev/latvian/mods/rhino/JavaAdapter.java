@@ -844,29 +844,29 @@ public final class JavaAdapter implements IdFunctionCall {
 			return 1;
 		}
 		String typeName = paramType.getName();
-		switch (typeName.charAt(0)) {
-			case 'z':
-			case 'b':
-			case 'c':
-			case 's':
-			case 'i':
-				// load an int value, convert to double.
-				cfw.addILoad(paramOffset);
-				return 1;
-			case 'l':
-				// load a long, convert to double.
-				cfw.addLLoad(paramOffset);
-				return 2;
-			case 'f':
-				// load a float, convert to double.
-				cfw.addFLoad(paramOffset);
-				return 1;
-			case 'd':
-				cfw.addDLoad(paramOffset);
-				return 2;
-		}
-		throw Kit.codeBug();
-	}
+        return switch (typeName.charAt(0)) {
+            case 'z', 'b', 'c', 's', 'i' -> {
+                cfw.addILoad(paramOffset);
+                yield 1;
+                // load an int value, convert to double.
+            }
+            case 'l' -> {
+                cfw.addLLoad(paramOffset);
+                yield 2;
+                // load a long, convert to double.
+            }
+            case 'f' -> {
+                cfw.addFLoad(paramOffset);
+                yield 1;
+                // load a float, convert to double.
+            }
+            case 'd' -> {
+                cfw.addDLoad(paramOffset);
+                yield 2;
+            }
+            default -> throw Kit.codeBug();
+        };
+    }
 
 	/**
 	 * Generates code to return a Java type, after calling a Java method

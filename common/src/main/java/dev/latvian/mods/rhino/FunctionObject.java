@@ -171,34 +171,35 @@ public class FunctionObject extends BaseFunction {
 	}
 
 	public static Object convertArg(Context cx, Scriptable scope, Object arg, int typeTag) {
-		switch (typeTag) {
-			case JAVA_STRING_TYPE:
-				if (arg instanceof String) {
-					return arg;
-				}
-				return ScriptRuntime.toString(arg);
-			case JAVA_INT_TYPE:
-				if (arg instanceof Integer) {
-					return arg;
-				}
-				return ScriptRuntime.toInt32(arg);
-			case JAVA_BOOLEAN_TYPE:
-				if (arg instanceof Boolean) {
-					return arg;
-				}
-				return ScriptRuntime.toBoolean(arg) ? Boolean.TRUE : Boolean.FALSE;
-			case JAVA_DOUBLE_TYPE:
-				if (arg instanceof Double) {
-					return arg;
-				}
-				return ScriptRuntime.toNumber(arg);
-			case JAVA_SCRIPTABLE_TYPE:
-				return ScriptRuntime.toObjectOrNull(cx, arg, scope);
-			case JAVA_OBJECT_TYPE:
-				return arg;
-			default:
-				throw new IllegalArgumentException();
-		}
+        return switch (typeTag) {
+            case JAVA_STRING_TYPE -> {
+                if (arg instanceof String) {
+                    yield arg;
+                }
+                yield ScriptRuntime.toString(arg);
+            }
+            case JAVA_INT_TYPE -> {
+                if (arg instanceof Integer) {
+                    yield arg;
+                }
+                yield ScriptRuntime.toInt32(arg);
+            }
+            case JAVA_BOOLEAN_TYPE -> {
+                if (arg instanceof Boolean) {
+                    yield arg;
+                }
+                yield ScriptRuntime.toBoolean(arg) ? Boolean.TRUE : Boolean.FALSE;
+            }
+            case JAVA_DOUBLE_TYPE -> {
+                if (arg instanceof Double) {
+                    yield arg;
+                }
+                yield ScriptRuntime.toNumber(arg);
+            }
+            case JAVA_SCRIPTABLE_TYPE -> ScriptRuntime.toObjectOrNull(cx, arg, scope);
+            case JAVA_OBJECT_TYPE -> arg;
+            default -> throw new IllegalArgumentException();
+        };
 	}
 
 	/**

@@ -76,14 +76,11 @@ public abstract class ES6Iterator extends IdScriptableObject {
 
 		ES6Iterator iterator = (ES6Iterator) thisObj;
 
-		switch (id) {
-			case Id_next:
-				return iterator.next(cx, scope);
-			case SymbolId_iterator:
-				return iterator;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        return switch (id) {
+            case Id_next -> iterator.next(cx, scope);
+            case SymbolId_iterator -> iterator;
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 	}
 
 	@Override

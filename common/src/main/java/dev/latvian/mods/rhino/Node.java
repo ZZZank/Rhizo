@@ -923,22 +923,13 @@ public class Node implements Iterable<Node> {
 					return END_DROPS_OFF;
 				}
 
-				switch (first.type) {
-					case Token.LABEL:
-						return first.endCheckLabel();
-
-					case Token.IFNE:
-						return first.endCheckIf();
-
-					case Token.SWITCH:
-						return first.endCheckSwitch();
-
-					case Token.TRY:
-						return first.endCheckTry();
-
-					default:
-						return endCheckBlock();
-				}
+                return switch (first.type) {
+                    case Token.LABEL -> first.endCheckLabel();
+                    case Token.IFNE -> first.endCheckIf();
+                    case Token.SWITCH -> first.endCheckSwitch();
+                    case Token.TRY -> first.endCheckTry();
+                    default -> endCheckBlock();
+                };
 
 			default:
 				return END_DROPS_OFF;
@@ -946,97 +937,38 @@ public class Node implements Iterable<Node> {
 	}
 
 	public boolean hasSideEffects() {
-		switch (type) {
-			case Token.EXPR_VOID:
-			case Token.COMMA:
-				if (last != null) {
-					return last.hasSideEffects();
-				}
-				return true;
-
-			case Token.HOOK:
-				if (first == null || first.next == null || first.next.next == null) {
-					Kit.codeBug();
-				}
-				return first.next.hasSideEffects() && first.next.next.hasSideEffects();
-
-			case Token.AND:
-			case Token.OR:
-				if (first == null || last == null) {
-					Kit.codeBug();
-				}
-				return first.hasSideEffects() || last.hasSideEffects();
-
-			case Token.ERROR:         // Avoid cascaded error messages
-			case Token.EXPR_RESULT:
-			case Token.ASSIGN:
-			case Token.ASSIGN_ADD:
-			case Token.ASSIGN_SUB:
-			case Token.ASSIGN_MUL:
-			case Token.ASSIGN_DIV:
-			case Token.ASSIGN_MOD:
-			case Token.ASSIGN_BITOR:
-			case Token.ASSIGN_BITXOR:
-			case Token.ASSIGN_BITAND:
-			case Token.ASSIGN_LSH:
-			case Token.ASSIGN_RSH:
-			case Token.ASSIGN_URSH:
-			case Token.ENTERWITH:
-			case Token.LEAVEWITH:
-			case Token.RETURN:
-			case Token.GOTO:
-			case Token.IFEQ:
-			case Token.IFNE:
-			case Token.NEW:
-			case Token.DELPROP:
-			case Token.SETNAME:
-			case Token.SETPROP:
-			case Token.SETELEM:
-			case Token.CALL:
-			case Token.THROW:
-			case Token.RETHROW:
-			case Token.SETVAR:
-			case Token.CATCH_SCOPE:
-			case Token.RETURN_RESULT:
-			case Token.SET_REF:
-			case Token.DEL_REF:
-			case Token.REF_CALL:
-			case Token.TRY:
-			case Token.SEMI:
-			case Token.INC:
-			case Token.DEC:
-			case Token.IF:
-			case Token.ELSE:
-			case Token.SWITCH:
-			case Token.WHILE:
-			case Token.DO:
-			case Token.FOR:
-			case Token.BREAK:
-			case Token.CONTINUE:
-			case Token.VAR:
-			case Token.CONST:
-			case Token.LET:
-			case Token.LETEXPR:
-			case Token.WITH:
-			case Token.WITHEXPR:
-			case Token.CATCH:
-			case Token.FINALLY:
-			case Token.BLOCK:
-			case Token.LABEL:
-			case Token.TARGET:
-			case Token.LOOP:
-			case Token.JSR:
-			case Token.SETPROP_OP:
-			case Token.SETELEM_OP:
-			case Token.LOCAL_BLOCK:
-			case Token.SET_REF_OP:
-			case Token.YIELD:
-			case Token.YIELD_STAR:
-				return true;
-
-			default:
-				return false;
-		}
+        return switch (type) {
+            case Token.EXPR_VOID, Token.COMMA -> {
+                if (last != null) {
+                    yield last.hasSideEffects();
+                }
+                yield true;
+            }
+            case Token.HOOK -> {
+                if (first == null || first.next == null || first.next.next == null) {
+                    Kit.codeBug();
+                }
+                yield first.next.hasSideEffects() && first.next.next.hasSideEffects();
+            }
+            case Token.AND, Token.OR -> {
+                if (first == null || last == null) {
+                    Kit.codeBug();
+                }
+                yield first.hasSideEffects() || last.hasSideEffects();
+            }         // Avoid cascaded error messages
+            case Token.ERROR, Token.EXPR_RESULT, Token.ASSIGN, Token.ASSIGN_ADD, Token.ASSIGN_SUB, Token.ASSIGN_MUL,
+                 Token.ASSIGN_DIV, Token.ASSIGN_MOD, Token.ASSIGN_BITOR, Token.ASSIGN_BITXOR, Token.ASSIGN_BITAND,
+                 Token.ASSIGN_LSH, Token.ASSIGN_RSH, Token.ASSIGN_URSH, Token.ENTERWITH, Token.LEAVEWITH, Token.RETURN,
+                 Token.GOTO, Token.IFEQ, Token.IFNE, Token.NEW, Token.DELPROP, Token.SETNAME, Token.SETPROP,
+                 Token.SETELEM, Token.CALL, Token.THROW, Token.RETHROW, Token.SETVAR, Token.CATCH_SCOPE,
+                 Token.RETURN_RESULT, Token.SET_REF, Token.DEL_REF, Token.REF_CALL, Token.TRY, Token.SEMI, Token.INC,
+                 Token.DEC, Token.IF, Token.ELSE, Token.SWITCH, Token.WHILE, Token.DO, Token.FOR, Token.BREAK,
+                 Token.CONTINUE, Token.VAR, Token.CONST, Token.LET, Token.LETEXPR, Token.WITH, Token.WITHEXPR,
+                 Token.CATCH, Token.FINALLY, Token.BLOCK, Token.LABEL, Token.TARGET, Token.LOOP, Token.JSR,
+                 Token.SETPROP_OP, Token.SETELEM_OP, Token.LOCAL_BLOCK, Token.SET_REF_OP, Token.YIELD,
+                 Token.YIELD_STAR -> true;
+            default -> false;
+        };
 	}
 
 	/**
@@ -1179,32 +1111,21 @@ public class Node implements Iterable<Node> {
 						value = "last local block";
 						break;
 					case ISNUMBER_PROP:
-						switch (x.intValue) {
-							case BOTH:
-								value = "both";
-								break;
-							case RIGHT:
-								value = "right";
-								break;
-							case LEFT:
-								value = "left";
-								break;
-							default:
-								throw Kit.codeBug();
-						}
+                        value = switch (x.intValue) {
+                            case BOTH -> "both";
+                            case RIGHT -> "right";
+                            case LEFT -> "left";
+                            default -> throw Kit.codeBug();
+                        };
 						break;
 					case SPECIALCALL_PROP:
-						switch (x.intValue) {
-							case SPECIALCALL_EVAL:
-								value = "eval";
-								break;
-							case SPECIALCALL_WITH:
-								value = "with";
-								break;
-							default:
-								// NON_SPECIALCALL should not be stored
-								throw Kit.codeBug();
-						}
+                        value = switch (x.intValue) {
+                            case SPECIALCALL_EVAL -> "eval";
+                            case SPECIALCALL_WITH -> "with";
+                            default ->
+                                // NON_SPECIALCALL should not be stored
+                                throw Kit.codeBug();
+                        };
 						break;
 					case OBJECT_IDS_PROP: {
 						Object[] a = (Object[]) x.objectValue;

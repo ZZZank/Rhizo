@@ -75,20 +75,15 @@ public class ObjArray implements Serializable {
 	}
 
 	private Object getImpl(int index) {
-		switch (index) {
-			case 0:
-				return f0;
-			case 1:
-				return f1;
-			case 2:
-				return f2;
-			case 3:
-				return f3;
-			case 4:
-				return f4;
-		}
-		return data[index - FIELDS_STORE_SIZE];
-	}
+        return switch (index) {
+            case 0 -> f0;
+            case 1 -> f1;
+            case 2 -> f2;
+            case 3 -> f3;
+            case 4 -> f4;
+            default -> data[index - FIELDS_STORE_SIZE];
+        };
+    }
 
 	private void setImpl(int index, Object value) {
 		switch (index) {

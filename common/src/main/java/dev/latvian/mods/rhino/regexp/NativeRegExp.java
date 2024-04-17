@@ -2531,56 +2531,37 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			return super.findInstanceIdInfo(s);
 		}
 
-		int attr;
-		switch (id) {
-			case Id_lastIndex:
-				attr = lastIndexAttr;
-				break;
-			case Id_source:
-			case Id_global:
-			case Id_ignoreCase:
-			case Id_multiline:
-				attr = PERMANENT | READONLY | DONTENUM;
-				break;
-			default:
-				throw new IllegalStateException();
-		}
-		return instanceIdInfo(attr, id);
+		int attr = switch (id) {
+            case Id_lastIndex -> lastIndexAttr;
+            case Id_source, Id_global, Id_ignoreCase, Id_multiline -> PERMANENT | READONLY | DONTENUM;
+            default -> throw new IllegalStateException();
+        };
+        return instanceIdInfo(attr, id);
 	}
 
 	@Override
 	protected String getInstanceIdName(int id) {
-		switch (id) {
-			case Id_lastIndex:
-				return "lastIndex";
-			case Id_source:
-				return "source";
-			case Id_global:
-				return "global";
-			case Id_ignoreCase:
-				return "ignoreCase";
-			case Id_multiline:
-				return "multiline";
-		}
-		return super.getInstanceIdName(id);
-	}
+        return switch (id) {
+            case Id_lastIndex -> "lastIndex";
+            case Id_source -> "source";
+            case Id_global -> "global";
+            case Id_ignoreCase -> "ignoreCase";
+            case Id_multiline -> "multiline";
+            default -> super.getInstanceIdName(id);
+        };
+    }
 
 	@Override
 	protected Object getInstanceIdValue(int id) {
-		switch (id) {
-			case Id_lastIndex:
-				return lastIndex;
-			case Id_source:
-				return new String(re.source);
-			case Id_global:
-				return ScriptRuntime.wrapBoolean((re.flags & JSREG_GLOB) != 0);
-			case Id_ignoreCase:
-				return ScriptRuntime.wrapBoolean((re.flags & JSREG_FOLD) != 0);
-			case Id_multiline:
-				return ScriptRuntime.wrapBoolean((re.flags & JSREG_MULTILINE) != 0);
-		}
-		return super.getInstanceIdValue(id);
-	}
+        return switch (id) {
+            case Id_lastIndex -> lastIndex;
+            case Id_source -> new String(re.source);
+            case Id_global -> ScriptRuntime.wrapBoolean((re.flags & JSREG_GLOB) != 0);
+            case Id_ignoreCase -> ScriptRuntime.wrapBoolean((re.flags & JSREG_FOLD) != 0);
+            case Id_multiline -> ScriptRuntime.wrapBoolean((re.flags & JSREG_MULTILINE) != 0);
+            default -> super.getInstanceIdValue(id);
+        };
+    }
 
 	private void setLastIndex(Object value) {
 		if ((lastIndexAttr & READONLY) != 0) {
@@ -2628,34 +2609,33 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 		String s;
 		int arity;
-		switch (id) {
-			case Id_compile:
-				arity = 2;
-				s = "compile";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_toSource:
-				arity = 0;
-				s = "toSource";
-				break;
-			case Id_exec:
-				arity = 1;
-				s = "exec";
-				break;
-			case Id_test:
-				arity = 1;
-				s = "test";
-				break;
-			case Id_prefix:
-				arity = 1;
-				s = "prefix";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_compile -> {
+                arity = 2;
+                yield "compile";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_toSource -> {
+                arity = 0;
+                yield "toSource";
+            }
+            case Id_exec -> {
+                arity = 1;
+                yield "exec";
+            }
+            case Id_test -> {
+                arity = 1;
+                yield "test";
+            }
+            case Id_prefix -> {
+                arity = 1;
+                yield "prefix";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(REGEXP_TAG, id, s, arity);
 	}
 
@@ -2665,34 +2645,23 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		switch (id) {
-			case Id_compile:
-				return realThis(thisObj, f).compile(cx, scope, args);
-
-			case Id_toString:
-			case Id_toSource:
-				return realThis(thisObj, f).toString();
-
-			case Id_exec:
-				return realThis(thisObj, f).execSub(cx, scope, args, MATCH);
-
-			case Id_test: {
-				Object x = realThis(thisObj, f).execSub(cx, scope, args, TEST);
-				return Boolean.TRUE.equals(x) ? Boolean.TRUE : Boolean.FALSE;
-			}
-
-			case Id_prefix:
-				return realThis(thisObj, f).execSub(cx, scope, args, PREFIX);
-
-			case SymbolId_match:
-				return realThis(thisObj, f).execSub(cx, scope, args, MATCH);
-
-			case SymbolId_search:
-				Scriptable scriptable = (Scriptable) realThis(thisObj, f).execSub(cx, scope, args, MATCH);
-				return scriptable.get("index", scriptable);
-		}
-		throw new IllegalArgumentException(String.valueOf(id));
-	}
+        return switch (id) {
+            case Id_compile -> realThis(thisObj, f).compile(cx, scope, args);
+            case Id_toString, Id_toSource -> realThis(thisObj, f).toString();
+            case Id_exec -> realThis(thisObj, f).execSub(cx, scope, args, MATCH);
+            case Id_test -> {
+                Object x = realThis(thisObj, f).execSub(cx, scope, args, TEST);
+                yield Boolean.TRUE.equals(x) ? Boolean.TRUE : Boolean.FALSE;
+            }
+            case Id_prefix -> realThis(thisObj, f).execSub(cx, scope, args, PREFIX);
+            case SymbolId_match -> realThis(thisObj, f).execSub(cx, scope, args, MATCH);
+            case SymbolId_search -> {
+                Scriptable scriptable = (Scriptable) realThis(thisObj, f).execSub(cx, scope, args, MATCH);
+                yield scriptable.get("index", scriptable);
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
+    }
 
 	private static NativeRegExp realThis(Scriptable thisObj, IdFunctionObject f) {
 		if (!(thisObj instanceof NativeRegExp)) {

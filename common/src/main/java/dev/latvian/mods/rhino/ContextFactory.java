@@ -201,52 +201,26 @@ public class ContextFactory {
 	 * additional subclasses.
 	 */
 	protected boolean hasFeature(Context cx, int featureIndex) {
-		switch (featureIndex) {
-			case Context.FEATURE_MEMBER_EXPR_AS_FUNCTION_NAME:
-				return false;
-
-			case Context.FEATURE_RESERVED_KEYWORD_AS_IDENTIFIER:
-				return true;
-
-			case Context.FEATURE_PARENT_PROTO_PROPERTIES:
-				return true;
-
-			case Context.FEATURE_DYNAMIC_SCOPE:
-				return false;
-
-			case Context.FEATURE_STRICT_VARS:
-				return false;
-
-			case Context.FEATURE_STRICT_EVAL:
-				return false;
-
-			case Context.FEATURE_LOCATION_INFORMATION_IN_ERROR:
-				return false;
-
-			case Context.FEATURE_STRICT_MODE:
-				return false;
-
-			case Context.FEATURE_WARNING_AS_ERROR:
-				return false;
-
-			case Context.FEATURE_ENHANCED_JAVA_ACCESS:
-				return false;
-
-			case Context.FEATURE_V8_EXTENSIONS:
-				return true;
-
-			case Context.FEATURE_THREAD_SAFE_OBJECTS:
-				return false;
-
-			case Context.FEATURE_INTEGER_WITHOUT_DECIMAL_PLACE:
-				return false;
-
-			case Context.FEATURE_LITTLE_ENDIAN:
-				return false;
-		}
-		// It is a bug to call the method with unknown featureIndex
-		throw new IllegalArgumentException(String.valueOf(featureIndex));
-	}
+        return switch (featureIndex) {
+            case Context.FEATURE_MEMBER_EXPR_AS_FUNCTION_NAME -> false;
+            case Context.FEATURE_RESERVED_KEYWORD_AS_IDENTIFIER -> true;
+            case Context.FEATURE_PARENT_PROTO_PROPERTIES -> true;
+            case Context.FEATURE_DYNAMIC_SCOPE -> false;
+            case Context.FEATURE_STRICT_VARS -> false;
+            case Context.FEATURE_STRICT_EVAL -> false;
+            case Context.FEATURE_LOCATION_INFORMATION_IN_ERROR -> false;
+            case Context.FEATURE_STRICT_MODE -> false;
+            case Context.FEATURE_WARNING_AS_ERROR -> false;
+            case Context.FEATURE_ENHANCED_JAVA_ACCESS -> false;
+            case Context.FEATURE_V8_EXTENSIONS -> true;
+            case Context.FEATURE_THREAD_SAFE_OBJECTS -> false;
+            case Context.FEATURE_INTEGER_WITHOUT_DECIMAL_PLACE -> false;
+            case Context.FEATURE_LITTLE_ENDIAN -> false;
+            default ->
+                // It is a bug to call the method with unknown featureIndex
+                throw new IllegalArgumentException(String.valueOf(featureIndex));
+        };
+    }
 
 	private static boolean isDom3Present() {
 		Class<?> nodeClass = Kit.classOrNull("org.w3c.dom.Node");

@@ -45,26 +45,25 @@ final class NativeBoolean extends IdScriptableObject {
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 1;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_toSource:
-				arity = 0;
-				s = "toSource";
-				break;
-			case Id_valueOf:
-				arity = 0;
-				s = "valueOf";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 1;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_toSource -> {
+                arity = 0;
+                yield "toSource";
+            }
+            case Id_valueOf -> {
+                arity = 0;
+                yield "valueOf";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(BOOLEAN_TAG, id, s, arity);
 	}
 
@@ -101,19 +100,13 @@ final class NativeBoolean extends IdScriptableObject {
 		}
 		boolean value = ((NativeBoolean) thisObj).booleanValue;
 
-		switch (id) {
-
-			case Id_toString:
-				return value ? "true" : "false";
-
-			case Id_toSource:
-				return "not_supported";
-
-			case Id_valueOf:
-				return ScriptRuntime.wrapBoolean(value);
-		}
-		throw new IllegalArgumentException(String.valueOf(id));
-	}
+        return switch (id) {
+            case Id_toString -> value ? "true" : "false";
+            case Id_toSource -> "not_supported";
+            case Id_valueOf -> ScriptRuntime.wrapBoolean(value);
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
+    }
 
 	// #string_id_map#
 

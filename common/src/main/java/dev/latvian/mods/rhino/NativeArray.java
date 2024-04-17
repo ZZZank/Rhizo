@@ -181,134 +181,133 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 
 		String s, fnName = null;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 1;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_toLocaleString:
-				arity = 0;
-				s = "toLocaleString";
-				break;
-			case Id_toSource:
-				arity = 0;
-				s = "toSource";
-				break;
-			case Id_join:
-				arity = 1;
-				s = "join";
-				break;
-			case Id_reverse:
-				arity = 0;
-				s = "reverse";
-				break;
-			case Id_sort:
-				arity = 1;
-				s = "sort";
-				break;
-			case Id_push:
-				arity = 1;
-				s = "push";
-				break;
-			case Id_pop:
-				arity = 0;
-				s = "pop";
-				break;
-			case Id_shift:
-				arity = 0;
-				s = "shift";
-				break;
-			case Id_unshift:
-				arity = 1;
-				s = "unshift";
-				break;
-			case Id_splice:
-				arity = 2;
-				s = "splice";
-				break;
-			case Id_concat:
-				arity = 1;
-				s = "concat";
-				break;
-			case Id_slice:
-				arity = 2;
-				s = "slice";
-				break;
-			case Id_indexOf:
-				arity = 1;
-				s = "indexOf";
-				break;
-			case Id_lastIndexOf:
-				arity = 1;
-				s = "lastIndexOf";
-				break;
-			case Id_every:
-				arity = 1;
-				s = "every";
-				break;
-			case Id_filter:
-				arity = 1;
-				s = "filter";
-				break;
-			case Id_forEach:
-				arity = 1;
-				s = "forEach";
-				break;
-			case Id_map:
-				arity = 1;
-				s = "map";
-				break;
-			case Id_some:
-				arity = 1;
-				s = "some";
-				break;
-			case Id_find:
-				arity = 1;
-				s = "find";
-				break;
-			case Id_findIndex:
-				arity = 1;
-				s = "findIndex";
-				break;
-			case Id_reduce:
-				arity = 1;
-				s = "reduce";
-				break;
-			case Id_reduceRight:
-				arity = 1;
-				s = "reduceRight";
-				break;
-			case Id_fill:
-				arity = 1;
-				s = "fill";
-				break;
-			case Id_keys:
-				arity = 0;
-				s = "keys";
-				break;
-			case Id_values:
-				arity = 0;
-				s = "values";
-				break;
-			case Id_entries:
-				arity = 0;
-				s = "entries";
-				break;
-			case Id_includes:
-				arity = 1;
-				s = "includes";
-				break;
-			case Id_copyWithin:
-				arity = 2;
-				s = "copyWithin";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 1;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_toLocaleString -> {
+                arity = 0;
+                yield "toLocaleString";
+            }
+            case Id_toSource -> {
+                arity = 0;
+                yield "toSource";
+            }
+            case Id_join -> {
+                arity = 1;
+                yield "join";
+            }
+            case Id_reverse -> {
+                arity = 0;
+                yield "reverse";
+            }
+            case Id_sort -> {
+                arity = 1;
+                yield "sort";
+            }
+            case Id_push -> {
+                arity = 1;
+                yield "push";
+            }
+            case Id_pop -> {
+                arity = 0;
+                yield "pop";
+            }
+            case Id_shift -> {
+                arity = 0;
+                yield "shift";
+            }
+            case Id_unshift -> {
+                arity = 1;
+                yield "unshift";
+            }
+            case Id_splice -> {
+                arity = 2;
+                yield "splice";
+            }
+            case Id_concat -> {
+                arity = 1;
+                yield "concat";
+            }
+            case Id_slice -> {
+                arity = 2;
+                yield "slice";
+            }
+            case Id_indexOf -> {
+                arity = 1;
+                yield "indexOf";
+            }
+            case Id_lastIndexOf -> {
+                arity = 1;
+                yield "lastIndexOf";
+            }
+            case Id_every -> {
+                arity = 1;
+                yield "every";
+            }
+            case Id_filter -> {
+                arity = 1;
+                yield "filter";
+            }
+            case Id_forEach -> {
+                arity = 1;
+                yield "forEach";
+            }
+            case Id_map -> {
+                arity = 1;
+                yield "map";
+            }
+            case Id_some -> {
+                arity = 1;
+                yield "some";
+            }
+            case Id_find -> {
+                arity = 1;
+                yield "find";
+            }
+            case Id_findIndex -> {
+                arity = 1;
+                yield "findIndex";
+            }
+            case Id_reduce -> {
+                arity = 1;
+                yield "reduce";
+            }
+            case Id_reduceRight -> {
+                arity = 1;
+                yield "reduceRight";
+            }
+            case Id_fill -> {
+                arity = 1;
+                yield "fill";
+            }
+            case Id_keys -> {
+                arity = 0;
+                yield "keys";
+            }
+            case Id_values -> {
+                arity = 0;
+                yield "values";
+            }
+            case Id_entries -> {
+                arity = 0;
+                yield "entries";
+            }
+            case Id_includes -> {
+                arity = 1;
+                yield "includes";
+            }
+            case Id_copyWithin -> {
+                arity = 2;
+                yield "copyWithin";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 
 		initPrototypeMethod(ARRAY_TAG, id, s, fnName, arity);
 	}
@@ -1927,20 +1926,13 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 					break;
 			}
 		}
-		switch (id) {
-			case Id_every:
-				return Boolean.TRUE;
-			case Id_filter:
-			case Id_map:
-				return array;
-			case Id_some:
-				return Boolean.FALSE;
-			case Id_findIndex:
-				return ScriptRuntime.wrapNumber(-1);
-			case Id_forEach:
-			default:
-				return Undefined.instance;
-		}
+        return switch (id) {
+            case Id_every -> Boolean.TRUE;
+            case Id_filter, Id_map -> array;
+            case Id_some -> Boolean.FALSE;
+            case Id_findIndex -> ScriptRuntime.wrapNumber(-1);
+            default -> Undefined.instance;
+        };
 	}
 
 	/**

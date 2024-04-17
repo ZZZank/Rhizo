@@ -1462,21 +1462,12 @@ public class ClassFileWriter {
 		 * returns or unconditional jumps.
 		 */
 		private boolean isSuperBlockEnd(int opcode) {
-			switch (opcode) {
-				case ByteCode.ARETURN:
-				case ByteCode.FRETURN:
-				case ByteCode.IRETURN:
-				case ByteCode.LRETURN:
-				case ByteCode.RETURN:
-				case ByteCode.ATHROW:
-				case ByteCode.GOTO:
-				case ByteCode.GOTO_W:
-				case ByteCode.TABLESWITCH:
-				case ByteCode.LOOKUPSWITCH:
-					return true;
-				default:
-					return false;
-			}
+            return switch (opcode) {
+                case ByteCode.ARETURN, ByteCode.FRETURN, ByteCode.IRETURN, ByteCode.LRETURN, ByteCode.RETURN,
+                     ByteCode.ATHROW, ByteCode.GOTO, ByteCode.GOTO_W, ByteCode.TABLESWITCH, ByteCode.LOOKUPSWITCH ->
+                    true;
+                default -> false;
+            };
 		}
 
 		/**
@@ -1527,29 +1518,13 @@ public class ClassFileWriter {
 		 * Determine whether or not an opcode is a conditional or unconditional jump.
 		 */
 		private boolean isBranch(int opcode) {
-			switch (opcode) {
-				case ByteCode.GOTO:
-				case ByteCode.GOTO_W:
-				case ByteCode.IFEQ:
-				case ByteCode.IFGE:
-				case ByteCode.IFGT:
-				case ByteCode.IFLE:
-				case ByteCode.IFLT:
-				case ByteCode.IFNE:
-				case ByteCode.IFNONNULL:
-				case ByteCode.IFNULL:
-				case ByteCode.IF_ACMPEQ:
-				case ByteCode.IF_ACMPNE:
-				case ByteCode.IF_ICMPEQ:
-				case ByteCode.IF_ICMPGE:
-				case ByteCode.IF_ICMPGT:
-				case ByteCode.IF_ICMPLE:
-				case ByteCode.IF_ICMPLT:
-				case ByteCode.IF_ICMPNE:
-					return true;
-				default:
-					return false;
-			}
+            return switch (opcode) {
+                case ByteCode.GOTO, ByteCode.GOTO_W, ByteCode.IFEQ, ByteCode.IFGE, ByteCode.IFGT, ByteCode.IFLE,
+                     ByteCode.IFLT, ByteCode.IFNE, ByteCode.IFNONNULL, ByteCode.IFNULL, ByteCode.IF_ACMPEQ,
+                     ByteCode.IF_ACMPNE, ByteCode.IF_ICMPEQ, ByteCode.IF_ICMPGE, ByteCode.IF_ICMPGT, ByteCode.IF_ICMPLE,
+                     ByteCode.IF_ICMPLT, ByteCode.IF_ICMPNE -> true;
+                default -> false;
+            };
 		}
 
 		private int getOperand(int offset) {
@@ -2518,26 +2493,17 @@ public class ClassFileWriter {
 	 * Convert a newarray operand into an internal type.
 	 */
 	private static char arrayTypeToName(int type) {
-		switch (type) {
-			case ByteCode.T_BOOLEAN:
-				return 'Z';
-			case ByteCode.T_CHAR:
-				return 'C';
-			case ByteCode.T_FLOAT:
-				return 'F';
-			case ByteCode.T_DOUBLE:
-				return 'D';
-			case ByteCode.T_BYTE:
-				return 'B';
-			case ByteCode.T_SHORT:
-				return 'S';
-			case ByteCode.T_INT:
-				return 'I';
-			case ByteCode.T_LONG:
-				return 'J';
-			default:
-				throw new IllegalArgumentException("bad operand");
-		}
+        return switch (type) {
+            case ByteCode.T_BOOLEAN -> 'Z';
+            case ByteCode.T_CHAR -> 'C';
+            case ByteCode.T_FLOAT -> 'F';
+            case ByteCode.T_DOUBLE -> 'D';
+            case ByteCode.T_BYTE -> 'B';
+            case ByteCode.T_SHORT -> 'S';
+            case ByteCode.T_INT -> 'I';
+            case ByteCode.T_LONG -> 'J';
+            default -> throw new IllegalArgumentException("bad operand");
+        };
 	}
 
 	/**
@@ -2555,23 +2521,11 @@ public class ClassFileWriter {
 	 * @param descriptor the simple type descriptor to convert
 	 */
 	private static String descriptorToInternalName(String descriptor) {
-		switch (descriptor.charAt(0)) {
-			case 'B':
-			case 'C':
-			case 'D':
-			case 'F':
-			case 'I':
-			case 'J':
-			case 'S':
-			case 'Z':
-			case 'V':
-			case '[':
-				return descriptor;
-			case 'L':
-				return classDescriptorToInternalName(descriptor);
-			default:
-				throw new IllegalArgumentException("bad descriptor:" + descriptor);
-		}
+        return switch (descriptor.charAt(0)) {
+            case 'B', 'C', 'D', 'F', 'I', 'J', 'S', 'Z', 'V', '[' -> descriptor;
+            case 'L' -> classDescriptorToInternalName(descriptor);
+            default -> throw new IllegalArgumentException("bad descriptor:" + descriptor);
+        };
 	}
 
 	/**
@@ -2904,449 +2858,105 @@ public class ClassFileWriter {
 	 * This is different from opcodeCount, since opcodeCount counts logical operands.
 	 */
 	private static int opcodeLength(int opcode, boolean wide) {
-		switch (opcode) {
-			case ByteCode.AALOAD:
-			case ByteCode.AASTORE:
-			case ByteCode.ACONST_NULL:
-			case ByteCode.ALOAD_0:
-			case ByteCode.ALOAD_1:
-			case ByteCode.ALOAD_2:
-			case ByteCode.ALOAD_3:
-			case ByteCode.ARETURN:
-			case ByteCode.ARRAYLENGTH:
-			case ByteCode.ASTORE_0:
-			case ByteCode.ASTORE_1:
-			case ByteCode.ASTORE_2:
-			case ByteCode.ASTORE_3:
-			case ByteCode.ATHROW:
-			case ByteCode.BALOAD:
-			case ByteCode.BASTORE:
-			case ByteCode.BREAKPOINT:
-			case ByteCode.CALOAD:
-			case ByteCode.CASTORE:
-			case ByteCode.D2F:
-			case ByteCode.D2I:
-			case ByteCode.D2L:
-			case ByteCode.DADD:
-			case ByteCode.DALOAD:
-			case ByteCode.DASTORE:
-			case ByteCode.DCMPG:
-			case ByteCode.DCMPL:
-			case ByteCode.DCONST_0:
-			case ByteCode.DCONST_1:
-			case ByteCode.DDIV:
-			case ByteCode.DLOAD_0:
-			case ByteCode.DLOAD_1:
-			case ByteCode.DLOAD_2:
-			case ByteCode.DLOAD_3:
-			case ByteCode.DMUL:
-			case ByteCode.DNEG:
-			case ByteCode.DREM:
-			case ByteCode.DRETURN:
-			case ByteCode.DSTORE_0:
-			case ByteCode.DSTORE_1:
-			case ByteCode.DSTORE_2:
-			case ByteCode.DSTORE_3:
-			case ByteCode.DSUB:
-			case ByteCode.DUP:
-			case ByteCode.DUP2:
-			case ByteCode.DUP2_X1:
-			case ByteCode.DUP2_X2:
-			case ByteCode.DUP_X1:
-			case ByteCode.DUP_X2:
-			case ByteCode.F2D:
-			case ByteCode.F2I:
-			case ByteCode.F2L:
-			case ByteCode.FADD:
-			case ByteCode.FALOAD:
-			case ByteCode.FASTORE:
-			case ByteCode.FCMPG:
-			case ByteCode.FCMPL:
-			case ByteCode.FCONST_0:
-			case ByteCode.FCONST_1:
-			case ByteCode.FCONST_2:
-			case ByteCode.FDIV:
-			case ByteCode.FLOAD_0:
-			case ByteCode.FLOAD_1:
-			case ByteCode.FLOAD_2:
-			case ByteCode.FLOAD_3:
-			case ByteCode.FMUL:
-			case ByteCode.FNEG:
-			case ByteCode.FREM:
-			case ByteCode.FRETURN:
-			case ByteCode.FSTORE_0:
-			case ByteCode.FSTORE_1:
-			case ByteCode.FSTORE_2:
-			case ByteCode.FSTORE_3:
-			case ByteCode.FSUB:
-			case ByteCode.I2B:
-			case ByteCode.I2C:
-			case ByteCode.I2D:
-			case ByteCode.I2F:
-			case ByteCode.I2L:
-			case ByteCode.I2S:
-			case ByteCode.IADD:
-			case ByteCode.IALOAD:
-			case ByteCode.IAND:
-			case ByteCode.IASTORE:
-			case ByteCode.ICONST_0:
-			case ByteCode.ICONST_1:
-			case ByteCode.ICONST_2:
-			case ByteCode.ICONST_3:
-			case ByteCode.ICONST_4:
-			case ByteCode.ICONST_5:
-			case ByteCode.ICONST_M1:
-			case ByteCode.IDIV:
-			case ByteCode.ILOAD_0:
-			case ByteCode.ILOAD_1:
-			case ByteCode.ILOAD_2:
-			case ByteCode.ILOAD_3:
-			case ByteCode.IMPDEP1:
-			case ByteCode.IMPDEP2:
-			case ByteCode.IMUL:
-			case ByteCode.INEG:
-			case ByteCode.IOR:
-			case ByteCode.IREM:
-			case ByteCode.IRETURN:
-			case ByteCode.ISHL:
-			case ByteCode.ISHR:
-			case ByteCode.ISTORE_0:
-			case ByteCode.ISTORE_1:
-			case ByteCode.ISTORE_2:
-			case ByteCode.ISTORE_3:
-			case ByteCode.ISUB:
-			case ByteCode.IUSHR:
-			case ByteCode.IXOR:
-			case ByteCode.L2D:
-			case ByteCode.L2F:
-			case ByteCode.L2I:
-			case ByteCode.LADD:
-			case ByteCode.LALOAD:
-			case ByteCode.LAND:
-			case ByteCode.LASTORE:
-			case ByteCode.LCMP:
-			case ByteCode.LCONST_0:
-			case ByteCode.LCONST_1:
-			case ByteCode.LDIV:
-			case ByteCode.LLOAD_0:
-			case ByteCode.LLOAD_1:
-			case ByteCode.LLOAD_2:
-			case ByteCode.LLOAD_3:
-			case ByteCode.LMUL:
-			case ByteCode.LNEG:
-			case ByteCode.LOR:
-			case ByteCode.LREM:
-			case ByteCode.LRETURN:
-			case ByteCode.LSHL:
-			case ByteCode.LSHR:
-			case ByteCode.LSTORE_0:
-			case ByteCode.LSTORE_1:
-			case ByteCode.LSTORE_2:
-			case ByteCode.LSTORE_3:
-			case ByteCode.LSUB:
-			case ByteCode.LUSHR:
-			case ByteCode.LXOR:
-			case ByteCode.MONITORENTER:
-			case ByteCode.MONITOREXIT:
-			case ByteCode.NOP:
-			case ByteCode.POP:
-			case ByteCode.POP2:
-			case ByteCode.RETURN:
-			case ByteCode.SALOAD:
-			case ByteCode.SASTORE:
-			case ByteCode.SWAP:
-			case ByteCode.WIDE:
-				return 1;
-			case ByteCode.BIPUSH:
-			case ByteCode.LDC:
-			case ByteCode.NEWARRAY:
-				return 2;
-			case ByteCode.ALOAD:
-			case ByteCode.ASTORE:
-			case ByteCode.DLOAD:
-			case ByteCode.DSTORE:
-			case ByteCode.FLOAD:
-			case ByteCode.FSTORE:
-			case ByteCode.ILOAD:
-			case ByteCode.ISTORE:
-			case ByteCode.LLOAD:
-			case ByteCode.LSTORE:
-			case ByteCode.RET:
-				return wide ? 3 : 2;
-
-			case ByteCode.ANEWARRAY:
-			case ByteCode.CHECKCAST:
-			case ByteCode.GETFIELD:
-			case ByteCode.GETSTATIC:
-			case ByteCode.GOTO:
-			case ByteCode.IFEQ:
-			case ByteCode.IFGE:
-			case ByteCode.IFGT:
-			case ByteCode.IFLE:
-			case ByteCode.IFLT:
-			case ByteCode.IFNE:
-			case ByteCode.IFNONNULL:
-			case ByteCode.IFNULL:
-			case ByteCode.IF_ACMPEQ:
-			case ByteCode.IF_ACMPNE:
-			case ByteCode.IF_ICMPEQ:
-			case ByteCode.IF_ICMPGE:
-			case ByteCode.IF_ICMPGT:
-			case ByteCode.IF_ICMPLE:
-			case ByteCode.IF_ICMPLT:
-			case ByteCode.IF_ICMPNE:
-			case ByteCode.INSTANCEOF:
-			case ByteCode.INVOKESPECIAL:
-			case ByteCode.INVOKESTATIC:
-			case ByteCode.INVOKEVIRTUAL:
-			case ByteCode.JSR:
-			case ByteCode.LDC_W:
-			case ByteCode.LDC2_W:
-			case ByteCode.NEW:
-			case ByteCode.PUTFIELD:
-			case ByteCode.PUTSTATIC:
-			case ByteCode.SIPUSH:
-				return 3;
-
-			case ByteCode.IINC:
-				return wide ? 5 : 3;
-
-			case ByteCode.MULTIANEWARRAY:
-				return 4;
-
-			case ByteCode.GOTO_W:
-			case ByteCode.INVOKEINTERFACE:
-			case ByteCode.INVOKEDYNAMIC:
-			case ByteCode.JSR_W:
-				return 5;
+        return switch (opcode) {
+            case ByteCode.AALOAD, ByteCode.AASTORE, ByteCode.ACONST_NULL, ByteCode.ALOAD_0, ByteCode.ALOAD_1,
+                 ByteCode.ALOAD_2, ByteCode.ALOAD_3, ByteCode.ARETURN, ByteCode.ARRAYLENGTH, ByteCode.ASTORE_0,
+                 ByteCode.ASTORE_1, ByteCode.ASTORE_2, ByteCode.ASTORE_3, ByteCode.ATHROW, ByteCode.BALOAD,
+                 ByteCode.BASTORE, ByteCode.BREAKPOINT, ByteCode.CALOAD, ByteCode.CASTORE, ByteCode.D2F, ByteCode.D2I,
+                 ByteCode.D2L, ByteCode.DADD, ByteCode.DALOAD, ByteCode.DASTORE, ByteCode.DCMPG, ByteCode.DCMPL,
+                 ByteCode.DCONST_0, ByteCode.DCONST_1, ByteCode.DDIV, ByteCode.DLOAD_0, ByteCode.DLOAD_1,
+                 ByteCode.DLOAD_2, ByteCode.DLOAD_3, ByteCode.DMUL, ByteCode.DNEG, ByteCode.DREM, ByteCode.DRETURN,
+                 ByteCode.DSTORE_0, ByteCode.DSTORE_1, ByteCode.DSTORE_2, ByteCode.DSTORE_3, ByteCode.DSUB,
+                 ByteCode.DUP, ByteCode.DUP2, ByteCode.DUP2_X1, ByteCode.DUP2_X2, ByteCode.DUP_X1, ByteCode.DUP_X2,
+                 ByteCode.F2D, ByteCode.F2I, ByteCode.F2L, ByteCode.FADD, ByteCode.FALOAD, ByteCode.FASTORE,
+                 ByteCode.FCMPG, ByteCode.FCMPL, ByteCode.FCONST_0, ByteCode.FCONST_1, ByteCode.FCONST_2, ByteCode.FDIV,
+                 ByteCode.FLOAD_0, ByteCode.FLOAD_1, ByteCode.FLOAD_2, ByteCode.FLOAD_3, ByteCode.FMUL, ByteCode.FNEG,
+                 ByteCode.FREM, ByteCode.FRETURN, ByteCode.FSTORE_0, ByteCode.FSTORE_1, ByteCode.FSTORE_2,
+                 ByteCode.FSTORE_3, ByteCode.FSUB, ByteCode.I2B, ByteCode.I2C, ByteCode.I2D, ByteCode.I2F, ByteCode.I2L,
+                 ByteCode.I2S, ByteCode.IADD, ByteCode.IALOAD, ByteCode.IAND, ByteCode.IASTORE, ByteCode.ICONST_0,
+                 ByteCode.ICONST_1, ByteCode.ICONST_2, ByteCode.ICONST_3, ByteCode.ICONST_4, ByteCode.ICONST_5,
+                 ByteCode.ICONST_M1, ByteCode.IDIV, ByteCode.ILOAD_0, ByteCode.ILOAD_1, ByteCode.ILOAD_2,
+                 ByteCode.ILOAD_3, ByteCode.IMPDEP1, ByteCode.IMPDEP2, ByteCode.IMUL, ByteCode.INEG, ByteCode.IOR,
+                 ByteCode.IREM, ByteCode.IRETURN, ByteCode.ISHL, ByteCode.ISHR, ByteCode.ISTORE_0, ByteCode.ISTORE_1,
+                 ByteCode.ISTORE_2, ByteCode.ISTORE_3, ByteCode.ISUB, ByteCode.IUSHR, ByteCode.IXOR, ByteCode.L2D,
+                 ByteCode.L2F, ByteCode.L2I, ByteCode.LADD, ByteCode.LALOAD, ByteCode.LAND, ByteCode.LASTORE,
+                 ByteCode.LCMP, ByteCode.LCONST_0, ByteCode.LCONST_1, ByteCode.LDIV, ByteCode.LLOAD_0, ByteCode.LLOAD_1,
+                 ByteCode.LLOAD_2, ByteCode.LLOAD_3, ByteCode.LMUL, ByteCode.LNEG, ByteCode.LOR, ByteCode.LREM,
+                 ByteCode.LRETURN, ByteCode.LSHL, ByteCode.LSHR, ByteCode.LSTORE_0, ByteCode.LSTORE_1,
+                 ByteCode.LSTORE_2, ByteCode.LSTORE_3, ByteCode.LSUB, ByteCode.LUSHR, ByteCode.LXOR,
+                 ByteCode.MONITORENTER, ByteCode.MONITOREXIT, ByteCode.NOP, ByteCode.POP, ByteCode.POP2,
+                 ByteCode.RETURN, ByteCode.SALOAD, ByteCode.SASTORE, ByteCode.SWAP, ByteCode.WIDE -> 1;
+            case ByteCode.BIPUSH, ByteCode.LDC, ByteCode.NEWARRAY -> 2;
+            case ByteCode.ALOAD, ByteCode.ASTORE, ByteCode.DLOAD, ByteCode.DSTORE, ByteCode.FLOAD, ByteCode.FSTORE,
+                 ByteCode.ILOAD, ByteCode.ISTORE, ByteCode.LLOAD, ByteCode.LSTORE, ByteCode.RET -> wide ? 3 : 2;
+            case ByteCode.ANEWARRAY, ByteCode.CHECKCAST, ByteCode.GETFIELD, ByteCode.GETSTATIC, ByteCode.GOTO,
+                 ByteCode.IFEQ, ByteCode.IFGE, ByteCode.IFGT, ByteCode.IFLE, ByteCode.IFLT, ByteCode.IFNE,
+                 ByteCode.IFNONNULL, ByteCode.IFNULL, ByteCode.IF_ACMPEQ, ByteCode.IF_ACMPNE, ByteCode.IF_ICMPEQ,
+                 ByteCode.IF_ICMPGE, ByteCode.IF_ICMPGT, ByteCode.IF_ICMPLE, ByteCode.IF_ICMPLT, ByteCode.IF_ICMPNE,
+                 ByteCode.INSTANCEOF, ByteCode.INVOKESPECIAL, ByteCode.INVOKESTATIC, ByteCode.INVOKEVIRTUAL,
+                 ByteCode.JSR, ByteCode.LDC_W, ByteCode.LDC2_W, ByteCode.NEW, ByteCode.PUTFIELD, ByteCode.PUTSTATIC,
+                 ByteCode.SIPUSH -> 3;
+            case ByteCode.IINC -> wide ? 5 : 3;
+            case ByteCode.MULTIANEWARRAY -> 4;
+            case ByteCode.GOTO_W, ByteCode.INVOKEINTERFACE, ByteCode.INVOKEDYNAMIC, ByteCode.JSR_W -> 5;
+            default ->
 
             /*
             case ByteCode.LOOKUPSWITCH:
             case ByteCode.TABLESWITCH:
                 return -1;
             */
-		}
-		throw new IllegalArgumentException("Bad opcode: " + opcode);
-	}
+                throw new IllegalArgumentException("Bad opcode: " + opcode);
+        };
+    }
 
 	/**
 	 * Number of operands accompanying the opcode.
 	 */
 	private static int opcodeCount(int opcode) {
-		switch (opcode) {
-			case ByteCode.AALOAD:
-			case ByteCode.AASTORE:
-			case ByteCode.ACONST_NULL:
-			case ByteCode.ALOAD_0:
-			case ByteCode.ALOAD_1:
-			case ByteCode.ALOAD_2:
-			case ByteCode.ALOAD_3:
-			case ByteCode.ARETURN:
-			case ByteCode.ARRAYLENGTH:
-			case ByteCode.ASTORE_0:
-			case ByteCode.ASTORE_1:
-			case ByteCode.ASTORE_2:
-			case ByteCode.ASTORE_3:
-			case ByteCode.ATHROW:
-			case ByteCode.BALOAD:
-			case ByteCode.BASTORE:
-			case ByteCode.BREAKPOINT:
-			case ByteCode.CALOAD:
-			case ByteCode.CASTORE:
-			case ByteCode.D2F:
-			case ByteCode.D2I:
-			case ByteCode.D2L:
-			case ByteCode.DADD:
-			case ByteCode.DALOAD:
-			case ByteCode.DASTORE:
-			case ByteCode.DCMPG:
-			case ByteCode.DCMPL:
-			case ByteCode.DCONST_0:
-			case ByteCode.DCONST_1:
-			case ByteCode.DDIV:
-			case ByteCode.DLOAD_0:
-			case ByteCode.DLOAD_1:
-			case ByteCode.DLOAD_2:
-			case ByteCode.DLOAD_3:
-			case ByteCode.DMUL:
-			case ByteCode.DNEG:
-			case ByteCode.DREM:
-			case ByteCode.DRETURN:
-			case ByteCode.DSTORE_0:
-			case ByteCode.DSTORE_1:
-			case ByteCode.DSTORE_2:
-			case ByteCode.DSTORE_3:
-			case ByteCode.DSUB:
-			case ByteCode.DUP:
-			case ByteCode.DUP2:
-			case ByteCode.DUP2_X1:
-			case ByteCode.DUP2_X2:
-			case ByteCode.DUP_X1:
-			case ByteCode.DUP_X2:
-			case ByteCode.F2D:
-			case ByteCode.F2I:
-			case ByteCode.F2L:
-			case ByteCode.FADD:
-			case ByteCode.FALOAD:
-			case ByteCode.FASTORE:
-			case ByteCode.FCMPG:
-			case ByteCode.FCMPL:
-			case ByteCode.FCONST_0:
-			case ByteCode.FCONST_1:
-			case ByteCode.FCONST_2:
-			case ByteCode.FDIV:
-			case ByteCode.FLOAD_0:
-			case ByteCode.FLOAD_1:
-			case ByteCode.FLOAD_2:
-			case ByteCode.FLOAD_3:
-			case ByteCode.FMUL:
-			case ByteCode.FNEG:
-			case ByteCode.FREM:
-			case ByteCode.FRETURN:
-			case ByteCode.FSTORE_0:
-			case ByteCode.FSTORE_1:
-			case ByteCode.FSTORE_2:
-			case ByteCode.FSTORE_3:
-			case ByteCode.FSUB:
-			case ByteCode.I2B:
-			case ByteCode.I2C:
-			case ByteCode.I2D:
-			case ByteCode.I2F:
-			case ByteCode.I2L:
-			case ByteCode.I2S:
-			case ByteCode.IADD:
-			case ByteCode.IALOAD:
-			case ByteCode.IAND:
-			case ByteCode.IASTORE:
-			case ByteCode.ICONST_0:
-			case ByteCode.ICONST_1:
-			case ByteCode.ICONST_2:
-			case ByteCode.ICONST_3:
-			case ByteCode.ICONST_4:
-			case ByteCode.ICONST_5:
-			case ByteCode.ICONST_M1:
-			case ByteCode.IDIV:
-			case ByteCode.ILOAD_0:
-			case ByteCode.ILOAD_1:
-			case ByteCode.ILOAD_2:
-			case ByteCode.ILOAD_3:
-			case ByteCode.IMPDEP1:
-			case ByteCode.IMPDEP2:
-			case ByteCode.IMUL:
-			case ByteCode.INEG:
-			case ByteCode.IOR:
-			case ByteCode.IREM:
-			case ByteCode.IRETURN:
-			case ByteCode.ISHL:
-			case ByteCode.ISHR:
-			case ByteCode.ISTORE_0:
-			case ByteCode.ISTORE_1:
-			case ByteCode.ISTORE_2:
-			case ByteCode.ISTORE_3:
-			case ByteCode.ISUB:
-			case ByteCode.IUSHR:
-			case ByteCode.IXOR:
-			case ByteCode.L2D:
-			case ByteCode.L2F:
-			case ByteCode.L2I:
-			case ByteCode.LADD:
-			case ByteCode.LALOAD:
-			case ByteCode.LAND:
-			case ByteCode.LASTORE:
-			case ByteCode.LCMP:
-			case ByteCode.LCONST_0:
-			case ByteCode.LCONST_1:
-			case ByteCode.LDIV:
-			case ByteCode.LLOAD_0:
-			case ByteCode.LLOAD_1:
-			case ByteCode.LLOAD_2:
-			case ByteCode.LLOAD_3:
-			case ByteCode.LMUL:
-			case ByteCode.LNEG:
-			case ByteCode.LOR:
-			case ByteCode.LREM:
-			case ByteCode.LRETURN:
-			case ByteCode.LSHL:
-			case ByteCode.LSHR:
-			case ByteCode.LSTORE_0:
-			case ByteCode.LSTORE_1:
-			case ByteCode.LSTORE_2:
-			case ByteCode.LSTORE_3:
-			case ByteCode.LSUB:
-			case ByteCode.LUSHR:
-			case ByteCode.LXOR:
-			case ByteCode.MONITORENTER:
-			case ByteCode.MONITOREXIT:
-			case ByteCode.NOP:
-			case ByteCode.POP:
-			case ByteCode.POP2:
-			case ByteCode.RETURN:
-			case ByteCode.SALOAD:
-			case ByteCode.SASTORE:
-			case ByteCode.SWAP:
-			case ByteCode.WIDE:
-				return 0;
-			case ByteCode.ALOAD:
-			case ByteCode.ANEWARRAY:
-			case ByteCode.ASTORE:
-			case ByteCode.BIPUSH:
-			case ByteCode.CHECKCAST:
-			case ByteCode.DLOAD:
-			case ByteCode.DSTORE:
-			case ByteCode.FLOAD:
-			case ByteCode.FSTORE:
-			case ByteCode.GETFIELD:
-			case ByteCode.GETSTATIC:
-			case ByteCode.GOTO:
-			case ByteCode.GOTO_W:
-			case ByteCode.IFEQ:
-			case ByteCode.IFGE:
-			case ByteCode.IFGT:
-			case ByteCode.IFLE:
-			case ByteCode.IFLT:
-			case ByteCode.IFNE:
-			case ByteCode.IFNONNULL:
-			case ByteCode.IFNULL:
-			case ByteCode.IF_ACMPEQ:
-			case ByteCode.IF_ACMPNE:
-			case ByteCode.IF_ICMPEQ:
-			case ByteCode.IF_ICMPGE:
-			case ByteCode.IF_ICMPGT:
-			case ByteCode.IF_ICMPLE:
-			case ByteCode.IF_ICMPLT:
-			case ByteCode.IF_ICMPNE:
-			case ByteCode.ILOAD:
-			case ByteCode.INSTANCEOF:
-			case ByteCode.INVOKEINTERFACE:
-			case ByteCode.INVOKESPECIAL:
-			case ByteCode.INVOKESTATIC:
-			case ByteCode.INVOKEVIRTUAL:
-			case ByteCode.ISTORE:
-			case ByteCode.JSR:
-			case ByteCode.JSR_W:
-			case ByteCode.LDC:
-			case ByteCode.LDC2_W:
-			case ByteCode.LDC_W:
-			case ByteCode.LLOAD:
-			case ByteCode.LSTORE:
-			case ByteCode.NEW:
-			case ByteCode.NEWARRAY:
-			case ByteCode.PUTFIELD:
-			case ByteCode.PUTSTATIC:
-			case ByteCode.RET:
-			case ByteCode.SIPUSH:
-				return 1;
-
-			case ByteCode.IINC:
-			case ByteCode.MULTIANEWARRAY:
-				return 2;
-
-			case ByteCode.LOOKUPSWITCH:
-			case ByteCode.TABLESWITCH:
-				return -1;
-		}
-		throw new IllegalArgumentException("Bad opcode: " + opcode);
-	}
+        return switch (opcode) {
+            case ByteCode.AALOAD, ByteCode.AASTORE, ByteCode.ACONST_NULL, ByteCode.ALOAD_0, ByteCode.ALOAD_1,
+                 ByteCode.ALOAD_2, ByteCode.ALOAD_3, ByteCode.ARETURN, ByteCode.ARRAYLENGTH, ByteCode.ASTORE_0,
+                 ByteCode.ASTORE_1, ByteCode.ASTORE_2, ByteCode.ASTORE_3, ByteCode.ATHROW, ByteCode.BALOAD,
+                 ByteCode.BASTORE, ByteCode.BREAKPOINT, ByteCode.CALOAD, ByteCode.CASTORE, ByteCode.D2F, ByteCode.D2I,
+                 ByteCode.D2L, ByteCode.DADD, ByteCode.DALOAD, ByteCode.DASTORE, ByteCode.DCMPG, ByteCode.DCMPL,
+                 ByteCode.DCONST_0, ByteCode.DCONST_1, ByteCode.DDIV, ByteCode.DLOAD_0, ByteCode.DLOAD_1,
+                 ByteCode.DLOAD_2, ByteCode.DLOAD_3, ByteCode.DMUL, ByteCode.DNEG, ByteCode.DREM, ByteCode.DRETURN,
+                 ByteCode.DSTORE_0, ByteCode.DSTORE_1, ByteCode.DSTORE_2, ByteCode.DSTORE_3, ByteCode.DSUB,
+                 ByteCode.DUP, ByteCode.DUP2, ByteCode.DUP2_X1, ByteCode.DUP2_X2, ByteCode.DUP_X1, ByteCode.DUP_X2,
+                 ByteCode.F2D, ByteCode.F2I, ByteCode.F2L, ByteCode.FADD, ByteCode.FALOAD, ByteCode.FASTORE,
+                 ByteCode.FCMPG, ByteCode.FCMPL, ByteCode.FCONST_0, ByteCode.FCONST_1, ByteCode.FCONST_2, ByteCode.FDIV,
+                 ByteCode.FLOAD_0, ByteCode.FLOAD_1, ByteCode.FLOAD_2, ByteCode.FLOAD_3, ByteCode.FMUL, ByteCode.FNEG,
+                 ByteCode.FREM, ByteCode.FRETURN, ByteCode.FSTORE_0, ByteCode.FSTORE_1, ByteCode.FSTORE_2,
+                 ByteCode.FSTORE_3, ByteCode.FSUB, ByteCode.I2B, ByteCode.I2C, ByteCode.I2D, ByteCode.I2F, ByteCode.I2L,
+                 ByteCode.I2S, ByteCode.IADD, ByteCode.IALOAD, ByteCode.IAND, ByteCode.IASTORE, ByteCode.ICONST_0,
+                 ByteCode.ICONST_1, ByteCode.ICONST_2, ByteCode.ICONST_3, ByteCode.ICONST_4, ByteCode.ICONST_5,
+                 ByteCode.ICONST_M1, ByteCode.IDIV, ByteCode.ILOAD_0, ByteCode.ILOAD_1, ByteCode.ILOAD_2,
+                 ByteCode.ILOAD_3, ByteCode.IMPDEP1, ByteCode.IMPDEP2, ByteCode.IMUL, ByteCode.INEG, ByteCode.IOR,
+                 ByteCode.IREM, ByteCode.IRETURN, ByteCode.ISHL, ByteCode.ISHR, ByteCode.ISTORE_0, ByteCode.ISTORE_1,
+                 ByteCode.ISTORE_2, ByteCode.ISTORE_3, ByteCode.ISUB, ByteCode.IUSHR, ByteCode.IXOR, ByteCode.L2D,
+                 ByteCode.L2F, ByteCode.L2I, ByteCode.LADD, ByteCode.LALOAD, ByteCode.LAND, ByteCode.LASTORE,
+                 ByteCode.LCMP, ByteCode.LCONST_0, ByteCode.LCONST_1, ByteCode.LDIV, ByteCode.LLOAD_0, ByteCode.LLOAD_1,
+                 ByteCode.LLOAD_2, ByteCode.LLOAD_3, ByteCode.LMUL, ByteCode.LNEG, ByteCode.LOR, ByteCode.LREM,
+                 ByteCode.LRETURN, ByteCode.LSHL, ByteCode.LSHR, ByteCode.LSTORE_0, ByteCode.LSTORE_1,
+                 ByteCode.LSTORE_2, ByteCode.LSTORE_3, ByteCode.LSUB, ByteCode.LUSHR, ByteCode.LXOR,
+                 ByteCode.MONITORENTER, ByteCode.MONITOREXIT, ByteCode.NOP, ByteCode.POP, ByteCode.POP2,
+                 ByteCode.RETURN, ByteCode.SALOAD, ByteCode.SASTORE, ByteCode.SWAP, ByteCode.WIDE -> 0;
+            case ByteCode.ALOAD, ByteCode.ANEWARRAY, ByteCode.ASTORE, ByteCode.BIPUSH, ByteCode.CHECKCAST,
+                 ByteCode.DLOAD, ByteCode.DSTORE, ByteCode.FLOAD, ByteCode.FSTORE, ByteCode.GETFIELD,
+                 ByteCode.GETSTATIC, ByteCode.GOTO, ByteCode.GOTO_W, ByteCode.IFEQ, ByteCode.IFGE, ByteCode.IFGT,
+                 ByteCode.IFLE, ByteCode.IFLT, ByteCode.IFNE, ByteCode.IFNONNULL, ByteCode.IFNULL, ByteCode.IF_ACMPEQ,
+                 ByteCode.IF_ACMPNE, ByteCode.IF_ICMPEQ, ByteCode.IF_ICMPGE, ByteCode.IF_ICMPGT, ByteCode.IF_ICMPLE,
+                 ByteCode.IF_ICMPLT, ByteCode.IF_ICMPNE, ByteCode.ILOAD, ByteCode.INSTANCEOF, ByteCode.INVOKEINTERFACE,
+                 ByteCode.INVOKESPECIAL, ByteCode.INVOKESTATIC, ByteCode.INVOKEVIRTUAL, ByteCode.ISTORE, ByteCode.JSR,
+                 ByteCode.JSR_W, ByteCode.LDC, ByteCode.LDC2_W, ByteCode.LDC_W, ByteCode.LLOAD, ByteCode.LSTORE,
+                 ByteCode.NEW, ByteCode.NEWARRAY, ByteCode.PUTFIELD, ByteCode.PUTSTATIC, ByteCode.RET,
+                 ByteCode.SIPUSH -> 1;
+            case ByteCode.IINC, ByteCode.MULTIANEWARRAY -> 2;
+            case ByteCode.LOOKUPSWITCH, ByteCode.TABLESWITCH -> -1;
+            default -> throw new IllegalArgumentException("Bad opcode: " + opcode);
+        };
+    }
 
 	/**
 	 * The effect on the operand stack of a given opcode.
@@ -3354,228 +2964,53 @@ public class ClassFileWriter {
 	private static int stackChange(int opcode) {
 		// For INVOKE... accounts only for popping this (unless static),
 		// ignoring parameters and return type
-		switch (opcode) {
-			case ByteCode.DASTORE:
-			case ByteCode.LASTORE:
-				return -4;
-
-			case ByteCode.AASTORE:
-			case ByteCode.BASTORE:
-			case ByteCode.CASTORE:
-			case ByteCode.DCMPG:
-			case ByteCode.DCMPL:
-			case ByteCode.FASTORE:
-			case ByteCode.IASTORE:
-			case ByteCode.LCMP:
-			case ByteCode.SASTORE:
-				return -3;
-
-			case ByteCode.DADD:
-			case ByteCode.DDIV:
-			case ByteCode.DMUL:
-			case ByteCode.DREM:
-			case ByteCode.DRETURN:
-			case ByteCode.DSTORE:
-			case ByteCode.DSTORE_0:
-			case ByteCode.DSTORE_1:
-			case ByteCode.DSTORE_2:
-			case ByteCode.DSTORE_3:
-			case ByteCode.DSUB:
-			case ByteCode.IF_ACMPEQ:
-			case ByteCode.IF_ACMPNE:
-			case ByteCode.IF_ICMPEQ:
-			case ByteCode.IF_ICMPGE:
-			case ByteCode.IF_ICMPGT:
-			case ByteCode.IF_ICMPLE:
-			case ByteCode.IF_ICMPLT:
-			case ByteCode.IF_ICMPNE:
-			case ByteCode.LADD:
-			case ByteCode.LAND:
-			case ByteCode.LDIV:
-			case ByteCode.LMUL:
-			case ByteCode.LOR:
-			case ByteCode.LREM:
-			case ByteCode.LRETURN:
-			case ByteCode.LSTORE:
-			case ByteCode.LSTORE_0:
-			case ByteCode.LSTORE_1:
-			case ByteCode.LSTORE_2:
-			case ByteCode.LSTORE_3:
-			case ByteCode.LSUB:
-			case ByteCode.LXOR:
-			case ByteCode.POP2:
-				return -2;
-
-			case ByteCode.AALOAD:
-			case ByteCode.ARETURN:
-			case ByteCode.ASTORE:
-			case ByteCode.ASTORE_0:
-			case ByteCode.ASTORE_1:
-			case ByteCode.ASTORE_2:
-			case ByteCode.ASTORE_3:
-			case ByteCode.ATHROW:
-			case ByteCode.BALOAD:
-			case ByteCode.CALOAD:
-			case ByteCode.D2F:
-			case ByteCode.D2I:
-			case ByteCode.FADD:
-			case ByteCode.FALOAD:
-			case ByteCode.FCMPG:
-			case ByteCode.FCMPL:
-			case ByteCode.FDIV:
-			case ByteCode.FMUL:
-			case ByteCode.FREM:
-			case ByteCode.FRETURN:
-			case ByteCode.FSTORE:
-			case ByteCode.FSTORE_0:
-			case ByteCode.FSTORE_1:
-			case ByteCode.FSTORE_2:
-			case ByteCode.FSTORE_3:
-			case ByteCode.FSUB:
-			case ByteCode.GETFIELD:
-			case ByteCode.IADD:
-			case ByteCode.IALOAD:
-			case ByteCode.IAND:
-			case ByteCode.IDIV:
-			case ByteCode.IFEQ:
-			case ByteCode.IFGE:
-			case ByteCode.IFGT:
-			case ByteCode.IFLE:
-			case ByteCode.IFLT:
-			case ByteCode.IFNE:
-			case ByteCode.IFNONNULL:
-			case ByteCode.IFNULL:
-			case ByteCode.IMUL:
-			case ByteCode.INVOKEINTERFACE:       //
-			case ByteCode.INVOKESPECIAL:         // but needs to account for
-			case ByteCode.INVOKEVIRTUAL:         // pops 'this' (unless static)
-			case ByteCode.IOR:
-			case ByteCode.IREM:
-			case ByteCode.IRETURN:
-			case ByteCode.ISHL:
-			case ByteCode.ISHR:
-			case ByteCode.ISTORE:
-			case ByteCode.ISTORE_0:
-			case ByteCode.ISTORE_1:
-			case ByteCode.ISTORE_2:
-			case ByteCode.ISTORE_3:
-			case ByteCode.ISUB:
-			case ByteCode.IUSHR:
-			case ByteCode.IXOR:
-			case ByteCode.L2F:
-			case ByteCode.L2I:
-			case ByteCode.LOOKUPSWITCH:
-			case ByteCode.LSHL:
-			case ByteCode.LSHR:
-			case ByteCode.LUSHR:
-			case ByteCode.MONITORENTER:
-			case ByteCode.MONITOREXIT:
-			case ByteCode.POP:
-			case ByteCode.PUTFIELD:
-			case ByteCode.SALOAD:
-			case ByteCode.TABLESWITCH:
-				return -1;
-
-			case ByteCode.ANEWARRAY:
-			case ByteCode.ARRAYLENGTH:
-			case ByteCode.BREAKPOINT:
-			case ByteCode.CHECKCAST:
-			case ByteCode.D2L:
-			case ByteCode.DALOAD:
-			case ByteCode.DNEG:
-			case ByteCode.F2I:
-			case ByteCode.FNEG:
-			case ByteCode.GETSTATIC:
-			case ByteCode.GOTO:
-			case ByteCode.GOTO_W:
-			case ByteCode.I2B:
-			case ByteCode.I2C:
-			case ByteCode.I2F:
-			case ByteCode.I2S:
-			case ByteCode.IINC:
-			case ByteCode.IMPDEP1:
-			case ByteCode.IMPDEP2:
-			case ByteCode.INEG:
-			case ByteCode.INSTANCEOF:
-			case ByteCode.INVOKESTATIC:
-			case ByteCode.INVOKEDYNAMIC:
-			case ByteCode.L2D:
-			case ByteCode.LALOAD:
-			case ByteCode.LNEG:
-			case ByteCode.NEWARRAY:
-			case ByteCode.NOP:
-			case ByteCode.PUTSTATIC:
-			case ByteCode.RET:
-			case ByteCode.RETURN:
-			case ByteCode.SWAP:
-			case ByteCode.WIDE:
-				return 0;
-
-			case ByteCode.ACONST_NULL:
-			case ByteCode.ALOAD:
-			case ByteCode.ALOAD_0:
-			case ByteCode.ALOAD_1:
-			case ByteCode.ALOAD_2:
-			case ByteCode.ALOAD_3:
-			case ByteCode.BIPUSH:
-			case ByteCode.DUP:
-			case ByteCode.DUP_X1:
-			case ByteCode.DUP_X2:
-			case ByteCode.F2D:
-			case ByteCode.F2L:
-			case ByteCode.FCONST_0:
-			case ByteCode.FCONST_1:
-			case ByteCode.FCONST_2:
-			case ByteCode.FLOAD:
-			case ByteCode.FLOAD_0:
-			case ByteCode.FLOAD_1:
-			case ByteCode.FLOAD_2:
-			case ByteCode.FLOAD_3:
-			case ByteCode.I2D:
-			case ByteCode.I2L:
-			case ByteCode.ICONST_0:
-			case ByteCode.ICONST_1:
-			case ByteCode.ICONST_2:
-			case ByteCode.ICONST_3:
-			case ByteCode.ICONST_4:
-			case ByteCode.ICONST_5:
-			case ByteCode.ICONST_M1:
-			case ByteCode.ILOAD:
-			case ByteCode.ILOAD_0:
-			case ByteCode.ILOAD_1:
-			case ByteCode.ILOAD_2:
-			case ByteCode.ILOAD_3:
-			case ByteCode.JSR:
-			case ByteCode.JSR_W:
-			case ByteCode.LDC:
-			case ByteCode.LDC_W:
-			case ByteCode.MULTIANEWARRAY:
-			case ByteCode.NEW:
-			case ByteCode.SIPUSH:
-				return 1;
-
-			case ByteCode.DCONST_0:
-			case ByteCode.DCONST_1:
-			case ByteCode.DLOAD:
-			case ByteCode.DLOAD_0:
-			case ByteCode.DLOAD_1:
-			case ByteCode.DLOAD_2:
-			case ByteCode.DLOAD_3:
-			case ByteCode.DUP2:
-			case ByteCode.DUP2_X1:
-			case ByteCode.DUP2_X2:
-			case ByteCode.LCONST_0:
-			case ByteCode.LCONST_1:
-			case ByteCode.LDC2_W:
-			case ByteCode.LLOAD:
-			case ByteCode.LLOAD_0:
-			case ByteCode.LLOAD_1:
-			case ByteCode.LLOAD_2:
-			case ByteCode.LLOAD_3:
-				return 2;
-		}
-		throw new IllegalArgumentException("Bad opcode: " + opcode);
-	}
+        return switch (opcode) {
+            case ByteCode.DASTORE, ByteCode.LASTORE -> -4;
+            case ByteCode.AASTORE, ByteCode.BASTORE, ByteCode.CASTORE, ByteCode.DCMPG, ByteCode.DCMPL, ByteCode.FASTORE,
+                 ByteCode.IASTORE, ByteCode.LCMP, ByteCode.SASTORE -> -3;
+            case ByteCode.DADD, ByteCode.DDIV, ByteCode.DMUL, ByteCode.DREM, ByteCode.DRETURN, ByteCode.DSTORE,
+                 ByteCode.DSTORE_0, ByteCode.DSTORE_1, ByteCode.DSTORE_2, ByteCode.DSTORE_3, ByteCode.DSUB,
+                 ByteCode.IF_ACMPEQ, ByteCode.IF_ACMPNE, ByteCode.IF_ICMPEQ, ByteCode.IF_ICMPGE, ByteCode.IF_ICMPGT,
+                 ByteCode.IF_ICMPLE, ByteCode.IF_ICMPLT, ByteCode.IF_ICMPNE, ByteCode.LADD, ByteCode.LAND,
+                 ByteCode.LDIV, ByteCode.LMUL, ByteCode.LOR, ByteCode.LREM, ByteCode.LRETURN, ByteCode.LSTORE,
+                 ByteCode.LSTORE_0, ByteCode.LSTORE_1, ByteCode.LSTORE_2, ByteCode.LSTORE_3, ByteCode.LSUB,
+                 ByteCode.LXOR, ByteCode.POP2 -> -2;       //
+            // but needs to account for
+            // pops 'this' (unless static)
+            case ByteCode.AALOAD, ByteCode.ARETURN, ByteCode.ASTORE, ByteCode.ASTORE_0, ByteCode.ASTORE_1,
+                 ByteCode.ASTORE_2, ByteCode.ASTORE_3, ByteCode.ATHROW, ByteCode.BALOAD, ByteCode.CALOAD, ByteCode.D2F,
+                 ByteCode.D2I, ByteCode.FADD, ByteCode.FALOAD, ByteCode.FCMPG, ByteCode.FCMPL, ByteCode.FDIV,
+                 ByteCode.FMUL, ByteCode.FREM, ByteCode.FRETURN, ByteCode.FSTORE, ByteCode.FSTORE_0, ByteCode.FSTORE_1,
+                 ByteCode.FSTORE_2, ByteCode.FSTORE_3, ByteCode.FSUB, ByteCode.GETFIELD, ByteCode.IADD, ByteCode.IALOAD,
+                 ByteCode.IAND, ByteCode.IDIV, ByteCode.IFEQ, ByteCode.IFGE, ByteCode.IFGT, ByteCode.IFLE,
+                 ByteCode.IFLT, ByteCode.IFNE, ByteCode.IFNONNULL, ByteCode.IFNULL, ByteCode.IMUL,
+                 ByteCode.INVOKEINTERFACE, ByteCode.INVOKESPECIAL, ByteCode.INVOKEVIRTUAL, ByteCode.IOR, ByteCode.IREM,
+                 ByteCode.IRETURN, ByteCode.ISHL, ByteCode.ISHR, ByteCode.ISTORE, ByteCode.ISTORE_0, ByteCode.ISTORE_1,
+                 ByteCode.ISTORE_2, ByteCode.ISTORE_3, ByteCode.ISUB, ByteCode.IUSHR, ByteCode.IXOR, ByteCode.L2F,
+                 ByteCode.L2I, ByteCode.LOOKUPSWITCH, ByteCode.LSHL, ByteCode.LSHR, ByteCode.LUSHR,
+                 ByteCode.MONITORENTER, ByteCode.MONITOREXIT, ByteCode.POP, ByteCode.PUTFIELD, ByteCode.SALOAD,
+                 ByteCode.TABLESWITCH -> -1;
+            case ByteCode.ANEWARRAY, ByteCode.ARRAYLENGTH, ByteCode.BREAKPOINT, ByteCode.CHECKCAST, ByteCode.D2L,
+                 ByteCode.DALOAD, ByteCode.DNEG, ByteCode.F2I, ByteCode.FNEG, ByteCode.GETSTATIC, ByteCode.GOTO,
+                 ByteCode.GOTO_W, ByteCode.I2B, ByteCode.I2C, ByteCode.I2F, ByteCode.I2S, ByteCode.IINC,
+                 ByteCode.IMPDEP1, ByteCode.IMPDEP2, ByteCode.INEG, ByteCode.INSTANCEOF, ByteCode.INVOKESTATIC,
+                 ByteCode.INVOKEDYNAMIC, ByteCode.L2D, ByteCode.LALOAD, ByteCode.LNEG, ByteCode.NEWARRAY, ByteCode.NOP,
+                 ByteCode.PUTSTATIC, ByteCode.RET, ByteCode.RETURN, ByteCode.SWAP, ByteCode.WIDE -> 0;
+            case ByteCode.ACONST_NULL, ByteCode.ALOAD, ByteCode.ALOAD_0, ByteCode.ALOAD_1, ByteCode.ALOAD_2,
+                 ByteCode.ALOAD_3, ByteCode.BIPUSH, ByteCode.DUP, ByteCode.DUP_X1, ByteCode.DUP_X2, ByteCode.F2D,
+                 ByteCode.F2L, ByteCode.FCONST_0, ByteCode.FCONST_1, ByteCode.FCONST_2, ByteCode.FLOAD,
+                 ByteCode.FLOAD_0, ByteCode.FLOAD_1, ByteCode.FLOAD_2, ByteCode.FLOAD_3, ByteCode.I2D, ByteCode.I2L,
+                 ByteCode.ICONST_0, ByteCode.ICONST_1, ByteCode.ICONST_2, ByteCode.ICONST_3, ByteCode.ICONST_4,
+                 ByteCode.ICONST_5, ByteCode.ICONST_M1, ByteCode.ILOAD, ByteCode.ILOAD_0, ByteCode.ILOAD_1,
+                 ByteCode.ILOAD_2, ByteCode.ILOAD_3, ByteCode.JSR, ByteCode.JSR_W, ByteCode.LDC, ByteCode.LDC_W,
+                 ByteCode.MULTIANEWARRAY, ByteCode.NEW, ByteCode.SIPUSH -> 1;
+            case ByteCode.DCONST_0, ByteCode.DCONST_1, ByteCode.DLOAD, ByteCode.DLOAD_0, ByteCode.DLOAD_1,
+                 ByteCode.DLOAD_2, ByteCode.DLOAD_3, ByteCode.DUP2, ByteCode.DUP2_X1, ByteCode.DUP2_X2,
+                 ByteCode.LCONST_0, ByteCode.LCONST_1, ByteCode.LDC2_W, ByteCode.LLOAD, ByteCode.LLOAD_0,
+                 ByteCode.LLOAD_1, ByteCode.LLOAD_2, ByteCode.LLOAD_3 -> 2;
+            default -> throw new IllegalArgumentException("Bad opcode: " + opcode);
+        };
+    }
 
 	/*
 	 * Number of bytes of operands generated after the opcode.

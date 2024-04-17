@@ -175,36 +175,26 @@ public class BaseFunction extends IdScriptableObject implements Function {
 
     @Override
     protected String getInstanceIdName(int id) {
-        switch (id) {
-            case Id_length:
-                return "length";
-            case Id_arity:
-                return "arity";
-            case Id_name:
-                return "name";
-            case Id_prototype:
-                return "prototype";
-            case Id_arguments:
-                return "arguments";
-        }
-        return super.getInstanceIdName(id);
+        return switch (id) {
+            case Id_length -> "length";
+            case Id_arity -> "arity";
+            case Id_name -> "name";
+            case Id_prototype -> "prototype";
+            case Id_arguments -> "arguments";
+            default -> super.getInstanceIdName(id);
+        };
     }
 
     @Override
     protected Object getInstanceIdValue(int id) {
-        switch (id) {
-            case Id_length:
-                return ScriptRuntime.wrapInt(getLength());
-            case Id_arity:
-                return ScriptRuntime.wrapInt(getArity());
-            case Id_name:
-                return getFunctionName();
-            case Id_prototype:
-                return getPrototypeProperty();
-            case Id_arguments:
-                return getArguments();
-        }
-        return super.getInstanceIdValue(id);
+        return switch (id) {
+            case Id_length -> ScriptRuntime.wrapInt(getLength());
+            case Id_arity -> ScriptRuntime.wrapInt(getArity());
+            case Id_name -> getFunctionName();
+            case Id_prototype -> getPrototypeProperty();
+            case Id_arguments -> getArguments();
+            default -> super.getInstanceIdValue(id);
+        };
     }
 
     @Override
@@ -260,34 +250,33 @@ public class BaseFunction extends IdScriptableObject implements Function {
     protected void initPrototypeId(int id) {
         String s;
         int arity;
-        switch (id) {
-            case Id_constructor:
+        s = switch (id) {
+            case Id_constructor -> {
                 arity = 1;
-                s = "constructor";
-                break;
-            case Id_toString:
+                yield "constructor";
+            }
+            case Id_toString -> {
                 arity = 0;
-                s = "toString";
-                break;
-            case Id_toSource:
+                yield "toString";
+            }
+            case Id_toSource -> {
                 arity = 1;
-                s = "toSource";
-                break;
-            case Id_apply:
+                yield "toSource";
+            }
+            case Id_apply -> {
                 arity = 2;
-                s = "apply";
-                break;
-            case Id_call:
+                yield "apply";
+            }
+            case Id_call -> {
                 arity = 1;
-                s = "call";
-                break;
-            case Id_bind:
+                yield "call";
+            }
+            case Id_bind -> {
                 arity = 1;
-                s = "bind";
-                break;
-            default:
-                throw new IllegalArgumentException(String.valueOf(id));
-        }
+                yield "bind";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
         initPrototypeMethod(FUNCTION_TAG, id, s, arity);
     }
 

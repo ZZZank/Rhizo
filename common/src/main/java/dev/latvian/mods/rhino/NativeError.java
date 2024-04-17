@@ -110,22 +110,21 @@ final class NativeError extends IdScriptableObject {
 	protected void initPrototypeId(int id) {
 		String s;
 		int arity;
-		switch (id) {
-			case Id_constructor:
-				arity = 1;
-				s = "constructor";
-				break;
-			case Id_toString:
-				arity = 0;
-				s = "toString";
-				break;
-			case Id_toSource:
-				arity = 0;
-				s = "toSource";
-				break;
-			default:
-				throw new IllegalArgumentException(String.valueOf(id));
-		}
+        s = switch (id) {
+            case Id_constructor -> {
+                arity = 1;
+                yield "constructor";
+            }
+            case Id_toString -> {
+                arity = 0;
+                yield "toString";
+            }
+            case Id_toSource -> {
+                arity = 0;
+                yield "toSource";
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
 		initPrototypeMethod(ERROR_TAG, id, s, arity);
 	}
 
@@ -135,22 +134,17 @@ final class NativeError extends IdScriptableObject {
 			return super.execIdCall(f, cx, scope, thisObj, args);
 		}
 		int id = f.methodId();
-		switch (id) {
-			case Id_constructor:
-				return make(cx, scope, f, args);
-
-			case Id_toString:
-				return js_toString(thisObj);
-
-			case Id_toSource:
-				return "not_supported";
-
-			case ConstructorId_captureStackTrace:
-				js_captureStackTrace(cx, thisObj, args);
-				return Undefined.instance;
-		}
-		throw new IllegalArgumentException(String.valueOf(id));
-	}
+        return switch (id) {
+            case Id_constructor -> make(cx, scope, f, args);
+            case Id_toString -> js_toString(thisObj);
+            case Id_toSource -> "not_supported";
+            case ConstructorId_captureStackTrace -> {
+                js_captureStackTrace(cx, thisObj, args);
+                yield Undefined.instance;
+            }
+            default -> throw new IllegalArgumentException(String.valueOf(id));
+        };
+    }
 
 	public void setStackProvider(RhinoException re) {
 		// We go some extra miles to make sure the stack property is only

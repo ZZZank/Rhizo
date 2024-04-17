@@ -2144,22 +2144,13 @@ public final class Interpreter extends Icode implements Evaluator {
 						throw Kit.codeBug();
 				}
 			}
-			switch (op) {
-				case Token.GE:
-					valBln = ScriptRuntime.cmp_LE(rhs, lhs);
-					break;
-				case Token.LE:
-					valBln = ScriptRuntime.cmp_LE(lhs, rhs);
-					break;
-				case Token.GT:
-					valBln = ScriptRuntime.cmp_LT(rhs, lhs);
-					break;
-				case Token.LT:
-					valBln = ScriptRuntime.cmp_LT(lhs, rhs);
-					break;
-				default:
-					throw Kit.codeBug();
-			}
+            valBln = switch (op) {
+                case Token.GE -> ScriptRuntime.cmp_LE(rhs, lhs);
+                case Token.LE -> ScriptRuntime.cmp_LE(lhs, rhs);
+                case Token.GT -> ScriptRuntime.cmp_LT(rhs, lhs);
+                case Token.LT -> ScriptRuntime.cmp_LT(lhs, rhs);
+                default -> throw Kit.codeBug();
+            };
 		}
 		stack[stackTop] = ScriptRuntime.wrapBoolean(valBln);
 		return stackTop;

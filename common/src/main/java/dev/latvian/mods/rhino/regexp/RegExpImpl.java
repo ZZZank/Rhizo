@@ -398,20 +398,15 @@ public class RegExpImpl implements RegExpProxy {
 		}
 
 		skip[0] = 2;
-		switch (dc) {
-			case '$':
-				return new SubString("$");
-			case '&':
-				return res.lastMatch;
-			case '+':
-				return res.lastParen;
-			case '`':
-				return res.leftContext;
-			case '\'':
-				return res.rightContext;
-		}
-		return null;
-	}
+        return switch (dc) {
+            case '$' -> new SubString("$");
+            case '&' -> res.lastMatch;
+            case '+' -> res.lastParen;
+            case '`' -> res.leftContext;
+            case '\'' -> res.rightContext;
+            default -> null;
+        };
+    }
 
 	/**
 	 * Analog of do_replace in jsstr.c
