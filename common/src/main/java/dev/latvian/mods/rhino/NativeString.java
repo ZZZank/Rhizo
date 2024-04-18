@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.regexp.NativeRegExp;
+import dev.latvian.mods.rhino.regexp.RegExp;
 
 import java.text.Collator;
 import java.text.Normalizer;
@@ -565,11 +566,11 @@ final class NativeString extends IdScriptableObject {
 				case Id_replace: {
 					int actionType;
 					if (id == Id_match) {
-						actionType = RegExpProxy.RA_MATCH;
+						actionType = RegExp.RA_MATCH;
 					} else if (id == Id_search) {
-						actionType = RegExpProxy.RA_SEARCH;
+						actionType = RegExp.RA_SEARCH;
 					} else {
-						actionType = RegExpProxy.RA_REPLACE;
+						actionType = RegExp.RA_REPLACE;
 					}
 
 					ScriptRuntimeES6.requireObjectCoercible(cx, thisObj, f);
