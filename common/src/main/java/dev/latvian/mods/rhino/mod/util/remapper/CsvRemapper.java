@@ -35,6 +35,7 @@ public class CsvRemapper implements Remapper {
         try (var in = new BufferedReader(new InputStreamReader(RhinoProperties.openResource(fileName)))) {
             in.lines().map(s -> s.split(",")).forEach(lines::add);
         } catch (Exception ignored) {
+            RemappingHelper.LOGGER.error("Error when trying to read '{}' CSV file", fileName);
         }
         //read
         var mapping = new HashMap<String, String>();
@@ -50,7 +51,7 @@ public class CsvRemapper implements Remapper {
         if (!name.startsWith("field_")) {
             return "";
         }
-        return this.fields.getOrDefault("field_" + name, "");
+        return this.fields.getOrDefault(name.substring(6), "");
     }
 
     @Override
@@ -59,6 +60,6 @@ public class CsvRemapper implements Remapper {
         if (!name.startsWith("func_")) {
             return "";
         }
-        return this.methods.getOrDefault("func_" + name, "");
+        return this.methods.getOrDefault(name.substring(5), "");
     }
 }
