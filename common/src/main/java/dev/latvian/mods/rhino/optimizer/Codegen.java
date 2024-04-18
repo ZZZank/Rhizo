@@ -65,13 +65,13 @@ public class Codegen implements Evaluator {
 
         String baseName = "c";
         if (!tree.getSourceName().isEmpty()) {
-            baseName = tree.getSourceName().replaceAll("\\W", "$");
+            baseName = tree.getSourceName().replaceAll("\\W", "_");
             if (!Character.isJavaIdentifierStart(baseName.charAt(0))) {
                 baseName = "_" + baseName;
             }
         }
 
-        String mainClassName = "dev.latvian.mods.rhino.gen." + baseName + "$" + serial;
+        String mainClassName = "dev.latvian.mods.rhino.gen." + baseName + "_" + serial;
 
         byte[] mainClassBytes = compileToClassFile(compilerEnv, mainClassName,
             tree, encodedSource,
