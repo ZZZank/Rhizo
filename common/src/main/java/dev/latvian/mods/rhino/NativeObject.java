@@ -405,9 +405,9 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 ScriptableObject obj = ensureScriptableObject(s);
                 Object[] ids = obj.getIds(true, true);
                 ArrayList<Object> syms = new ArrayList<>();
-                for (int i = 0; i < ids.length; i++) {
-                    if (ids[i] instanceof Symbol) {
-                        syms.add(ids[i]);
+                for (Object o : ids) {
+                    if (o instanceof Symbol) {
+                        syms.add(o);
                     }
                 }
                 return cx.newArray(scope, syms.toArray());

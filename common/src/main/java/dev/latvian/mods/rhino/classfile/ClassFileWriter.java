@@ -1446,14 +1446,13 @@ public class ClassFileWriter {
 		}
 
 		private SuperBlock getSuperBlockFromOffset(int offset) {
-			for (int i = 0; i < superBlocks.length; i++) {
-				SuperBlock sb = superBlocks[i];
-				if (sb == null) {
-					break;
-				} else if (offset >= sb.getStart() && offset < sb.getEnd()) {
-					return sb;
-				}
-			}
+            for (SuperBlock sb : superBlocks) {
+                if (sb == null) {
+                    break;
+                } else if (offset >= sb.getStart() && offset < sb.getEnd()) {
+                    return sb;
+                }
+            }
 			throw new IllegalArgumentException("bad offset: " + offset);
 		}
 
@@ -1488,13 +1487,12 @@ public class ClassFileWriter {
 				deps[handlerSB.getIndex()] = dep;
 			}
 			int[] targetPCs = itsJumpFroms.getKeys();
-			for (int i = 0; i < targetPCs.length; i++) {
-				int targetPC = targetPCs[i];
-				int branchPC = itsJumpFroms.getInt(targetPC, -1);
-				SuperBlock branchSB = getSuperBlockFromOffset(branchPC);
-				SuperBlock targetSB = getSuperBlockFromOffset(targetPC);
-				deps[targetSB.getIndex()] = branchSB;
-			}
+            for (int targetPC : targetPCs) {
+                int branchPC = itsJumpFroms.getInt(targetPC, -1);
+                SuperBlock branchSB = getSuperBlockFromOffset(branchPC);
+                SuperBlock targetSB = getSuperBlockFromOffset(targetPC);
+                deps[targetSB.getIndex()] = branchSB;
+            }
 
 			return deps;
 		}
@@ -1561,12 +1559,11 @@ public class ClassFileWriter {
 			executeWorkList();
 
 			// Replace dead code with no-ops.
-			for (int i = 0; i < superBlocks.length; i++) {
-				SuperBlock sb = superBlocks[i];
-				if (!sb.isInitialized()) {
-					killSuperBlock(sb);
-				}
-			}
+            for (SuperBlock sb : superBlocks) {
+                if (!sb.isInitialized()) {
+                    killSuperBlock(sb);
+                }
+            }
 			executeWorkList();
 		}
 

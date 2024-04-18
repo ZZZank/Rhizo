@@ -883,57 +883,44 @@ public class Node implements Iterable<Node> {
 	 * @return logical OR of END_* flags
 	 */
 	private int endCheck() {
-		switch (type) {
-			case Token.BREAK:
-				return endCheckBreak();
-
-			case Token.EXPR_VOID:
-				if (this.first != null) {
-					return first.endCheck();
-				}
-				return END_DROPS_OFF;
-
-			case Token.YIELD:
-			case Token.YIELD_STAR:
-				return END_YIELDS;
-
-			case Token.CONTINUE:
-			case Token.THROW:
-				return END_UNREACHED;
-
-			case Token.RETURN:
-				if (this.first != null) {
-					return END_RETURNS_VALUE;
-				}
-				return END_RETURNS;
-
-			case Token.TARGET:
-				if (next != null) {
-					return next.endCheck();
-				}
-				return END_DROPS_OFF;
-
-			case Token.LOOP:
-				return endCheckLoop();
-
-			case Token.LOCAL_BLOCK:
-			case Token.BLOCK:
-				// there are several special kinds of blocks
-				if (first == null) {
-					return END_DROPS_OFF;
-				}
-
-                return switch (first.type) {
+        return switch (type) {
+            case Token.BREAK -> endCheckBreak();
+            case Token.EXPR_VOID -> {
+                if (this.first != null) {
+                    yield first.endCheck();
+                }
+                yield END_DROPS_OFF;
+            }
+            case Token.YIELD, Token.YIELD_STAR -> END_YIELDS;
+            case Token.CONTINUE, Token.THROW -> END_UNREACHED;
+            case Token.RETURN -> {
+                if (this.first != null) {
+                    yield END_RETURNS_VALUE;
+                }
+                yield END_RETURNS;
+            }
+            case Token.TARGET -> {
+                if (next != null) {
+                    yield next.endCheck();
+                }
+                yield END_DROPS_OFF;
+            }
+            case Token.LOOP -> endCheckLoop();
+            case Token.LOCAL_BLOCK, Token.BLOCK -> {
+                if (first == null) {
+                    yield END_DROPS_OFF;
+                }
+                yield switch (first.type) {
                     case Token.LABEL -> first.endCheckLabel();
                     case Token.IFNE -> first.endCheckIf();
                     case Token.SWITCH -> first.endCheckSwitch();
                     case Token.TRY -> first.endCheckTry();
                     default -> endCheckBlock();
                 };
-
-			default:
-				return END_DROPS_OFF;
-		}
+                // there are several special kinds of blocks
+            }
+            default -> END_DROPS_OFF;
+        };
 	}
 
 	public boolean hasSideEffects() {
@@ -1043,11 +1030,10 @@ public class Node implements Iterable<Node> {
 					sb.append(" [scope ");
 					appendPrintId(this, printIds, sb);
 					sb.append(": ");
-					Iterator<String> iter = ((Scope) this).getSymbolTable().keySet().iterator();
-					while (iter.hasNext()) {
-						sb.append(iter.next());
-						sb.append(" ");
-					}
+                    for (String s : ((Scope) this).getSymbolTable().keySet()) {
+                        sb.append(s);
+                        sb.append(" ");
+                    }
 					sb.append("]");
 				}
 			} else if (this instanceof Jump jump) {

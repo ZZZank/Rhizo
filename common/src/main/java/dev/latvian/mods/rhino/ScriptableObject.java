@@ -1214,36 +1214,41 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 
 	static <T extends Scriptable> BaseFunction buildClassCtor(Scriptable scope, Class<T> clazz, boolean sealed, boolean mapInheritance) throws IllegalAccessException, InstantiationException, InvocationTargetException {
 		Method[] methods = FunctionObject.getMethodList(clazz);
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (!method.getName().equals("init")) {
-				continue;
-			}
-			Class<?>[] parmTypes = method.getParameterTypes();
-			if (parmTypes.length == 3 && parmTypes[0] == ScriptRuntime.ContextClass && parmTypes[1] == ScriptRuntime.ScriptableClass && parmTypes[2] == Boolean.TYPE && Modifier.isStatic(method.getModifiers())) {
-				Object[] args = {Context.getContext(), scope, sealed ? Boolean.TRUE : Boolean.FALSE};
-				method.invoke(null, args);
-				return null;
-			}
-			if (parmTypes.length == 1 && parmTypes[0] == ScriptRuntime.ScriptableClass && Modifier.isStatic(method.getModifiers())) {
-				Object[] args = {scope};
-				method.invoke(null, args);
-				return null;
-			}
+        for (Method method : methods) {
+            if (!method.getName().equals("init")) {
+                continue;
+            }
+            Class<?>[] parmTypes = method.getParameterTypes();
+            if (parmTypes.length == 3
+                && parmTypes[0] == ScriptRuntime.ContextClass
+                && parmTypes[1] == ScriptRuntime.ScriptableClass
+                && parmTypes[2] == Boolean.TYPE
+                && Modifier.isStatic(method.getModifiers())) {
+                Object[] args = {Context.getContext(), scope, sealed ? Boolean.TRUE : Boolean.FALSE};
+                method.invoke(null, args);
+                return null;
+            }
+            if (parmTypes.length == 1
+                && parmTypes[0] == ScriptRuntime.ScriptableClass
+                && Modifier.isStatic(method.getModifiers())) {
+                Object[] args = {scope};
+                method.invoke(null, args);
+                return null;
+            }
 
-		}
+        }
 
 		// If we got here, there isn't an "init" method with the right
 		// parameter types.
 
 		Constructor<?>[] ctors = clazz.getConstructors();
 		Constructor<?> protoCtor = null;
-		for (int i = 0; i < ctors.length; i++) {
-			if (ctors[i].getParameterTypes().length == 0) {
-				protoCtor = ctors[i];
-				break;
-			}
-		}
+        for (Constructor<?> constructor : ctors) {
+            if (constructor.getParameterTypes().length == 0) {
+                protoCtor = constructor;
+                break;
+            }
+        }
 		if (protoCtor == null) {
 			throw Context.reportRuntimeError1("msg.zero.arg.ctor", clazz.getName());
 		}
@@ -1989,15 +1994,14 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 */
 	public void defineFunctionProperties(String[] names, Class<?> clazz, int attributes) {
 		Method[] methods = FunctionObject.getMethodList(clazz);
-		for (int i = 0; i < names.length; i++) {
-			String name = names[i];
-			Method m = FunctionObject.findSingleMethod(methods, name);
-			if (m == null) {
-				throw Context.reportRuntimeError2("msg.method.not.found", name, clazz.getName());
-			}
-			FunctionObject f = new FunctionObject(name, m, this);
-			defineProperty(name, f, attributes);
-		}
+        for (String name : names) {
+            Method m = FunctionObject.findSingleMethod(methods, name);
+            if (m == null) {
+                throw Context.reportRuntimeError2("msg.method.not.found", name, clazz.getName());
+            }
+            FunctionObject f = new FunctionObject(name, m, this);
+            defineProperty(name, f, attributes);
+        }
 	}
 
 	/**

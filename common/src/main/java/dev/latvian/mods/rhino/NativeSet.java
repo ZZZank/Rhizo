@@ -115,21 +115,20 @@ public class NativeSet extends IdScriptableObject {
 		}
 
         boolean isStrict = cx.isStrictMode();
-		Iterator<Hashtable.Entry> i = entries.iterator();
-		while (i.hasNext()) {
-			// Per spec must convert every time so that primitives are always regenerated...
-			Scriptable thisObj = ScriptRuntime.toObjectOrNull(cx, arg2, scope);
+        for (Hashtable.Entry entry : entries) {
+            // Per spec must convert every time so that primitives are always regenerated...
+            Scriptable thisObj = ScriptRuntime.toObjectOrNull(cx, arg2, scope);
 
-			if (thisObj == null && !isStrict) {
-				thisObj = scope;
-			}
-			if (thisObj == null) {
-				thisObj = Undefined.SCRIPTABLE_UNDEFINED;
-			}
+            if (thisObj == null && !isStrict) {
+                thisObj = scope;
+            }
+            if (thisObj == null) {
+                thisObj = Undefined.SCRIPTABLE_UNDEFINED;
+            }
 
-			final Hashtable.Entry e = i.next();
-			f.call(cx, scope, thisObj, new Object[]{e.value, e.value, this});
-		}
+            final Hashtable.Entry e = entry;
+            f.call(cx, scope, thisObj, new Object[]{e.value, e.value, this});
+        }
 		return Undefined.instance;
 	}
 

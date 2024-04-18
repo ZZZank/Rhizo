@@ -501,10 +501,9 @@ public final class IRFactory extends Parser {
 		Node call = createCallOrNew(Token.CALL, transform(node.getTarget()));
 		call.setLineno(node.getLineno());
 		List<AstNode> args = node.getArguments();
-		for (int i = 0; i < args.size(); i++) {
-			AstNode arg = args.get(i);
-			call.addChildToBack(transform(arg));
-		}
+        for (AstNode arg : args) {
+            call.addChildToBack(transform(arg));
+        }
 		return call;
 	}
 
@@ -678,10 +677,9 @@ public final class IRFactory extends Parser {
 		Node nx = createCallOrNew(Token.NEW, transform(node.getTarget()));
 		nx.setLineno(node.getLineno());
 		List<AstNode> args = node.getArguments();
-		for (int i = 0; i < args.size(); i++) {
-			AstNode arg = args.get(i);
-			nx.addChildToBack(transform(arg));
-		}
+        for (AstNode arg : args) {
+            nx.addChildToBack(transform(arg));
+        }
 		if (node.getInitializer() != null) {
 			nx.addChildToBack(transformObjectLiteral(node.getInitializer()));
 		}
@@ -765,19 +763,18 @@ public final class IRFactory extends Parser {
 		List<AstNode> elems = node.getElements();
 		// start with an empty string to ensure ToString() for each substitution
 		Node pn = Node.newString("");
-		for (int i = 0; i < elems.size(); ++i) {
-			AstNode elem = elems.get(i);
-			if (elem.getType() != Token.TEMPLATE_CHARS) {
-				pn = createBinary(Token.ADD, pn, transform(elem));
-			} else {
-				TemplateCharacters chars = (TemplateCharacters) elem;
-				// skip empty parts, e.g. `ε${expr}ε` where ε denotes the empty string
-				String value = chars.getValue();
-				if (value.length() > 0) {
-					pn = createBinary(Token.ADD, pn, Node.newString(value));
-				}
-			}
-		}
+        for (AstNode elem : elems) {
+            if (elem.getType() != Token.TEMPLATE_CHARS) {
+                pn = createBinary(Token.ADD, pn, transform(elem));
+            } else {
+                TemplateCharacters chars = (TemplateCharacters) elem;
+                // skip empty parts, e.g. `ε${expr}ε` where ε denotes the empty string
+                String value = chars.getValue();
+                if (value.length() > 0) {
+                    pn = createBinary(Token.ADD, pn, Node.newString(value));
+                }
+            }
+        }
 		return pn;
 	}
 
@@ -789,15 +786,14 @@ public final class IRFactory extends Parser {
 		// Node callSite = new Node(Token.TEMPLATE_LITERAL_CALL);
 		// call.addChildToBack(callSite);
 		call.addChildToBack(templateLiteral);
-		for (int i = 0; i < elems.size(); ++i) {
-			AstNode elem = elems.get(i);
-			if (elem.getType() != Token.TEMPLATE_CHARS) {
-				call.addChildToBack(transform(elem));
-			} else {
-				TemplateCharacters chars = (TemplateCharacters) elem;
-				// callSite.addChildToBack(elem);
-			}
-		}
+        for (AstNode elem : elems) {
+            if (elem.getType() != Token.TEMPLATE_CHARS) {
+                call.addChildToBack(transform(elem));
+            } else {
+                TemplateCharacters chars = (TemplateCharacters) elem;
+                // callSite.addChildToBack(elem);
+            }
+        }
 		currentScriptOrFn.addTemplateLiteral(templateLiteral);
 		return call;
 	}
@@ -1943,9 +1939,9 @@ public final class IRFactory extends Parser {
 		boolean isArrow = fn.getFunctionType() == FunctionNode.ARROW_FUNCTION;
 		boolean noParen = isArrow && fn.getLp() == -1;
 		List<AstNode> params = fn.getParams();
-		for (int i = 0; i < params.size(); i++) {
-			decompile(params.get(i));
-		}
+        for (AstNode param : params) {
+            decompile(param);
+        }
 		return mexpr;
 	}
 
@@ -1982,24 +1978,22 @@ public final class IRFactory extends Parser {
 	void decompileArrayLiteral(ArrayLiteral node) {
 		List<AstNode> elems = node.getElements();
 		int size = elems.size();
-		for (int i = 0; i < size; i++) {
-			AstNode elem = elems.get(i);
-			decompile(elem);
-		}
+        for (AstNode elem : elems) {
+            decompile(elem);
+        }
 	}
 
 	// only used for destructuring forms
 	void decompileObjectLiteral(ObjectLiteral node) {
 		List<ObjectProperty> props = node.getElements();
 		int size = props.size();
-		for (int i = 0; i < size; i++) {
-			ObjectProperty prop = props.get(i);
-			boolean destructuringShorthand = Boolean.TRUE.equals(prop.getProp(Node.DESTRUCTURING_SHORTHAND));
-			decompile(prop.getLeft());
-			if (!destructuringShorthand) {
-				decompile(prop.getRight());
-			}
-		}
+        for (ObjectProperty prop : props) {
+            boolean destructuringShorthand = Boolean.TRUE.equals(prop.getProp(Node.DESTRUCTURING_SHORTHAND));
+            decompile(prop.getLeft());
+            if (!destructuringShorthand) {
+                decompile(prop.getRight());
+            }
+        }
 	}
 
 	// only used for destructuring forms

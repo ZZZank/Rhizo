@@ -275,22 +275,21 @@ final class MemberBox implements Serializable {
 	private static void writeParameters(ObjectOutputStream out, Class<?>[] parms) throws IOException {
 		out.writeShort(parms.length);
 		outer:
-		for (int i = 0; i < parms.length; i++) {
-			Class<?> parm = parms[i];
-			boolean primitive = parm.isPrimitive();
-			out.writeBoolean(primitive);
-			if (!primitive) {
-				out.writeObject(parm);
-				continue;
-			}
-			for (int j = 0; j < primitives.length; j++) {
-				if (parm.equals(primitives[j])) {
-					out.writeByte(j);
-					continue outer;
-				}
-			}
-			throw new IllegalArgumentException("Primitive " + parm + " not found");
-		}
+        for (Class<?> parm : parms) {
+            boolean primitive = parm.isPrimitive();
+            out.writeBoolean(primitive);
+            if (!primitive) {
+                out.writeObject(parm);
+                continue;
+            }
+            for (int j = 0; j < primitives.length; j++) {
+                if (parm.equals(primitives[j])) {
+                    out.writeByte(j);
+                    continue outer;
+                }
+            }
+            throw new IllegalArgumentException("Primitive " + parm + " not found");
+        }
 	}
 
 	/**

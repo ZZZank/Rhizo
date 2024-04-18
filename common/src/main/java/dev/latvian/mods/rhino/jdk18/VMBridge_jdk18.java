@@ -91,21 +91,22 @@ public class VMBridge_jdk18 extends VMBridge {
 			// invocation handler.
 			if (method.getDeclaringClass() == Object.class) {
 				String methodName = method.getName();
-				if (methodName.equals("equals")) {
-					Object other = args[0];
-					// Note: we could compare a proxy and its wrapped function
-					// as equal here but that would break symmetry of equal().
-					// The reason == suffices here is that proxies are cached
-					// in ScriptableObject (see NativeJavaObject.coerceType())
-					return proxy == other;
-				}
-				if (methodName.equals("hashCode")) {
-					return target.hashCode();
-				}
-				if (methodName.equals("toString")) {
-					return "Proxy[" + target.toString() + "]";
-				}
-			}
+                switch (methodName) {
+                    case "equals" -> {
+                        // Note: we could compare a proxy and its wrapped function
+                        // as equal here but that would break symmetry of equal().
+                        // The reason == suffices here is that proxies are cached
+                        // in ScriptableObject (see NativeJavaObject.coerceType())
+                        return proxy == args[0];
+                    }
+                    case "hashCode" -> {
+                        return target.hashCode();
+                    }
+                    case "toString" -> {
+                        return "Proxy[" + target.toString() + "]";
+                    }
+                }
+            }
 			return adapter.invoke(cf, target, topScope, proxy, method, args);
 		};
 		Object proxy;
