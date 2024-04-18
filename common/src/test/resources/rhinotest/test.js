@@ -67,7 +67,7 @@ Object.entries(tests).forEach(([key, value])=>{
 		value()
 		passCount += 1
 	} catch (e) {
-		console.info(`[x]Error occured when running test: ${key}`)
+		console.error(`[x]Error occured when running test: ${key}`)
 		failed.push({
 			name: key,
 			err: e
@@ -81,9 +81,9 @@ if (totalCount == passCount) {
 	console.info(`[y]${passCount}/${totalCount} passed`)
 } else {
 	console.info(`[x]${passCount}/${totalCount} passed`)
-	console.info("[x]failed:")
+	console.warn("[x]failed:")
 	failed.forEach(f=>{
-		console.info("    "+f.name)
-		console.info("        err:"+f.err)
+		console.warn("    "+f.name)
+		console.warn("        err:"+f.err)
 	})
 }

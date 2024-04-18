@@ -69,6 +69,8 @@ public enum RhinoProperties {
 		} catch (Exception ex) {
 			RemappingHelper.LOGGER.info("Error happened during Rhino properties loading.");
 			ex.printStackTrace();
+		} catch (AssertionError e) {
+			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
 		}
 
 		RemappingHelper.LOGGER.info("Rhino properties loaded.");
