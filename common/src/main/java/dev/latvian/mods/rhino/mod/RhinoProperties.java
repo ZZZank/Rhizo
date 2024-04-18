@@ -42,7 +42,7 @@ public enum RhinoProperties {
 	private boolean writeProperties;
 
 	RhinoProperties() {
-		properties = new Properties();
+		this.properties = new Properties();
 
 		try {
 			var propertiesFile = getGameDir().resolve("rhino.local.properties");

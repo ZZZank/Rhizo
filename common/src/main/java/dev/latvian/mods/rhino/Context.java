@@ -751,9 +751,7 @@ public class Context {
         }
         if (cx.lastInterpreterFrame != null) {
             Evaluator evaluator = createInterpreter();
-            if (evaluator != null) {
-                return evaluator.getSourcePositionFromStack(cx, linep);
-            }
+            return evaluator.getSourcePositionFromStack(cx, linep);
         }
         /*
          * A bit of a hack, but the only way to get filename and line
@@ -762,12 +760,13 @@ public class Context {
         StackTraceElement[] stackTrace = new Throwable().getStackTrace();
         for (StackTraceElement st : stackTrace) {
             String file = st.getFileName();
-            if (!(file == null || file.endsWith(".java"))) {
-                int line = st.getLineNumber();
-                if (line >= 0) {
-                    linep[0] = line;
-                    return file;
-                }
+            if (file == null || file.endsWith(".java")) {
+                continue;
+            }
+            int line = st.getLineNumber();
+            if (line >= 0) {
+                linep[0] = line;
+                return file;
             }
         }
 

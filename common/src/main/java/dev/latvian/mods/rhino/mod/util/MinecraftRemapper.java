@@ -311,10 +311,6 @@ public class MinecraftRemapper implements Remapper {
         var c = classMap.get(from.getName());
 
         if (c == null) {
-            RemappingHelper.LOGGER.info("Remapping method '{}' from class '{}', mapped to a null class",
-                method.getName(),
-                from.getName()
-            );
             return "";
         } else if (method.getParameterCount() == 0) {
             return c.emptyMethods == null ? "" : c.emptyMethods.getOrDefault(method.getName(), "");

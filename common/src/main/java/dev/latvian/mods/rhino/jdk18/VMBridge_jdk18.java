@@ -113,13 +113,10 @@ public class VMBridge_jdk18 extends VMBridge {
 			proxy = c.newInstance(handler);
 		} catch (InvocationTargetException ex) {
 			throw Context.throwAsScriptRuntimeEx(ex);
-		} catch (IllegalAccessException ex) {
-			// Should not happen
-			throw new IllegalStateException(ex);
-		} catch (InstantiationException ex) {
+		} catch (IllegalAccessException | InstantiationException ex) {
 			// Should not happen
 			throw new IllegalStateException(ex);
 		}
-		return proxy;
+        return proxy;
 	}
 }

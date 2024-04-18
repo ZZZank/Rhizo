@@ -151,7 +151,7 @@ public class RemappingHelper {
     }
 
     public static Reader createReader(String url) throws Exception {
-        LOGGER.info("Fetching " + url + "...");
+        LOGGER.info("Fetching {}...", url);
         var connection = new URL(url).openConnection();
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(10000);

@@ -4,20 +4,15 @@ import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.util.MojMappings;
 import dev.latvian.mods.rhino.mod.util.RemappingHelper;
-import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
-import dev.latvian.mods.rhino.util.remapper.FileRemapper;
-import dev.latvian.mods.rhino.util.remapper.Remapper;
-import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.BufferedReader;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Mod("rhino")
 public class RhinoModForge {
@@ -35,25 +30,30 @@ public class RhinoModForge {
     }
 
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
-        MojMappings.ClassDef current = null;
         //using an old, hardcoded link because the newest is using official mapping, while 1.16.5 is still using MCP
-        String link = "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/0cdc6055297f0b30cf3e27e59317f229a30863a6/versions/release/1.16.5/joined.tsrg";
-        List<String> srg = Collections.emptyList();
+        final String link = "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/0cdc6055297f0b30cf3e27e59317f229a30863a6/versions/release/1.16.5/joined.tsrg";
+        final var pattern = Pattern.compile("[\t ]");
+
+        List<String[]> srg = new ArrayList<>(100);
         try (var reader = new BufferedReader(RemappingHelper.createReader(link))) {
-            srg = reader.lines().collect(Collectors.toList());
+            reader.lines()
+                //split into slices to ease processing
+                .map(pattern::split)
+                //remove abnormal line
+                .filter(parts -> parts.length > 2 && !parts[1].isEmpty())
+                .forEach(srg::add);
         }
 
-        var pattern = Pattern.compile("[\t ]");
-
-        for (int i = 1; i < srg.size(); i++) {
-            var s = pattern.split(srg.get(i));
-
-            if (s.length < 3 || s[1].isEmpty()) {
-                continue;
-            }
-
-            if (!s[0].isEmpty()) {
+        MojMappings.ClassDef current = null;
+        for (String[] s : srg) {
+            /*example:
+            a net/minecraft/util/math/vector/Matrix3f
+	            a field_226097_a_
+	            a (FF)Lcom/mojang/datafixers/util/Pair; func_226112_a_
+             */
+            if (!s[0].isEmpty()) {//found class def line, refresh "current"
                 s[0] = s[0].replace('/', '.');
+                // TODO: class def getting seems not valid, no logs for member remapping
                 current = context.mappings().getClass(s[0]);
 
                 if (current != null) {
@@ -62,34 +62,38 @@ public class RhinoModForge {
                 } else {
                     RemappingHelper.LOGGER.info("- Skipping class {}", s[0]);
                 }
-            } else if (current != null) {
-                if (s.length == 5) {
-                    if (s[1].equals("<init>") || s[1].equals("<clinit>")) {
-                        continue;
-                    }
+                continue;//this line is consumed, go to next
+            }
+            if (current == null) {
+                continue;
+//                throw new IllegalStateException("Bad mapping file, there's class member showing up before any valid class definition!");
+            }
+            if (s.length == 5) {//method
+                if (s[1].equals("<init>") || s[1].equals("<clinit>")) {
+                    continue;
+                }
 
-                    var sigs = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
-                    var sig = new MojMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigs));
-                    var m = current.members.get(sig);
+                var sigStr = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
+                var sig = new MojMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigStr));
+                var m = current.members.get(sig);
 
-                    if (m != null && !m.mmName().equals(s[3])) {
-                        m.unmappedName().setValue(s[3]);
-                        RemappingHelper.LOGGER.info("Remapped method {}{} to {}", s[3], sigs, m.mmName());
-                    } else if (m == null && !current.ignoredMembers.contains(sig)) {
-                        RemappingHelper.LOGGER.info("Method {} [{}] not found!", s[3], sig);
-                    }
-                } else if (s.length == 4) {
-                    var sig = new MojMappings.NamedSignature(s[1], null);
-                    var m = current.members.get(sig);
+                if (m != null && !m.mmName().equals(s[3])) {
+                    m.unmappedName().setValue(s[3]);
+                    RemappingHelper.LOGGER.info("Remapped method {}{} to {}", s[3], sigStr, m.mmName());
+                } else if (m == null && !current.ignoredMembers.contains(sig)) {
+                    RemappingHelper.LOGGER.info("Method {} [{}] not found!", s[3], sig);
+                }
+            } else if (s.length == 4) {//field
+                var sig = new MojMappings.NamedSignature(s[1], null);
+                var m = current.members.get(sig);
 
-                    if (m != null) {
-                        if (!m.mmName().equals(s[2])) {
-                            m.unmappedName().setValue(s[2]);
-                            RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}", s[2], m.rawName(), m.mmName());
-                        }
-                    } else if (!current.ignoredMembers.contains(sig)) {
-                        RemappingHelper.LOGGER.info("Field {} [{}] not found!", s[2], s[1]);
+                if (m != null) {
+                    if (!m.mmName().equals(s[2])) {
+                        m.unmappedName().setValue(s[2]);
+                        RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}", s[2], m.rawName(), m.mmName());
                     }
+                } else if (!current.ignoredMembers.contains(sig)) {
+                    RemappingHelper.LOGGER.info("Field {} [{}] not found!", s[2], s[1]);
                 }
             }
         }
