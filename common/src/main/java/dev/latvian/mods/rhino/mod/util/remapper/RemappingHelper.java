@@ -13,9 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -129,7 +127,6 @@ public class RemappingHelper {
                 configPath))))) {
                 return MinecraftRemapper.load(in, debug);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 LOGGER.error("Failed to load Rhino Minecraft remapper from config/mm.jsmappings!", ex);
                 return new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
             }
@@ -139,7 +136,6 @@ public class RemappingHelper {
                 "mm.jsmappings"))))) {
                 return MinecraftRemapper.load(in, debug);
             } catch (Exception ex) {
-                ex.printStackTrace();
                 LOGGER.error("Failed to load Rhino Minecraft remapper from mod jar!", ex);
                 return new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
             }
@@ -164,7 +160,7 @@ public class RemappingHelper {
 
     public static void run(String mcVersion, Callback callback) {
         try {
-            generate(mcVersion, callback);
+            generateOfficial(mcVersion, callback);
         } catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -172,7 +168,7 @@ public class RemappingHelper {
         }
     }
 
-    private static void generate(String mcVersion, Callback callback) throws Exception {
+    private static void generateOfficial(String mcVersion, Callback callback) throws Exception {
         if (mcVersion.isEmpty()) {
             throw new RuntimeException("Invalid Minecraft version!");
         }
@@ -191,7 +187,8 @@ public class RemappingHelper {
                 try (var metaReader = createReader(metaUrl)) {
                     var meta = GSON.fromJson(metaReader, JsonObject.class);
                     if (meta.get("downloads") instanceof JsonObject o
-                        && o.get("client_mappings") instanceof JsonObject cmap && cmap.has("url")) {
+                        && o.get("client_mappings") instanceof JsonObject cmap
+                        && cmap.has("url")) {
                         try (var cmapReader = createReader(cmap.get("url").getAsString())) {
                             var mojangMappings = MojMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
                             callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
@@ -213,46 +210,5 @@ public class RemappingHelper {
         }
 
         throw new RemapperException("Failed for unknown reason!");
-    }
-
-    public static void writeVarInt(OutputStream stream, int value) throws Exception {
-        while ((value & -128) != 0) {
-            stream.write(value & 127 | 128);
-            value >>>= 7;
-        }
-
-        stream.write(value);
-    }
-
-    public static void writeUtf(OutputStream stream, String value) throws Exception {
-        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-        writeVarInt(stream, bytes.length);
-        stream.write(bytes);
-    }
-
-    public static int readVarInt(InputStream stream) throws Exception {
-        int i = 0;
-        int j = 0;
-
-        byte b;
-        do {
-            b = (byte) stream.read();
-            i |= (b & 127) << j++ * 7;
-            if (j > 5) {
-                throw new RemapperException("VarInt too big");
-            }
-        } while ((b & 128) == 128);
-
-        return i;
-    }
-
-    public static String readUtf(InputStream stream) throws Exception {
-        byte[] bytes = new byte[readVarInt(stream)];
-
-        for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = (byte) stream.read();
-        }
-
-        return new String(bytes, StandardCharsets.UTF_8);
     }
 }

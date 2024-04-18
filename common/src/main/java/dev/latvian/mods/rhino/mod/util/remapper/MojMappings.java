@@ -35,17 +35,7 @@ public class MojMappings {
 		allTypes = new HashMap<>();
 		methodSignatures = new HashMap<>();
 
-		for (var c : new ClassDef[]{
-			VOID,
-			BOOLEAN,
-			CHAR,
-			BYTE,
-			SHORT,
-			INT,
-			LONG,
-			FLOAT,
-			DOUBLE,
-		}) {
+		for (var c : new ClassDef[]{VOID, BOOLEAN, CHAR, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE,}) {
 			classes.put(c.rawName, c);
 			allTypes.put(c.noArrayType, c.noArrayType);
 		}
@@ -269,14 +259,6 @@ public class MojMappings {
 		}
 	}
 
-	private static void writeVarInt(OutputStream stream, int value) throws Exception {
-		RemappingHelper.writeVarInt(stream, value);
-	}
-
-	private static void writeUtf(OutputStream stream, String value) throws Exception {
-		RemappingHelper.writeUtf(stream, value);
-	}
-
 	public void write(OutputStream stream) throws Exception {
 		cleanup();
 		updateOccurrences();
@@ -316,36 +298,37 @@ public class MojMappings {
 
 		stream.write(0); // Binary indicator
 		stream.write(1); // Version
-		writeUtf(stream, mcVersion);
+		MappingIO.writeUtf(stream, mcVersion);
 
-		writeVarInt(stream, unmappedTypes.size());
-		writeVarInt(stream, mappedTypes.size());
-		writeVarInt(stream, arrayTypes.size());
+		MappingIO.writeVarInt(stream, unmappedTypes.size());
+		MappingIO.writeVarInt(stream, mappedTypes.size());
+		MappingIO.writeVarInt(stream, arrayTypes.size());
 
 		for (var c : unmappedTypes) {
-			writeVarInt(stream, c.index);
-			writeUtf(stream, c.parent.rawName);
+			MappingIO.writeVarInt(stream, c.index);
+			MappingIO.writeUtf(stream, c.parent.rawName);
 		}
 
 		for (var c : mappedTypes) {
-			writeVarInt(stream, c.index);
-			writeUtf(stream, c.parent.unmappedName.getValue());
-			writeUtf(stream, c.parent.mmName);
+			MappingIO.writeVarInt(stream, c.index);
+			String value = c.parent.unmappedName.getValue();
+			MappingIO.writeUtf(stream, value);
+			MappingIO.writeUtf(stream, c.parent.mmName);
 		}
 
 		for (var c : arrayTypes) {
-			writeVarInt(stream, c.index);
-			writeVarInt(stream, c.parent.noArrayType.index);
-			writeVarInt(stream, c.array);
+			MappingIO.writeVarInt(stream, c.index);
+			MappingIO.writeVarInt(stream, c.parent.noArrayType.index);
+			MappingIO.writeVarInt(stream, c.array);
 		}
 
-		writeVarInt(stream, sigList.size());
+		MappingIO.writeVarInt(stream, sigList.size());
 
 		for (var s : sigList) {
-			writeVarInt(stream, s.types.length);
+			MappingIO.writeVarInt(stream, s.types.length);
 
 			for (var c : s.types) {
-				writeVarInt(stream, c.index);
+				MappingIO.writeVarInt(stream, c.index);
 			}
 		}
 
@@ -364,24 +347,27 @@ public class MojMappings {
 				}
 			}
 
-			writeVarInt(stream, fields.size());
-			writeVarInt(stream, arg0methods.size());
-			writeVarInt(stream, argNmethods.size());
+			MappingIO.writeVarInt(stream, fields.size());
+			MappingIO.writeVarInt(stream, arg0methods.size());
+			MappingIO.writeVarInt(stream, argNmethods.size());
 
 			for (var m : fields) {
-				writeUtf(stream, m.unmappedName.getValue());
-				writeUtf(stream, m.mmName);
+				String value = m.unmappedName.getValue();
+				MappingIO.writeUtf(stream, value);
+				MappingIO.writeUtf(stream, m.mmName);
 			}
 
 			for (var m : arg0methods) {
-				writeUtf(stream, m.unmappedName.getValue());
-				writeUtf(stream, m.mmName);
+				String value = m.unmappedName.getValue();
+				MappingIO.writeUtf(stream, value);
+				MappingIO.writeUtf(stream, m.mmName);
 			}
 
 			for (var m : argNmethods) {
-				writeUtf(stream, m.unmappedName.getValue());
-				writeUtf(stream, m.mmName);
-				writeVarInt(stream, m.rawName.signature.index);
+				String value = m.unmappedName.getValue();
+				MappingIO.writeUtf(stream, value);
+				MappingIO.writeUtf(stream, m.mmName);
+				MappingIO.writeVarInt(stream, m.rawName.signature.index);
 			}
 		}
 	}
@@ -474,8 +460,6 @@ public class MojMappings {
         public int hashCode() {
             return Objects.hash(name, signature);
         }
-
-
     }
 
 	public static final class ClassDef {
@@ -695,6 +679,5 @@ public class MojMappings {
                 "type=" + type + ", " +
                 "unmappedName=" + unmappedName + ']';
         }
-
     }
 }
