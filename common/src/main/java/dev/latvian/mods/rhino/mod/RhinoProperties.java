@@ -1,7 +1,7 @@
 package dev.latvian.mods.rhino.mod;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.remapper.RemappingHelper;
 import org.jetbrains.annotations.Contract;
 
 import java.io.InputStream;

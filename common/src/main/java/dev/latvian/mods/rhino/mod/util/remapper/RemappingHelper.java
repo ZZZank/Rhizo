@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.util;
+package dev.latvian.mods.rhino.mod.util.remapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

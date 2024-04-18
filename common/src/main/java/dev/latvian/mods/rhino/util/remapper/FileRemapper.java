@@ -1,7 +1,7 @@
 package dev.latvian.mods.rhino.util.remapper;
 
 import dev.latvian.mods.rhino.mod.RhinoProperties;
-import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.remapper.RemappingHelper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

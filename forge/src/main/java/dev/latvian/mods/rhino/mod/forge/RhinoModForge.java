@@ -2,8 +2,8 @@ package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
-import dev.latvian.mods.rhino.mod.util.MojMappings;
-import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.remapper.MojMappings;
+import dev.latvian.mods.rhino.mod.util.remapper.RemappingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;

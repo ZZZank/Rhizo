@@ -1,7 +1,7 @@
 package dev.latvian.mods.rhino.util.remapper;
 
-import dev.latvian.mods.rhino.mod.util.MinecraftRemapper;
-import dev.latvian.mods.rhino.mod.util.RemappingHelper;
+import dev.latvian.mods.rhino.mod.util.remapper.MinecraftRemapper;
+import dev.latvian.mods.rhino.mod.util.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.RemapForJS;
 
 import java.lang.reflect.Field;

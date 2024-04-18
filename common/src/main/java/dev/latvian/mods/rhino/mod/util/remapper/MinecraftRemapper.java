@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.util;
+package dev.latvian.mods.rhino.mod.util.remapper;
 
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
