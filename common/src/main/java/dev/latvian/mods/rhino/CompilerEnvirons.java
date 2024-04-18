@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.ast.ErrorCollector;
+import dev.latvian.mods.rhino.mod.RhinoProperties;
 
 import java.util.Set;
 
@@ -16,11 +17,10 @@ public class CompilerEnvirons {
 		this.errorReporter = DefaultErrorReporter.instance;
 		this.reservedKeywordAsIdentifier = true;
 		this.allowMemberExprAsFunctionName = false;
-		this.generatingSource = true;
 		this.strictMode = false;
 		this.warningAsError = false;
 		this.allowSharpComments = false;
-		this.optimizationLevel = 0;
+		this.optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
 	}
 
 	public void initFromContext(Context cx) {
@@ -92,7 +92,7 @@ public class CompilerEnvirons {
 	}
 
 	public final boolean isGeneratingSource() {
-		return generatingSource;
+		return false;
 	}
 
 	public boolean getWarnTrailingComma() {
@@ -116,6 +116,7 @@ public class CompilerEnvirons {
 	}
 
 	/**
+	 * @deprecated
 	 * Specify whether or not source information should be generated.
 	 * <p>
 	 * Without source information, evaluating the "toString" method
@@ -125,7 +126,6 @@ public class CompilerEnvirons {
 	 * conformant.
 	 */
 	public void setGeneratingSource(boolean generatingSource) {
-		this.generatingSource = generatingSource;
 	}
 
 	/**
@@ -249,7 +249,6 @@ public class CompilerEnvirons {
 	private int optimizationLevel;
 	private boolean reservedKeywordAsIdentifier;
 	private boolean allowMemberExprAsFunctionName;
-	private boolean generatingSource;
 	private boolean strictMode;
 	private boolean warningAsError;
 	private boolean warnTrailingComma;
