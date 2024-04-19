@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.util.remapper;
+package dev.latvian.mods.rhino.mod.remapper;
 
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.util.remapper.Remapper;

@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.util.remapper;
+package dev.latvian.mods.rhino.mod.remapper;
 
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
@@ -133,8 +133,8 @@ public class MojMappings {
 
 	@Nullable
 	public ClassDef getClass(String name) {
-		var mmc = classesMM.get(name);
-		return mmc != null ? mmc : classes.get(name);
+		var mmClassDef = classesMM.get(name);
+		return mmClassDef != null ? mmClassDef : classes.get(name);
 	}
 
 	public TypeDef getType(String string) {
@@ -166,19 +166,26 @@ public class MojMappings {
 		return JavaPortingHelper.isBlank(s) || s.startsWith("#") || s.endsWith("init>") || s.contains(".package-info ");
 	}
 
-	private void parse0(List<String> lines) {
+	private void parseOfficial0(List<String> lines) {
 		lines.removeIf(MojMappings::invalidLine);
 
+		//fetch class first
 		for (var line : lines) {
-			if (line.charAt(line.length() - 1) == ':') {
-				var s = line.split(" -> ", 2); // replace with faster, last index of space check
-				var clazzDef = new ClassDef(this, s[1].substring(0, s[1].length() - 1), s[0], new HashMap<>(0), new HashSet<>(0));
-				clazzDef.mapped = true;
-				classes.put(clazzDef.rawName, clazzDef);
-				classesMM.put(clazzDef.mmName, clazzDef);
-				allTypes.put(clazzDef.noArrayType, clazzDef.noArrayType);
-			}
-		}
+            if (line.charAt(line.length() - 1) != ':') {
+                continue;
+            }
+			var s = line.split(" -> ", 2); // replace with faster, last index of space check
+			var clazzDef = new ClassDef(this,
+				s[1].substring(0, s[1].length() - 1),
+				s[0],
+				new HashMap<>(),
+				new HashSet<>()
+			);
+			clazzDef.mapped = true;
+			classes.put(clazzDef.rawName, clazzDef);
+            classesMM.put(clazzDef.mmName, clazzDef);
+            allTypes.put(clazzDef.noArrayType, clazzDef.noArrayType);
+        }
 
 		ClassDef currentClassDef = null;
 
@@ -372,9 +379,9 @@ public class MojMappings {
 		}
 	}
 
-	public static MojMappings parse(String mcVersion, List<String> lines) throws Exception {
+	public static MojMappings parseOfficial(String mcVersion, List<String> lines) throws Exception {
 		var mappings = new MojMappings(mcVersion);
-		mappings.parse0(lines);
+		mappings.parseOfficial0(lines);
 		return mappings;
 	}
 
@@ -439,8 +446,7 @@ public class MojMappings {
             if (signature == null) {
                 return name;
             }
-
-            return name + "(" + signature + ")";
+            return String.format("%s(%s)", name, signature);
         }
 
         @Override
@@ -464,6 +470,9 @@ public class MojMappings {
 
 	public static final class ClassDef {
 		public final MojMappings mappings;
+		/**
+		 * aka notch name
+		 */
 		public final String rawName;
 		public final String mmName;
 		public final String displayName;

@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.mod.util.remapper;
+package dev.latvian.mods.rhino.mod.remapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -160,7 +160,7 @@ public class RemappingHelper {
 
     public static void run(String mcVersion, Callback callback) {
         try {
-            generateOfficial(mcVersion, callback);
+            generate(mcVersion, callback);
         } catch (RuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -168,7 +168,16 @@ public class RemappingHelper {
         }
     }
 
-    private static void generateOfficial(String mcVersion, Callback callback) throws Exception {
+    /**
+     * generate a mapping file called "mm.jsmappings", can provide conversion between raw name,
+     * in-game name(srg name) and mapped name.
+     * <p>
+     * Official mapping provides raw name <-> mapped name conversion, and the param {@code callback}
+     * should provide raw name <-> in-game name conversion
+     * @param mcVersion version of the game, like "1.16.5", "1.20.1"
+     * @param callback should provide "in-game name -> raw name" conversion
+     */
+    private static void generate(String mcVersion, Callback callback) throws Exception {
         if (mcVersion.isEmpty()) {
             throw new RuntimeException("Invalid Minecraft version!");
         }
@@ -190,7 +199,7 @@ public class RemappingHelper {
                         && o.get("client_mappings") instanceof JsonObject cmap
                         && cmap.has("url")) {
                         try (var cmapReader = createReader(cmap.get("url").getAsString())) {
-                            var mojangMappings = MojMappings.parse(mcVersion, IOUtils.readLines(cmapReader));
+                            var mojangMappings = MojMappings.parseOfficial(mcVersion, IOUtils.readLines(cmapReader));
                             callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
                             mojangMappings.cleanup();
 
