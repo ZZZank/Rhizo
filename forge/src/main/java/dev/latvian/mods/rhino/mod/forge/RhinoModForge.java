@@ -2,10 +2,10 @@ package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
-import dev.latvian.mods.rhino.mod.util.remapper.MojMappings;
-import dev.latvian.mods.rhino.mod.util.remapper.RemappingHelper;
+import dev.latvian.mods.rhino.mod.remapper.MojMappings;
+import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
-import dev.latvian.mods.rhino.mod.util.remapper.CsvRemapper;
+import dev.latvian.mods.rhino.mod.remapper.CsvRemapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,7 +43,7 @@ public class RhinoModForge {
                 //split into slices to ease processing
                 .map(pattern::split)
                 //remove abnormal line
-                .filter(parts -> parts.length > 2 && !parts[1].isEmpty())
+                .filter(parts -> parts.length > 1 && !parts[1].isEmpty())
                 .forEach(srg::add);
         }
 
@@ -71,10 +71,11 @@ public class RhinoModForge {
                 continue;
 //                throw new IllegalStateException("Bad mapping file, there's class member showing up before any valid class definition!");
             }
-            if (s.length == 5) {//method
-                if (s[1].equals("<init>") || s[1].equals("<clinit>")) {
-                    continue;
-                }
+            if (s.length == 4) {//method
+                //    a (FF)Lcom/mojang/datafixers/util/Pair; func_226112_a_
+                //["", "a", "(FF)Lcom/mojang/datafixers/util/Pair;", "func_226112_a_"]
+
+                //old srg mapping does not include <init> or <cinit>, so no check needed
 
                 var sigStr = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
                 var sig = new MojMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigStr));
@@ -86,7 +87,9 @@ public class RhinoModForge {
                 } else if (m == null && !current.ignoredMembers.contains(sig)) {
                     RemappingHelper.LOGGER.info("Method {} [{}] not found!", s[3], sig);
                 }
-            } else if (s.length == 4) {//field
+            } else if (s.length == 3) {//field, length==4?
+                //    a field_226097_a_
+                //['', 'a', 'field_226097_a_']
                 var sig = new MojMappings.NamedSignature(s[1], null);
                 var m = current.members.get(sig);
 
