@@ -39,7 +39,6 @@ public class CompilerEnvirons {
 	}
 
 	/**
-	 * @deprecated
 	 * Get the current language version.
 	 * <p>
 	 * The language version number affects JavaScript semantics as detailed

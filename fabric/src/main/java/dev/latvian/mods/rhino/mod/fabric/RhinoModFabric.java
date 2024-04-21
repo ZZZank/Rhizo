@@ -1,8 +1,8 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
 import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.mod.util.remapper.MojMappings;
-import dev.latvian.mods.rhino.mod.util.remapper.RemappingHelper;
+import dev.latvian.mods.rhino.mod.remapper.MojMappings;
+import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.fabricmc.api.ModInitializer;
@@ -41,7 +41,7 @@ public class RhinoModFabric implements ModInitializer {
 
             if (mmClass != null) {
                 if (!mmClass.mmName.equals(unmappedClassName)) {
-                    mmClass.unmappedName().setValue(unmappedClassName);
+                    mmClass.setUnmappedName(unmappedClassName);
                 }
 
                 RemappingHelper.LOGGER.info("Remapped class {} to {}", unmappedClassName, mmClass.displayName);

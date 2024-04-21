@@ -318,7 +318,7 @@ public class MojMappings {
 
 		for (var c : mappedTypes) {
 			MappingIO.writeVarInt(stream, c.index);
-			String value = c.parent.unmappedName.getValue();
+			String value = c.parent.unmappedName;
 			MappingIO.writeUtf(stream, value);
 			MappingIO.writeUtf(stream, c.parent.mmName);
 		}
@@ -478,7 +478,7 @@ public class MojMappings {
 		public final String displayName;
 		public final Map<NamedSignature, MemberDef> members;
 		public final Set<NamedSignature> ignoredMembers;
-		private final MutableObject<String> unmappedName;
+		private String unmappedName;
 		public boolean mapped;
 
 		public TypeDef noArrayType;
@@ -493,7 +493,7 @@ public class MojMappings {
 			this.displayName = dni == -1 ? dn : dn.substring(dni + 1);
 			this.members = members;
 			this.ignoredMembers = ignoredMembers;
-			this.unmappedName = new MutableObject<>("");
+			this.unmappedName = "";
 			this.mapped = false;
 			this.noArrayType = new TypeDef(this, 0);
 		}
@@ -538,24 +538,26 @@ public class MojMappings {
 			return displayName;
 		}
 
-		public MutableObject<String> unmappedName() {
+		public String unmappedName() {
 			return unmappedName;
+		}
+
+		public void setUnmappedName(String name) {
+			this.unmappedName = name;
 		}
 
 		public String getRawDescriptor() {
 			if (rawDescriptor == null) {
 				rawDescriptor = 'L' + rawName.replace('.', '/') + ';';
 			}
-
 			return rawDescriptor;
 		}
 
 		public boolean cleanup() {
 			if (mapped) {
 				members.values().removeIf(MemberDef::cleanup);
-				return members.isEmpty() && unmappedName.getValue().isEmpty();
+				return members.isEmpty() && unmappedName.isEmpty();
 			}
-
 			return false;
 		}
 	}
