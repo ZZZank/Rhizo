@@ -174,8 +174,9 @@ public class RemappingHelper {
      * <p>
      * Official mapping provides raw name <-> mapped name conversion, and the param {@code callback}
      * should provide raw name <-> in-game name conversion
+     *
      * @param mcVersion version of the game, like "1.16.5", "1.20.1"
-     * @param callback should provide "in-game name -> raw name" conversion
+     * @param callback  should provide "in-game name -> raw name" conversion
      */
     private static void generate(String mcVersion, Callback callback) throws Exception {
         if (mcVersion.isEmpty()) {
@@ -187,37 +188,42 @@ public class RemappingHelper {
             return;
         }
 
+        JsonObject vInfo = null;
         try (var metaInfoReader = createReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
             for (var metaInfo : GSON.fromJson(metaInfoReader, JsonObject.class).get("versions").getAsJsonArray()) {
-                if (!mcVersion.equals(metaInfo.getAsJsonObject().get("id").getAsString())) {
-                    continue;
-                }
-                String metaUrl = metaInfo.getAsJsonObject().get("url").getAsString();
-                try (var metaReader = createReader(metaUrl)) {
-                    var meta = GSON.fromJson(metaReader, JsonObject.class);
-                    if (meta.get("downloads") instanceof JsonObject o
-                        && o.get("client_mappings") instanceof JsonObject cmap
-                        && cmap.has("url")) {
-                        try (var cmapReader = createReader(cmap.get("url").getAsString())) {
-                            var mojangMappings = MojMappings.parseOfficial(mcVersion, IOUtils.readLines(cmapReader));
-                            callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
-                            mojangMappings.cleanup();
-
-                            try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(
-                                JavaPortingHelper.ofPath("mm.jsmappings"))))) {
-                                mojangMappings.write(out);
-                            }
-
-                            LOGGER.info("Finished generating mappings!");
-                            return;
-                        }
-                    } else {
-                        throw new RemapperException("This Minecraft version doesn't have mappings!");
-                    }
+                if (mcVersion.equals(metaInfo.getAsJsonObject().get("id").getAsString())) {
+                    vInfo = metaInfo.getAsJsonObject();
+                    break;
                 }
             }
         }
+        if (vInfo == null) {
+            throw new RemapperException(String.format("No version information for '%s' from official source", mcVersion));
+        }
 
-        throw new RemapperException("Failed for unknown reason!");
+        String metaUrl = vInfo.get("url").getAsString();
+        try (var metaReader = createReader(metaUrl)) {
+            var meta = GSON.fromJson(metaReader, JsonObject.class);
+            if (!(meta.get("downloads") instanceof JsonObject o)
+                || !(o.get("client_mappings") instanceof JsonObject cmap)
+                || !cmap.has("url")) {
+                throw new RemapperException("This Minecraft version doesn't have mappings!");
+            }
+            try (var cmapReader = createReader(cmap.get("url").getAsString())) {
+                var mojangMappings = MojMappings.parseOfficial(mcVersion, IOUtils.readLines(cmapReader));
+                callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
+                mojangMappings.cleanup();
+
+                try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(JavaPortingHelper.ofPath(
+                    "mm.jsmappings"))))) {
+                    mojangMappings.write(out);
+                }
+
+                LOGGER.info("Finished generating mappings!");
+                return;
+            }
+        }
+
+        //throw new RemapperException("Failed for unknown reason!");
     }
 }

@@ -471,14 +471,20 @@ public class MojMappings {
 	public static final class ClassDef {
 		public final MojMappings mappings;
 		/**
-		 * aka notch name
+		 * notch name
 		 */
 		public final String rawName;
+		/**
+		 * MojMapping name
+		 */
 		public final String mmName;
+		/**
+		 * should be mcp name in Forge
+		 */
+		private String unmappedName;
 		public final String displayName;
 		public final Map<NamedSignature, MemberDef> members;
 		public final Set<NamedSignature> ignoredMembers;
-		private String unmappedName;
 		public boolean mapped;
 
 		public TypeDef noArrayType;

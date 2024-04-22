@@ -2,10 +2,10 @@ package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
+import dev.latvian.mods.rhino.mod.remapper.CsvRemapper;
 import dev.latvian.mods.rhino.mod.remapper.MojMappings;
 import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
-import dev.latvian.mods.rhino.mod.remapper.CsvRemapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -55,21 +55,22 @@ public class RhinoModForge {
 	            a (FF)Lcom/mojang/datafixers/util/Pair; func_226112_a_
              */
             if (!s[0].isEmpty()) {//found class def line, refresh "current"
-                s[0] = s[0].replace('/', '.');
-                // TODO: class def getting seems not valid, no logs for member remapping
-                current = context.mappings().getClass(s[0]);
+                //a net/minecraft/util/math/vector/Matrix3f
+                var rawName = s[0].replace('/', '.');
+                var mcpName = s[1];//in-game name
+                current = context.mappings().getClass(rawName);
 
                 if (current != null) {
-                    RemappingHelper.LOGGER.info("- Checking class {} ; {}", s[0], current.displayName);
+                    current.setUnmappedName(mcpName);
+                    RemappingHelper.LOGGER.info("- Checking class {} ; {}", rawName, current.displayName);
                     RemappingHelper.LOGGER.info("- class rawName: {}, mmName: {}", current.rawName, current.mmName);
                 } else {
-                    RemappingHelper.LOGGER.info("- Skipping class {}", s[0]);
+                    RemappingHelper.LOGGER.info("- Skipping class {}", rawName);
                 }
                 continue;//this line is consumed, go to next
             }
             if (current == null) {
                 continue;
-//                throw new IllegalStateException("Bad mapping file, there's class member showing up before any valid class definition!");
             }
             if (s.length == 4) {//method
                 //    a (FF)Lcom/mojang/datafixers/util/Pair; func_226112_a_
@@ -77,29 +78,39 @@ public class RhinoModForge {
 
                 //old srg mapping does not include <init> or <cinit>, so no check needed
 
-                var sigStr = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
-                var sig = new MojMappings.NamedSignature(s[1], context.mappings().readSignatureFromDescriptor(sigStr));
-                var m = current.members.get(sig);
+                var rawName = s[1]; //also available in the end of srg name
+                var srgName = s[3];
+                var paramSigStr = s[2].substring(0, s[2].lastIndexOf(')') + 1).replace('/', '.');
+                var paramSig = new MojMappings.NamedSignature(s[1],
+                    context.mappings().readSignatureFromDescriptor(paramSigStr)
+                );
+                var mDef = current.members.get(paramSig);
 
-                if (m != null && !m.mmName().equals(s[3])) {
-                    m.unmappedName().setValue(s[3]);
-                    RemappingHelper.LOGGER.info("Remapped method {}{} to {}", s[3], sigStr, m.mmName());
-                } else if (m == null && !current.ignoredMembers.contains(sig)) {
-                    RemappingHelper.LOGGER.info("Method {} [{}] not found!", s[3], sig);
+                if (mDef != null && !mDef.mmName().equals(srgName)) {
+                    mDef.unmappedName().setValue(srgName);
+                    RemappingHelper.LOGGER.info("Remapped method {}{} to {}", srgName, paramSigStr, mDef.mmName());
+                } else if (mDef == null && !current.ignoredMembers.contains(paramSig)) {
+                    RemappingHelper.LOGGER.info("Method {} [{}] not found!", srgName, paramSig);
                 }
             } else if (s.length == 3) {//field, length==4?
                 //    a field_226097_a_
                 //['', 'a', 'field_226097_a_']
-                var sig = new MojMappings.NamedSignature(s[1], null);
-                var m = current.members.get(sig);
+                var rawName = s[1];
+                var srgName = s[2];
+                var sig = new MojMappings.NamedSignature(rawName, null);
+                var fDef = current.members.get(sig);
 
-                if (m != null) {
-                    if (!m.mmName().equals(s[2])) {
-                        m.unmappedName().setValue(s[2]);
-                        RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}", s[2], m.rawName(), m.mmName());
+                if (fDef != null) {
+                    if (!fDef.mmName().equals(srgName)) {
+                        fDef.unmappedName().setValue(srgName);
+                        RemappingHelper.LOGGER.info("Remapped field {} [{}] to {}",
+                            srgName,
+                            fDef.rawName(),
+                            fDef.mmName()
+                        );
                     }
                 } else if (!current.ignoredMembers.contains(sig)) {
-                    RemappingHelper.LOGGER.info("Field {} [{}] not found!", s[2], s[1]);
+                    RemappingHelper.LOGGER.info("Field {} [{}] not found!", srgName, rawName);
                 }
             }
         }

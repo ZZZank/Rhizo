@@ -7,6 +7,22 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public abstract class MappingIO {
+
+    public interface Handler<T> {
+        /**
+         * write data into stream. Implementation of this should write enough data for {@link Handler#read(InputStream)}
+         * to rebuild the object itself
+         */
+        void write(OutputStream stream);
+
+        /**
+         * read data from stream, and build a new object from these data. Implementation of this should consume all written
+         * data of such type, and should NOT return caller of this method
+         * @return a NEW object containing data fetched from stream
+         */
+        T read(InputStream stream);
+    }
+
     public static void writeVarInt(OutputStream stream, int value) throws Exception {
         while ((value & -128) != 0) {
             stream.write(value & 127 | 128);
