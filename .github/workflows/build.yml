@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       norelease:
-        description: 'Do not publish'
+        description: 'will not publish if true'
         required: true
         default: 'false'
 
@@ -30,12 +30,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 30 # Gets the last 30 commits so the changelog might work
-      # Always run on Java 16, Loom needs it
-      - name: Set up JDK 16
+      # Always run on Java 17 or higher, Loom needs it
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
-          java-version: '16'
+          java-version: '17'
       - name: Build with Gradle
         env:
           FTB_MAVEN_TOKEN: ${{ secrets.FTB_MAVEN_TOKEN }}
