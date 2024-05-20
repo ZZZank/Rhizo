@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class CsvRemapper implements Remapper {
 
-    public static final CsvRemapper INSTANCE = new CsvRemapper();
+    private static CsvRemapper INSTANCE = null;
     private static final int VERSION = 1;
     private static final int MARK = 27;
     private final Map<String, String> fields;
@@ -43,6 +43,13 @@ public class CsvRemapper implements Remapper {
             mapping.put(line[0], line[1]);
         }
         return mapping;
+    }
+
+    public static CsvRemapper instance() {
+        if (INSTANCE == null) {
+            INSTANCE = new CsvRemapper();
+        }
+        return INSTANCE;
     }
 
     @Override
