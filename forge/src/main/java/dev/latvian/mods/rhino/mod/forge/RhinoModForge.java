@@ -22,11 +22,12 @@ public class RhinoModForge {
 
     public RhinoModForge() {
         FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
+        //        Context.setRemapper(DefaultRemapper.INSTANCE);
+        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, CsvRemapper.instance()));
     }
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, CsvRemapper.INSTANCE));
         if (RhinoProperties.INSTANCE.generateMapping) {
             RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }
