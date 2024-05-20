@@ -1,7 +1,6 @@
 plugins {
 	id "architectury-plugin" version "3.4-SNAPSHOT"
 	id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
-	id "org.glavo.kala-retro8" version "1.1" apply false
 }
 
 
@@ -11,7 +10,6 @@ architectury {
 
 subprojects {
 	apply plugin: "dev.architectury.loom"
-	apply plugin: "org.glavo.kala-retro8"
 
 	loom {
 		silentMojangMappingsLicense()
@@ -23,6 +21,8 @@ subprojects {
 			officialMojangMappings()
 			parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:2021.10.10")
 		}
+		annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
+		compileOnly "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
 	}
 }
 
@@ -30,16 +30,13 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "architectury-plugin"
 	apply plugin: "maven-publish"
-//	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
+	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
 
 	def ENV = System.getenv()
 //	version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
 	version = mod_version
 	group = project.mod_package
 	archivesBaseName = project.mod_name
-
-	sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '16'
-//	sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '8'
 
 	tasks.withType(JavaCompile) {
 		options.encoding = "UTF-8"
@@ -49,10 +46,7 @@ allprojects {
 		// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
 		// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
 		// We'll use that if it's available, but otherwise we'll use the older option.
-		def targetVersion = 8
-		if (JavaVersion.current().isJava9Compatible()) {
-			options.release = targetVersion
-		}
+		options.release = 8
 	}
 
 	repositories {
