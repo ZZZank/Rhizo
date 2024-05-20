@@ -1,4 +1,4 @@
-## Rhino 2.0 -> 2.1
+## Rhizo 2.0 -> 2.1
 
 Compiler Mode
 
