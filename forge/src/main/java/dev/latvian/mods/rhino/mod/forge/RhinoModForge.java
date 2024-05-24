@@ -34,7 +34,8 @@ public class RhinoModForge {
     }
 
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
-        //using an old, hardcoded link because the newest is using official mapping, while 1.16.5 is still using MCP
+        //using an old, hardcoded link because the newest is using another format of srg name, which is different from
+        //names used in game
         final String link = "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/0cdc6055297f0b30cf3e27e59317f229a30863a6/versions/release/1.16.5/joined.tsrg";
         final var pattern = Pattern.compile("[\t ]");
 

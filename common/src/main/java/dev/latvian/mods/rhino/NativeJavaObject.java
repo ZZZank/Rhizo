@@ -374,7 +374,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 				}
 				if (to.isArray()) {
 					if (fromObj instanceof NativeArray) {
-						// This is a native array conversion to a java array
+						// This is a native array conversion to a java array.
 						// Array conversions are all equal, and preferable to object
 						// and string conversion, per LC3.
 						return 2;

@@ -1,14 +1,10 @@
 package dev.latvian.mods.rhino.util;
 
-import dev.latvian.mods.rhino.util.remapper.Remapper;
-
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collections;
 
 public class JavaPortingHelper {
-
-//    public static final Map IMMUTABLE_MAP = Collections.emptyMap();
 
     public static Path ofPath(String first, String... more) {
         return FileSystems.getDefault().getPath(first, more);

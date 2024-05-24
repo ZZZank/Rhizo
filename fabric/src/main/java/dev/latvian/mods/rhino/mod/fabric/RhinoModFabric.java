@@ -30,9 +30,9 @@ public class RhinoModFabric implements ModInitializer {
     private static void generateMappings(RemappingHelper.MappingContext context) throws Exception {
         var runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
         var rawNamespace = "official";
-        var tinyTree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+        var tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
 
-        for (var classDef : tinyTree.getClasses()) {
+        for (var classDef : tree.getClasses()) {
             var unmappedClassName = classDef.getName(runtimeNamespace).replace('/', '.');
             var rawClassName = classDef.getName(rawNamespace);
 
@@ -70,7 +70,7 @@ public class RhinoModFabric implements ModInitializer {
 
                 for (var methodDef : classDef.getMethods()) {
                     var rawMethodName = methodDef.getName(rawNamespace);
-                    var rawMethodDesc = methodDef.getDesc(tinyTree.getNamespaceId(rawNamespace));
+                    var rawMethodDesc = methodDef.getDesc(tree.getNamespaceId(rawNamespace));
                     var sig = new MojMappings.NamedSignature(rawMethodName, context.mappings()
                         .readSignatureFromDescriptor(rawMethodDesc));
                     var mmMethod = mmClass.members.get(sig);
