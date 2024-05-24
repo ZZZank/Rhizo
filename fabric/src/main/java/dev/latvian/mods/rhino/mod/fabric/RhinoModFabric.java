@@ -1,6 +1,7 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
 import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.remapper.MojMappings;
 import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
@@ -16,7 +17,7 @@ public class RhinoModFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RemappingHelper.getMinecraftRemapper()));
-        if (RemappingHelper.GENERATE) {
+        if (RhinoProperties.INSTANCE.generateMapping) {
             RemappingHelper.run(FabricLoader.getInstance()
                 .getModContainer("minecraft")
                 .map(ModContainer::getMetadata)

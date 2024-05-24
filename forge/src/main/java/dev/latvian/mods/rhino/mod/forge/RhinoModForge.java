@@ -39,7 +39,7 @@ public class RhinoModForge {
         final var pattern = Pattern.compile("[\t ]");
 
         List<String[]> srg = new ArrayList<>(100);
-        try (var reader = new BufferedReader(RemappingHelper.createReader(link))) {
+        try (var reader = new BufferedReader(RemappingHelper.createUrlReader(link))) {
             reader.lines()
                 //split into slices to ease processing
                 .map(pattern::split)

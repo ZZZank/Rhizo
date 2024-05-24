@@ -10,12 +10,11 @@ import org.apache.commons.io.IOUtils;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -23,7 +22,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class RemappingHelper {
-    public static final boolean GENERATE = System.getProperty("generaterhinomappings", "0").equals("1");
     //    public static final boolean GENERATE = true;
     private static final Gson GSON = new GsonBuilder().setLenient().setPrettyPrinting().disableHtmlEscaping().create();
     public static final Logger LOGGER = LogManager.getLogger("Rhino Script Remapper");
@@ -146,12 +144,17 @@ public class RemappingHelper {
         return getMinecraftRemapper(false);
     }
 
-    public static Reader createReader(String url) throws Exception {
+    public static Reader createUrlReader(String url) throws Exception {
         LOGGER.info("Fetching {}...", url);
+        var connection = getUrlConnection(url);
+        return new InputStreamReader(new BufferedInputStream(connection.getInputStream()), StandardCharsets.UTF_8);
+    }
+
+    private static @NotNull URLConnection getUrlConnection(String url) throws IOException {
         var connection = new URL(url).openConnection();
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(10000);
-        return new InputStreamReader(new BufferedInputStream(connection.getInputStream()), StandardCharsets.UTF_8);
+        return connection;
     }
 
 //    public static void main(String[] args) {
@@ -189,7 +192,7 @@ public class RemappingHelper {
         }
 
         JsonObject vInfo = null;
-        try (var metaInfoReader = createReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
+        try (var metaInfoReader = createUrlReader("https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
             for (var metaInfo : GSON.fromJson(metaInfoReader, JsonObject.class).get("versions").getAsJsonArray()) {
                 if (mcVersion.equals(metaInfo.getAsJsonObject().get("id").getAsString())) {
                     vInfo = metaInfo.getAsJsonObject();
@@ -202,14 +205,14 @@ public class RemappingHelper {
         }
 
         String metaUrl = vInfo.get("url").getAsString();
-        try (var metaReader = createReader(metaUrl)) {
+        try (var metaReader = createUrlReader(metaUrl)) {
             var meta = GSON.fromJson(metaReader, JsonObject.class);
             if (!(meta.get("downloads") instanceof JsonObject o)
                 || !(o.get("client_mappings") instanceof JsonObject cmap)
                 || !cmap.has("url")) {
                 throw new RemapperException("This Minecraft version doesn't have mappings!");
             }
-            try (var cmapReader = createReader(cmap.get("url").getAsString())) {
+            try (var cmapReader = createUrlReader(cmap.get("url").getAsString())) {
                 var mojangMappings = MojMappings.parseOfficial(mcVersion, IOUtils.readLines(cmapReader));
                 callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
                 mojangMappings.cleanup();
