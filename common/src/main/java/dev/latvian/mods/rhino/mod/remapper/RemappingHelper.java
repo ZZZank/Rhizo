@@ -144,13 +144,16 @@ public class RemappingHelper {
         return getMinecraftRemapper(false);
     }
 
-    public static Reader createUrlReader(String url) throws Exception {
+    public static Reader createUrlReader(String url) throws IOException {
         LOGGER.info("Fetching {}...", url);
         var connection = getUrlConnection(url);
         return new InputStreamReader(new BufferedInputStream(connection.getInputStream()), StandardCharsets.UTF_8);
     }
 
-    private static @NotNull URLConnection getUrlConnection(String url) throws IOException {
+    /**
+     * connect to an url, with more tolerance in timeout
+     */
+    public static @NotNull URLConnection getUrlConnection(String url) throws IOException {
         var connection = new URL(url).openConnection();
         connection.setConnectTimeout(5000);
         connection.setReadTimeout(10000);

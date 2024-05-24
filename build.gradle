@@ -21,8 +21,11 @@ subprojects {
 			officialMojangMappings()
 			parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:2021.10.10")
 		}
+		// https://mvnrepository.com/artifact/com.github.bsideup.jabel/jabel-javac-plugin
 		annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
 		compileOnly "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
+		// https://mvnrepository.com/artifact/net.neoforged/srgutils
+		implementation 'net.neoforged:srgutils:1.0.9'
 	}
 }
 
