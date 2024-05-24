@@ -34,7 +34,7 @@ public class DefaultRemapper implements Remapper {
         if (!remapped.isEmpty()) {
             return remapped;
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DefaultRemapper implements Remapper {
         if (!remapped.isEmpty()) {
             return remapped;
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -60,6 +60,6 @@ public class DefaultRemapper implements Remapper {
         if (!remapped.isEmpty()) {
 			return remapped;
         }
-        return "";
+        return NOT_REMAPPED;
     }
 }

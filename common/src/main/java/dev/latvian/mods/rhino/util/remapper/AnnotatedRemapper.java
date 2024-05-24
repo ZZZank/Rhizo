@@ -19,7 +19,7 @@ public class AnnotatedRemapper implements Remapper {
         if (remap != null) {
             return remap.value();
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class AnnotatedRemapper implements Remapper {
         if (remap != null) {
             return remap.value();
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -37,6 +37,6 @@ public class AnnotatedRemapper implements Remapper {
         if (remap != null) {
             return remap.value();
         }
-        return "";
+        return NOT_REMAPPED;
     }
 }

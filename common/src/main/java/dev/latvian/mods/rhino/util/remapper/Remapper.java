@@ -8,6 +8,11 @@ import java.lang.reflect.Method;
 
 public interface Remapper {
 
+	/**
+	 * used as the return value of Remapper when the Remapper does not remap the input
+	 */
+	String NOT_REMAPPED = "";
+
 	static String getTypeName(String type) {
 		int array = 0;
 		while (type.endsWith("[]")) {
@@ -35,7 +40,7 @@ public interface Remapper {
 	 * @return a string holding remapped class name, or an empty string if not remapped
 	 */
 	default String getMappedClass(Class<?> from) {
-		return "";
+		return NOT_REMAPPED;
 	}
 
 	/**
@@ -43,21 +48,21 @@ public interface Remapper {
 	 * @return the original class name
 	 */
 	default String getUnmappedClass(String from) {
-		return "";
+		return NOT_REMAPPED;
 	}
 
 	/**
 	 * @return a string holding remapped field name, or an empty string if not remapped
 	 */
 	default String getMappedField(Class<?> from, Field field) {
-		return "";
+		return NOT_REMAPPED;
 	}
 
 	/**
 	 * @return a string holding remapped method name, or an empty string if not remapped
 	 */
 	default String getMappedMethod(Class<?> from, Method method) {
-		return "";
+		return NOT_REMAPPED;
 	}
 }
 

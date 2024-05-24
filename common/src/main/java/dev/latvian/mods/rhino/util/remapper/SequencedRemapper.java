@@ -3,7 +3,7 @@ package dev.latvian.mods.rhino.util.remapper;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-public class SequencedRemapper implements Remapper{
+public class SequencedRemapper implements Remapper {
 
     private final Remapper[] seq;
 
@@ -20,7 +20,7 @@ public class SequencedRemapper implements Remapper{
                 return mapped;
             }
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class SequencedRemapper implements Remapper{
                 return mapped;
             }
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class SequencedRemapper implements Remapper{
                 return mapped;
             }
         }
-        return "";
+        return NOT_REMAPPED;
     }
 
     @Override
@@ -56,6 +56,6 @@ public class SequencedRemapper implements Remapper{
                 return mapped;
             }
         }
-        return "";
+        return NOT_REMAPPED;
     }
 }
