@@ -14,10 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
-public abstract class RhizoMappingLoader {
+public abstract class RhizoMappingGen {
 
-    //the number 31, is obtained by running SHA256 on string "lambda", and calculating `HASH mod 128`
+    /**
+     * the number 31, is obtained by running SHA256 on string "lambda", and calculating `HASH mod 128`
+     */
     private static final String SKIP_MARK = "31";
+    public static final int MAPPING_MARK = 21;
+    public static final int MAPPING_VERSION = 1;
 
     /**
      * generate a mapping file called "mm.jsmappings", that can provides name conversion between
@@ -42,8 +46,8 @@ public abstract class RhizoMappingLoader {
             //in-game -> mapped
             var target = vanillaMapping.chain(nativeMapping).reverse();
             //write mapping
-            writeRhizoMapping(JavaPortingHelper.ofPath("mm.jsmappings"), target);
-        } catch (IOException e) {
+            writeRhizoMapping(JavaPortingHelper.ofPath("mm.jsmappings"), target, mcVersion);
+        } catch (Exception e) {
             RemappingHelper.LOGGER.error("Mapping generation failed");
             e.printStackTrace();
             return;
@@ -51,42 +55,48 @@ public abstract class RhizoMappingLoader {
         RemappingHelper.LOGGER.info("Finished generating mappings!");
     }
 
-    private static void writeRhizoMapping(Path path, IMappingFile mapping) throws IOException {
-        try (var out = new GZIPOutputStream(Files.newOutputStream(path))) {
-            //used for auto fetching skip mark when parsing
-            MappingIO.writeUtf(out, SKIP_MARK);
-            //class
-            var classes = mapping.getClasses();
-            MappingIO.writeVarInt(out, classes.size());
-            for (IMappingFile.IClass clazz : classes) {
-                if (isAnonymousClass(clazz.getMapped())) {
+    /**
+     * write mapping data into specified file path, in a special format
+     */
+    private static void writeRhizoMapping(@NotNull Path path, @NotNull IMappingFile mapping, @NotNull String mcVersion) throws IOException {
+        var out = new GZIPOutputStream(Files.newOutputStream(path));
+        //metadata
+        out.write(MAPPING_MARK); //minecraft mapping mark
+        out.write(MAPPING_VERSION); //mapping version
+        MappingIO.writeUtf(out, mcVersion); //minecraft version
+        MappingIO.writeUtf(out, SKIP_MARK); //skip mark
+        //class
+        var classes = mapping.getClasses();
+        MappingIO.writeVarInt(out, classes.size());
+        for (IMappingFile.IClass clazz : classes) {
+            if (isAnonymousClass(clazz.getMapped())) {
+                MappingIO.writeUtf(out, SKIP_MARK);
+                continue;
+            }
+            MappingIO.writeUtf(out, clazz.getOriginal());
+            MappingIO.writeUtf(out, clazz.getMapped());
+            //method
+            var methods = clazz.getMethods();
+            MappingIO.writeVarInt(out, methods.size());
+            for (IMappingFile.IMethod method : methods) {
+                if (method.getMapped().startsWith("lambda$")) {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
-                MappingIO.writeUtf(out, clazz.getOriginal());
-                MappingIO.writeUtf(out, clazz.getMapped());
-                //method
-                var methods = clazz.getMethods();
-                MappingIO.writeVarInt(out, methods.size());
-                for (IMappingFile.IMethod method : methods) {
-                    if (method.getMapped().startsWith("lambda$")) {
-                        MappingIO.writeUtf(out, SKIP_MARK);
-                        continue;
-                    }
-                    MappingIO.writeUtf(out, method.getDescriptor());
-                    MappingIO.writeUtf(out, method.getMapped());
-                }
-                //field
-                var fields = clazz.getFields();
-                MappingIO.writeVarInt(out, fields.size());
-                for (IMappingFile.IField field : fields) {
-                    var desc = field.getOriginal();
-                    MappingIO.writeUtf(out, desc == null ? "" : desc);
-                    desc = field.getMapped();
-                    MappingIO.writeUtf(out, desc == null ? "" : desc);
-                }
+                MappingIO.writeUtf(out, method.getDescriptor());
+                MappingIO.writeUtf(out, method.getMapped());
+            }
+            //field
+            var fields = clazz.getFields();
+            MappingIO.writeVarInt(out, fields.size());
+            for (IMappingFile.IField field : fields) {
+                var desc = field.getOriginal();
+                MappingIO.writeUtf(out, desc == null ? "" : desc);
+                desc = field.getMapped();
+                MappingIO.writeUtf(out, desc == null ? "" : desc);
             }
         }
+        out.close();
     }
 
     /**
