@@ -14,7 +14,7 @@ A fork of Mozilla's Rhino library, modified for use in mods
 
 [[mods]]
 modId = "rhino"
-version = "1605.1.5"
+version = "1605.2.0"
 displayName = "Rhino(Rhizo)"
 authors = "LatvianModder, Mozilla"
 description = '''
