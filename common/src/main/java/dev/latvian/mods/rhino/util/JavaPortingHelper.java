@@ -42,12 +42,12 @@ public class JavaPortingHelper {
         if (c.isPrimitive()) {
             return "java.lang";
         }
-        String cn = c.getName();
-        int dot = cn.lastIndexOf('.');
+        String className = c.getName();
+        int dot = className.lastIndexOf('.');
         if (dot == -1) {
             return "";
         }
-        return cn.substring(0, dot).intern();
+        return className.substring(0, dot).intern();
     }
 
     public static String descriptorString(Class<?> clazz) {
@@ -68,7 +68,7 @@ public class JavaPortingHelper {
 
         if (clazz.isArray()) {
             return "[" + JavaPortingHelper.descriptorString(clazz.getComponentType());
-        /*hidden class only exists after Java15
+        /*hidden class only exists after Java 15
         } else if (clazz.isHidden()) {
             String name = clazz.getName();
             int index = name.indexOf('/');
