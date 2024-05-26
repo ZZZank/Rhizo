@@ -1,6 +1,7 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ public class RhinoPropertiesImpl {
 		return FabricLoader.getInstance().isDevelopmentEnvironment();
 	}
 
+	@NotNull
 	public static InputStream openResource(String path) throws Exception {
 		return Files.newInputStream(FabricLoader.getInstance().getModContainer("rhino").get().findPath(path).get());
 	}

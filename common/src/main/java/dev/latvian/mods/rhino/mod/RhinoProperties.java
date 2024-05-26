@@ -3,6 +3,7 @@ package dev.latvian.mods.rhino.mod;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -32,6 +33,7 @@ public enum RhinoProperties {
 	}
 
 	@ExpectPlatform
+	@NotNull
 	@Contract(value = " -> _", pure = true)
 	public static InputStream openResource(String path) throws Exception {
 		throw new AssertionError();

@@ -83,6 +83,7 @@ public abstract class RhizoMappingGen {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
+                MappingIO.writeUtf(out, method.getOriginal());
                 MappingIO.writeUtf(out, method.getDescriptor());
                 MappingIO.writeUtf(out, method.getMapped());
             }
@@ -90,10 +91,10 @@ public abstract class RhizoMappingGen {
             var fields = clazz.getFields();
             MappingIO.writeVarInt(out, fields.size());
             for (IMappingFile.IField field : fields) {
-                var desc = field.getOriginal();
-                MappingIO.writeUtf(out, desc == null ? "" : desc);
-                desc = field.getMapped();
-                MappingIO.writeUtf(out, desc == null ? "" : desc);
+                var tmp = field.getOriginal();
+                MappingIO.writeUtf(out, tmp == null ? "" : tmp);
+                tmp = field.getMapped();
+                MappingIO.writeUtf(out, tmp == null ? "" : tmp);
             }
         }
         out.close();
