@@ -2,16 +2,14 @@ package dev.latvian.mods.rhino.mod.forge;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
-import dev.latvian.mods.rhino.mod.remapper.CsvRemapper;
-import dev.latvian.mods.rhino.mod.remapper.MojMappings;
-import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
-import dev.latvian.mods.rhino.mod.remapper.RhizoRemapper;
+import dev.latvian.mods.rhino.mod.remapper.*;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.srgutils.IMappingFile;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -30,7 +28,12 @@ public class RhinoModForge {
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         if (RhinoProperties.INSTANCE.generateMapping) {
-            RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
+            RhizoMappingGen.generate("1.16.5",
+                mcVersion -> IMappingFile.load(RemappingHelper.getUrlConnection(
+                        "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/0cdc6055297f0b30cf3e27e59317f229a30863a6/versions/release/1.16.5/joined.tsrg")
+                    .getInputStream())
+            );
+//            RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
         }
     }
 

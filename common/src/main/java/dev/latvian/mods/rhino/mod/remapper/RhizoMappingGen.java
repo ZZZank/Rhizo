@@ -152,6 +152,6 @@ public abstract class RhizoMappingGen {
         /**
          * obf -> in-game
          */
-        IMappingFile load(String mcVersion);
+        IMappingFile load(String mcVersion) throws IOException;
     }
 }
