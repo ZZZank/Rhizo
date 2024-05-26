@@ -70,7 +70,7 @@ public class RhizoRemapper implements Remapper {
                     clazz.acceptField(originalF, mappedF);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             RemappingHelper.LOGGER.error("Failed to load Rhizo Minecraft remapper!", e);
         }
     }
