@@ -4,22 +4,31 @@ issueTrackerURL = "https://github.com/KubeJS-Mods/Rhino/issues"
 license = "MPL-2.0"
 
 [[mods]]
-modId = "rhino"
+modId = "rhizo"
 version = "${version}"
 displayName = "Rhizo"
-authors = "ZZZank, LatvianModder, Mozilla"
+authors = "ZZZank"
 description = '''
 A fork of Mozilla's Rhino library, modified for use in mods
 '''
 
-[[dependencies.rhino]]
+[[mods]]
+modId = "rhino"
+version = "1605.1.5"
+displayName = "Rhino(Rhizo)"
+authors = "LatvianModder, Mozilla"
+description = '''
+Stub, to allow mods requiring Rhino to function as expected.
+'''
+
+[[dependencies.rhizo]]
 modId = "forge"
 mandatory = true
 versionRange = "[32.0.75,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.rhino]]
+[[dependencies.rhizo]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.16.4,)"
