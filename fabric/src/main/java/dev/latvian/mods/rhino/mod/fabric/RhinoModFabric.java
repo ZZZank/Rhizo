@@ -3,7 +3,8 @@ package dev.latvian.mods.rhino.mod.fabric;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.remapper.MinecraftRemapper;
-import dev.latvian.mods.rhino.mod.remapper.MojMappings;
+import dev.latvian.mods.rhino.mod.remapper.info.Clazz;
+import dev.latvian.mods.rhino.mod.remapper.info.MojMappings;
 import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
@@ -14,6 +15,10 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.fabricmc.loader.api.ModContainer;
 import net.neoforged.srgutils.IMappingFile;
+import net.neoforged.srgutils.IRenamer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RhinoModFabric implements ModInitializer {
     @Override
@@ -29,15 +34,73 @@ public class RhinoModFabric implements ModInitializer {
         }
     }
 
-    private static IMappingFile loadNativeMapping(String mcVersion, IMappingFile vanillaMapping) {
-        var runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
-        var rawNamespace = "official";
-        var tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+    private static IRenamer loadNativeMappingRenamer(String mcVersion, IMappingFile vanillaMapping) {
+        final var runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
+        final var rawNamespace = "official";
+        final var tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+
+        final Map<String, Clazz> classMap = new HashMap<>();
         //class
-        for (var clazz : tree.getClasses()) {
-            clazz.getSrcName();
+        for (var c : tree.getClasses()) {
+            //clazz
+                //similar to SRG name in Forge
+            var unmappedC = c.getName(runtimeNamespace).replace('/', '.');
+                //obf name
+            var rawC = c.getName(rawNamespace).replace('/', '.');
+            var clazz = new Clazz(unmappedC, rawC);
+            classMap.put(unmappedC, clazz);
+            //method
+            for(var method: c.getMethods()) {
+                var unmappedM = method.getName(runtimeNamespace);
+                var rawM = method.getName(rawNamespace);
+                var desc = method.getDesc(tree.getNamespaceId(runtimeNamespace));
+                clazz.acceptMethod(unmappedM, desc, rawM);
+            }
+            //field
+            for(var field: c.getFields()) {
+                var unmappedF = field.getName(runtimeNamespace);
+                var rawF = field.getName(rawNamespace);
+                clazz.acceptField(unmappedF, rawF);
+            }
         }
-        return null;
+        return new IRenamer() {
+            public String rename(IMappingFile.IClass value) {
+                var clazz = classMap.get(value.getMapped());
+                if (clazz == null) {
+                    return value.getMapped();
+                }
+                return clazz.remapped();
+            }
+
+            public String rename(IMappingFile.IField value) {
+                var clazz = classMap.get(value.getParent().getMapped());
+                if (clazz == null) {
+                    return value.getMapped();
+                }
+                var f = clazz.fields().get(value.getMapped());
+                if (f == null) {
+                    return value.getMapped();
+                }
+                return f.remapped();
+            }
+
+            public String rename(IMappingFile.IMethod value) {
+                var clazz = classMap.get(value.getParent().getMapped());
+                if (clazz == null) {
+                    return value.getMapped();
+                }
+                var methods = clazz.methods().get(value.getMapped());
+                if (methods.isEmpty()) {
+                    return value.getMapped();
+                }
+                for (var m: methods) {
+                    if (value.getMappedDescriptor().startsWith(m.paramDescriptor())) {
+                        return m.remapped();
+                    }
+                }
+                return value.getMapped();
+            }
+        };
     }
 
     private static void generateMappings(String mcVersion, MojMappings mappings) throws Exception {

@@ -1,9 +1,7 @@
 package dev.latvian.mods.rhino.mod.remapper;
 
-import com.github.bsideup.jabel.Desugar;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
+import dev.latvian.mods.rhino.mod.remapper.info.Clazz;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
@@ -104,7 +102,7 @@ public class RhizoRemapper implements Remapper {
     }
 
     Clazz acceptClass(String original, String remapped) {
-        var clazz = new Clazz(original, remapped, ArrayListMultimap.create(), new HashMap<>());
+        var clazz = new Clazz(original, remapped);
         this.classMap.put(original, clazz);
         this.classUnmap.put(remapped, clazz);
         return clazz;
@@ -116,7 +114,7 @@ public class RhizoRemapper implements Remapper {
         if (clz == null) {
             return NOT_REMAPPED;
         }
-        return clz.remapped;
+        return clz.remapped();
     }
 
     private @Nullable Clazz getClazzFiltered(Class<?> from) {
@@ -132,7 +130,7 @@ public class RhizoRemapper implements Remapper {
         if (un == null) {
             return NOT_REMAPPED;
         }
-        return un.original;
+        return un.original();
     }
 
     @Override
@@ -141,11 +139,11 @@ public class RhizoRemapper implements Remapper {
         if (clazz == null) {
             return NOT_REMAPPED;
         }
-        var fInfo = clazz.fields.get(field.getName());
+        var fInfo = clazz.fields().get(field.getName());
         if (fInfo == null) {
             return NOT_REMAPPED;
         }
-        return fInfo.remapped;
+        return fInfo.remapped();
     }
 
     @Override
@@ -156,7 +154,7 @@ public class RhizoRemapper implements Remapper {
             return NOT_REMAPPED;
         }
         //method name level
-        var methods = clazz.methods.get(method.getName());
+        var methods = clazz.methods().get(method.getName());
         if (methods.isEmpty()) {
             return NOT_REMAPPED;
         }
@@ -167,31 +165,12 @@ public class RhizoRemapper implements Remapper {
         }
         var paramDesc = sb.toString();
         for (var m : methods) {
-            if (m.paramDescriptor.equals(paramDesc)) {
-                return m.remapped;
+            if (m.paramDescriptor().equals(paramDesc)) {
+                return m.remapped();
             }
         }
         //failed
         return NOT_REMAPPED;
     }
 
-    @Desugar
-    record Clazz(String original, String remapped, Multimap<String, MethodInfo> methods,
-                 Map<String, FieldInfo> fields) {
-        void acceptMethod(String original, String paramDesc, String remapped) {
-            this.methods.put(original, new MethodInfo(original, paramDesc, remapped));
-        }
-
-        void acceptField(String original, String remapped) {
-            this.fields.put(original, new FieldInfo(original, remapped));
-        }
-    }
-
-    @Desugar
-    record MethodInfo(String original, String paramDescriptor, String remapped) {
-    }
-
-    @Desugar
-    record FieldInfo(String original, String remapped) {
-    }
 }

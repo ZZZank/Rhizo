@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
+import dev.latvian.mods.rhino.mod.remapper.info.MojMappings;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import org.apache.commons.io.IOUtils;

@@ -1,5 +1,7 @@
-package dev.latvian.mods.rhino.mod.remapper;
+package dev.latvian.mods.rhino.mod.remapper.info;
 
+import dev.latvian.mods.rhino.mod.remapper.MappingIO;
+import dev.latvian.mods.rhino.mod.remapper.RemappingHelper;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import org.apache.commons.lang3.mutable.MutableObject;
