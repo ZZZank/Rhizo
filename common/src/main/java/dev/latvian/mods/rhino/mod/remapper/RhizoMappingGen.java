@@ -21,12 +21,12 @@ public abstract class RhizoMappingGen {
      */
     private static final String SKIP_MARK = "31";
     public static final int MAPPING_MARK = 21;
-    public static final int MAPPING_VERSION = 1;
+    public static final int MAPPING_VERSION = 2;
     public static final String MAPPING_FILENAME = "rhizo.jsmapping";
 
     /**
-     * generate a mapping file called "mm.jsmappings", that can provides name conversion between
-     * in-game name(srg name) and mapped name.
+     * generate a mapping file called {@link RhizoMappingGen#MAPPING_FILENAME}, that can provides name conversion between
+     * in-game name(srg name?) and mapped name.
      * <p>
      * Official mapping provides raw name <-> mapped name conversion, and the param {@code callback}
      * should provide raw name <-> in-game name conversion
@@ -35,10 +35,6 @@ public abstract class RhizoMappingGen {
      * @param callback  should provide "in-game name -> raw name" conversion
      */
     public static void generate(@NotNull String mcVersion, NativeMappingLoader callback) {
-        if (RhinoProperties.isDev()) {
-            RemappingHelper.buildMinecraftRemapper(true);
-            return;
-        }
         try {
             //mapped -> obf
             var vanillaMapping = loadVanilla(mcVersion);
@@ -90,14 +86,12 @@ public abstract class RhizoMappingGen {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
+                var paramDesc = method.getDescriptor().substring(0, method.getDescriptor().lastIndexOf(')'));
                 RemappingHelper.LOGGER.info(
-                    "    method: '{}' -> '{}', with descriptor '{}'",
-                    original,
-                    mapped,
-                    method.getDescriptor()
+                    "    method: '{}' -> '{}', with descriptor '{}'", original, mapped, paramDesc
                 );
                 MappingIO.writeUtf(out, original);
-                MappingIO.writeUtf(out, method.getDescriptor());
+                MappingIO.writeUtf(out, paramDesc);
                 MappingIO.writeUtf(out, mapped);
             }
             //field

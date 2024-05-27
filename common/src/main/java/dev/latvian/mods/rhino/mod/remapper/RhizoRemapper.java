@@ -43,8 +43,9 @@ public class RhizoRemapper implements Remapper {
             }
             RemappingHelper.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
             final String SKIP_MARK = MappingIO.readUtf(in);
+            //class
             final int classCount = MappingIO.readVarInt(in);
-            for (int i = 0; i < classCount; i++) { //read class count
+            for (int i = 0; i < classCount; i++) {
                 var original = MappingIO.readUtf(in);
                 if (SKIP_MARK.equals(original)) {
                     continue;
@@ -58,9 +59,9 @@ public class RhizoRemapper implements Remapper {
                     if (SKIP_MARK.equals(originalM)) {
                         continue;
                     }
-                    var descriptor = MappingIO.readUtf(in);
+                    var paramDesc = MappingIO.readUtf(in);
                     var mappedM = MappingIO.readUtf(in);
-                    clazz.acceptMethod(originalM, descriptor, mappedM);
+                    clazz.acceptMethod(originalM, paramDesc, mappedM);
                 }
                 //field
                 final int fieldCount = MappingIO.readVarInt(in);
@@ -85,8 +86,9 @@ public class RhizoRemapper implements Remapper {
             return new GZIPInputStream(Files.newInputStream(cfgPath));
         }
         try {
+            var in = new GZIPInputStream(RhinoProperties.openResource(name));
             RemappingHelper.LOGGER.info("Found Rhizo mapping file from Rhizo mod jar.");
-            return new GZIPInputStream(RhinoProperties.openResource(name));
+            return in;
         } catch (Exception e) {
             return null;
         }
@@ -169,14 +171,8 @@ public class RhizoRemapper implements Remapper {
     @Desugar
     record Clazz(String original, String remapped, Multimap<String, MethodInfo> methods,
                  Map<String, FieldInfo> fields) {
-        void acceptMethod(String original, String descriptor, String remapped) {
-            int rightBracket = descriptor.lastIndexOf(')');
-            if (rightBracket < 0) {
-                throw new IllegalArgumentException(String.format("arg 'paramDescriptor' with value '%s' not valid",
-                    descriptor
-                ));
-            }
-            this.methods.put(original, new MethodInfo(original, descriptor.substring(0, rightBracket), remapped));
+        void acceptMethod(String original, String paramDesc, String remapped) {
+            this.methods.put(original, new MethodInfo(original, paramDesc, remapped));
         }
 
         void acceptField(String original, String remapped) {
