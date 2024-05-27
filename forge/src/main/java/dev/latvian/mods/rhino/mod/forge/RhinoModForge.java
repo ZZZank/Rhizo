@@ -28,9 +28,10 @@ public class RhinoModForge {
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         if (RhinoProperties.INSTANCE.generateMapping) {
-            RhizoMappingGen.generate("1.16.5",
+            RhizoMappingGen.generate(
+                "1.16.5",
                 mcVersion -> IMappingFile.load(RemappingHelper.getUrlConnection(
-                        "https://raw.githubusercontent.com/MinecraftForge/MCPConfig/0cdc6055297f0b30cf3e27e59317f229a30863a6/versions/release/1.16.5/joined.tsrg")
+                        "https://raw.githubusercontent.com/ZZZank/Rhizo/1.16-rhizo/_dev/joined_old.tsrg")
                     .getInputStream())
             );
 //            RemappingHelper.run("1.16.5", RhinoModForge::generateMappings);
