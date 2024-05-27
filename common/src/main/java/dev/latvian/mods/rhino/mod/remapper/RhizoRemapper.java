@@ -9,7 +9,6 @@ import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,10 +25,12 @@ public class RhizoRemapper implements Remapper {
     private static RhizoRemapper INSTANCE = null;
 
     private final Map<String, Clazz> classMap;
+    private final Map<String, Clazz> classUnmap;
 
     private RhizoRemapper() {
         //init
         this.classMap = new HashMap<>();
+        this.classUnmap = new HashMap<>();
         //load
         try (var in = locateMappingFile(RhizoMappingGen.MAPPING_FILENAME)) {
             if (in == null) {
@@ -39,7 +40,8 @@ public class RhizoRemapper implements Remapper {
                 throw new RemapperException("Invalid Rhizo mapping file!");
             }
             if (in.read() != RhizoMappingGen.MAPPING_VERSION) {
-                throw new RemapperException("Rhizo mapping file version not matching expected version "+RhizoMappingGen.MAPPING_VERSION);
+                throw new RemapperException(
+                    "Rhizo mapping file version not matching expected version " + RhizoMappingGen.MAPPING_VERSION);
             }
             RemappingHelper.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
             final String SKIP_MARK = MappingIO.readUtf(in);
@@ -79,13 +81,13 @@ public class RhizoRemapper implements Remapper {
         }
     }
 
-    private static InputStream locateMappingFile(String name) throws IOException {
+    private static InputStream locateMappingFile(String name) {
         var cfgPath = RhinoProperties.getGameDir().resolve("config/" + name);
-        if (Files.exists(cfgPath)) {
-            RemappingHelper.LOGGER.info("Found Rhizo mapping file from config/{}.", name);
-            return new GZIPInputStream(Files.newInputStream(cfgPath));
-        }
         try {
+            if (Files.exists(cfgPath)) {
+                RemappingHelper.LOGGER.info("Found Rhizo mapping file from config/{}.", name);
+                return new GZIPInputStream(Files.newInputStream(cfgPath));
+            }
             var in = new GZIPInputStream(RhinoProperties.openResource(name));
             RemappingHelper.LOGGER.info("Found Rhizo mapping file from Rhizo mod jar.");
             return in;
@@ -104,6 +106,7 @@ public class RhizoRemapper implements Remapper {
     Clazz acceptClass(String original, String remapped) {
         var clazz = new Clazz(original, remapped, ArrayListMultimap.create(), new HashMap<>());
         this.classMap.put(original, clazz);
+        this.classUnmap.put(remapped, clazz);
         return clazz;
     }
 
@@ -125,7 +128,11 @@ public class RhizoRemapper implements Remapper {
 
     @Override
     public String getUnmappedClass(String from) {
-        throw new AssertionError("not implemented yet");
+        var un = classUnmap.get(from);
+        if (un == null) {
+            return NOT_REMAPPED;
+        }
+        return un.original;
     }
 
     @Override
