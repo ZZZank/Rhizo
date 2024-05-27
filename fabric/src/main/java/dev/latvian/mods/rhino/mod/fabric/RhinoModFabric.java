@@ -92,7 +92,7 @@ public class RhinoModFabric implements ModInitializer {
             var unmappedC = c.getName(runtimeNamespace).replace('/', '.');
             //obf name
             var rawC = c.getName(rawNamespace).replace('/', '.');
-            var clazz = new Clazz(unmappedC, rawC);
+            var clazz = new Clazz(rawC, unmappedC);
             classMap.put(rawC, clazz);
             //method
             for (var method : c.getMethods()) {
