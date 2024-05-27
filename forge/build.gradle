@@ -1,5 +1,4 @@
 plugins {
-	id "com.github.johnrengelman.shadow" version "7.0.0"
 	id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
@@ -32,7 +31,7 @@ loom {
 dependencies {
 	forge("net.minecraftforge:forge:${rootProject.architectury.minecraft}-${rootProject.forge_version}")
 
-	common(project(path: ":common", configuration: "dev")) { transitive false }
+	common(project(path: ":common", configuration: "dev"), ) { transitive false }
 	shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
 }
 
@@ -46,8 +45,10 @@ processResources {
 
 shadowJar {
 	exclude "fabric.mod.json"
+	
+	relocate("net.neoforged.srgutils", "dev.latvian.mods.rhino.mod.shadow.srgutils")
 
-	configurations = [project.configurations.shadowCommon]
+	configurations = [project.configurations.shadowCommon, project.configurations.shade]
 	// classifier "dev-shadow"
 	archiveClassifier.set("dev-shadow")
 }
