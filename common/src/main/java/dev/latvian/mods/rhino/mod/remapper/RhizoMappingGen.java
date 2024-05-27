@@ -5,7 +5,9 @@ import dev.latvian.mods.rhino.mod.util.JsonUtils;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import net.neoforged.srgutils.IMappingFile;
+import net.neoforged.srgutils.IRenamer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URLConnection;
@@ -38,9 +40,9 @@ public abstract class RhizoMappingGen {
             //mapped -> obf
             var vanillaMapping = loadVanilla(mcVersion);
             //obf -> in-game
-            var nativeMapping = callback.load(mcVersion, vanillaMapping);
+            var renamer = callback.toRenamer(callback.load(mcVersion, vanillaMapping));
             //in-game -> mapped
-            var target = vanillaMapping.chain(nativeMapping).reverse();
+            var target = vanillaMapping.rename(renamer).reverse();
             //write mapping
             writeRhizoMapping(JavaPortingHelper.ofPath(MAPPING_FILENAME), target, mcVersion);
         } catch (Exception e) {
@@ -163,6 +165,36 @@ public abstract class RhizoMappingGen {
          * obf -> in-game
          * @param vanillaMapping vanilla mapping which provides mapped -> obf, should not be modified
          */
+        @Nullable
         IMappingFile load(String mcVersion, IMappingFile vanillaMapping) throws IOException;
+
+        default IRenamer toRenamer(IMappingFile link) {
+            return new IRenamer() {
+                public String rename(IMappingFile.IPackage value) {
+                    return link.remapPackage(value.getMapped());
+                }
+
+                public String rename(IMappingFile.IClass value) {
+                    return link.remapClass(value.getMapped());
+                }
+
+                public String rename(IMappingFile.IField value) {
+                    IMappingFile.IClass cls = link.getClass(value.getParent().getMapped());
+                    return cls == null ? value.getMapped() : cls.remapField(value.getMapped());
+                }
+
+                public String rename(IMappingFile.IMethod value) {
+                    IMappingFile.IClass cls = link.getClass(value.getParent().getMapped());
+                    return cls == null ? value.getMapped() : cls.remapMethod(value.getMapped(), value.getMappedDescriptor());
+                }
+
+                public String rename(IMappingFile.IParameter value) {
+                    IMappingFile.IMethod mtd = value.getParent();
+                    IMappingFile.IClass cls = link.getClass(mtd.getParent().getMapped());
+                    mtd = cls == null ? null : cls.getMethod(mtd.getMapped(), mtd.getMappedDescriptor());
+                    return mtd == null ? value.getMapped() : mtd.remapParameter(value.getIndex(), value.getMapped());
+                }
+            };
+        }
     }
 }
