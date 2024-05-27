@@ -31,17 +31,17 @@ public class RhizoRemapper implements Remapper {
         //init
         this.classMap = new HashMap<>();
         //load
-        try (var in = locateMappingFile("rhizo.jsmappings")) {
+        try (var in = locateMappingFile(RhizoMappingGen.MAPPING_FILENAME)) {
             if (in == null) {
-                throw new RemapperException("No Minecraft Remapper file available!");
+                throw new RemapperException("No Rhizo mapping file available!");
             }
             if (in.read() != RhizoMappingGen.MAPPING_MARK) {
-                throw new RemapperException("Invalid Minecraft Remapper file!");
+                throw new RemapperException("Invalid Rhizo mapping file!");
             }
-            if (in.read() > RhizoMappingGen.MAPPING_VERSION) {
-                throw new RemapperException("Minecraft Remapper file version too high!");
+            if (in.read() != RhizoMappingGen.MAPPING_VERSION) {
+                throw new RemapperException("Rhizo mapping file version not matching expected version "+RhizoMappingGen.MAPPING_VERSION);
             }
-            MappingIO.readUtf(in); //mc version
+            RemappingHelper.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
             final String SKIP_MARK = MappingIO.readUtf(in);
             final int classCount = MappingIO.readVarInt(in);
             for (int i = 0; i < classCount; i++) { //read class count
@@ -66,6 +66,9 @@ public class RhizoRemapper implements Remapper {
                 final int fieldCount = MappingIO.readVarInt(in);
                 for (int j = 0; j < fieldCount; j++) {
                     var originalF = MappingIO.readUtf(in);
+                    if (SKIP_MARK.equals(originalF)) {
+                        continue;
+                    }
                     var mappedF = MappingIO.readUtf(in);
                     clazz.acceptField(originalF, mappedF);
                 }

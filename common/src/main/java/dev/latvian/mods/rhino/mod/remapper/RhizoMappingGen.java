@@ -22,6 +22,7 @@ public abstract class RhizoMappingGen {
     private static final String SKIP_MARK = "31";
     public static final int MAPPING_MARK = 21;
     public static final int MAPPING_VERSION = 1;
+    public static final String MAPPING_FILENAME = "rhizo.jsmapping";
 
     /**
      * generate a mapping file called "mm.jsmappings", that can provides name conversion between
@@ -46,7 +47,7 @@ public abstract class RhizoMappingGen {
             //in-game -> mapped
             var target = vanillaMapping.chain(nativeMapping).reverse();
             //write mapping
-            writeRhizoMapping(JavaPortingHelper.ofPath("mm.jsmappings"), target, mcVersion);
+            writeRhizoMapping(JavaPortingHelper.ofPath(MAPPING_FILENAME), target, mcVersion);
         } catch (Exception e) {
             RemappingHelper.LOGGER.error("Mapping generation failed");
             e.printStackTrace();
@@ -60,6 +61,7 @@ public abstract class RhizoMappingGen {
      */
     private static void writeRhizoMapping(@NotNull Path path, @NotNull IMappingFile mapping, @NotNull String mcVersion) throws IOException {
         var out = new GZIPOutputStream(Files.newOutputStream(path));
+        RemappingHelper.LOGGER.info("writing Rhizo mapping.");
         //metadata
         out.write(MAPPING_MARK); //minecraft mapping mark
         out.write(MAPPING_VERSION); //mapping version
@@ -73,28 +75,44 @@ public abstract class RhizoMappingGen {
                 MappingIO.writeUtf(out, SKIP_MARK);
                 continue;
             }
-            MappingIO.writeUtf(out, clazz.getOriginal());
-            MappingIO.writeUtf(out, clazz.getMapped());
+            var originalDot = clazz.getOriginal().replace('/', '.');
+            var mappedDot = clazz.getMapped().replace('/', '.');
+            MappingIO.writeUtf(out, originalDot);
+            MappingIO.writeUtf(out, mappedDot);
+            RemappingHelper.LOGGER.info("class: '{}' -> '{}'", originalDot, mappedDot);
             //method
             var methods = clazz.getMethods();
             MappingIO.writeVarInt(out, methods.size());
             for (IMappingFile.IMethod method : methods) {
-                if (method.getMapped().startsWith("lambda$")) {
+                var original = method.getOriginal();
+                var mapped = method.getMapped();
+                if (mapped.startsWith("lambda$") || mapped.startsWith("<") || original.equals(mapped)) {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
-                MappingIO.writeUtf(out, method.getOriginal());
+                RemappingHelper.LOGGER.info(
+                    "    method: '{}' -> '{}', with descriptor '{}'",
+                    original,
+                    mapped,
+                    method.getDescriptor()
+                );
+                MappingIO.writeUtf(out, original);
                 MappingIO.writeUtf(out, method.getDescriptor());
-                MappingIO.writeUtf(out, method.getMapped());
+                MappingIO.writeUtf(out, mapped);
             }
             //field
             var fields = clazz.getFields();
             MappingIO.writeVarInt(out, fields.size());
             for (IMappingFile.IField field : fields) {
-                var tmp = field.getOriginal();
-                MappingIO.writeUtf(out, tmp == null ? "" : tmp);
-                tmp = field.getMapped();
-                MappingIO.writeUtf(out, tmp == null ? "" : tmp);
+                var original = field.getOriginal();
+                var mapped = field.getMapped();
+                if (mapped.equals(original)) {
+                    MappingIO.writeUtf(out, SKIP_MARK);
+                    continue;
+                }
+                MappingIO.writeUtf(out, original);
+                MappingIO.writeUtf(out, mapped);
+                RemappingHelper.LOGGER.info("    field: '{}' -> '{}'", original, mapped);
             }
         }
         out.close();
