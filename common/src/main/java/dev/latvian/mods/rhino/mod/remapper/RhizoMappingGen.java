@@ -1,7 +1,6 @@
 package dev.latvian.mods.rhino.mod.remapper;
 
 import com.google.gson.JsonObject;
-import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.util.JsonUtils;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
@@ -45,11 +44,10 @@ public abstract class RhizoMappingGen {
             //write mapping
             writeRhizoMapping(JavaPortingHelper.ofPath(MAPPING_FILENAME), target, mcVersion);
         } catch (Exception e) {
-            RemappingHelper.LOGGER.error("Mapping generation failed");
-            e.printStackTrace();
+            RemappingHelper.LOGGER.error("Mapping generation failed", e);
             return;
         }
-        RemappingHelper.LOGGER.info("Finished generating mappings!");
+        RemappingHelper.LOGGER.info("Mapping generation finished!");
     }
 
     /**

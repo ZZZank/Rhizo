@@ -12,9 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-public enum RhinoProperties {
+public class RhinoProperties {
 
-	INSTANCE;
+	public static final RhinoProperties INSTANCE = new RhinoProperties();
 
 	public boolean generateMapping;
 	public boolean enableCompiler;

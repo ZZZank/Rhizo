@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * Default impl of {@link Remapper}, will only check {@link RemapForJS} annotation
+ * an impl of {@link Remapper} that will check {@link RemapForJS} annotation
  */
 public class AnnotatedRemapper implements Remapper {
     public static final AnnotatedRemapper INSTANCE = new AnnotatedRemapper();

@@ -13,6 +13,8 @@ import java.util.Objects;
 
 public class MinecraftRemapper implements Remapper {
 
+    private static MinecraftRemapper INSTANCE = null;
+
     private final Map<String, RemappedClass> classMap;
     private final Map<String, String> unmapClassMap;
 
@@ -20,6 +22,20 @@ public class MinecraftRemapper implements Remapper {
         var m = new MinecraftRemapper(new HashMap<>(), new HashMap<>());
         m.load0(stream, debug);
         return m;
+    }
+
+    public static MinecraftRemapper instance(boolean debug) {
+        if (INSTANCE == null) {
+            RemappingHelper.LOGGER.info("Loading Rhino Minecraft remapper...");
+            long time = System.currentTimeMillis();
+            INSTANCE = RemappingHelper.buildMinecraftRemapper(debug);
+            RemappingHelper.LOGGER.info(String.format("Done in %.03f s", (System.currentTimeMillis() - time) / 1000F));
+        }
+        return INSTANCE;
+    }
+
+    public static MinecraftRemapper instance() {
+        return instance(false);
     }
 
     private void load0(InputStream stream, boolean debug) throws Exception {

@@ -52,65 +52,8 @@ public class RemappingHelper {
         return CLASS_CACHE.computeIfAbsent(name, RemappingHelper::loadClass);
     }
 
-    public static final class MappingContext {
-        private final String mcVersion;
-        private final MojMappings mappings;
-
-        public MappingContext(String mcVersion, MojMappings mappings) {
-            this.mcVersion = mcVersion;
-            this.mappings = mappings;
-        }
-
-        public String mcVersion() {
-            return mcVersion;
-        }
-
-        public MojMappings mappings() {
-            return mappings;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if (obj == null || obj.getClass() != this.getClass()) {
-                return false;
-            }
-            var that = (MappingContext) obj;
-            return Objects.equals(this.mcVersion, that.mcVersion) &&
-                Objects.equals(this.mappings, that.mappings);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(mcVersion, mappings);
-        }
-
-        @Override
-        public String toString() {
-            return "MappingContext[" +
-                "mcVersion=" + mcVersion + ", " +
-                "mappings=" + mappings + ']';
-        }
-
-    }
-
     public interface Callback {
-        void generateMappings(MappingContext context) throws Exception;
-    }
-
-    private static MinecraftRemapper minecraftRemapper = null;
-
-    public static MinecraftRemapper getMinecraftRemapper(boolean debug) {
-        if (minecraftRemapper == null) {
-            LOGGER.info("Loading Rhino Minecraft remapper...");
-            long time = System.currentTimeMillis();
-            minecraftRemapper = buildMinecraftRemapper(debug);
-            LOGGER.info(String.format("Done in %.03f s", (System.currentTimeMillis() - time) / 1000F));
-        }
-
-        return minecraftRemapper;
+        void generateMappings(String mcVersion, MojMappings mappings) throws Exception;
     }
 
     /**
@@ -138,10 +81,6 @@ public class RemappingHelper {
                 return new MinecraftRemapper(Collections.emptyMap(), Collections.emptyMap());
             }
         }
-    }
-
-    public static MinecraftRemapper getMinecraftRemapper() {
-        return getMinecraftRemapper(false);
     }
 
     public static Reader createUrlReader(String url) throws IOException {
@@ -217,7 +156,7 @@ public class RemappingHelper {
             }
             try (var cmapReader = createUrlReader(cmap.get("url").getAsString())) {
                 var mojangMappings = MojMappings.parseOfficial(mcVersion, IOUtils.readLines(cmapReader));
-                callback.generateMappings(new MappingContext(mcVersion, mojangMappings));
+                callback.generateMappings(mcVersion, mojangMappings);
                 mojangMappings.cleanup();
 
                 try (var out = new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(JavaPortingHelper.ofPath(
