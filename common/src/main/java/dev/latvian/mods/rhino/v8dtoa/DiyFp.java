@@ -30,11 +30,14 @@
 
 package dev.latvian.mods.rhino.v8dtoa;
 
-// This "Do It Yourself Floating Point" class implements a floating-point number
-// with a uint64 significand and an int exponent. Normalized DiyFp numbers will
-// have the most significant bit of the significand set.
-// Multiplication and Subtraction do not normalize their results.
-// DiyFp are not designed to contain special doubles (NaN and Infinity).
+
+/**
+ * This "Do It Yourself Floating Point" class implements a floating-point number
+ * with an uint64 significand and an int exponent. Normalized DiyFp numbers will
+ * have the most significant bit of the significand set.
+ * Multiplication and Subtraction do not normalize their results.
+ * DiyFp are not designed to contain special doubles (NaN and Infinity).
+ */
 class DiyFp {
 
 	private long f;

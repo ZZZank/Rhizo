@@ -144,7 +144,7 @@ public class WrapFactory {
 	 * <code>String</code>, <code>Number</code>, <code>Boolean</code> and
 	 * <code>Character</code>, should be used directly as JavaScript primitive
 	 * type.
-	 * By default the method returns true to indicate that instances of
+	 * By default, the method returns true to indicate that instances of
 	 * <code>String</code>, <code>Number</code>, <code>Boolean</code> and
 	 * <code>Character</code> should be wrapped as any other Java object and
 	 * scripts can access any Java method available in these objects.

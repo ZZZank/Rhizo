@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * @see dev.latvian.mods.rhino.mod.RhinoProperties
+ */
 public class RhinoPropertiesImpl {
 	public static Path getGameDir() {
 		return FabricLoader.getInstance().getGameDir();

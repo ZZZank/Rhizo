@@ -12,6 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+/**
+ * @see dev.latvian.mods.rhino.mod.forge.RhinoPropertiesImpl
+ * @see dev.latvian.mods.rhino.mod.fabric.RhinoPropertiesImpl
+ */
 public class RhinoProperties {
 
 	public static final RhinoProperties INSTANCE = new RhinoProperties();
