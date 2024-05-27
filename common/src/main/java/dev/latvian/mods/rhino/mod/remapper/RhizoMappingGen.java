@@ -39,7 +39,7 @@ public abstract class RhizoMappingGen {
             //mapped -> obf
             var vanillaMapping = loadVanilla(mcVersion);
             //obf -> in-game
-            var nativeMapping = callback.load(mcVersion);
+            var nativeMapping = callback.load(mcVersion, vanillaMapping);
             //in-game -> mapped
             var target = vanillaMapping.chain(nativeMapping).reverse();
             //write mapping
@@ -163,7 +163,8 @@ public abstract class RhizoMappingGen {
     public interface NativeMappingLoader {
         /**
          * obf -> in-game
+         * @param vanillaMapping vanilla mapping which provides mapped -> obf, should not be modified
          */
-        IMappingFile load(String mcVersion) throws IOException;
+        IMappingFile load(String mcVersion, IMappingFile vanillaMapping) throws IOException;
     }
 }
