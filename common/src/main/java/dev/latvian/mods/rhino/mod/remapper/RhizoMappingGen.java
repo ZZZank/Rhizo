@@ -160,6 +160,13 @@ public abstract class RhizoMappingGen {
         return IMappingFile.load(mappingUrl.getInputStream());
     }
 
+    /**
+     * There are two methods that will be called in sequence.
+     * <p>
+     * the mapping file returned by {@link NativeMappingLoader#load(String, IMappingFile)} will then be passed to
+     * {@link NativeMappingLoader#toRenamer(IMappingFile)} for renamer generation
+     *
+     */
     public interface NativeMappingLoader {
         /**
          * obf -> in-game

@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
+import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.remapper.RhizoMappingGen;
@@ -25,56 +26,7 @@ public class RhinoModFabric implements ModInitializer {
         if (RhinoProperties.INSTANCE.generateMapping) {
             RhizoMappingGen.generate(
                 "1.16.5",
-                new RhizoMappingGen.NativeMappingLoader() {
-                    @Override
-                    public @Nullable IMappingFile load(String mcVersion,
-                        IMappingFile vanillaMapping) throws IOException {
-                        return null;
-                    }
-
-                    @Override
-                    public IRenamer toRenamer(IMappingFile link) {
-                        var classMap = loadNativeMappingClassMap();
-                        return new IRenamer() {
-                            public String rename(IMappingFile.IClass value) {
-                                var clazz = classMap.get(value.getMapped());
-                                if (clazz == null) {
-                                    return value.getMapped();
-                                }
-                                return clazz.remapped();
-                            }
-
-                            public String rename(IMappingFile.IField value) {
-                                var clazz = classMap.get(value.getParent().getMapped());
-                                if (clazz == null) {
-                                    return value.getMapped();
-                                }
-                                var f = clazz.fields().get(value.getMapped());
-                                if (f == null) {
-                                    return value.getMapped();
-                                }
-                                return f.remapped();
-                            }
-
-                            public String rename(IMappingFile.IMethod value) {
-                                var clazz = classMap.get(value.getParent().getMapped());
-                                if (clazz == null) {
-                                    return value.getMapped();
-                                }
-                                var methods = clazz.methods().get(value.getMapped());
-                                if (methods.isEmpty()) {
-                                    return value.getMapped();
-                                }
-                                for (var m : methods) {
-                                    if (value.getMappedDescriptor().startsWith(m.paramDescriptor())) {
-                                        return m.remapped();
-                                    }
-                                }
-                                return value.getMapped();
-                            }
-                        };
-                    }
-                }
+                new RenameOnlyMappingLoader(loadNativeMappingClassMap())
             );
         }
     }
@@ -85,7 +37,6 @@ public class RhinoModFabric implements ModInitializer {
         final var tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
 
         final Map<String, Clazz> classMap = new HashMap<>();
-        //class
         for (var c : tree.getClasses()) {
             //clazz
             //similar to SRG name in Forge
@@ -109,5 +60,60 @@ public class RhinoModFabric implements ModInitializer {
             }
         }
         return classMap;
+    }
+
+    @Desugar
+    private record RenameOnlyMappingLoader(Map<String, Clazz> classMap)
+        implements RhizoMappingGen.NativeMappingLoader, IRenamer {
+        /**
+         * returning null because there are too many features to cover, if we want to return an actual mapping file,
+         * actual logic will be handled by the returned IRenamer from {@link RenameOnlyMappingLoader#toRenamer(IMappingFile)}
+         */
+        @Override
+        public @Nullable IMappingFile load(String mcVersion, IMappingFile vanillaMapping) throws IOException {
+            return null;
+        }
+
+        @Override
+        public IRenamer toRenamer(IMappingFile link) {
+            return this;
+        }
+
+        public String rename(IMappingFile.IClass c) {
+            var clazz = classMap.get(c.getMapped());
+            if (clazz == null) {
+                return c.getMapped();
+            }
+            return clazz.remapped();
+        }
+
+        public String rename(IMappingFile.IField f) {
+            var clazz = classMap.get(f.getParent().getMapped());
+            if (clazz == null) {
+                return f.getMapped();
+            }
+            var fInfo = clazz.fields().get(f.getMapped());
+            if (fInfo == null) {
+                return f.getMapped();
+            }
+            return fInfo.remapped();
+        }
+
+        public String rename(IMappingFile.IMethod m) {
+            var clazz = classMap.get(m.getParent().getMapped());
+            if (clazz == null) {
+                return m.getMapped();
+            }
+            var methods = clazz.methods().get(m.getMapped());
+            if (methods.isEmpty()) {
+                return m.getMapped();
+            }
+            for (var method : methods) {
+                if (m.getMappedDescriptor().startsWith(method.paramDescriptor())) {
+                    return method.remapped();
+                }
+            }
+            return m.getMapped();
+        }
     }
 }
