@@ -1,5 +1,7 @@
 package dev.latvian.mods.rhino.util.remapper;
 
+import lombok.val;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -14,7 +16,7 @@ public class SequencedRemapper implements Remapper {
     @Override
     public String getMappedMethod(Class<?> from, Method method) {
         String mapped;
-        for (final Remapper remapper : seq) {
+        for (val remapper : seq) {
             mapped = remapper.getMappedMethod(from, method);
             if (!mapped.isEmpty()) {
                 return mapped;
@@ -26,7 +28,7 @@ public class SequencedRemapper implements Remapper {
     @Override
     public String getMappedField(Class<?> from, Field field) {
         String mapped;
-        for (final Remapper remapper : seq) {
+        for (val remapper : seq) {
             mapped = remapper.getMappedField(from, field);
             if (!mapped.isEmpty()) {
                 return mapped;
@@ -38,7 +40,7 @@ public class SequencedRemapper implements Remapper {
     @Override
     public String getMappedClass(Class<?> from) {
         String mapped;
-        for (final Remapper remapper : seq) {
+        for (val remapper : seq) {
             mapped = remapper.getMappedClass(from);
             if (!mapped.isEmpty()) {
                 return mapped;
@@ -50,7 +52,7 @@ public class SequencedRemapper implements Remapper {
     @Override
     public String getUnmappedClass(String from) {
         String mapped;
-        for (final Remapper remapper : seq) {
+        for (val remapper : seq) {
             mapped = remapper.getUnmappedClass(from);
             if (!mapped.isEmpty()) {
                 return mapped;

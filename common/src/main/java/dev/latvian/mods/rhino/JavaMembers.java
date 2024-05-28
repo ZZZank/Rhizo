@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
+import lombok.val;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -330,8 +331,8 @@ public class JavaMembers {
     }
 
     Object get(Scriptable scope, String name, Object javaObject, boolean isStatic) {
-        Map<String, Object> ht = isStatic ? staticMembers : members;
-        Object member = ht.get(name);
+        val ht = isStatic ? staticMembers : members;
+        var member = ht.get(name);
         if (!isStatic && member == null) {
             // Try to get static member from instance (LC3)
             member = staticMembers.get(name);
@@ -345,7 +346,7 @@ public class JavaMembers {
         if (member instanceof Scriptable) {
             return member;
         }
-        Context cx = Context.getContext();
+        val cx = Context.getContext();
         Object rval;
         Class<?> type;
         try {
@@ -369,7 +370,7 @@ public class JavaMembers {
     }
 
     void put(Scriptable scope, String name, Object javaObject, Object value, boolean isStatic) {
-        Map<String, Object> ht = isStatic ? staticMembers : members;
+        val ht = isStatic ? staticMembers : members;
         Object member = ht.get(name);
         if (!isStatic && member == null) {
             // Try to get static member from instance (LC3)
@@ -514,12 +515,12 @@ public class JavaMembers {
         // We reflect methods first, because we want overloaded field/method
         // names to be allocated to the NativeJavaMethod before the field
         // gets in the way.
-        for (Method method : discoverAccessibleMethods(cl, includeProtected, includePrivate).values()) {
-            int mods = method.getModifiers();
-            boolean isStatic = Modifier.isStatic(mods);
-            Map<String, Object> ht = isStatic ? staticMembers : members;
-            final String mappedMethod = Context.getRemapper().getMappedMethod(cl, method);
-            String name = mappedMethod.isEmpty() ? method.getName() : mappedMethod;
+        for (val method : discoverAccessibleMethods(cl, includeProtected, includePrivate).values()) {
+            val mods = method.getModifiers();
+            val isStatic = Modifier.isStatic(mods);
+            val ht = isStatic ? staticMembers : members;
+            val mappedMethod = Context.getRemapper().getMappedMethod(cl, method);
+            val name = mappedMethod.isEmpty() ? method.getName() : mappedMethod;
 
             Object previous = ht.get(name);
             if (previous == null) {
@@ -545,8 +546,8 @@ public class JavaMembers {
         // replace Method instances by wrapped NativeJavaMethod objects
         // first in staticMembers and then in members
         for (int tableCursor = 0; tableCursor != 2; ++tableCursor) {
-            boolean isStatic = (tableCursor == 0);
-            Map<String, Object> ht = isStatic ? staticMembers : members;
+            val isStatic = (tableCursor == 0);
+            val ht = isStatic ? staticMembers : members;
             for (Map.Entry<String, Object> entry : ht.entrySet()) {
                 MemberBox[] methodBoxes;
                 Object value = entry.getValue();
@@ -575,10 +576,10 @@ public class JavaMembers {
 
         // Reflect fields.
         for (Field field : getAccessibleFields(includeProtected, includePrivate)) {
-            String mappedField = Context.getRemapper().getMappedField(cl, field);
-            String name = mappedField.isEmpty() ? field.getName() : mappedField;
+            val mappedField = Context.getRemapper().getMappedField(cl, field);
+            val name = mappedField.isEmpty() ? field.getName() : mappedField;
 
-            int mods = field.getModifiers();
+            val mods = field.getModifiers();
             try {
                 boolean isStatic = Modifier.isStatic(mods);
                 Map<String, Object> ht = isStatic ? staticMembers : members;
@@ -625,8 +626,8 @@ public class JavaMembers {
         // Create bean properties from corresponding get/set methods first for
         // static members and then for instance members
         for (int tableCursor = 0; tableCursor != 2; ++tableCursor) {
-            boolean isStatic = (tableCursor == 0);
-            Map<String, Object> ht = isStatic ? staticMembers : members;
+            val isStatic = (tableCursor == 0);
+            val ht = isStatic ? staticMembers : members;
 
             Map<String, BeanProperty> toAdd = new HashMap<>();
 

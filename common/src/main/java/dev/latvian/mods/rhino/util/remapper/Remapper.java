@@ -8,6 +8,10 @@ import java.lang.reflect.Method;
 
 public interface Remapper {
 
+	static boolean valid(String mapped) {
+		return mapped.isEmpty();
+	}
+
 	/**
 	 * used as the return value of Remapper when the Remapper does not remap the input
 	 */

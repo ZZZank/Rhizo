@@ -1,5 +1,7 @@
 package dev.latvian.mods.rhino.util.wrap;
 
+import lombok.val;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,44 +31,45 @@ public class EnumTypeWrapper<T> implements TypeWrapperFactory<T> {
     }
 
     public final Class<T> enumType;
-    public final T[] indexValues;
+    public final T[] indexedValues;
     public final Map<String, T> nameValues;
     public final Map<T, String> valueNames;
 
     private EnumTypeWrapper(Class<T> enumType) {
         this.enumType = enumType;
-        this.indexValues = enumType.getEnumConstants();
+        this.indexedValues = enumType.getEnumConstants();
         this.nameValues = new HashMap<>();
         this.valueNames = new HashMap<>();
 
-        for (T t : indexValues) {
-            String name = getName(enumType, (Enum<?>) t, false).toLowerCase();
-            nameValues.put(name, t);
-            valueNames.put(t, name);
+        for (T value : indexedValues) {
+            val name = getName(enumType, (Enum<?>) value, false).toLowerCase();
+            nameValues.put(name, value);
+            valueNames.put(value, name);
         }
     }
 
     @Override
     public T wrap(Object o) {
         if (o instanceof CharSequence) {
-            String s = o.toString().toLowerCase();
-            if (s.isEmpty()) {
+            val lowerCased = o.toString().toLowerCase();
+            if (lowerCased.isEmpty()) {
                 return null;
             }
 
-            T t = nameValues.get(s);
+            T t = nameValues.get(lowerCased);
             if (t == null) {
-                throw new IllegalArgumentException("'" + s + "' is not a valid enum constant! Valid values are: " + nameValues.keySet().stream().map(s1 -> "'" + s1 + "'").collect(Collectors.joining(", ")));
+                throw new IllegalArgumentException("'" + lowerCased + "' is not a valid enum constant! Valid values are: " + nameValues.keySet().stream().map(s1 -> "'" + s1 + "'").collect(Collectors.joining(", ")));
             }
 
             return t;
         } else if (o instanceof Number) {
-            int index = ((Number) o).intValue();
-            if (index < 0 || index >= indexValues.length) {
-                throw new IllegalArgumentException(index + " is not a valid enum index! Valid values are: 0 - " + (indexValues.length - 1));
+            val index = ((Number) o).intValue();
+            if (index < 0 || index >= indexedValues.length) {
+                throw new IllegalArgumentException(index + " is not a valid enum index! Valid values are: 0 - " + (
+                    indexedValues.length - 1));
             }
 
-            return indexValues[index];
+            return indexedValues[index];
         }
 
         return (T) o;

@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.util.wrap;
 
+import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
@@ -40,21 +41,18 @@ public class TypeWrappers {
 		// You may say that it would be better to just implement N-sized array checking directly in java parser, but this is way more efficient
 
 		// 1D
-		Class<T[]> target1 = (Class<T[]>) Array.newInstance(target, 0).getClass();
-		TypeWrapper<T[]> typeWrapper1 = new TypeWrapper<>(target1, validator, new ArrayTypeWrapperFactory<>(typeWrapper0, target, target1));
-		wrappers.put(target1, typeWrapper1);
-
+		val arr1D = (Class<T[]>) Array.newInstance(target, 0).getClass();
+		val wrapper1D = new TypeWrapper<>(arr1D, validator, new ArrayTypeWrapperFactory<>(typeWrapper0, target, arr1D));
+		wrappers.put(arr1D, wrapper1D);
 		// 2D
-		Class<T[][]> target2 = (Class<T[][]>) Array.newInstance(target1, 0).getClass();
-		TypeWrapper<T[][]> typeWrapper2 = new TypeWrapper<>(target2, validator, new ArrayTypeWrapperFactory<>(typeWrapper1, target1, target2));
-		wrappers.put(target2, typeWrapper2);
-
+		val arr2D = (Class<T[][]>) Array.newInstance(arr1D, 0).getClass();
+		val wrapper2D = new TypeWrapper<>(arr2D, validator, new ArrayTypeWrapperFactory<>(wrapper1D, arr1D, arr2D));
+		wrappers.put(arr2D, wrapper2D);
 		// 3D
-		Class<T[][][]> target3 = (Class<T[][][]>) Array.newInstance(target2, 0).getClass();
-		TypeWrapper<T[][][]> typeWrapper3 = new TypeWrapper<>(target3, validator, new ArrayTypeWrapperFactory<>(typeWrapper2, target2, target3));
-		wrappers.put(target3, typeWrapper3);
-
-		// 4D.. yeah no. 3D already is an overkill
+		val arr3D = (Class<T[][][]>) Array.newInstance(arr2D, 0).getClass();
+		val wrapper3D = new TypeWrapper<>(arr3D, validator, new ArrayTypeWrapperFactory<>(wrapper2D, arr2D, arr3D));
+		wrappers.put(arr3D, wrapper3D);
+		// 4D... yeah no. 3D already is an overkill
 	}
 
 	public <T> void register(Class<T> target, TypeWrapperFactory<T> factory) {
@@ -67,11 +65,11 @@ public class TypeWrappers {
 			return null;
 		}
 
-		TypeWrapper<?> wrapper = wrappers.get(target);
+		val wrapper = wrappers.get(target);
 
-		if (wrapper != null && wrapper.validator.test(from)) {
+		if (wrapper != null && wrapper.validator.test(from)) {//explicit wrapper
 			return wrapper.factory;
-		} else if (target.isEnum()) {
+		} else if (target.isEnum()) {//enum wrapper
 			return EnumTypeWrapper.get(target);
 		}
 		//else if (from != null && target.isArray() && !from.getClass().isArray() && target.getComponentType() == from.getClass() && !target.isPrimitive())

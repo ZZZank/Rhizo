@@ -33,6 +33,11 @@ subprojects {
 		compileOnly "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
 		// https://mvnrepository.com/artifact/net.neoforged/srgutils
 		shade 'net.neoforged:srgutils:1.0.9'
+		//lombok, see https://projectlombok.org/setup/gradle
+		compileOnly 'org.projectlombok:lombok:1.18.32'
+		annotationProcessor 'org.projectlombok:lombok:1.18.32'
+		testCompileOnly 'org.projectlombok:lombok:1.18.32'
+		testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
 	}
 }
 
@@ -60,6 +65,8 @@ allprojects {
 	}
 
 	repositories {
+		mavenCentral()
+
 		maven {
 			url "https://maven.architectury.dev/"
 		}

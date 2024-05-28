@@ -76,7 +76,6 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 				return result;
 			}
 		}
-
 		if (members.has(name, true)) {
 			return members.get(this, name, javaObject, true);
 		}
