@@ -98,8 +98,8 @@ public class RhinoModFabric implements ModInitializer {
             for (var method : c.getMethods()) {
                 var unmappedM = method.getName(runtimeNamespace);
                 var rawM = method.getName(rawNamespace);
-                var desc = method.getDesc(tree.getNamespaceId(runtimeNamespace));
-                clazz.acceptMethod(rawM, desc, unmappedM);
+                var desc = method.getDesc(tree.getNamespaceId(rawNamespace));
+                clazz.acceptMethod(rawM, desc.substring(0, desc.lastIndexOf(')')), unmappedM);
             }
             //field
             for (var field : c.getFields()) {
