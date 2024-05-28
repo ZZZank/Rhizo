@@ -9,6 +9,7 @@
 		"LatvianModder",
 		"Mozilla"
 	],
+	"icon": "rhizo_icon.png",
 	"contact": {
 		"sources": "https://github.com/KubeJS-Mods/Rhino",
 		"issues": "https://github.com/KubeJS-Mods/Rhino/issues"
@@ -32,6 +33,5 @@
 		"minecraft": ">=1.14.4"
 	},
 	"custom": {
-		"modmenu:api": true
 	}
 }
