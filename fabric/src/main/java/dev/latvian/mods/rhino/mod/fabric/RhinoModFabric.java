@@ -104,7 +104,7 @@ public class RhinoModFabric implements ModInitializer {
             if (clazz == null) {
                 return m.getMapped();
             }
-            var methods = clazz.methods().get(m.getMapped());
+            var methods = clazz.nArgMethods().get(m.getMapped());
             if (methods.isEmpty()) {
                 return m.getMapped();
             }

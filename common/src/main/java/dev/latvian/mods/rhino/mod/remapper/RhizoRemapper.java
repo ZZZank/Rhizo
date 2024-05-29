@@ -156,20 +156,27 @@ public class RhizoRemapper implements Remapper {
         if (clazz == null) {
             return NOT_REMAPPED;
         }
-        //method name level
-        val methods = clazz.methods().get(method.getName());
-        if (methods.isEmpty()) {
-            return NOT_REMAPPED;
-        }
-        //parameters level
-        val sb = new StringBuilder().append('(');
-        for (val t : method.getParameterTypes()) {
-            sb.append(JavaPortingHelper.descriptorString(t));
-        }
-        val paramDesc = sb.toString();
-        for (var m : methods) {
-            if (m.paramDescriptor().equals(paramDesc)) {
-                return m.remapped();
+        //method level
+        val params = method.getParameterTypes();
+        if (params.length == 0) {
+            val noArgMethod = clazz.noArgMethods().get(method.getName());
+            if (noArgMethod != null) {
+                return noArgMethod.remapped();
+            }
+        } else {
+            val nArgMethods = clazz.nArgMethods().get(method.getName());
+            if (nArgMethods.isEmpty()) {
+                return NOT_REMAPPED;
+            }
+            val sb = new StringBuilder().append('(');
+            for (val t : params) {
+                sb.append(JavaPortingHelper.descriptorString(t));
+            }
+            val paramDesc = sb.toString();
+            for (val m : nArgMethods) {
+                if (m.paramDescriptor().equals(paramDesc)) {
+                    return m.remapped();
+                }
             }
         }
         //failed
