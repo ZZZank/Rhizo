@@ -11,6 +11,8 @@ Enum++ & Full Remapper
     -   Because of this, remapping on Forge no longer fully relies on an unusual uniqueness, and remapping for Fabric is now actually working. 
     -   Note: the remapping file now uses a new storage format, that will make Rhizo jar bigger.
     -   It has been 4 months since the first attempt of bringing remapper to 1.16, and it turns out the first 3 months are completely useless, because writing a new Remapper solution from the ground up is actually faster.
+-   Rhizo will now provide a dummy mod with modid `rhizo`
+-   Rhizo now includes a nod icon
 
 ## Rhizo 2.1 -> 2.2
 
