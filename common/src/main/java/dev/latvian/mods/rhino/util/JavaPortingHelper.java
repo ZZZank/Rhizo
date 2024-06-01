@@ -19,7 +19,7 @@ public class JavaPortingHelper {
     }
 
     /*
-     * Returns the {@code Class} representing the element type of an array class.
+     * Returns the {@code Class} representing the element type of array class.
      * If this class does not represent an array class, then this method returns
      * {@code null}.
      */

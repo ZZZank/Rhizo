@@ -164,8 +164,11 @@ public abstract class RhizoMappingGen {
     /**
      * There are two methods that will be called in sequence.
      * <p>
-     * the mapping file returned by {@link NativeMappingLoader#load(String, IMappingFile)} will then be passed to
-     * {@link NativeMappingLoader#toRenamer(IMappingFile)} for renamer generation
+     * the mapping file returned by {@link NativeMappingLoader#load(String, IMappingFile)} will be passed to
+     * {@link NativeMappingLoader#toRenamer(IMappingFile)} for renamer generation.
+     * <p>
+     * This means that returned value of {@link NativeMappingLoader#load(String, IMappingFile)} can be null, as long as
+     * {@link NativeMappingLoader#toRenamer(IMappingFile)} can generate renamer correctly.
      */
     public interface NativeMappingLoader {
         /**
@@ -196,7 +199,7 @@ public abstract class RhizoMappingGen {
                 }
 
                 public String rename(IMappingFile.IParameter value) {
-                    IMappingFile.IMethod mtd = value.getParent();
+                    var mtd = value.getParent();
                     val cls = link.getClass(mtd.getParent().getMapped());
                     mtd = cls == null ? null : cls.getMethod(mtd.getMapped(), mtd.getMappedDescriptor());
                     return mtd == null ? value.getMapped() : mtd.remapParameter(value.getIndex(), value.getMapped());
