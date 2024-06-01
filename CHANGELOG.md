@@ -1,3 +1,23 @@
+## Rhizo 2.2 -> 3.0
+
+Enum++ & Full Remapper
+
+-   Enum Type Wrapper
+    -   now you can access enum values by their names or indexes.
+    -   E.g. `Direction.EAST` can be accessed via `"east"`
+    -   Note: name should be in lower case
+-   Full Remapper
+    -   Remapper is now rewritten, providing more complete and accurate remapping for methods and fields.
+    -   Because of this, remapping on Forge no longer fully relies on an unusual uniqueness, and remapping for Fabric is now actually working. 
+    -   Note: the remapping file now uses a new storage format, that will make Rhizo jar bigger.
+    -   It has been 4 months since the first attempt of bringing remapper to 1.16, and it turns out the first 3 months are completely useless, because writing a new Remapper solution from the ground up is actually faster.
+
+## Rhizo 2.1 -> 2.2
+
+Early Remapper
+
+-   Remapper is now enabled before KubeJS startup script is loaded, so that names used in startup scripts can also be remapped.
+
 ## Rhizo 2.0 -> 2.1
 
 Compiler Mode
