@@ -6,15 +6,13 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.Getter;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 
 /**
  * Wrapper class for Method and Constructor instances to cache
@@ -23,11 +21,11 @@ import java.lang.reflect.Modifier;
  *
  * @author Igor Bukanov
  */
-
 final class MemberBox implements Serializable {
 	private static final long serialVersionUID = 6358550398665688245L;
 
-	private transient Member memberObject;
+	@Getter
+	private transient Executable memberObject;
 	transient Class<?>[] argTypes;
 	transient Object delegateTo;
 	transient boolean vararg;

@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.Getter;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -512,6 +514,7 @@ public class NativeJavaMethod extends BaseFunction {
 		}
 	}
 
+	@Getter
 	MemberBox[] methods;
 	private final String functionName;
 	private transient final CopyOnWriteArrayList<ResolvedOverload> overloadCache = new CopyOnWriteArrayList<>();

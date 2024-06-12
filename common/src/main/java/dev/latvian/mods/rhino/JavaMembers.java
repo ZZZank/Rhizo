@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
+import lombok.Getter;
 import lombok.val;
 
 import java.lang.reflect.Constructor;
@@ -843,6 +844,7 @@ class BeanProperty {
     }
 }
 
+@Getter
 class FieldAndMethods extends NativeJavaMethod {
     private static final long serialVersionUID = -9222428244284796755L;
     Field field;
