@@ -1,13 +1,14 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
 import com.github.bsideup.jabel.Desugar;
-import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.remapper.RhizoMappingGen;
 import dev.latvian.mods.rhino.mod.remapper.RhizoRemapper;
 import dev.latvian.mods.rhino.mod.remapper.info.Clazz;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
+import dev.latvian.mods.rhino.util.remapper.RemapperManager;
 import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
+import lombok.val;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 import net.neoforged.srgutils.IMappingFile;
@@ -22,7 +23,7 @@ public class RhinoModFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        Context.setRemapper(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
+        RemapperManager.setDefault(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
         if (RhinoProperties.INSTANCE.generateMapping) {
             RhizoMappingGen.generate(
                 "1.16.5",
@@ -32,30 +33,30 @@ public class RhinoModFabric implements ModInitializer {
     }
 
     private static Map<String, Clazz> loadNativeMappingClassMap() {
-        final var runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
-        final var rawNamespace = "official";
-        final var tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
+        val runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
+        val rawNamespace = "official";
+        val tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
 
-        final Map<String, Clazz> classMap = new HashMap<>();
-        for (var c : tree.getClasses()) {
+        val classMap = new HashMap<String, Clazz>();
+        for (val c : tree.getClasses()) {
             //clazz
             //similar to SRG name in Forge
-            var unmappedC = c.getName(runtimeNamespace).replace('/', '.');
+            val unmappedC = c.getName(runtimeNamespace).replace('/', '.');
             //obf name
-            var rawC = c.getName(rawNamespace).replace('/', '.');
-            var clazz = new Clazz(rawC, unmappedC);
+            val rawC = c.getName(rawNamespace).replace('/', '.');
+            val clazz = new Clazz(rawC, unmappedC);
             classMap.put(rawC, clazz);
             //method
-            for (var method : c.getMethods()) {
-                var unmappedM = method.getName(runtimeNamespace);
-                var rawM = method.getName(rawNamespace);
-                var desc = method.getDesc(tree.getNamespaceId(rawNamespace));
+            for (val method : c.getMethods()) {
+                val unmappedM = method.getName(runtimeNamespace);
+                val rawM = method.getName(rawNamespace);
+                val desc = method.getDesc(tree.getNamespaceId(rawNamespace));
                 clazz.acceptMethod(rawM, desc.substring(0, desc.lastIndexOf(')')), unmappedM);
             }
             //field
-            for (var field : c.getFields()) {
-                var unmappedF = field.getName(runtimeNamespace);
-                var rawF = field.getName(rawNamespace);
+            for (val field : c.getFields()) {
+                val unmappedF = field.getName(runtimeNamespace);
+                val rawF = field.getName(rawNamespace);
                 clazz.acceptField(rawF, unmappedF);
             }
         }
@@ -80,7 +81,7 @@ public class RhinoModFabric implements ModInitializer {
         }
 
         public String rename(IMappingFile.IClass c) {
-            var clazz = classMap.get(c.getMapped());
+            val clazz = classMap.get(c.getMapped());
             if (clazz == null) {
                 return c.getMapped();
             }
@@ -88,11 +89,11 @@ public class RhinoModFabric implements ModInitializer {
         }
 
         public String rename(IMappingFile.IField f) {
-            var clazz = classMap.get(f.getParent().getMapped());
+            val clazz = classMap.get(f.getParent().getMapped());
             if (clazz == null) {
                 return f.getMapped();
             }
-            var fInfo = clazz.fields().get(f.getMapped());
+            val fInfo = clazz.fields().get(f.getMapped());
             if (fInfo == null) {
                 return f.getMapped();
             }
@@ -100,15 +101,15 @@ public class RhinoModFabric implements ModInitializer {
         }
 
         public String rename(IMappingFile.IMethod m) {
-            var clazz = classMap.get(m.getParent().getMapped());
+            val clazz = classMap.get(m.getParent().getMapped());
             if (clazz == null) {
                 return m.getMapped();
             }
-            var methods = clazz.nArgMethods().get(m.getMapped());
+            val methods = clazz.nArgMethods().get(m.getMapped());
             if (methods.isEmpty()) {
                 return m.getMapped();
             }
-            for (var method : methods) {
+            for (val method : methods) {
                 if (m.getMappedDescriptor().startsWith(method.paramDescriptor())) {
                     return method.remapped();
                 }

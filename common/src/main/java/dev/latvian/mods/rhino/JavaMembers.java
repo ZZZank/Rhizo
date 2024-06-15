@@ -520,7 +520,7 @@ public class JavaMembers {
             val mods = method.getModifiers();
             val isStatic = Modifier.isStatic(mods);
             val ht = isStatic ? staticMembers : members;
-            val mappedMethod = Context.getRemapper().remapMethod(cl, method);
+            val mappedMethod = cx.getRemapper().remapMethod(cl, method);
             val name = mappedMethod.isEmpty() ? method.getName() : mappedMethod;
 
             Object previous = ht.get(name);
@@ -577,7 +577,7 @@ public class JavaMembers {
 
         // Reflect fields.
         for (Field field : getAccessibleFields(includeProtected, includePrivate)) {
-            val mappedField = Context.getRemapper().remapField(cl, field);
+            val mappedField = cx.getRemapper().remapField(cl, field);
             val name = mappedField.isEmpty() ? field.getName() : mappedField;
 
             val mods = field.getModifiers();

@@ -16,6 +16,7 @@ import dev.latvian.mods.rhino.optimizer.Codegen;
 import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
+import lombok.Setter;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -25,11 +26,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * This class represents the runtime context of an executing script.
@@ -277,6 +274,8 @@ public class Context {
     private Object propertyListeners;
     private Map<Object, Object> threadLocalMap;
     private ClassLoader applicationClassLoader;
+    @Setter
+    private Remapper remapper;
 
     /**
      * Creates a new context. Provided as a preferred super constructor for
@@ -295,6 +294,7 @@ public class Context {
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
         optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
+        remapper = null;
     }
 
     /**
@@ -786,12 +786,8 @@ public class Context {
         return Context.VERSION_ES6;
     }
 
-    public static Remapper getRemapper() {
-        return ContextFactory.remapper;
-    }
-
-    public static void setRemapper(Remapper remapper) {
-        ContextFactory.remapper = remapper;
+    public Remapper getRemapper() {
+        return remapper == null ? factory.remapper : remapper;
     }
 
     /**
@@ -920,7 +916,7 @@ public class Context {
      * Get the current locale.  Returns the default locale if none has
      * been set.
      *
-     * @see java.util.Locale
+     * @see Locale
      */
 
     public final Locale getLocale() {
@@ -933,7 +929,7 @@ public class Context {
     /**
      * Set the current locale.
      *
-     * @see java.util.Locale
+     * @see Locale
      */
     public final Locale setLocale(Locale loc) {
         if (sealed) {
@@ -949,8 +945,8 @@ public class Context {
      * has changed
      *
      * @param l the listener
-     * @see java.beans.PropertyChangeEvent
-     * @see #removePropertyChangeListener(java.beans.PropertyChangeListener)
+     * @see PropertyChangeEvent
+     * @see #removePropertyChangeListener(PropertyChangeListener)
      */
     public final void addPropertyChangeListener(PropertyChangeListener l) {
         if (sealed) {
@@ -964,8 +960,8 @@ public class Context {
      * notification of changes to a bounded property
      *
      * @param l the listener
-     * @see java.beans.PropertyChangeEvent
-     * @see #addPropertyChangeListener(java.beans.PropertyChangeListener)
+     * @see PropertyChangeEvent
+     * @see #addPropertyChangeListener(PropertyChangeListener)
      */
     public final void removePropertyChangeListener(PropertyChangeListener l) {
         if (sealed) {
@@ -980,10 +976,10 @@ public class Context {
      * @param property the bound property
      * @param oldValue the old value
      * @param newValue the new value
-     * @see #addPropertyChangeListener(java.beans.PropertyChangeListener)
-     * @see #removePropertyChangeListener(java.beans.PropertyChangeListener)
-     * @see java.beans.PropertyChangeListener
-     * @see java.beans.PropertyChangeEvent
+     * @see #addPropertyChangeListener(PropertyChangeListener)
+     * @see #removePropertyChangeListener(PropertyChangeListener)
+     * @see PropertyChangeListener
+     * @see PropertyChangeEvent
      */
     final void firePropertyChange(String property, Object oldValue, Object newValue) {
         Object listeners = propertyListeners;
