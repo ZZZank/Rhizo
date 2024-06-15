@@ -520,7 +520,7 @@ public class JavaMembers {
             val mods = method.getModifiers();
             val isStatic = Modifier.isStatic(mods);
             val ht = isStatic ? staticMembers : members;
-            val mappedMethod = Context.getRemapper().getMappedMethod(cl, method);
+            val mappedMethod = Context.getRemapper().remapMethod(cl, method);
             val name = mappedMethod.isEmpty() ? method.getName() : mappedMethod;
 
             Object previous = ht.get(name);
@@ -534,7 +534,7 @@ public class JavaMembers {
                     if (!(previous instanceof Method)) {
                         Kit.codeBug();
                     }
-                    // value should be instance of Method as at this stage
+                    // value should be an instance of Method as at this stage
                     // staticMembers and members can only contain methods
                     overloadedMethods = new ObjArray();
                     overloadedMethods.add(previous);
@@ -577,7 +577,7 @@ public class JavaMembers {
 
         // Reflect fields.
         for (Field field : getAccessibleFields(includeProtected, includePrivate)) {
-            val mappedField = Context.getRemapper().getMappedField(cl, field);
+            val mappedField = Context.getRemapper().remapField(cl, field);
             val name = mappedField.isEmpty() ? field.getName() : mappedField;
 
             val mods = field.getModifiers();

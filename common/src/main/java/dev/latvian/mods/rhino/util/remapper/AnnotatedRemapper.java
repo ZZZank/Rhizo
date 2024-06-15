@@ -14,7 +14,7 @@ public class AnnotatedRemapper implements Remapper {
     private AnnotatedRemapper() {}
 
     @Override
-    public String getMappedClass(Class<?> from) {
+    public String remapClass(Class<?> from) {
         RemapForJS remap = from.getAnnotation(RemapForJS.class);
         if (remap != null) {
             return remap.value();
@@ -23,7 +23,7 @@ public class AnnotatedRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedField(Class<?> from, Field field) {
+    public String remapField(Class<?> from, Field field) {
         RemapForJS remap = field.getAnnotation(RemapForJS.class);
         if (remap != null) {
             return remap.value();
@@ -32,7 +32,7 @@ public class AnnotatedRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedMethod(Class<?> from, Method method) {
+    public String remapMethod(Class<?> from, Method method) {
         RemapForJS remap = method.getAnnotation(RemapForJS.class);
         if (remap != null) {
             return remap.value();

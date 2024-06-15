@@ -15,6 +15,7 @@ import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import dev.latvian.mods.rhino.json.JsonParser;
 import dev.latvian.mods.rhino.util.HideFromJS;
+import lombok.val;
 
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -340,8 +341,8 @@ public final class NativeJSON extends IdScriptableObject {
 		}
 
 		Class<?> cl = v.getClass();
-		String name = Context.getRemapper().getMappedClass(cl);
-		StringBuilder className = new StringBuilder(name.isEmpty() ? cl.getName() : name);
+		val name = Context.getRemapper().remapClass(cl);
+		val className = new StringBuilder(name.isEmpty() ? cl.getName() : name);
 
 		while (cl.isArray()) {
 			cl = cl.getComponentType();
@@ -362,23 +363,23 @@ public final class NativeJSON extends IdScriptableObject {
 
 		list.add(className.toString());
 
-		for (Constructor<?> constructor : cl.getConstructors()) {
+		for (val constructor : cl.getConstructors()) {
 			if (constructor.isAnnotationPresent(HideFromJS.class)) {
 				continue;
 			}
-			StringBuilder builder = new StringBuilder("new ");
+			val builder = new StringBuilder("new ");
 			builder.append(cl.getSimpleName());
 			params(builder, constructor.getParameterTypes());
 			list.add(builder.toString());
 		}
 
-		for (Field field : cl.getFields()) {
-			int mod = field.getModifiers();
+		for (val field : cl.getFields()) {
+			val mod = field.getModifiers();
 			if (Modifier.isTransient(mod) || field.isAnnotationPresent(HideFromJS.class)) {
 				continue;
 			}
 
-			StringBuilder fName = new StringBuilder();
+			val fName = new StringBuilder();
 			if (Modifier.isStatic(mod)) {
 				fName.append("static ");
 			}
@@ -390,37 +391,33 @@ public final class NativeJSON extends IdScriptableObject {
 			}
 			type(fName, field.getType());
 			fName.append(' ');
-			String mappedField = Context.getRemapper().getMappedField(cl, field);
-			if (mappedField.isEmpty()) {
-				fName.append(field.getName());
-			}else{
-				fName.append(mappedField);
-			}
+
+			val mappedField = Context.getRemapper().remapField(cl, field);
+            fName.append(mappedField.isEmpty() ? field.getName() : mappedField);
+
 			list.add(fName.toString());
 		}
 
-		for (Method method : cl.getMethods()) {
+		for (val method : cl.getMethods()) {
 			if (method.isAnnotationPresent(HideFromJS.class)) {
 				continue;
 			}
 
-			int mod = method.getModifiers();
+			val builder = new StringBuilder();
 
-			StringBuilder builder = new StringBuilder();
-
-			if (Modifier.isStatic(mod)) {
+			val modifiers = method.getModifiers();
+			if (Modifier.isStatic(modifiers)) {
 				builder.append("static ");
 			}
-
-			if (Modifier.isNative(mod)) {
+			if (Modifier.isNative(modifiers)) {
 				builder.append("native ");
 			}
 
 			type(builder, method.getReturnType());
 			builder.append(' ');
 
-			final String mappedMethod = Context.getRemapper().getMappedMethod(cl, method);
-			builder.append(mappedMethod.isEmpty()?method.getName():mappedMethod);
+			val mappedMethod = Context.getRemapper().remapMethod(cl, method);
+			builder.append(mappedMethod.isEmpty() ? method.getName() : mappedMethod);
 
 			params(builder, method.getParameterTypes());
 

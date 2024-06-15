@@ -112,7 +112,7 @@ public class RhizoRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedClass(Class<?> from) {
+    public String remapClass(Class<?> from) {
         val clz = getClazzFiltered(from);
         if (clz == null) {
             return NOT_REMAPPED;
@@ -128,7 +128,7 @@ public class RhizoRemapper implements Remapper {
     }
 
     @Override
-    public String getUnmappedClass(String from) {
+    public String unmapClass(String from) {
         val un = classUnmap.get(from);
         if (un == null) {
             return NOT_REMAPPED;
@@ -137,7 +137,7 @@ public class RhizoRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedField(Class<?> from, Field field) {
+    public String remapField(Class<?> from, Field field) {
         val clazz = getClazzFiltered(from);
         if (clazz == null) {
             return NOT_REMAPPED;
@@ -150,7 +150,7 @@ public class RhizoRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedMethod(Class<?> from, Method method) {
+    public String remapMethod(Class<?> from, Method method) {
         //class level
         val clazz = getClazzFiltered(from);
         if (clazz == null) {

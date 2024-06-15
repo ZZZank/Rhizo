@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 public interface Remapper {
 
-	static boolean valid(String mapped) {
+	static boolean isRemapped(String mapped) {
 		return mapped.isEmpty();
 	}
 
@@ -18,7 +18,7 @@ public interface Remapper {
 	/**
 	 * @return a string holding remapped class name, or an empty string if not remapped
 	 */
-	default String getMappedClass(Class<?> from) {
+	default String remapClass(Class<?> from) {
 		return NOT_REMAPPED;
 	}
 
@@ -26,21 +26,21 @@ public interface Remapper {
 	 * @param from name of remapped class
 	 * @return the original class name
 	 */
-	default String getUnmappedClass(String from) {
+	default String unmapClass(String from) {
 		return NOT_REMAPPED;
 	}
 
 	/**
 	 * @return a string holding remapped field name, or an empty string if not remapped
 	 */
-	default String getMappedField(Class<?> from, Field field) {
+	default String remapField(Class<?> from, Field field) {
 		return NOT_REMAPPED;
 	}
 
 	/**
 	 * @return a string holding remapped method name, or an empty string if not remapped
 	 */
-	default String getMappedMethod(Class<?> from, Method method) {
+	default String remapMethod(Class<?> from, Method method) {
 		return NOT_REMAPPED;
 	}
 }

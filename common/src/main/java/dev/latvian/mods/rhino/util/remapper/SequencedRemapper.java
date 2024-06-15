@@ -14,10 +14,10 @@ public class SequencedRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedMethod(Class<?> from, Method method) {
+    public String remapMethod(Class<?> from, Method method) {
         String mapped;
         for (val remapper : seq) {
-            mapped = remapper.getMappedMethod(from, method);
+            mapped = remapper.remapMethod(from, method);
             if (!mapped.isEmpty()) {
                 return mapped;
             }
@@ -26,10 +26,10 @@ public class SequencedRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedField(Class<?> from, Field field) {
+    public String remapField(Class<?> from, Field field) {
         String mapped;
         for (val remapper : seq) {
-            mapped = remapper.getMappedField(from, field);
+            mapped = remapper.remapField(from, field);
             if (!mapped.isEmpty()) {
                 return mapped;
             }
@@ -38,10 +38,10 @@ public class SequencedRemapper implements Remapper {
     }
 
     @Override
-    public String getMappedClass(Class<?> from) {
+    public String remapClass(Class<?> from) {
         String mapped;
         for (val remapper : seq) {
-            mapped = remapper.getMappedClass(from);
+            mapped = remapper.remapClass(from);
             if (!mapped.isEmpty()) {
                 return mapped;
             }
@@ -50,10 +50,10 @@ public class SequencedRemapper implements Remapper {
     }
 
     @Override
-    public String getUnmappedClass(String from) {
+    public String unmapClass(String from) {
         String mapped;
         for (val remapper : seq) {
-            mapped = remapper.getUnmappedClass(from);
+            mapped = remapper.unmapClass(from);
             if (!mapped.isEmpty()) {
                 return mapped;
             }
