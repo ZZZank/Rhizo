@@ -340,7 +340,8 @@ public final class NativeJSON extends IdScriptableObject {
 		}
 
 		Class<?> cl = v.getClass();
-		StringBuilder className = new StringBuilder(cl.getName());
+		String name = Context.getRemapper().getMappedClass(cl);
+		StringBuilder className = new StringBuilder(name.isEmpty() ? cl.getName() : name);
 
 		while (cl.isArray()) {
 			cl = cl.getComponentType();
