@@ -6,6 +6,7 @@
 
 package dev.latvian.mods.rhino;
 
+import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.Getter;
 import lombok.val;
@@ -233,18 +234,20 @@ public class JavaMembers {
         // and one to find a widening conversion.
         for (int pass = 1; pass <= 2; ++pass) {
             for (MemberBox method : methods) {
-                if (!isStatic || method.isStatic()) {
-                    Class<?>[] params = method.argTypes;
-                    if (params.length == 1) {
-                        if (pass == 1) {
-                            if (params[0] == type) {
-                                return method;
-                            }
-                        } else {
-                            if (params[0].isAssignableFrom(type)) {
-                                return method;
-                            }
-                        }
+                if (isStatic && !method.isStatic()) {
+                    continue;
+                }
+                Class<?>[] params = method.argTypes;
+                if (params.length != 1) {
+                    continue;
+                }
+                if (pass == 1) {
+                    if (params[0] == type) {
+                        return method;
+                    }
+                } else {
+                    if (params[0].isAssignableFrom(type)) {
+                        return method;
                     }
                 }
             }
@@ -266,7 +269,7 @@ public class JavaMembers {
         return null;
     }
 
-    static JavaMembers lookupClass(Scriptable scope,
+    public static JavaMembers lookupClass(Scriptable scope,
         Class<?> dynamicType,
         Class<?> staticType,
         boolean includeProtected) {
@@ -322,7 +325,7 @@ public class JavaMembers {
         return members;
     }
 
-    boolean has(String name, boolean isStatic) {
+    public boolean has(String name, boolean isStatic) {
         Map<String, Object> ht = isStatic ? staticMembers : members;
         Object obj = ht.get(name);
         if (obj != null) {
@@ -331,7 +334,7 @@ public class JavaMembers {
         return findExplicitFunction(name, isStatic) != null;
     }
 
-    Object get(Scriptable scope, String name, Object javaObject, boolean isStatic) {
+    public Object get(Scriptable scope, String name, Object javaObject, boolean isStatic) {
         val ht = isStatic ? staticMembers : members;
         var member = ht.get(name);
         if (!isStatic && member == null) {
@@ -807,16 +810,9 @@ public class JavaMembers {
         return Context.reportRuntimeError2("msg.java.member.not.found", cl.getName(), memberName);
     }
 
-    private static final class MethodSignature {
+    @Desugar
+    private record MethodSignature(String name, Class<?>[] args) {
         private static final Class<?>[] NO_ARGS = new Class<?>[0];
-
-        private final String name;
-        private final Class<?>[] args;
-
-        private MethodSignature(String name, Class<?>[] args) {
-            this.name = name;
-            this.args = args;
-        }
 
         @Override
         public boolean equals(Object o) {
