@@ -1455,7 +1455,7 @@ class TokenStream {
 	private final StringBuilder rawString = new StringBuilder();
 
 	String getRawString() {
-		if (rawString.isEmpty()) {
+		if (rawString.length() == 0) {
 			return "";
 		}
 		return rawString.toString();
