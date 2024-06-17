@@ -1,11 +1,12 @@
 package dev.latvian.mods.rhino.annotations.typing;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @author ZZZank
  */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface JSParam {
     String rename() default "";
