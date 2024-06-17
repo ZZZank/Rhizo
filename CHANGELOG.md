@@ -1,3 +1,14 @@
+## Rhizo 3.0 -> 3.1(beta)
+
+API update
+
+- more internal members are exposed now
+- typing annotations like JSInfo are accessible at runtime now
+- a new annotation `RemapPrefixForJS` is added for class level prefix-based remapping
+- devs can now attach custom properties to a Context
+
+---
+
 ## Rhizo 2.2 -> 3.0
 
 Enum++ & Full Remapper
@@ -8,7 +19,7 @@ Enum++ & Full Remapper
     -   Note: name should be in lower case
 -   Full Remapper
     -   Remapper is now rewritten, providing more complete and accurate remapping for methods and fields.
-    -   Because of this, remapping on Forge no longer fully relies on an unusual uniqueness, and remapping for Fabric is now actually working. 
+    -   Because of this, remapping on Forge no longer fully relies on an unusual uniqueness, and remapping for Fabric is now actually working.
     -   Note: the remapping file now uses a new storage format, that will make Rhizo jar bigger.
     -   It has been 4 months since the first attempt of bringing remapper to 1.16, and it turns out the first 3 months are completely useless, because writing a new Remapper solution from the ground up is actually faster.
 -   Rhizo will now provide a dummy mod with modid `rhizo`
