@@ -96,9 +96,18 @@ public class ScriptRuntime {
 	 * that they won't cause problems by being loaded early.
 	 */
 
-	public final static Class<?> BooleanClass = Kit.classOrNull("java.lang.Boolean"), ByteClass = Kit.classOrNull("java.lang.Byte"), CharacterClass = Kit.classOrNull("java.lang.Character"), ClassClass = Kit.classOrNull("java.lang.Class"), DoubleClass = Kit.classOrNull("java.lang.Double"), FloatClass = Kit.classOrNull("java.lang.Float"), IntegerClass = Kit.classOrNull("java.lang.Integer"), LongClass = Kit.classOrNull("java.lang.Long"), NumberClass = Kit.classOrNull("java.lang.Number"), ObjectClass = Kit.classOrNull("java.lang.Object"), ShortClass = Kit.classOrNull("java.lang.Short"), StringClass = Kit.classOrNull("java.lang.String"), DateClass = Kit.classOrNull("java.util.Date");
+	public final static Class<?> BooleanClass = Kit.classOrNull("java.lang.Boolean"), ByteClass =
+		Kit.classOrNull("java.lang.Byte"), CharacterClass = Kit.classOrNull("java.lang.Character"), ClassClass =
+		Kit.classOrNull("java.lang.Class"), DoubleClass = Kit.classOrNull("java.lang.Double"), FloatClass =
+		Kit.classOrNull("java.lang.Float"), IntegerClass = Kit.classOrNull("java.lang.Integer"), LongClass =
+		Kit.classOrNull("java.lang.Long"), NumberClass = Kit.classOrNull("java.lang.Number"), ObjectClass =
+		Kit.classOrNull("java.lang.Object"), ShortClass = Kit.classOrNull("java.lang.Short"), StringClass =
+		Kit.classOrNull("java.lang.String"), DateClass = Kit.classOrNull("java.util.Date");
 
-	public final static Class<?> ContextClass = Kit.classOrNull("dev.latvian.mods.rhino.Context"), ContextFactoryClass = Kit.classOrNull("dev.latvian.mods.rhino.ContextFactory"), FunctionClass = Kit.classOrNull("dev.latvian.mods.rhino.Function"), ScriptableObjectClass = Kit.classOrNull("dev.latvian.mods.rhino.ScriptableObject");
+	public final static Class<?> ContextClass = Kit.classOrNull("dev.latvian.mods.rhino.Context"), ContextFactoryClass =
+		Kit.classOrNull("dev.latvian.mods.rhino.ContextFactory"), FunctionClass =
+		Kit.classOrNull("dev.latvian.mods.rhino.Function"), ScriptableObjectClass =
+		Kit.classOrNull("dev.latvian.mods.rhino.ScriptableObject");
 	public static final Class<Scriptable> ScriptableClass = Scriptable.class;
 
 	private static final Object LIBRARY_SCOPE_KEY = "LIBRARY_SCOPE";
@@ -155,20 +164,6 @@ public class ScriptRuntime {
 		// define lazy-loaded properties using their class name
 		new LazilyLoadedCtor(scope, "RegExp", "dev.latvian.mods.rhino.regexp.NativeRegExp", sealed, true);
 		new LazilyLoadedCtor(scope, "Continuation", "dev.latvian.mods.rhino.NativeContinuation", sealed, true);
-
-		if (cx.hasFeature(Context.FEATURE_V8_EXTENSIONS)) {
-			new LazilyLoadedCtor(scope, "ArrayBuffer", "dev.latvian.mods.rhino.typedarrays.NativeArrayBuffer", sealed, true);
-			new LazilyLoadedCtor(scope, "Int8Array", "dev.latvian.mods.rhino.typedarrays.NativeInt8Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Uint8Array", "dev.latvian.mods.rhino.typedarrays.NativeUint8Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Uint8ClampedArray", "dev.latvian.mods.rhino.typedarrays.NativeUint8ClampedArray", sealed, true);
-			new LazilyLoadedCtor(scope, "Int16Array", "dev.latvian.mods.rhino.typedarrays.NativeInt16Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Uint16Array", "dev.latvian.mods.rhino.typedarrays.NativeUint16Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Int32Array", "dev.latvian.mods.rhino.typedarrays.NativeInt32Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Uint32Array", "dev.latvian.mods.rhino.typedarrays.NativeUint32Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Float32Array", "dev.latvian.mods.rhino.typedarrays.NativeFloat32Array", sealed, true);
-			new LazilyLoadedCtor(scope, "Float64Array", "dev.latvian.mods.rhino.typedarrays.NativeFloat64Array", sealed, true);
-			new LazilyLoadedCtor(scope, "DataView", "dev.latvian.mods.rhino.typedarrays.NativeDataView", sealed, true);
-		}
 
 		NativeSymbol.init(cx, scope, sealed);
 		NativeCollectionIterator.init(scope, NativeSet.ITERATOR_TAG, sealed);

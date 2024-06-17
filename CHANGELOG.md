@@ -12,13 +12,17 @@ Enum++ & Full Remapper
     -   Note: the remapping file now uses a new storage format, that will make Rhizo jar bigger.
     -   It has been 4 months since the first attempt of bringing remapper to 1.16, and it turns out the first 3 months are completely useless, because writing a new Remapper solution from the ground up is actually faster.
 -   Rhizo will now provide a dummy mod with modid `rhizo`
--   Rhizo now includes a nod icon
+-   Rhizo now includes a mod icon
+
+---
 
 ## Rhizo 2.1 -> 2.2
 
 Early Remapper
 
 -   Remapper is now enabled before KubeJS startup script is loaded, so that names used in startup scripts can also be remapped.
+
+---
 
 ## Rhizo 2.0 -> 2.1
 
@@ -32,6 +36,8 @@ Compiler Mode
 -   you can also toggle mapping generation in `rhino.local.properties`, but the output file is useless currently
     -   generated mapping file is designed for a more complex remapper implementation, and is scheduled to be available in the next release
 -   mapping file used by our temporary remapper solution is now driven by `.csv` file, for readablility.
+
+---
 
 ## Rhino 1605.1.9 -> Rhizo 1605.2.0
 
