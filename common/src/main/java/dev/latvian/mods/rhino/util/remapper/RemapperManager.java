@@ -5,7 +5,7 @@ package dev.latvian.mods.rhino.util.remapper;
  */
 public abstract class RemapperManager {
 
-    private static Remapper defaultRemapper = DummyRemapper.INSTANCE;
+    private static Remapper defaultRemapper = AnnotatedRemapper.INSTANCE;
 
     public static Remapper getDefault() {
         return defaultRemapper;
