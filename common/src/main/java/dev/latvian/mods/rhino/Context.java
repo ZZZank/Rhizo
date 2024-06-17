@@ -17,6 +17,7 @@ import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -276,6 +277,7 @@ public class Context {
     private ClassLoader applicationClassLoader;
     @Setter
     private Remapper remapper;
+    private final Map<String, Object> customProperties;
 
     /**
      * Creates a new context. Provided as a preferred super constructor for
@@ -295,6 +297,7 @@ public class Context {
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
         optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
         remapper = null;
+        customProperties = new HashMap<>();
     }
 
     /**
@@ -788,6 +791,18 @@ public class Context {
 
     public Remapper getRemapper() {
         return remapper == null ? factory.remapper : remapper;
+    }
+
+    public Object getCustomProperty(String name) {
+        return customProperties.get(name);
+    }
+
+    public Object getCustomProperty(String name, Object orDefault) {
+        return customProperties.getOrDefault(name, orDefault);
+    }
+
+    public void setCustomProperty(String name, @Nullable Object value) {
+        customProperties.put(name, value);
     }
 
     /**
