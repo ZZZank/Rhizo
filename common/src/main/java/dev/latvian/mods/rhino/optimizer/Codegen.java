@@ -14,6 +14,7 @@ import dev.latvian.mods.rhino.ast.TemplateCharacters;
 import dev.latvian.mods.rhino.classfile.ByteCode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter;
 import dev.latvian.mods.rhino.util.JavaPortingHelper;
+import lombok.val;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -54,10 +55,7 @@ public class Codegen implements Evaluator {
     }
 
     @Override
-    public Object compile(CompilerEnvirons compilerEnv,
-        ScriptNode tree,
-        String encodedSource,
-        boolean returnFunction) {
+    public Object compile(CompilerEnvirons compilerEnv, ScriptNode tree, String encodedSource, boolean returnFunction) {
         int serial;
         synchronized (globalLock) {
             serial = ++globalSerialClassCounter;
@@ -71,7 +69,7 @@ public class Codegen implements Evaluator {
             }
         }
 
-        String mainClassName = "dev.latvian.mods.rhino.gen." + baseName + "_" + serial;
+        val mainClassName = "dev.latvian.mods.rhino.gen." + baseName + "_" + serial;
 
         byte[] mainClassBytes = compileToClassFile(compilerEnv, mainClassName,
             tree, encodedSource,
@@ -230,11 +228,11 @@ public class Codegen implements Evaluator {
     }
 
     private byte[] generateCode() {
-        boolean hasScript = (scriptOrFnNodes[0].getType() == Token.SCRIPT);
-        boolean hasFunctions = (scriptOrFnNodes.length > 1 || !hasScript);
-        boolean isStrictMode = scriptOrFnNodes[0].isInStrictMode();
+        val hasScript = (scriptOrFnNodes[0].getType() == Token.SCRIPT);
+        val hasFunctions = (scriptOrFnNodes.length > 1 || !hasScript);
+        val isStrictMode = scriptOrFnNodes[0].isInStrictMode();
 
-        ClassFileWriter cfw = new ClassFileWriter(mainClassName,
+        val cfw = new ClassFileWriter(mainClassName,
             SUPER_CLASS_NAME,
             null
         );
@@ -258,9 +256,9 @@ public class Codegen implements Evaluator {
 
         int count = scriptOrFnNodes.length;
         for (int i = 0; i != count; ++i) {
-            ScriptNode n = scriptOrFnNodes[i];
+            val n = scriptOrFnNodes[i];
 
-            BodyCodegen bodygen = new BodyCodegen();
+            val bodygen = new BodyCodegen();
             bodygen.cfw = cfw;
             bodygen.codegen = this;
             bodygen.compilerEnv = compilerEnv;
@@ -270,7 +268,7 @@ public class Codegen implements Evaluator {
             bodygen.generateBodyCode();
 
             if (n.getType() == Token.FUNCTION) {
-                OptFunctionNode ofn = OptFunctionNode.get(n);
+                val ofn = OptFunctionNode.get(n);
                 generateFunctionInit(cfw, ofn);
                 if (ofn.isTargetOfDirectCall()) {
                     emitDirectConstructor(cfw, ofn);
@@ -285,8 +283,7 @@ public class Codegen implements Evaluator {
         return cfw.toByteArray();
     }
 
-    private void emitDirectConstructor(ClassFileWriter cfw,
-        OptFunctionNode ofn) {
+    private void emitDirectConstructor(ClassFileWriter cfw, OptFunctionNode ofn) {
 /*
     we generate ..
         Scriptable directConstruct(<directCallArgs>) {
@@ -303,8 +300,8 @@ public class Codegen implements Evaluator {
             (short) (ClassFileWriter.ACC_STATIC | ClassFileWriter.ACC_PRIVATE)
         );
 
-        int argCount = ofn.fnode.getParamCount();
-        int firstLocal = (4 + argCount * 3) + 1;
+        val argCount = ofn.fnode.getParamCount();
+        val firstLocal = (4 + argCount * 3) + 1;
 
         cfw.addALoad(0); // this
         cfw.addALoad(1); // cx
@@ -348,8 +345,7 @@ public class Codegen implements Evaluator {
     }
 
     static boolean isGenerator(ScriptNode node) {
-        return (node.getType() == Token.FUNCTION) &&
-            ((FunctionNode) node).isGenerator();
+        return (node.getType() == Token.FUNCTION) && ((FunctionNode) node).isGenerator();
     }
 
     // How dispatch to generators works:
@@ -366,7 +362,7 @@ public class Codegen implements Evaluator {
     // appended by "_gen".
     private void generateResumeGenerator(ClassFileWriter cfw) {
         boolean hasGenerators = false;
-        for (ScriptNode scriptOrFnNode : scriptOrFnNodes) {
+        for (val scriptOrFnNode : scriptOrFnNodes) {
             if (isGenerator(scriptOrFnNode)) {
                 hasGenerators = true;
             }

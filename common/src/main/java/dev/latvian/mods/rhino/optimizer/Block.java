@@ -9,6 +9,7 @@ import dev.latvian.mods.rhino.ObjArray;
 import dev.latvian.mods.rhino.ObjToIntMap;
 import dev.latvian.mods.rhino.Token;
 import dev.latvian.mods.rhino.ast.Jump;
+import lombok.val;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -39,9 +40,9 @@ class Block {
     }
 
     static void runFlowAnalyzes(OptFunctionNode fn, Node[] statementNodes) {
-        int paramCount = fn.fnode.getParamCount();
-        int varCount = fn.fnode.getParamAndVarCount();
-        int[] varTypes = new int[varCount];
+        val paramCount = fn.fnode.getParamCount();
+        val varCount = fn.fnode.getParamAndVarCount();
+        val varTypes = new int[varCount];
         // If the variable is a parameter, it could have any type.
         for (int i = 0; i != paramCount; ++i) {
             varTypes[i] = Optimizer.AnyType;

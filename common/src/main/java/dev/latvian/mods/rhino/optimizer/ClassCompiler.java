@@ -12,9 +12,8 @@ import dev.latvian.mods.rhino.JavaAdapter;
 import dev.latvian.mods.rhino.ObjToIntMap;
 import dev.latvian.mods.rhino.Parser;
 import dev.latvian.mods.rhino.ScriptRuntime;
-import dev.latvian.mods.rhino.ast.AstRoot;
-import dev.latvian.mods.rhino.ast.FunctionNode;
 import dev.latvian.mods.rhino.ast.ScriptNode;
+import lombok.val;
 
 /**
  * Generates class files from script sources.
@@ -124,45 +123,39 @@ public class ClassCompiler {
      * array. The initial element of the array always holds
      * mainClassName and array[1] holds its byte code.
      */
-    public Object[] compileToClassFiles(String source,
-        String sourceLocation,
-        int lineno,
-        String mainClassName) {
-        Parser p = new Parser(compilerEnv);
-        AstRoot ast = p.parse(source, sourceLocation, lineno);
-        IRFactory irf = new IRFactory(compilerEnv);
-        ScriptNode tree = irf.transformTree(ast);
-
-        // release reference to original parse tree & parser
-        irf = null;
-        ast = null;
-        p = null;
+    public Object[] compileToClassFiles(String source, String sourceLocation, int lineno, String mainClassName) {
+        ScriptNode tree;
+        {
+            val p = new Parser(compilerEnv);
+            val ast = p.parse(source, sourceLocation, lineno);
+            val irf = new IRFactory(compilerEnv);
+            tree = irf.transformTree(ast);
+            //release these references early
+        }
 
         Class<?> superClass = getTargetExtends();
-        Class<?>[] interfaces = getTargetImplements();
+        val interfaces = getTargetImplements();
         String scriptClassName;
-        boolean isPrimary = (interfaces == null && superClass == null);
+        val isPrimary = (interfaces == null && superClass == null);
         if (isPrimary) {
             scriptClassName = mainClassName;
         } else {
             scriptClassName = makeAuxiliaryClassName(mainClassName, "1");
         }
 
-        Codegen codegen = new Codegen();
+        val codegen = new Codegen();
         codegen.setMainMethodClass(mainMethodClassName);
-        byte[] scriptClassBytes = codegen.compileToClassFile(compilerEnv, scriptClassName,
-            tree, tree.getEncodedSource(),
-            false
-        );
+        val scriptClassBytes =
+            codegen.compileToClassFile(compilerEnv, scriptClassName, tree, tree.getEncodedSource(), false);
 
         if (isPrimary) {
             return new Object[]{scriptClassName, scriptClassBytes};
         }
-        int functionCount = tree.getFunctionCount();
-        ObjToIntMap functionNames = new ObjToIntMap(functionCount);
+        val functionCount = tree.getFunctionCount();
+        val functionNames = new ObjToIntMap(functionCount);
         for (int i = 0; i != functionCount; ++i) {
-            FunctionNode ofn = tree.getFunctionNode(i);
-            String name = ofn.getName();
+            val ofn = tree.getFunctionNode(i);
+            val name = ofn.getName();
             if (name != null && name.length() != 0) {
                 functionNames.put(name, ofn.getParamCount());
             }
@@ -170,20 +163,17 @@ public class ClassCompiler {
         if (superClass == null) {
             superClass = ScriptRuntime.ObjectClass;
         }
-        byte[] mainClassBytes
-            = JavaAdapter.createAdapterCode(
-            functionNames, mainClassName,
-            superClass, interfaces, scriptClassName
-        );
+        val mainClassBytes =
+            JavaAdapter.createAdapterCode(functionNames, mainClassName, superClass, interfaces, scriptClassName);
 
-        return new Object[]{mainClassName, mainClassBytes,
-            scriptClassName, scriptClassBytes};
+        return new Object[]{
+            mainClassName, mainClassBytes, scriptClassName, scriptClassBytes
+        };
     }
 
     private String mainMethodClassName;
     private final CompilerEnvirons compilerEnv;
     private Class<?> targetExtends;
     private Class<?>[] targetImplements;
-
 }
 

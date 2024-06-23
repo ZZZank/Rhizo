@@ -7,8 +7,8 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.util.Deletable;
-import dev.latvian.mods.rhino.util.wrap.TypeWrapperFactory;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
+import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -470,8 +470,8 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 			return value;
 		}
 
-		Object unwrappedValue = Wrapper.unwrapped(value);
-		TypeWrapperFactory<?> typeWrapper = typeWrappers == null ? null : typeWrappers.getWrapperFactory(type, unwrappedValue);
+		val unwrappedValue = Wrapper.unwrapped(value);
+		val typeWrapper = typeWrappers == null ? null : typeWrappers.getWrapperFactory(type, unwrappedValue);
 
 		if (typeWrapper != null) {
 			return typeWrapper.wrap(unwrappedValue);
