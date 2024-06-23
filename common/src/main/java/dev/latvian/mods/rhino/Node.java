@@ -36,18 +36,20 @@ public class Node implements Iterable<Node> {
 	//                    object against the known class and call direct if it
 	//                    matches.
 
-	TARGETBLOCK_PROP = 6, VARIABLE_PROP = 7, ISNUMBER_PROP = 8, DIRECTCALL_PROP = 9, SPECIALCALL_PROP = 10, SKIP_INDEXES_PROP = 11, // array of skipped indexes of array literal
-			OBJECT_IDS_PROP = 12, // array of properties for object literal
-			INCRDECR_PROP = 13, // pre or post type of increment/decrement
-			CATCH_SCOPE_PROP = 14, // index of catch scope block in catch
-			LABEL_ID_PROP = 15, // label id: code generation uses it
-			MEMBER_TYPE_PROP = 16, // type of element access operation
-			NAME_PROP = 17, // property name
-			CONTROL_BLOCK_PROP = 18, // flags a control block that can drop off
-			PARENTHESIZED_PROP = 19, // expression is parenthesized
-			GENERATOR_END_PROP = 20, DESTRUCTURING_ARRAY_LENGTH = 21, DESTRUCTURING_NAMES = 22, DESTRUCTURING_PARAMS = 23, JSDOC_PROP = 24, EXPRESSION_CLOSURE_PROP = 25, // JS 1.8 expression closure pseudo-return
-			DESTRUCTURING_SHORTHAND = 26, // JS 1.8 destructuring shorthand
-			ARROW_FUNCTION_PROP = 27, TEMPLATE_LITERAL_PROP = 28, LAST_PROP = 28;
+	TARGETBLOCK_PROP = 6, VARIABLE_PROP = 7, ISNUMBER_PROP = 8, DIRECTCALL_PROP = 9, SPECIALCALL_PROP = 10,
+		SKIP_INDEXES_PROP = 11, // array of skipped indexes of array literal
+		OBJECT_IDS_PROP = 12, // array of properties for object literal
+		INCRDECR_PROP = 13, // pre or post type of increment/decrement
+		CATCH_SCOPE_PROP = 14, // index of catch scope block in catch
+		LABEL_ID_PROP = 15, // label id: code generation uses it
+		MEMBER_TYPE_PROP = 16, // type of element access operation
+		NAME_PROP = 17, // property name
+		CONTROL_BLOCK_PROP = 18, // flags a control block that can drop off
+		PARENTHESIZED_PROP = 19, // expression is parenthesized
+		GENERATOR_END_PROP = 20, DESTRUCTURING_ARRAY_LENGTH = 21, DESTRUCTURING_NAMES = 22, DESTRUCTURING_PARAMS = 23,
+		JSDOC_PROP = 24, EXPRESSION_CLOSURE_PROP = 25, // JS 1.8 expression closure pseudo-return
+		DESTRUCTURING_SHORTHAND = 26, // JS 1.8 destructuring shorthand
+		ARROW_FUNCTION_PROP = 27, TEMPLATE_LITERAL_PROP = 28, LAST_PROP = 28;
 
 	// values of ISNUMBER_PROP to specify
 	// which of the children are Number types
@@ -937,7 +939,7 @@ public class Node implements Iterable<Node> {
                 }
                 yield first.next.hasSideEffects() && first.next.next.hasSideEffects();
             }
-            case Token.AND, Token.OR -> {
+            case Token.AND, Token.OR, Token.NULLISH_COALESCING -> {
                 if (first == null || last == null) {
                     Kit.codeBug();
                 }

@@ -1160,7 +1160,11 @@ class TokenStream {
 				case ',':
 					return Token.COMMA;
 				case '?':
-					return Token.HOOK;
+					if (matchChar('?')) {
+						return Token.NULLISH_COALESCING;
+					} else {
+						return Token.HOOK;
+					}
 				case ':':
 					return Token.COLON;
 				case '.':
@@ -1455,7 +1459,7 @@ class TokenStream {
 	private final StringBuilder rawString = new StringBuilder();
 
 	String getRawString() {
-		if (rawString.length() == 0) {
+		if (rawString.isEmpty()) {
 			return "";
 		}
 		return rawString.toString();

@@ -8,6 +8,7 @@ package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.ast.FunctionNode;
 import dev.latvian.mods.rhino.ast.ScriptNode;
+import lombok.val;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -1253,6 +1254,9 @@ public final class Interpreter extends Icode implements Evaluator {
 								stackTop = doBitOp(frame, op, stack, sDbl, stackTop);
 								continue;
 							}
+							case Token.NULLISH_COALESCING:
+								stackTop = doNullishCoalescing(frame, stack, sDbl, stackTop);
+								continue;
 							case Token.URSH: {
 								double lDbl = stack_double(frame, stackTop - 1);
 								int rIntValue = stack_int32(frame, stackTop) & 0x1F;
@@ -2078,6 +2082,13 @@ public final class Interpreter extends Icode implements Evaluator {
 		}
 
 		return (interpreterResult != DBL_MRK) ? interpreterResult : ScriptRuntime.wrapNumber(interpreterResultDbl);
+	}
+
+	private static int doNullishCoalescing(CallFrame frame, Object[] stack, double[] sDbl, int stackTop) {
+		val a = frame.stack[stackTop - 1];
+		val b = frame.stack[stackTop];
+		stack[--stackTop] = a == null || Undefined.isUndefined(a) ? b : a;
+		return stackTop;
 	}
 
 	private static int doInOrInstanceof(Context cx, int op, Object[] stack, double[] sDbl, int stackTop) {

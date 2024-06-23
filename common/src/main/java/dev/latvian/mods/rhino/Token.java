@@ -113,9 +113,10 @@ public interface Token {
 	int REF_SPECIAL = 72; // reference for special properties like __proto
 	int YIELD = 73;  // JS 1.7 yield pseudo keyword
 	int STRICT_SETNAME = 74;
+	int NULLISH_COALESCING = 75; // nullish coalescing operator (??)
 
 	// End of interpreter bytecodes
-	int LAST_BYTECODE_TOKEN = STRICT_SETNAME;
+	int LAST_BYTECODE_TOKEN = NULLISH_COALESCING;
 
 	int TRY = 82;
 	int SEMI = 83;  // semicolon
@@ -143,7 +144,7 @@ public interface Token {
 	int FIRST_ASSIGN = ASSIGN;
 	int LAST_ASSIGN = ASSIGN_MOD;
 
-	int HOOK = 103; // conditional (?:)
+	int HOOK = 103; // tri-conditional (bool ? a : b)
 	int COLON = 104;
 	int OR = 105; // logical or (||)
 	int AND = 106; // logical and (&&)
@@ -390,9 +391,9 @@ public interface Token {
             case TEMPLATE_LITERAL -> "TEMPLATE_LITERAL";
             case TEMPLATE_CHARS -> "TEMPLATE_CHARS";
             case TEMPLATE_LITERAL_SUBST -> "TEMPLATE_LITERAL_SUBST";
-            case TAGGED_TEMPLATE_LITERAL -> "TAGGED_TEMPLATE_LITERAL";
+			case TAGGED_TEMPLATE_LITERAL -> "TAGGED_TEMPLATE_LITERAL";
+			case NULLISH_COALESCING -> "NULLISH_COALESCING";
             default ->
-
                 // Token without name
                 throw new IllegalStateException(String.valueOf(token));
         };

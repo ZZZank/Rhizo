@@ -680,6 +680,7 @@ class CodeGenerator extends Icode {
 			case Token.LT:
 			case Token.GE:
 			case Token.GT:
+			case Token.NULLISH_COALESCING:
 				visitExpression(child, 0);
 				child = child.getNext();
 				visitExpression(child, 0);
