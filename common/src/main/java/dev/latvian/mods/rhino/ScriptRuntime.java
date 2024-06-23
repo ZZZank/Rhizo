@@ -11,6 +11,7 @@ import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.SpecialEquality;
 import dev.latvian.mods.rhino.v8dtoa.DoubleConversion;
 import dev.latvian.mods.rhino.v8dtoa.FastDtoa;
+import lombok.val;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
@@ -1270,6 +1271,18 @@ public class ScriptRuntime {
 			result = Undefined.instance;
 		}
 
+		return result;
+	}
+
+	public static Object getObjectPropOptional(Object obj, String property, Context cx, Scriptable scope) {
+		val sobj = toObjectOrNull(cx, obj, scope);
+		if (sobj == null) {
+			return Undefined.instance;
+		}
+		val result = ScriptableObject.getProperty(sobj, property);
+		if (result == Scriptable.NOT_FOUND) {
+			return Undefined.instance;
+		}
 		return result;
 	}
 

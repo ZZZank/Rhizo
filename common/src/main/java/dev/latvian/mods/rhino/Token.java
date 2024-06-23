@@ -114,9 +114,11 @@ public interface Token {
 	int YIELD = 73;  // JS 1.7 yield pseudo keyword
 	int STRICT_SETNAME = 74;
 	int NULLISH_COALESCING = 75; // nullish coalescing operator (??)
+	int OPTIONAL_CHAINING = 77; // optional chaining operator (?.), type is GETOPTIONAL
+	int GETOPTIONAL = 78;
 
 	// End of interpreter bytecodes
-	int LAST_BYTECODE_TOKEN = NULLISH_COALESCING;
+	int LAST_BYTECODE_TOKEN = GETOPTIONAL;
 
 	int TRY = 82;
 	int SEMI = 83;  // semicolon
@@ -393,6 +395,8 @@ public interface Token {
             case TEMPLATE_LITERAL_SUBST -> "TEMPLATE_LITERAL_SUBST";
 			case TAGGED_TEMPLATE_LITERAL -> "TAGGED_TEMPLATE_LITERAL";
 			case NULLISH_COALESCING -> "NULLISH_COALESCING";
+			case OPTIONAL_CHAINING -> "OPTIONAL_CHAINING";
+			case GETOPTIONAL -> "GETOPTIONAL";
             default ->
                 // Token without name
                 throw new IllegalStateException(String.valueOf(token));

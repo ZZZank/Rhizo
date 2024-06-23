@@ -1162,6 +1162,8 @@ class TokenStream {
 				case '?':
 					if (matchChar('?')) {
 						return Token.NULLISH_COALESCING;
+					} else if (matchChar('.')) {
+						return Token.OPTIONAL_CHAINING;
 					} else {
 						return Token.HOOK;
 					}

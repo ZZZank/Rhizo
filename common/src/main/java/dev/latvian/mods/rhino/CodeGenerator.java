@@ -639,6 +639,7 @@ class CodeGenerator extends Icode {
 
 			case Token.GETPROP:
 			case Token.GETPROPNOWARN:
+			case Token.GETOPTIONAL:
 				visitExpression(child, 0);
 				child = child.getNext();
 				addStringOp(type, child.getString());
