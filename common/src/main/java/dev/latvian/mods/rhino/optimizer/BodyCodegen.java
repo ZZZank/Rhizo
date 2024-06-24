@@ -11,6 +11,7 @@ import dev.latvian.mods.rhino.ast.Jump;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.classfile.ByteCode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -978,11 +979,9 @@ class BodyCodegen {
 
             case Token.FUNCTION:
                 if (fnCurrent != null || parent.getType() != Token.SCRIPT) {
-                    int fnIndex = node.getExistingIntProp(Node.FUNCTION_PROP);
-                    OptFunctionNode ofn = OptFunctionNode.get(scriptOrFn,
-                        fnIndex
-                    );
-                    int t = ofn.fnode.getFunctionType();
+                    val fnIndex = node.getExistingIntProp(Node.FUNCTION_PROP);
+                    val ofn = OptFunctionNode.get(scriptOrFn, fnIndex);
+                    val t = ofn.fnode.getFunctionType();
                     if (t != FunctionNode.FUNCTION_EXPRESSION &&
                         t != FunctionNode.ARROW_FUNCTION) {
                         throw Codegen.badTree();
@@ -1141,9 +1140,9 @@ class BodyCodegen {
                 break;
 
             case Token.NOT: {
-                int trueTarget = cfw.acquireLabel();
-                int falseTarget = cfw.acquireLabel();
-                int beyond = cfw.acquireLabel();
+                val trueTarget = cfw.acquireLabel();
+                val falseTarget = cfw.acquireLabel();
+                val beyond = cfw.acquireLabel();
                 generateIfJump(child, node, trueTarget, falseTarget);
 
                 cfw.markLabel(trueTarget);
@@ -1234,41 +1233,41 @@ class BodyCodegen {
                 generateExpression(child, node);
                 generateExpression(child.getNext(), node);
                 switch (node.getIntProp(Node.ISNUMBER_PROP, -1)) {
-                    case Node.BOTH:
-                        cfw.add(ByteCode.DADD);
-                        break;
-                    case Node.LEFT:
-                        addOptRuntimeInvoke("add",
-                            "(DLjava/lang/Object;)Ljava/lang/Object;"
-                        );
-                        break;
-                    case Node.RIGHT:
-                        addOptRuntimeInvoke("add",
-                            "(Ljava/lang/Object;D)Ljava/lang/Object;"
-                        );
-                        break;
-                    default:
+                    case Node.BOTH -> cfw.add(ByteCode.DADD);
+                    case Node.LEFT -> addOptRuntimeInvoke(
+                        "add",
+                        "(DLjava/lang/Object;)Ljava/lang/Object;"
+                    );
+                    case Node.RIGHT -> addOptRuntimeInvoke(
+                        "add",
+                        "(Ljava/lang/Object;D)Ljava/lang/Object;"
+                    );
+                    default -> {
                         if (child.getType() == Token.STRING) {
-                            addScriptRuntimeInvoke("add",
+                            addScriptRuntimeInvoke(
+                                "add",
                                 "(Ljava/lang/CharSequence;"
                                     + "Ljava/lang/Object;"
                                     + ")Ljava/lang/CharSequence;"
                             );
                         } else if (child.getNext().getType() == Token.STRING) {
-                            addScriptRuntimeInvoke("add",
+                            addScriptRuntimeInvoke(
+                                "add",
                                 "(Ljava/lang/Object;"
                                     + "Ljava/lang/CharSequence;"
                                     + ")Ljava/lang/CharSequence;"
                             );
                         } else {
                             cfw.addALoad(contextLocal);
-                            addScriptRuntimeInvoke("add",
+                            addScriptRuntimeInvoke(
+                                "add",
                                 "(Ljava/lang/Object;"
                                     + "Ljava/lang/Object;"
                                     + "Ldev/latvian/mods/rhino/Context;"
                                     + ")Ljava/lang/Object;"
                             );
                         }
+                    }
                 }
             }
             break;
@@ -1356,6 +1355,7 @@ class BodyCodegen {
 
             case Token.GETPROP:
             case Token.GETPROPNOWARN:
+            case Token.GETOPTIONAL:
                 visitGetProp(node, child);
                 break;
 
@@ -3969,6 +3969,18 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
             cfw.addALoad(variableObjectLocal);
             addScriptRuntimeInvoke(
                 "getObjectPropNoWarn",
+                "(Ljava/lang/Object;"
+                    + "Ljava/lang/String;"
+                    + "Ldev/latvian/mods/rhino/Context;"
+                    + "Ldev/latvian/mods/rhino/Scriptable;"
+                    + ")Ljava/lang/Object;"
+            );
+            return;
+        } else if (node.getType() == Token.GETOPTIONAL) {
+            cfw.addALoad(contextLocal);
+            cfw.addALoad(variableObjectLocal);
+            addScriptRuntimeInvoke(
+                "getObjectPropOptional",
                 "(Ljava/lang/Object;"
                     + "Ljava/lang/String;"
                     + "Ldev/latvian/mods/rhino/Context;"
