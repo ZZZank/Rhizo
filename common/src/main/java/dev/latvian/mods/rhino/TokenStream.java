@@ -1461,7 +1461,8 @@ class TokenStream {
 	private final StringBuilder rawString = new StringBuilder();
 
 	String getRawString() {
-		if (rawString.isEmpty()) {
+		//hey, dont use .isEmpty(), it's not avaliable until Java15
+		if (rawString.length() == 0) {
 			return "";
 		}
 		return rawString.toString();
