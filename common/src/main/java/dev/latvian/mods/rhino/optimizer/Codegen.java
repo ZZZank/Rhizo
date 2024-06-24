@@ -730,14 +730,14 @@ public class Codegen implements Evaluator {
         // The rest of NativeFunction overrides require specific code for each
         // script/function id
 
-        final int Do_getFunctionName = 0;
-        final int Do_getParamCount = 1;
-        final int Do_getParamAndVarCount = 2;
-        final int Do_getParamOrVarName = 3;
-        final int Do_getEncodedSource = 4;
-        final int Do_getParamOrVarConst = 5;
-        final int Do_isGeneratorFunction = 6;
-        final int SWITCH_COUNT = 7;
+        val Do_getFunctionName = 0;
+        val Do_getParamCount = 1;
+        val Do_getParamAndVarCount = 2;
+        val Do_getParamOrVarName = 3;
+        val Do_getEncodedSource = 4;
+        val Do_getParamOrVarConst = 5;
+        val Do_isGeneratorFunction = 6;
+        val SWITCH_COUNT = 7;
 
         for (int methodIndex = 0; methodIndex != SWITCH_COUNT; ++methodIndex) {
             if (methodIndex == Do_getEncodedSource) {

@@ -2093,9 +2093,9 @@ public final class Interpreter extends Icode implements Evaluator {
 	}
 
 	private static int doNullishCoalescing(CallFrame frame, Object[] stack, double[] sDbl, int stackTop) {
-		val a = frame.stack[stackTop - 1];
-		val b = frame.stack[stackTop];
-		stack[--stackTop] = a == null || Undefined.isUndefined(a) ? b : a;
+		val left = frame.stack[stackTop - 1];
+		val right = frame.stack[stackTop];
+		stack[--stackTop] = (left == null || Undefined.isUndefined(left)) ? right : left;
 		return stackTop;
 	}
 
@@ -2138,22 +2138,15 @@ public final class Interpreter extends Icode implements Evaluator {
 				} else {
 					break number_compare;
 				}
-				switch (op) {
-					case Token.GE:
-						valBln = (lDbl >= rDbl);
-						break object_compare;
-					case Token.LE:
-						valBln = (lDbl <= rDbl);
-						break object_compare;
-					case Token.GT:
-						valBln = (lDbl > rDbl);
-						break object_compare;
-					case Token.LT:
-						valBln = (lDbl < rDbl);
-						break object_compare;
-					default:
-						throw Kit.codeBug();
-				}
+				valBln = switch (op) {
+					case Token.GE -> lDbl >= rDbl;
+					case Token.LE -> lDbl <= rDbl;
+					case Token.GT -> lDbl > rDbl;
+					case Token.LT -> lDbl < rDbl;
+					default -> throw Kit.codeBug();
+				};
+				//back if no bug thrown
+				break object_compare;
 			}
             valBln = switch (op) {
                 case Token.GE -> ScriptRuntime.cmp_LE(rhs, lhs);
@@ -2171,24 +2164,14 @@ public final class Interpreter extends Icode implements Evaluator {
 		int lIntValue = stack_int32(frame, stackTop - 1);
 		int rIntValue = stack_int32(frame, stackTop);
 		stack[--stackTop] = UniqueTag.DOUBLE_MARK;
-		switch (op) {
-			case Token.BITAND:
-				lIntValue &= rIntValue;
-				break;
-			case Token.BITOR:
-				lIntValue |= rIntValue;
-				break;
-			case Token.BITXOR:
-				lIntValue ^= rIntValue;
-				break;
-			case Token.LSH:
-				lIntValue <<= rIntValue;
-				break;
-			case Token.RSH:
-				lIntValue >>= rIntValue;
-				break;
-		}
-		sDbl[stackTop] = lIntValue;
+		sDbl[stackTop] = switch (op) {
+			case Token.BITAND -> lIntValue & rIntValue;
+			case Token.BITOR -> lIntValue | rIntValue;
+			case Token.BITXOR -> lIntValue ^ rIntValue;
+			case Token.LSH -> lIntValue << rIntValue;
+			case Token.RSH -> lIntValue >> rIntValue;
+			default -> lIntValue;
+		};
 		return stackTop;
 	}
 

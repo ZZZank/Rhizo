@@ -2318,15 +2318,15 @@ public class Parser {
 		AstNode pn = relExpr();
 		for (; ; ) {
 			int tt = peekToken(), opPos = ts.tokenBeg;
-			switch (tt) {
-				case Token.EQ:
-				case Token.NE:
-				case Token.SHEQ:
-				case Token.SHNE:
-					consumeToken();
-					pn = new InfixExpression(tt, pn, relExpr(), opPos);
-					continue;
-			}
+            switch (tt) {
+                case Token.EQ:
+                case Token.NE:
+                case Token.SHEQ:
+                case Token.SHNE:
+                    consumeToken();
+                    pn = new InfixExpression(tt, pn, relExpr(), opPos);
+                    continue;
+            }
 			break;
 		}
 		return pn;
