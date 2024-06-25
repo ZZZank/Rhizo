@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -93,6 +94,14 @@ public class RhizoRemapper implements Remapper {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public Map<String, Clazz> getClazzMappingView() {
+        return Collections.unmodifiableMap(classMap);
+    }
+
+    public Map<String, Clazz> getClazzUnmappingView() {
+        return Collections.unmodifiableMap(classUnmap);
     }
 
     public static RhizoRemapper instance() {
