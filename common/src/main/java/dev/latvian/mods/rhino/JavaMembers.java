@@ -675,6 +675,7 @@ public class JavaMembers {
 
     public Collection<FieldInfo> getAccessibleFields(Context cx, boolean includeProtected) {
         val fieldMap = new LinkedHashMap<String, FieldInfo>();
+        val remapper = cx.getRemapper();
 
         try {
             Class<?> currentClass = cl;
@@ -684,7 +685,7 @@ public class JavaMembers {
                 // accessible, and save
 
                 for (val field : getDeclaredFieldsSafe(currentClass)) {
-                    int mods = field.getModifiers();
+                    val mods = field.getModifiers();
 
                     if (!Modifier.isTransient(mods) && (Modifier.isPublic(mods) || includeProtected && Modifier.isProtected(mods)) && !field.isAnnotationPresent(HideFromJS.class)) {
                         try {
@@ -692,10 +693,10 @@ public class JavaMembers {
                                 field.setAccessible(true);
                             }
 
-                            FieldInfo info = new FieldInfo(field);
+                            val info = new FieldInfo(field);
 
                             if (info.name.isEmpty()) {
-                                info.name = cx.getRemapper().remapField(currentClass, field);
+                                info.name = remapper.remapField(currentClass, field);
                             }
 
                             if (info.name.isEmpty()) {
@@ -723,22 +724,22 @@ public class JavaMembers {
     }
 
     public Collection<MethodInfo> getAccessibleMethods(Context cx, boolean includeProtected) {
-        var methodMap = new LinkedHashMap<MethodSignature, MethodInfo>();
-
-        var stack = new ArrayDeque<Class<?>>();
+        val methodMap = new LinkedHashMap<MethodSignature, MethodInfo>();
+        val remapper = cx.getRemapper();
+        val stack = new ArrayDeque<Class<?>>();
         stack.add(cl);
 
         while (!stack.isEmpty()) {
             val currentClass = stack.pop();
 
             for (val method : getDeclaredMethodsSafe(currentClass)) {
-                int mods = method.getModifiers();
+                val mods = method.getModifiers();
 
                 if ((Modifier.isPublic(mods) || includeProtected && Modifier.isProtected(mods))) {
-                    MethodSignature signature = new MethodSignature(method);
+                    val signature = new MethodSignature(method);
 
                     var info = methodMap.get(signature);
-                    boolean hidden = method.isAnnotationPresent(HideFromJS.class);
+                    val hidden = method.isAnnotationPresent(HideFromJS.class);
 
                     if (info == null) {
                         try {
@@ -761,7 +762,7 @@ public class JavaMembers {
                     }
 
                     if (info.name.isEmpty()) {
-                        info.name = cx.getRemapper().remapMethod(currentClass, method);
+                        info.name = remapper.remapMethod(currentClass, method);
                     }
 
                     if (info.name.isEmpty()) {
@@ -779,9 +780,9 @@ public class JavaMembers {
             }
         }
 
-        var list = new ArrayList<MethodInfo>(methodMap.size());
+        val list = new ArrayList<MethodInfo>(methodMap.size());
 
-        for (var m : methodMap.values()) {
+        for (val m : methodMap.values()) {
             if (!m.hidden) {
                 if (m.name.isEmpty()) {
                     m.name = m.method.getName();

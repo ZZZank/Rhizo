@@ -109,11 +109,16 @@ public class ContextFactory {
 
 	private volatile boolean sealed;
 
-	private final Object listenersLock = new Object();
+	private final Object listenersLock;
 	private volatile Object listeners;
 	private boolean disabledListening;
 	TypeWrappers typeWrappers;
-	Remapper remapper = RemapperManager.getDefault();
+	Remapper remapper;
+
+    public ContextFactory() {
+        listenersLock = new Object();
+        remapper = RemapperManager.getDefault();
+    }
 
 	/**
 	 * Listener of {@link Context} creation and release events.

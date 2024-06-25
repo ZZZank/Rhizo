@@ -15,19 +15,19 @@ import net.neoforged.srgutils.IMappingFile;
 public class RhinoModForge {
 
     public RhinoModForge() {
-        FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
         RemapperManager.setDefault(new DualRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
+        FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
     }
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         if (RhinoProperties.INSTANCE.generateMapping) {
-            Thread t = new Thread(()->
-            RhizoMappingGen.generate(
-                "1.16.5",
-                (mcVersion, vanillaMapping) -> IMappingFile.load(RemappingHelper.getUrlConnection(
-                    "https://github.com/ZZZank/Rhizo/raw/1.16-rhizo/_dev/joined_old.tsrg").getInputStream())
-            ));
+            Thread t = new Thread(() ->
+                RhizoMappingGen.generate(
+                    "1.16.5",
+                    (mcVersion, vanillaMapping) -> IMappingFile.load(RemappingHelper.getUrlConnection(
+                        "https://github.com/ZZZank/Rhizo/raw/1.16-rhizo/_dev/joined_old.tsrg").getInputStream())
+                ));
             t.setDaemon(true);
             t.start();
         }

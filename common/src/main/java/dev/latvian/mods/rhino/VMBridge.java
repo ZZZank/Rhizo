@@ -8,6 +8,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+
 import java.lang.reflect.*;
 
 public abstract class VMBridge {
@@ -154,8 +156,8 @@ public abstract class VMBridge {
 		protected Object getInterfaceProxyHelper(ContextFactory cf, Class<?>[] interfaces) {
 			// XXX: How to handle interfaces array withclasses from different
 			// class loaders? Using cf.getApplicationClassLoader() ?
-			ClassLoader loader = interfaces[0].getClassLoader();
-			Class<?> cl = Proxy.getProxyClass(loader, interfaces);
+			val loader = interfaces[0].getClassLoader();
+			val cl = Proxy.getProxyClass(loader, interfaces);
 			Constructor<?> c;
 			try {
 				c = cl.getConstructor(InvocationHandler.class);
@@ -168,7 +170,7 @@ public abstract class VMBridge {
 
 		@Override
 		protected Object newInterfaceProxy(Object proxyHelper, final ContextFactory cf, final InterfaceAdapter adapter, final Object target, final Scriptable topScope) {
-			Constructor<?> c = (Constructor<?>) proxyHelper;
+			val c = (Constructor<?>) proxyHelper;
 
 			InvocationHandler handler = (proxy, method, args) -> {
 				// In addition to methods declared in the interface, proxies
@@ -176,21 +178,18 @@ public abstract class VMBridge {
 				// invocation handler.
 				if (method.getDeclaringClass() == Object.class) {
 					String methodName = method.getName();
-					switch (methodName) {
-						case "equals" -> {
+                    switch (methodName) {
+                        case "equals":
 							// Note: we could compare a proxy and its wrapped function
-							// as equal here but that would break symmetry of equal().
-							// The reason == suffices here is that proxies are cached
-							// in ScriptableObject (see NativeJavaObject.coerceType())
-							return proxy == args[0];
-						}
-						case "hashCode" -> {
-							return target.hashCode();
-						}
-						case "toString" -> {
-							return "Proxy[" + target.toString() + "]";
-						}
-					}
+                            // as equal here but that would break symmetry of equal().
+                            // The reason == suffices here is that proxies are cached
+                            // in ScriptableObject (see NativeJavaObject.coerceType())
+                            return proxy == args[0];
+                        case "hashCode":
+                            return target.hashCode();
+                        case "toString":
+                            return "Proxy[" + target.toString() + "]";
+                    }
 				}
 				return adapter.invoke(cf, target, topScope, proxy, method, args);
 			};
