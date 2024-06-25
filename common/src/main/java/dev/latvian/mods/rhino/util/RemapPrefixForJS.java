@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.annotations;
+package dev.latvian.mods.rhino.util;
 
 import java.lang.annotation.*;
 

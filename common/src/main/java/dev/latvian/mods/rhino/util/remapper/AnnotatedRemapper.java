@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.util.remapper;
 
-import dev.latvian.mods.rhino.annotations.RemapPrefixForJS;
+import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import dev.latvian.mods.rhino.util.RemapForJS;
 import lombok.val;
 
