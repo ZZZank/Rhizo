@@ -15,7 +15,6 @@ import net.neoforged.srgutils.IMappingFile;
 public class RhinoModForge {
 
     public RhinoModForge() {
-        RemapperManager.setDefault(new DualRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
         FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
     }
 

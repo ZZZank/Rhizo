@@ -23,7 +23,6 @@ public class RhinoModFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        RemapperManager.setDefault(new DualRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
         if (RhinoProperties.INSTANCE.generateMapping) {
             RhizoMappingGen.generate(
                 "1.16.5",
