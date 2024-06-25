@@ -682,7 +682,7 @@ public class JavaMembers {
                 // get all declared fields in this class, make them
                 // accessible, and save
 
-                for (Field field : getDeclaredFieldsSafe(currentClass)) {
+                for (val field : getDeclaredFieldsSafe(currentClass)) {
                     int mods = field.getModifiers();
 
                     if (!Modifier.isTransient(mods) && (Modifier.isPublic(mods) || includeProtected && Modifier.isProtected(mods)) && !field.isAnnotationPresent(HideFromJS.class)) {
@@ -728,9 +728,9 @@ public class JavaMembers {
         stack.add(cl);
 
         while (!stack.isEmpty()) {
-            var currentClass = stack.pop();
+            val currentClass = stack.pop();
 
-            for (var method : getDeclaredMethodsSafe(currentClass)) {
+            for (val method : getDeclaredMethodsSafe(currentClass)) {
                 int mods = method.getModifiers();
 
                 if ((Modifier.isPublic(mods) || includeProtected && Modifier.isProtected(mods))) {
@@ -762,12 +762,16 @@ public class JavaMembers {
                     if (info.name.isEmpty()) {
                         info.name = cx.getRemapper().remapMethod(currentClass, method);
                     }
+
+                    if (info.name.isEmpty()) {
+                        info.name = method.getName();
+                    }
                 }
             }
 
             stack.addAll(Arrays.asList(currentClass.getInterfaces()));
 
-            var parent = currentClass.getSuperclass();
+            val parent = currentClass.getSuperclass();
 
             if (parent != null) {
                 stack.add(parent);

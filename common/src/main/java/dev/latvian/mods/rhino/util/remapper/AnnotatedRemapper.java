@@ -30,23 +30,28 @@ public class AnnotatedRemapper implements Remapper {
         return NOT_REMAPPED;
     }
 
+    private static Set<String> computeRemapPrefixes(Class<?> clazz) {
+        var prefixes = prefixRemapCache.get(clazz);
+        if (prefixes == null) {
+            prefixes = new HashSet<>(3);
+            for (val anno : clazz.getAnnotationsByType(RemapPrefixForJS.class)) {
+                val s = anno.value().trim();
+                if (s.isEmpty()) {
+                    prefixes.add(s);
+                }
+            }
+            prefixRemapCache.put(clazz, prefixes);
+        }
+        return prefixes;
+    }
+
     @Override
     public String remapField(Class<?> from, Field field) {
         val remap = field.getAnnotation(RemapForJS.class);
         if (remap != null) {
             return remap.value();
         }
-        var prefixRemap = prefixRemapCache.get(from);
-        if (prefixRemap == null) {
-            prefixRemap = new HashSet<>();
-            for (val anno : from.getAnnotationsByType(RemapPrefixForJS.class)) {
-                val s = anno.value().trim();
-                if (s.isEmpty()) {
-                    prefixRemap.add(s);
-                }
-            }
-            prefixRemapCache.put(from, prefixRemap);
-        }
+        val prefixRemap = computeRemapPrefixes(from);
         val original = field.getName();
         for (val prefix : prefixRemap) {
             if (original.startsWith(prefix)) {
@@ -62,10 +67,9 @@ public class AnnotatedRemapper implements Remapper {
         if (remap != null) {
             return remap.value();
         }
-        val remapPrefix = from.getAnnotation(RemapPrefixForJS.class);
-        if (remapPrefix != null) {
-            val prefix = remapPrefix.value();
-            val original = method.getName();
+        val prefixes = computeRemapPrefixes(from);
+        val original = method.getName();
+        for (val prefix : prefixes) {
             if (original.startsWith(prefix)) {
                 return original.substring(prefix.length());
             }

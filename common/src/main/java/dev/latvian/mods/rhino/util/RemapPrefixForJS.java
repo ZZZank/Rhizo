@@ -8,6 +8,7 @@ import java.lang.annotation.*;
  * @author ZZZank
  */
 @Documented
+@Repeatable(RemapPrefixForJSRep.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface RemapPrefixForJS {
