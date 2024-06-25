@@ -27,6 +27,8 @@ import java.util.ResourceBundle;
 
 public class ScriptRuntime {
 
+	public static final Object[] EMPTY_OBJECTS = new Object[0];
+
 	/**
 	 * No instances should be created.
 	 */
