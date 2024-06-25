@@ -9,6 +9,7 @@ package dev.latvian.mods.rhino;
 import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -661,7 +662,7 @@ public class JavaMembers {
     public List<Constructor<?>> getAccessibleConstructors() {
         List<Constructor<?>> constructorsList = new ArrayList<>();
 
-        for (Constructor<?> c : cl.getConstructors()) {
+        for (Constructor<?> c : getConstructorsSafe(cl)) {
             if (!c.isAnnotationPresent(HideFromJS.class)) {
                 if (Modifier.isPublic(c.getModifiers())) {
                     constructorsList.add(c);
@@ -799,6 +800,15 @@ public class JavaMembers {
         } catch (Throwable t) {
             System.err.println("[Rhino] Failed to get declared methods for " + cl.getName() + ": " + t);
             return new Method[0];
+        }
+    }
+
+    private static Constructor<?> @NotNull [] getConstructorsSafe(Class<?> cl) {
+        try {
+            return cl.getConstructors();
+        } catch (Throwable e) {
+            System.err.println("[Rhino] Failed to get constructors for " + cl.getName() + ": " + e);
+            return new Constructor[0];
         }
     }
 
