@@ -6,12 +6,18 @@ import lombok.val;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * an impl of {@link Remapper} that will check {@link RemapForJS} and {@link RemapPrefixForJS} annotations
  */
 public class AnnotatedRemapper implements Remapper {
     public static final AnnotatedRemapper INSTANCE = new AnnotatedRemapper();
+
+    private static final Map<Class<?>, Set<String>> prefixRemapCache = new HashMap<>();
 
     private AnnotatedRemapper() {}
 
@@ -30,10 +36,19 @@ public class AnnotatedRemapper implements Remapper {
         if (remap != null) {
             return remap.value();
         }
-        val remapPrefix = from.getAnnotation(RemapPrefixForJS.class);
-        if (remapPrefix != null) {
-            val prefix = remapPrefix.value();
-            val original = field.getName();
+        var prefixRemap = prefixRemapCache.get(from);
+        if (prefixRemap == null) {
+            prefixRemap = new HashSet<>();
+            for (val anno : from.getAnnotationsByType(RemapPrefixForJS.class)) {
+                val s = anno.value().trim();
+                if (s.isEmpty()) {
+                    prefixRemap.add(s);
+                }
+            }
+            prefixRemapCache.put(from, prefixRemap);
+        }
+        val original = field.getName();
+        for (val prefix : prefixRemap) {
             if (original.startsWith(prefix)) {
                 return original.substring(prefix.length());
             }
