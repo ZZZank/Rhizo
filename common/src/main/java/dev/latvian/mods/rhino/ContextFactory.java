@@ -8,7 +8,6 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.util.remapper.DummyRemapper;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperManager;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;

@@ -3,8 +3,8 @@ package dev.latvian.mods.rhino.mod.forge;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.remapper.*;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
+import dev.latvian.mods.rhino.util.remapper.DualRemapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperManager;
-import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -16,7 +16,7 @@ public class RhinoModForge {
 
     public RhinoModForge() {
         FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
-        RemapperManager.setDefault(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
+        RemapperManager.setDefault(new DualRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
     }
 
     @SubscribeEvent

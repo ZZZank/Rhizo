@@ -6,8 +6,8 @@ import dev.latvian.mods.rhino.mod.remapper.RhizoMappingGen;
 import dev.latvian.mods.rhino.mod.remapper.RhizoRemapper;
 import dev.latvian.mods.rhino.mod.remapper.info.Clazz;
 import dev.latvian.mods.rhino.util.remapper.AnnotatedRemapper;
+import dev.latvian.mods.rhino.util.remapper.DualRemapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperManager;
-import dev.latvian.mods.rhino.util.remapper.SequencedRemapper;
 import lombok.val;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.impl.launch.FabricLauncherBase;
@@ -23,7 +23,7 @@ public class RhinoModFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        RemapperManager.setDefault(new SequencedRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
+        RemapperManager.setDefault(new DualRemapper(AnnotatedRemapper.INSTANCE, RhizoRemapper.instance()));
         if (RhinoProperties.INSTANCE.generateMapping) {
             RhizoMappingGen.generate(
                 "1.16.5",
