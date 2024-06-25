@@ -8,8 +8,6 @@ package dev.latvian.mods.rhino;
 
 import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.util.HideFromJS;
-import dev.latvian.mods.rhino.util.RemapForJS;
-import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import lombok.val;
 
 import java.lang.reflect.Constructor;
@@ -21,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Mike Shaver
@@ -685,15 +681,6 @@ public class JavaMembers {
             while (currentClass != null) {
                 // get all declared fields in this class, make them
                 // accessible, and save
-                Set<String> remapPrefixes = new HashSet<>();
-
-                for (RemapPrefixForJS r : currentClass.getAnnotationsByType(RemapPrefixForJS.class)) {
-                    String s = r.value().trim();
-
-                    if (!s.isEmpty()) {
-                        remapPrefixes.add(s);
-                    }
-                }
 
                 for (Field field : getDeclaredFieldsSafe(currentClass)) {
                     int mods = field.getModifiers();
@@ -705,21 +692,6 @@ public class JavaMembers {
                             }
 
                             FieldInfo info = new FieldInfo(field);
-
-                            var remap = field.getAnnotation(RemapForJS.class);
-
-                            if (remap != null) {
-                                info.name = remap.value().trim();
-                            }
-
-                            if (info.name.isEmpty()) {
-                                for (String s : remapPrefixes) {
-                                    if (field.getName().startsWith(s)) {
-                                        info.name = field.getName().substring(s.length()).trim();
-                                        break;
-                                    }
-                                }
-                            }
 
                             if (info.name.isEmpty()) {
                                 info.name = cx.getRemapper().remapField(currentClass, field);
@@ -757,15 +729,6 @@ public class JavaMembers {
 
         while (!stack.isEmpty()) {
             var currentClass = stack.pop();
-            Set<String> remapPrefixes = new HashSet<>();
-
-            for (RemapPrefixForJS r : currentClass.getAnnotationsByType(RemapPrefixForJS.class)) {
-                String s = r.value().trim();
-
-                if (!s.isEmpty()) {
-                    remapPrefixes.add(s);
-                }
-            }
 
             for (var method : getDeclaredMethodsSafe(currentClass)) {
                 int mods = method.getModifiers();
@@ -794,21 +757,6 @@ public class JavaMembers {
                     } else if (hidden) {
                         info.hidden = true;
                         continue;
-                    }
-
-                    var remap = method.getAnnotation(RemapForJS.class);
-
-                    if (remap != null) {
-                        info.name = remap.value().trim();
-                    }
-
-                    if (info.name.isEmpty()) {
-                        for (String s : remapPrefixes) {
-                            if (method.getName().startsWith(s)) {
-                                info.name = method.getName().substring(s.length()).trim();
-                                break;
-                            }
-                        }
                     }
 
                     if (info.name.isEmpty()) {
