@@ -63,10 +63,12 @@ public class AnnotatedRemapper implements Remapper {
 
     @Override
     public String remapMethod(Class<?> from, Method method) {
+        //full remap
         val remap = method.getAnnotation(RemapForJS.class);
         if (remap != null) {
             return remap.value();
         }
+        //prefix remap
         val prefixes = computeRemapPrefixes(from);
         val original = method.getName();
         for (val prefix : prefixes) {
@@ -74,6 +76,7 @@ public class AnnotatedRemapper implements Remapper {
                 return original.substring(prefix.length());
             }
         }
+        //fallback
         return NOT_REMAPPED;
     }
 }

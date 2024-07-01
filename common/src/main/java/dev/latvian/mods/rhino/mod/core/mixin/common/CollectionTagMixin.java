@@ -9,29 +9,34 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(CollectionTag.class)
 public abstract class CollectionTagMixin implements ListLike<Object> {
+
+	private CollectionTag rhizo$self() {
+		return (CollectionTag) (Object) this;
+	}
+
 	@Nullable
 	@Override
 	public Object getLL(int index) {
-		return NBTWrapper.fromTag((Tag) ((CollectionTag) (Object) this).get(index));
+		return NBTWrapper.fromTag((Tag) rhizo$self().get(index));
 	}
 
 	@Override
 	public void setLL(int index, Object value) {
-		((CollectionTag) (Object) this).set(index, NBTWrapper.toTag(value));
+		rhizo$self().set(index, NBTWrapper.toTag(value));
 	}
 
 	@Override
 	public int sizeLL() {
-		return ((CollectionTag) (Object) this).size();
+		return rhizo$self().size();
 	}
 
 	@Override
 	public void removeLL(int index) {
-		((CollectionTag) (Object) this).remove(index);
+		rhizo$self().remove(index);
 	}
 
 	@Override
 	public void clearLL() {
-		((CollectionTag) (Object) this).clear();
+		rhizo$self().clear();
 	}
 }

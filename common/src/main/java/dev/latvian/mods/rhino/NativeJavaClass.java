@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -80,9 +82,9 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 			return members.get(this, name, javaObject, true);
 		}
 
-		Context cx = Context.getContext();
-		Scriptable scope = ScriptableObject.getTopLevelScope(start);
-		WrapFactory wrapFactory = cx.getWrapFactory();
+		val cx = Context.getContext();
+		val scope = ScriptableObject.getTopLevelScope(start);
+		val wrapFactory = cx.getWrapFactory();
 
 		if (javaClassPropertyName.equals(name)) {
 			return wrapFactory.wrap(cx, scope, javaObject, ScriptRuntime.ClassClass);
@@ -92,7 +94,7 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 		// current class' name.
 		Class<?> nestedClass = findNestedClass(getClassObject(), name);
 		if (nestedClass != null) {
-			Scriptable nestedValue = wrapFactory.wrapJavaClass(cx, scope, nestedClass);
+			val nestedValue = wrapFactory.wrapJavaClass(cx, scope, nestedClass);
 			nestedValue.setParentScope(this);
 			return nestedValue;
 		}
@@ -136,9 +138,8 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 		if (args.length == 1 && args[0] instanceof Scriptable p) {
 			Class<?> c = getClassObject();
             do {
-				if (p instanceof Wrapper) {
-					Object o = ((Wrapper) p).unwrap();
-					if (c.isInstance(o)) {
+				if (p instanceof Wrapper wrapper) {
+					if (c.isInstance(wrapper.unwrap())) {
 						return p;
 					}
 				}

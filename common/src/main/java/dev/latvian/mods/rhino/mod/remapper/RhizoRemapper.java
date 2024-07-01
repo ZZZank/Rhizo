@@ -123,10 +123,7 @@ public class RhizoRemapper implements Remapper {
     @Override
     public String remapClass(Class<?> from) {
         val clz = getClazzFiltered(from);
-        if (clz == null) {
-            return NOT_REMAPPED;
-        }
-        return clz.remapped();
+        return clz == null ? NOT_REMAPPED : clz.remapped();
     }
 
     private @Nullable Clazz getClazzFiltered(Class<?> from) {
@@ -139,10 +136,7 @@ public class RhizoRemapper implements Remapper {
     @Override
     public String unmapClass(String from) {
         val un = classUnmap.get(from);
-        if (un == null) {
-            return NOT_REMAPPED;
-        }
-        return un.original();
+        return un == null ? NOT_REMAPPED : un.original();
     }
 
     @Override
@@ -152,10 +146,7 @@ public class RhizoRemapper implements Remapper {
             return NOT_REMAPPED;
         }
         val fInfo = clazz.fields().get(field.getName());
-        if (fInfo == null) {
-            return NOT_REMAPPED;
-        }
-        return fInfo.remapped();
+        return fInfo == null ? NOT_REMAPPED : fInfo.remapped();
     }
 
     @Override

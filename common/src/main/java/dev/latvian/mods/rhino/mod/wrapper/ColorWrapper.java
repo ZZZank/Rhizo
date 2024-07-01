@@ -17,8 +17,7 @@ public interface ColorWrapper {
 	static Color of(Object o) {
 		if (o instanceof Color) {
 			return (Color) o;
-		} else if (o instanceof String) {
-			String s = o.toString();
+		} else if (o instanceof String s) {
 			Color c = MAP.get(s);
 
 			if (c != null) {

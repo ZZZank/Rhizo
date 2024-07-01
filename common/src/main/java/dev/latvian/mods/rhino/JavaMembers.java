@@ -261,8 +261,8 @@ public class JavaMembers {
     }
 
     public boolean has(String name, boolean isStatic) {
-        Map<String, Object> ht = isStatic ? staticMembers : members;
-        Object obj = ht.get(name);
+        val ht = isStatic ? staticMembers : members;
+        val obj = ht.get(name);
         if (obj != null) {
             return true;
         }
@@ -734,40 +734,40 @@ public class JavaMembers {
 
             for (val method : getDeclaredMethodsSafe(currentClass)) {
                 val mods = method.getModifiers();
+                if (!Modifier.isPublic(mods) && !(includeProtected && Modifier.isProtected(mods))) {
+                    continue;
+                }
+                val signature = new MethodSignature(method);
 
-                if ((Modifier.isPublic(mods) || includeProtected && Modifier.isProtected(mods))) {
-                    val signature = new MethodSignature(method);
+                var info = methodMap.get(signature);
+                val hidden = method.isAnnotationPresent(HideFromJS.class);
 
-                    var info = methodMap.get(signature);
-                    val hidden = method.isAnnotationPresent(HideFromJS.class);
-
-                    if (info == null) {
-                        try {
-                            if (!hidden && includeProtected && Modifier.isProtected(mods) && !method.isAccessible()) {
-                                method.setAccessible(true);
-                            }
-
-                            info = new MethodInfo(method);
-                            methodMap.put(signature, info);
-                        } catch (Exception ex) {
-                            // ex.printStackTrace();
+                if (info == null) {
+                    try {
+                        if (!hidden && includeProtected && Modifier.isProtected(mods) && !method.isAccessible()) {
+                            method.setAccessible(true);
                         }
-                    }
 
-                    if (info == null) {
-                        continue;
-                    } else if (hidden) {
-                        info.hidden = true;
-                        continue;
+                        info = new MethodInfo(method);
+                        methodMap.put(signature, info);
+                    } catch (Exception ex) {
+                        // ex.printStackTrace();
                     }
+                }
 
-                    if (info.name.isEmpty()) {
-                        info.name = remapper.remapMethod(currentClass, method);
-                    }
+                if (info == null) {
+                    continue;
+                } else if (hidden) {
+                    info.hidden = true;
+                    continue;
+                }
 
-                    if (info.name.isEmpty()) {
-                        info.name = method.getName();
-                    }
+                if (info.name.isEmpty()) {
+                    info.name = remapper.remapMethod(currentClass, method);
+                }
+
+                if (info.name.isEmpty()) {
+                    info.name = method.getName();
                 }
             }
 

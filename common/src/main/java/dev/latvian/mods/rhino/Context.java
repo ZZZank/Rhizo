@@ -410,7 +410,8 @@ public class Context {
         final Callable callable,
         final Scriptable scope,
         final Scriptable thisObj,
-        final Object[] args) {
+        final Object[] args
+    ) {
         if (factory == null) {
             factory = ContextFactory.getGlobal();
         }
