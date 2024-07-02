@@ -28,16 +28,16 @@ subprojects {
 			officialMojangMappings()
 			parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:2021.10.10")
 		}
-		// https://mvnrepository.com/artifact/com.github.bsideup.jabel/jabel-javac-plugin
-		annotationProcessor "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
-		compileOnly "com.github.bsideup.jabel:jabel-javac-plugin:${rootProject.jabel_version}"
+		// https://mvnrepository.com/artifact/com.pkware.jabel/jabel-javac-plugin
+		annotationProcessor 'com.pkware.jabel:jabel-javac-plugin:1.0.1-1'
+		compileOnly 'com.pkware.jabel:jabel-javac-plugin:1.0.1-1'
 		// https://mvnrepository.com/artifact/net.neoforged/srgutils
 		shade 'net.neoforged:srgutils:1.0.9'
 		//lombok, see https://projectlombok.org/setup/gradle
-		compileOnly 'org.projectlombok:lombok:1.18.32'
-		annotationProcessor 'org.projectlombok:lombok:1.18.32'
-		testCompileOnly 'org.projectlombok:lombok:1.18.32'
-		testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
+		compileOnly 'org.projectlombok:lombok:1.18.34'
+		annotationProcessor 'org.projectlombok:lombok:1.18.34'
+		testCompileOnly 'org.projectlombok:lombok:1.18.34'
+		testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 	}
 }
 
@@ -55,7 +55,7 @@ allprojects {
 
 	tasks.withType(JavaCompile) {
 		options.encoding = "UTF-8"
-		sourceCompatibility = 16
+		sourceCompatibility = 21
 		options.compilerArgs << '-parameters'
 
 		// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
