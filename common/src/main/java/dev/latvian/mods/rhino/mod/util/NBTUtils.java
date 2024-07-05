@@ -1,34 +1,19 @@
 package dev.latvian.mods.rhino.mod.util;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.EncoderException;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CollectionTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.FloatTag;
-import net.minecraft.nbt.IntArrayTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongArrayTag;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NumericTag;
-import net.minecraft.nbt.ShortTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagType;
-import net.minecraft.nbt.TagTypes;
+import lombok.val;
+import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author LatvianModder
@@ -36,43 +21,64 @@ import java.util.Map;
 public class NBTUtils {
 	@Nullable
 	public static Tag toNBT(@Nullable Object o) {
-		if (o instanceof Tag) {
-			return (Tag) o;
-		} else if (o instanceof NBTSerializable) {
-			return ((NBTSerializable) o).toNBT();
-		} else if (o instanceof CharSequence || o instanceof Character) {
+		//already resolved
+		if (o instanceof Tag tag) {
+			return tag;
+		} else if (o instanceof NBTSerializable serializable) {
+			return serializable.toNBT();
+		}
+		//primitive
+		else if (o instanceof CharSequence || o instanceof Character) {
 			return StringTag.valueOf(o.toString());
-		} else if (o instanceof Boolean) {
-			return ByteTag.valueOf((Boolean) o ? (byte) 1 : (byte) 0);
+		} else if (o instanceof Boolean b) {
+			return ByteTag.valueOf(b);
 		} else if (o instanceof Number number) {
-
             if (number instanceof Byte) {
-				return ByteTag.valueOf(number.byteValue());
-			} else if (number instanceof Short) {
-				return ShortTag.valueOf(number.shortValue());
-			} else if (number instanceof Integer) {
-				return IntTag.valueOf(number.intValue());
-			} else if (number instanceof Long) {
-				return LongTag.valueOf(number.longValue());
-			} else if (number instanceof Float) {
-				return FloatTag.valueOf(number.floatValue());
+                return ByteTag.valueOf(number.byteValue());
+            } else if (number instanceof Short) {
+                return ShortTag.valueOf(number.shortValue());
+            } else if (number instanceof Integer) {
+                return IntTag.valueOf(number.intValue());
+            } else if (number instanceof Long) {
+                return LongTag.valueOf(number.longValue());
+            } else if (number instanceof Float) {
+                return FloatTag.valueOf(number.floatValue());
+            }
+            return DoubleTag.valueOf(number.doubleValue());
+        }
+		//native json
+		else if (o instanceof JsonPrimitive json) {
+			if (json.isNumber()) {
+				return toNBT(json.getAsNumber());
+			} else if (json.isBoolean()) {
+				return ByteTag.valueOf(json.getAsBoolean());
+			} else {
+				return StringTag.valueOf(json.getAsString());
 			}
-
-			return DoubleTag.valueOf(number.doubleValue());
-		} else if (o instanceof Map) {
-			CompoundTag tag = new OrderedCompoundTag();
-
-			for (Map.Entry<?, ?> entry : ((Map<?, ?>) o).entrySet()) {
-				Tag nbt1 = NBTUtils.toNBT(entry.getValue());
-
-				if (nbt1 != null) {
-					tag.put(String.valueOf(entry.getKey()), nbt1);
+		} else if (o instanceof JsonObject json) {
+			val tag = new OrderedCompoundTag();
+			for (val entry : json.entrySet()) {
+				tag.put(entry.getKey(), toNBT(entry.getValue()));
+			}
+		} else if (o instanceof JsonArray array) {
+			List<Tag> list = new ArrayList<>(array.size());
+			for (val element : array) {
+				list.add(toNBT(element));
+			}
+			return toNBT(list);
+		}
+		//java collections
+		else if (o instanceof Map<?,?> map) {
+			val tag = new OrderedCompoundTag();
+			for (val entry : map.entrySet()) {
+				val valueNbt = NBTUtils.toNBT(entry.getValue());
+				if (valueNbt != null) {
+					tag.put(String.valueOf(entry.getKey()), valueNbt);
 				}
 			}
-
 			return tag;
-		} else if (o instanceof Collection) {
-			return toNBT((Collection<?>) o);
+		} else if (o instanceof Collection c) {
+			return toNBT(c);
 		}
 
 		return null;
@@ -173,7 +179,9 @@ public class NBTUtils {
 	}
 
 	private static TagType<?> convertType(TagType<?> tagType) {
-		return tagType == CompoundTag.TYPE ? COMPOUND_TYPE : tagType == ListTag.TYPE ? LIST_TYPE : tagType;
+		return tagType == CompoundTag.TYPE ? COMPOUND_TYPE
+				: tagType == ListTag.TYPE ? LIST_TYPE
+				: tagType;
 	}
 
 	private static final TagType<OrderedCompoundTag> COMPOUND_TYPE = new TagType<OrderedCompoundTag>() {
