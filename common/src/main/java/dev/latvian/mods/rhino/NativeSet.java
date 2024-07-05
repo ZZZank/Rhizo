@@ -6,8 +6,6 @@
 
 package dev.latvian.mods.rhino;
 
-import java.util.Iterator;
-
 public class NativeSet extends IdScriptableObject {
 	private static final long serialVersionUID = -8442212766987072986L;
 	private static final Object SET_TAG = "Set";

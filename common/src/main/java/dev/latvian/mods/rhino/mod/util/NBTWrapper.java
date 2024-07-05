@@ -23,8 +23,8 @@ public interface NBTWrapper {
 			return null;
 		} else if (t instanceof StringTag) {
 			return t.getAsString();
-		} else if (t instanceof NumericTag) {
-			return ((NumericTag) t).getAsNumber();
+		} else if (t instanceof NumericTag numeric) {
+			return numeric.getAsNumber();
 		}
 
 		return t;

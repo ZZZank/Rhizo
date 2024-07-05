@@ -30,7 +30,6 @@ final class MemberBox implements Serializable {
 	transient Object delegateTo;
 	transient boolean vararg;
 
-
 	MemberBox(Method method) {
 		init(method);
 	}

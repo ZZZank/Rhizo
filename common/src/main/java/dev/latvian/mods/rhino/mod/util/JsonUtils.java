@@ -12,6 +12,7 @@ import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -55,18 +56,18 @@ public interface JsonUtils {
 	static JsonElement of(@Nullable Object o) {
 		if (o == null) {
 			return JsonNull.INSTANCE;
-		} else if (o instanceof JsonSerializable) {
-			return ((JsonSerializable) o).toJson();
-		} else if (o instanceof JsonElement) {
-			return (JsonElement) o;
+		} else if (o instanceof JsonSerializable serializable) {
+			return serializable.toJson();
+		} else if (o instanceof JsonElement element) {
+			return element;
 		} else if (o instanceof CharSequence) {
 			return new JsonPrimitive(o.toString());
-		} else if (o instanceof Boolean) {
-			return new JsonPrimitive((Boolean) o);
-		} else if (o instanceof Number) {
-			return new JsonPrimitive((Number) o);
-		} else if (o instanceof Character) {
-			return new JsonPrimitive((Character) o);
+		} else if (o instanceof Boolean b) {
+			return new JsonPrimitive(b);
+		} else if (o instanceof Number number) {
+			return new JsonPrimitive(number);
+		} else if (o instanceof Character c) {
+			return new JsonPrimitive(c);
 		}
 
 		return JsonNull.INSTANCE;
@@ -80,7 +81,7 @@ public interface JsonUtils {
 			LinkedHashMap<String, Object> map = new LinkedHashMap<>();
 			JsonObject o = json.getAsJsonObject();
 
-			for (Map.Entry<String, JsonElement> entry : o.entrySet()) {
+			for (val entry : o.entrySet()) {
 				map.put(entry.getKey(), toObject(entry.getValue()));
 			}
 

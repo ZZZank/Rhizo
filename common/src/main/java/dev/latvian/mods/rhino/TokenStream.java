@@ -453,22 +453,30 @@ class TokenStream {
 		// #string_id_map#
 		// The following assumes that Token.EOF == 0
 		final int
-				// 11.6.2.1 Keywords (ECMAScript2015)
-				Id_break = Token.BREAK, Id_case = Token.CASE, Id_catch = Token.CATCH, Id_class = Token.RESERVED, Id_const = Token.CONST, Id_continue = Token.CONTINUE, Id_default = Token.DEFAULT, Id_delete = Token.DELPROP, Id_do = Token.DO, Id_else = Token.ELSE, Id_export = Token.RESERVED, Id_extends = Token.RESERVED, Id_finally = Token.FINALLY, Id_for = Token.FOR, Id_function = Token.FUNCTION, Id_if = Token.IF, Id_import = Token.RESERVED, Id_in = Token.IN, Id_instanceof = Token.INSTANCEOF, Id_new = Token.NEW, Id_return = Token.RETURN, Id_super = Token.RESERVED, Id_switch = Token.SWITCH, Id_this = Token.THIS, Id_throw = Token.THROW, Id_try = Token.TRY, Id_typeof = Token.TYPEOF, Id_var = Token.VAR, Id_void = Token.VOID, Id_while = Token.WHILE, Id_with = Token.WITH, Id_yield = Token.YIELD,
+			// 11.6.2.1 Keywords (ECMAScript2015)
+			Id_break = Token.BREAK, Id_case = Token.CASE, Id_catch = Token.CATCH, Id_class = Token.RESERVED, Id_const =
+			Token.CONST, Id_continue = Token.CONTINUE, Id_default = Token.DEFAULT, Id_delete = Token.DELPROP, Id_do =
+			Token.DO, Id_else = Token.ELSE, Id_export = Token.RESERVED, Id_extends = Token.RESERVED, Id_finally =
+			Token.FINALLY, Id_for = Token.FOR, Id_function = Token.FUNCTION, Id_if = Token.IF, Id_import =
+			Token.RESERVED, Id_in = Token.IN, Id_instanceof = Token.INSTANCEOF, Id_new = Token.NEW, Id_return =
+			Token.RETURN, Id_super = Token.RESERVED, Id_switch = Token.SWITCH, Id_this = Token.THIS, Id_throw =
+			Token.THROW, Id_try = Token.TRY, Id_typeof = Token.TYPEOF, Id_var = Token.VAR, Id_void = Token.VOID,
+			Id_while = Token.WHILE, Id_with = Token.WITH, Id_yield = Token.YIELD,
 
-				// 11.6.2.2 Future Reserved Words
-				Id_await = Token.RESERVED, Id_enum = Token.RESERVED,
+			// 11.6.2.2 Future Reserved Words
+			Id_await = Token.RESERVED, Id_enum = Token.RESERVED,
 
-				// 11.6.2.2 NOTE Strict Future Reserved Words
-				Id_implements = Token.RESERVED, Id_interface = Token.RESERVED, Id_package = Token.RESERVED, Id_private = Token.RESERVED, Id_protected = Token.RESERVED, Id_public = Token.RESERVED,
+			// 11.6.2.2 NOTE Strict Future Reserved Words
+			Id_implements = Token.RESERVED, Id_interface = Token.RESERVED, Id_package = Token.RESERVED, Id_private =
+			Token.RESERVED, Id_protected = Token.RESERVED, Id_public = Token.RESERVED,
 
-				// 11.8 Literals
-				Id_false = Token.FALSE, Id_null = Token.NULL, Id_true = Token.TRUE,
+			// 11.8 Literals
+			Id_false = Token.FALSE, Id_null = Token.NULL, Id_true = Token.TRUE,
 
-				// Non ReservedWord, but Non IdentifierName in strict mode code.
-				// 12.1.1 Static Semantics: Early Errors
-				Id_let = Token.LET,   // TODO : Valid IdentifierName in non-strict mode.
-				Id_static = Token.RESERVED;
+			// Non ReservedWord, but Non IdentifierName in strict mode code.
+			// 12.1.1 Static Semantics: Early Errors
+			Id_let = Token.LET,   // TODO : Valid IdentifierName in non-strict mode.
+			Id_static = Token.RESERVED;
 
 		int id;
 		String s = name;

@@ -147,7 +147,8 @@ public abstract class VMBridge {
 
 			try {
 				accessible.setAccessible(true);
-			} catch (Exception ex) {}
+			} catch (Exception ignored) {
+			}
 
 			return accessible.isAccessible();
 		}
@@ -169,7 +170,13 @@ public abstract class VMBridge {
 		}
 
 		@Override
-		protected Object newInterfaceProxy(Object proxyHelper, final ContextFactory cf, final InterfaceAdapter adapter, final Object target, final Scriptable topScope) {
+		protected Object newInterfaceProxy(
+			Object proxyHelper,
+			final ContextFactory cf,
+			final InterfaceAdapter adapter,
+			final Object target,
+			final Scriptable topScope
+		) {
 			val c = (Constructor<?>) proxyHelper;
 
 			InvocationHandler handler = (proxy, method, args) -> {

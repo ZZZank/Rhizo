@@ -231,10 +231,9 @@ public final class JavaAdapter implements IdFunctionCall {
 			Object delegee = cl.getField("delegee").get(javaObject);
 			out.writeObject(delegee);
 			return;
-		} catch (IllegalAccessException e) {
-		} catch (NoSuchFieldException e) {
+		} catch (IllegalAccessException | NoSuchFieldException ignored) {
 		}
-		throw new IOException();
+        throw new IOException();
 	}
 
 	// Needed by NativeJavaObject de-serializer
@@ -264,13 +263,11 @@ public final class JavaAdapter implements IdFunctionCall {
 		Object[] ctorArgs = {factory, delegee, self};
 		try {
 			return adapterClass.getConstructor(ctorParms).newInstance(ctorArgs);
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
-		} catch (NoSuchMethodException e) {
+		} catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException ignored) {
 		}
 
-		throw new ClassNotFoundException("adapter");
+        throw new ClassNotFoundException("adapter");
 	}
 
 	private static ObjToIntMap getObjectFunctionNames(Scriptable obj) {

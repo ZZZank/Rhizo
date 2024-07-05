@@ -20,14 +20,14 @@ public class CompoundTagWrapper implements MapLike<String, Object>, JsonSerializ
 			return null;
 		} else if (t instanceof StringTag) {
 			return t.getAsString();
-		} else if (t instanceof NumericTag) {
-			return ((NumericTag) t).getAsNumber();
-		} else if (t instanceof CompoundTag) {
-			CompoundTagWrapper c = new CompoundTagWrapper((CompoundTag) t);
+		} else if (t instanceof NumericTag numeric) {
+			return numeric.getAsNumber();
+		} else if (t instanceof CompoundTag compound) {
+			CompoundTagWrapper c = new CompoundTagWrapper(compound);
 			c.listener = l;
 			return c;
-		} else if (t instanceof CollectionTag) {
-			CollectionTagWrapper<?> c = new CollectionTagWrapper<>((CollectionTag<?>) t);
+		} else if (t instanceof CollectionTag<?> collection) {
+			CollectionTagWrapper<?> c = new CollectionTagWrapper<>(collection);
 			c.listener = l;
 			return c;
 		}

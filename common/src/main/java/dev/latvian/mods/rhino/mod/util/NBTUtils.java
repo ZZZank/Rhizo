@@ -52,10 +52,9 @@ public class NBTUtils {
 				return toNBT(json.getAsNumber());
 			} else if (json.isBoolean()) {
 				return ByteTag.valueOf(json.getAsBoolean());
-			} else {
-				return StringTag.valueOf(json.getAsString());
 			}
-		} else if (o instanceof JsonObject json) {
+            return StringTag.valueOf(json.getAsString());
+        } else if (o instanceof JsonObject json) {
 			val tag = new OrderedCompoundTag();
 			for (val entry : json.entrySet()) {
 				tag.put(entry.getKey(), toNBT(entry.getValue()));
@@ -77,7 +76,7 @@ public class NBTUtils {
 				}
 			}
 			return tag;
-		} else if (o instanceof Collection c) {
+		} else if (o instanceof Collection<?> c) {
 			return toNBT(c);
 		}
 
@@ -180,7 +179,7 @@ public class NBTUtils {
 
 	private static TagType<?> convertType(TagType<?> tagType) {
 		return tagType == CompoundTag.TYPE ? COMPOUND_TYPE
-				: tagType == ListTag.TYPE ? LIST_TYPE
+			: tagType == ListTag.TYPE ? LIST_TYPE
 				: tagType;
 	}
 
