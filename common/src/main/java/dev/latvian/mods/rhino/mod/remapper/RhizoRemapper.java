@@ -167,6 +167,8 @@ public class RhizoRemapper implements Remapper {
             val nArgMethods = clazz.nArgMethods().get(method.getName());
             if (nArgMethods.isEmpty()) {
                 return NOT_REMAPPED;
+            } else if (nArgMethods.size() == 1) {
+                return nArgMethods.get(0).remapped();
             }
             val sb = new StringBuilder().append('(');
             for (val t : params) {
