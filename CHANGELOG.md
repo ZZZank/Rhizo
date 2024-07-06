@@ -1,3 +1,21 @@
+## Rhizo 3.1 -> 3.2
+
+`??` and `?.` operator
+
+- optional chaining operator (a ?. b)
+- nullish coalescing operator (a ?? b)
+    - note that this operator does not support compile mode yet
+- better remapper performance, by caching annotation values, and using a simplified version of remapper sequence
+- NBT converting now supports JSON types
+- (internal) JavaMembers is rewritten, to guard against broken classes, and expose more useful information
+- a new RemapPrefixForJSRep annotation that enables remapping based on multiple prefixes
+- an unmodifiable view of rhizo remapper internal is now exposed
+    - will be used by ProbeJS Legacy soon, stay tuned for that
+- default remapper now includes Rhizo one and annotation-based one
+    - this can fix KubeJS having broken startup script remapping
+
+---
+
 ## Rhizo 3.0 -> 3.1(beta)
 
 API update
