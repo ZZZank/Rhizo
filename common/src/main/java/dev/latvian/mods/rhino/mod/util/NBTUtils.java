@@ -47,26 +47,26 @@ public class NBTUtils {
             return DoubleTag.valueOf(number.doubleValue());
         }
 		//native json
-//		else if (o instanceof JsonPrimitive json) {
-//			if (json.isNumber()) {
-//				return toNBT(json.getAsNumber());
-//			} else if (json.isBoolean()) {
-//				return ByteTag.valueOf(json.getAsBoolean());
-//			}
-//            return StringTag.valueOf(json.getAsString());
-//        } else if (o instanceof JsonObject json) {
-//			val tag = new OrderedCompoundTag();
-//			for (val entry : json.entrySet()) {
-//				tag.put(entry.getKey(), toNBT(entry.getValue()));
-//			}
-//			return tag;
-//		} else if (o instanceof JsonArray array) {
-//			List<Tag> list = new ArrayList<>(array.size());
-//			for (val element : array) {
-//				list.add(toNBT(element));
-//			}
-//			return toNBT(list);
-//		}
+		else if (o instanceof JsonPrimitive json) {
+			if (json.isNumber()) {
+				return toNBT(json.getAsNumber());
+			} else if (json.isBoolean()) {
+				return ByteTag.valueOf(json.getAsBoolean());
+			}
+            return StringTag.valueOf(json.getAsString());
+        } else if (o instanceof JsonObject json) {
+			val tag = new OrderedCompoundTag();
+			for (val entry : json.entrySet()) {
+				tag.put(entry.getKey(), toNBT(entry.getValue()));
+			}
+			return tag;
+		} else if (o instanceof JsonArray array) {
+			List<Tag> list = new ArrayList<>(array.size());
+			for (val element : array) {
+				list.add(toNBT(element));
+			}
+			return toNBT(list);
+		}
 		//java collections
 		else if (o instanceof Map<?,?> map) {
 			val tag = new OrderedCompoundTag();

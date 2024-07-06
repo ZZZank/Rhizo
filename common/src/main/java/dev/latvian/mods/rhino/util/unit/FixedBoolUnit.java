@@ -9,7 +9,11 @@ public class FixedBoolUnit extends FixedUnit {
 
     private final boolean b;
 
-    protected FixedBoolUnit(boolean b) {
+    public static FixedBoolUnit of(boolean b) {
+        return b ? TRUE : FALSE;
+    }
+
+    private FixedBoolUnit(boolean b) {
         super(b ? 1F : 0F);
         this.b = b;
     }
