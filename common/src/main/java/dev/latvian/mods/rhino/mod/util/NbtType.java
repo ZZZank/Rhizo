@@ -16,6 +16,9 @@
 
 package dev.latvian.mods.rhino.mod.util;
 
+/**
+ * @see net.minecraft.nbt.TagTypes
+ */
 public final class NbtType {
 	public static final int END = 0;
 	public static final int BYTE = 1;

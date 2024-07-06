@@ -36,16 +36,16 @@ public class CompoundTagWrapper implements MapLike<String, Object>, JsonSerializ
 	}
 
 	public static Tag wrap(@Nullable Object o) {
-		if (o instanceof Tag) {
-			return (Tag) o;
+		if (o instanceof Tag tag) {
+			return tag;
 		} else if (o instanceof Number) {
 			return DoubleTag.valueOf(((Number) o).doubleValue());
 		} else if (o instanceof CharSequence) {
 			return StringTag.valueOf(o.toString());
-		} else if (o instanceof CompoundTagWrapper) {
-			return ((CompoundTagWrapper) o).minecraftTag;
-		} else if (o instanceof CollectionTagWrapper) {
-			return ((CollectionTagWrapper<?>) o).minecraftTag;
+		} else if (o instanceof CompoundTagWrapper compound) {
+			return compound.minecraftTag;
+		} else if (o instanceof CollectionTagWrapper collection) {
+			return collection.minecraftTag;
 		}
 
 		return null;

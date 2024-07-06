@@ -178,81 +178,46 @@ public class NBTUtils {
 		stringBuilder.append(c);
 	}
 
-	private static TagType<?> convertType(TagType<?> tagType) {
-		return tagType == CompoundTag.TYPE ? COMPOUND_TYPE
+	static TagType<?> convertType(TagType<?> tagType) {
+		return tagType == CompoundTag.TYPE ? OrderedCompoundTag.ORDERED_TYPE
 			: tagType == ListTag.TYPE ? LIST_TYPE
 				: tagType;
 	}
 
-	private static final TagType<OrderedCompoundTag> COMPOUND_TYPE = new TagType<OrderedCompoundTag>() {
-		@Override
-		public OrderedCompoundTag load(DataInput dataInput, int i, NbtAccounter nbtAccounter) throws IOException {
-			nbtAccounter.accountBits(384L);
-			if (i > 512) {
-				throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
-			}
-			Map<String, Tag> map = new LinkedHashMap<>();
+	private static final TagType<ListTag> LIST_TYPE = new TagType<>() {
+        @Override
+        public ListTag load(DataInput dataInput, int i, NbtAccounter nbtAccounter) throws IOException {
+            nbtAccounter.accountBits(296L);
+            if (i > 512) {
+                throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
+            }
+            byte b = dataInput.readByte();
+            int j = dataInput.readInt();
+            if (b == 0 && j > 0) {
+                throw new RuntimeException("Missing type on ListTag");
+            } else {
+                nbtAccounter.accountBits(32L * (long) j);
+                TagType<?> tagType = convertType(TagTypes.getType(b));
+                ListTag list = new ListTag();
 
-			byte b;
-			while ((b = dataInput.readByte()) != 0) {
-				String string = dataInput.readUTF();
-				nbtAccounter.accountBits(224L + 16L * string.length());
-				TagType<?> tagType = convertType(TagTypes.getType(b));
-				Tag tag = tagType.load(dataInput, i + 1, nbtAccounter);
+                for (int k = 0; k < j; ++k) {
+                    list.add(tagType.load(dataInput, i + 1, nbtAccounter));
+                }
 
-				if (map.put(string, tag) != null) {
-					nbtAccounter.accountBits(288L);
-				}
-			}
+                return list;
+            }
+        }
 
-			return new OrderedCompoundTag(map);
-		}
+        @Override
+        public String getName() {
+            return "LIST";
+        }
 
-		@Override
-		public String getName() {
-			return "COMPOUND";
-		}
-
-		@Override
-		public String getPrettyName() {
-			return "TAG_Compound";
-		}
-	};
-
-	private static final TagType<ListTag> LIST_TYPE = new TagType<ListTag>() {
-		@Override
-		public ListTag load(DataInput dataInput, int i, NbtAccounter nbtAccounter) throws IOException {
-			nbtAccounter.accountBits(296L);
-			if (i > 512) {
-				throw new RuntimeException("Tried to read NBT tag with too high complexity, depth > 512");
-			}
-			byte b = dataInput.readByte();
-			int j = dataInput.readInt();
-			if (b == 0 && j > 0) {
-				throw new RuntimeException("Missing type on ListTag");
-			} else {
-				nbtAccounter.accountBits(32L * (long) j);
-				TagType<?> tagType = convertType(TagTypes.getType(b));
-				ListTag list = new ListTag();
-
-				for (int k = 0; k < j; ++k) {
-					list.add(tagType.load(dataInput, i + 1, nbtAccounter));
-				}
-
-				return list;
-			}
-		}
-
-		@Override
-		public String getName() {
-			return "LIST";
-		}
-
-		@Override
-		public String getPrettyName() {
-			return "TAG_List";
-		}
-	};
+        @Override
+        public String getPrettyName() {
+            return "TAG_List";
+        }
+    };
 
 	@Nullable
 	public static OrderedCompoundTag read(FriendlyByteBuf buf) {
@@ -271,11 +236,11 @@ public class NBTUtils {
 			}
 			stream.readUTF();
 			TagType<?> tagType = convertType(TagTypes.getType(b1));
-			if (tagType != COMPOUND_TYPE) {
+			if (tagType != OrderedCompoundTag.ORDERED_TYPE) {
 				stream.close();
 				return null;
 			}
-			return COMPOUND_TYPE.load(stream, 0, NbtAccounter.UNLIMITED);
+			return OrderedCompoundTag.ORDERED_TYPE.load(stream, 0, NbtAccounter.UNLIMITED);
 		} catch (IOException var5) {
 			throw new EncoderException(var5);
 		}

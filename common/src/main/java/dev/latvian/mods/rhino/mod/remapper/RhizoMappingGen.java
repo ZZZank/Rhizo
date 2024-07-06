@@ -149,13 +149,16 @@ public abstract class RhizoMappingGen {
         }
         //read meta info from version info
         URLConnection mappingUrl = null;
-        try (var metaReader = MappingIO.createUrlReader(verInfo.get("url").getAsString())) {
-            var meta = JsonUtils.GSON.fromJson(metaReader, JsonObject.class);
-            if (!(meta.get("downloads") instanceof JsonObject o)
-                || !(o.get("client_mappings") instanceof JsonObject cmap) || !cmap.has("url")) {
+        try (val metaReader = MappingIO.createUrlReader(verInfo.get("url").getAsString())) {
+            val meta = JsonUtils.GSON.fromJson(metaReader, JsonObject.class);
+            if (meta.get("downloads") instanceof JsonObject o
+                && o.get("client_mappings") instanceof JsonObject cmap
+                && cmap.has("url")
+            ) {
+                mappingUrl = MappingIO.getUrlConnection(cmap.get("url").getAsString());
+            } else {
                 throw new RemapperException("This Minecraft version doesn't have mappings!");
             }
-            mappingUrl = MappingIO.getUrlConnection(cmap.get("url").getAsString());
         }
         //generate mapping
         return IMappingFile.load(mappingUrl.getInputStream());
