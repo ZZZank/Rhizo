@@ -43,7 +43,7 @@ public class RhizoRemapper implements Remapper {
                 throw new RemapperException(
                     "Rhizo mapping file version not matching expected version " + RhizoMappingGen.MAPPING_VERSION);
             }
-            RemappingHelper.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
+            MappingIO.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
             val SKIP_MARK = MappingIO.readUtf(in);
             //class
             val classCount = MappingIO.readVarInt(in);
@@ -77,7 +77,7 @@ public class RhizoRemapper implements Remapper {
                 }
             }
         } catch (Exception e) {
-            RemappingHelper.LOGGER.error("Failed to load Rhizo Minecraft remapper!", e);
+            MappingIO.LOGGER.error("Failed to load Rhizo Minecraft remapper!", e);
         }
     }
 
@@ -85,11 +85,11 @@ public class RhizoRemapper implements Remapper {
         val cfgPath = RhinoProperties.getGameDir().resolve("config/" + name);
         try {
             if (Files.exists(cfgPath)) {
-                RemappingHelper.LOGGER.info("Found Rhizo mapping file from config/{}.", name);
+                MappingIO.LOGGER.info("Found Rhizo mapping file from config/{}.", name);
                 return new GZIPInputStream(Files.newInputStream(cfgPath));
             }
             val in = new GZIPInputStream(RhinoProperties.openResource(name));
-            RemappingHelper.LOGGER.info("Found Rhizo mapping file from Rhizo mod jar.");
+            MappingIO.LOGGER.info("Found Rhizo mapping file from Rhizo mod jar.");
             return in;
         } catch (Exception e) {
             return null;
@@ -108,7 +108,7 @@ public class RhizoRemapper implements Remapper {
         if (INSTANCE == null) {
             long start = System.currentTimeMillis();
             INSTANCE = new RhizoRemapper();
-            RemappingHelper.LOGGER.info("Rhizo remapper initialization took {} milliseconds", System.currentTimeMillis()-start);
+            MappingIO.LOGGER.info("Rhizo remapper initialization took {} milliseconds", System.currentTimeMillis()-start);
         }
         return INSTANCE;
     }

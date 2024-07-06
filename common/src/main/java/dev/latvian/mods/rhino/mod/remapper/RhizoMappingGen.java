@@ -47,10 +47,10 @@ public abstract class RhizoMappingGen {
             //write mapping
             writeRhizoMapping(JavaPortingHelper.ofPath(MAPPING_FILENAME), target, mcVersion);
         } catch (Exception e) {
-            RemappingHelper.LOGGER.error("Mapping generation failed", e);
+            MappingIO.LOGGER.error("Mapping generation failed", e);
             return;
         }
-        RemappingHelper.LOGGER.info("Mapping generation finished!");
+        MappingIO.LOGGER.info("Mapping generation finished!");
     }
 
     /**
@@ -58,7 +58,7 @@ public abstract class RhizoMappingGen {
      */
     private static void writeRhizoMapping(@NotNull Path path, @NotNull IMappingFile mapping, @NotNull String mcVersion) throws IOException {
         val out = new GZIPOutputStream(Files.newOutputStream(path));
-        RemappingHelper.LOGGER.info("writing Rhizo mapping.");
+        MappingIO.LOGGER.info("writing Rhizo mapping.");
         //metadata
         out.write(MAPPING_MARK); //minecraft mapping mark
         out.write(MAPPING_VERSION); //mapping version
@@ -76,7 +76,7 @@ public abstract class RhizoMappingGen {
             val mappedDot = clazz.getMapped().replace('/', '.');
             MappingIO.writeUtf(out, originalDot);
             MappingIO.writeUtf(out, mappedDot);
-            RemappingHelper.LOGGER.info("class: '{}' -> '{}'", originalDot, mappedDot);
+            MappingIO.LOGGER.info("class: '{}' -> '{}'", originalDot, mappedDot);
             //method
             val methods = clazz.getMethods();
             MappingIO.writeVarInt(out, methods.size());
@@ -88,7 +88,7 @@ public abstract class RhizoMappingGen {
                     continue;
                 }
                 val paramDesc = method.getDescriptor().substring(0, method.getDescriptor().lastIndexOf(')'));
-                RemappingHelper.LOGGER.info(
+                MappingIO.LOGGER.info(
                     "    method: '{}' -> '{}', with descriptor '{}'", original, mapped, paramDesc
                 );
                 MappingIO.writeUtf(out, original);
@@ -107,7 +107,7 @@ public abstract class RhizoMappingGen {
                 }
                 MappingIO.writeUtf(out, original);
                 MappingIO.writeUtf(out, mapped);
-                RemappingHelper.LOGGER.info("    field: '{}' -> '{}'", original, mapped);
+                MappingIO.LOGGER.info("    field: '{}' -> '{}'", original, mapped);
             }
         }
         out.close();
@@ -131,7 +131,7 @@ public abstract class RhizoMappingGen {
     private static IMappingFile loadVanilla(@NotNull String mcVersion) throws IOException {
         //find info for provided `mcVersion`
         JsonObject verInfo = null;
-        try (val metaInfoReader = RemappingHelper.createUrlReader(
+        try (val metaInfoReader = MappingIO.createUrlReader(
             "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json")) {
             for (var metaInfo : JsonUtils.GSON.fromJson(metaInfoReader, JsonObject.class)
                 .get("versions")
@@ -149,13 +149,13 @@ public abstract class RhizoMappingGen {
         }
         //read meta info from version info
         URLConnection mappingUrl = null;
-        try (var metaReader = RemappingHelper.createUrlReader(verInfo.get("url").getAsString())) {
+        try (var metaReader = MappingIO.createUrlReader(verInfo.get("url").getAsString())) {
             var meta = JsonUtils.GSON.fromJson(metaReader, JsonObject.class);
             if (!(meta.get("downloads") instanceof JsonObject o)
                 || !(o.get("client_mappings") instanceof JsonObject cmap) || !cmap.has("url")) {
                 throw new RemapperException("This Minecraft version doesn't have mappings!");
             }
-            mappingUrl = RemappingHelper.getUrlConnection(cmap.get("url").getAsString());
+            mappingUrl = MappingIO.getUrlConnection(cmap.get("url").getAsString());
         }
         //generate mapping
         return IMappingFile.load(mappingUrl.getInputStream());

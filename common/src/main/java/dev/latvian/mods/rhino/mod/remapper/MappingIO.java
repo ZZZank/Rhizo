@@ -1,15 +1,21 @@
 package dev.latvian.mods.rhino.mod.remapper;
 
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
+import lombok.val;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
-public abstract class MappingIO {
+public interface MappingIO {
 
-    public static void writeVarInt(OutputStream stream, int value) throws IOException {
+    Logger LOGGER = LogManager.getLogger("Rhizo Java Remapper");
+
+    static void writeVarInt(OutputStream stream, int value) throws IOException {
         while ((value & -128) != 0) {
             stream.write(value & 127 | 128);
             value >>>= 7;
@@ -18,13 +24,13 @@ public abstract class MappingIO {
         stream.write(value);
     }
 
-    public static void writeUtf(OutputStream stream, String value) throws IOException {
+    static void writeUtf(OutputStream stream, String value) throws IOException {
         byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
         writeVarInt(stream, bytes.length);
         stream.write(bytes);
     }
 
-    public static int readVarInt(InputStream stream) throws IOException {
+    static int readVarInt(InputStream stream) throws IOException {
         int i = 0;
         int j = 0;
 
@@ -40,7 +46,7 @@ public abstract class MappingIO {
         return i;
     }
 
-    public static String readUtf(InputStream stream) throws IOException {
+    static String readUtf(InputStream stream) throws IOException {
         byte[] bytes = new byte[readVarInt(stream)];
 
         for (int i = 0; i < bytes.length; i++) {
@@ -48,5 +54,21 @@ public abstract class MappingIO {
         }
 
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    static Reader createUrlReader(String url) throws IOException {
+        LOGGER.info("Fetching {}...", url);
+        val connection = getUrlConnection(url);
+        return new InputStreamReader(new BufferedInputStream(connection.getInputStream()), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * connect to an url, with more tolerance in timeout
+     */
+    static @NotNull URLConnection getUrlConnection(String url) throws IOException {
+        val connection = new URL(url).openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(10000);
+        return connection;
     }
 }
