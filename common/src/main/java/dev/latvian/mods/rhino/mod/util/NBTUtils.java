@@ -59,6 +59,7 @@ public class NBTUtils {
 			for (val entry : json.entrySet()) {
 				tag.put(entry.getKey(), toNBT(entry.getValue()));
 			}
+			return tag;
 		} else if (o instanceof JsonArray array) {
 			List<Tag> list = new ArrayList<>(array.size());
 			for (val element : array) {
