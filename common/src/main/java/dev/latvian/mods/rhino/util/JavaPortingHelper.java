@@ -47,7 +47,8 @@ public class JavaPortingHelper {
         if (dot == -1) {
             return "";
         }
-        return className.substring(0, dot).intern();
+        return className.substring(0, dot);
+//        return className.substring(0, dot).intern();
     }
 
     public static String descriptorString(Class<?> clazz) {
