@@ -1,18 +1,15 @@
 package dev.latvian.mods.rhino.mod.remapper;
 
 import dev.latvian.mods.rhino.mod.RhinoProperties;
-import dev.latvian.mods.rhino.mod.remapper.info.Clazz;
-import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
+import lombok.Getter;
 import lombok.val;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
@@ -24,13 +21,12 @@ public class RhizoRemapper implements Remapper {
 
     private static RhizoRemapper INSTANCE = null;
 
-    private final Map<String, Clazz> classMap;
-    private final Map<String, Clazz> classUnmap;
+    public final Map<String, String> mappingC = new HashMap<>(); //class mapping
+    public final Map<String, String> unmappingC = new HashMap<>(); //class mapping
+    public final Map<String, String> mappingM = new HashMap<>(); //method mapping
+    public final Map<String, String> mappingF = new HashMap<>(); //field mapping
 
     private RhizoRemapper() {
-        //init
-        this.classMap = new HashMap<>();
-        this.classUnmap = new HashMap<>();
         //load
         try (val in = locateMappingFile()) {
             if (in == null) {
@@ -48,12 +44,13 @@ public class RhizoRemapper implements Remapper {
             //class
             val classCount = MappingIO.readVarInt(in);
             for (int i = 0; i < classCount; i++) {
-                val original = MappingIO.readUtf(in);
-                if (SKIP_MARK.equals(original)) {
+                val originalC = MappingIO.readUtf(in);
+                if (SKIP_MARK.equals(originalC)) {
                     continue;
                 }
-                val mapped = MappingIO.readUtf(in);
-                val clazz = acceptClass(original, mapped);
+                val mappedC = MappingIO.readUtf(in);
+                mappingC.put(originalC, mappedC);
+                unmappingC.put(mappedC, originalC);
                 //method
                 val methodCount = MappingIO.readVarInt(in);
                 for (int j = 0; j < methodCount; j++) {
@@ -61,9 +58,8 @@ public class RhizoRemapper implements Remapper {
                     if (SKIP_MARK.equals(originalM)) {
                         continue;
                     }
-                    val paramDesc = MappingIO.readUtf(in);
                     val mappedM = MappingIO.readUtf(in);
-                    clazz.acceptMethod(originalM, paramDesc, mappedM);
+                    mappingM.put(originalM, mappedM);
                 }
                 //field
                 val fieldCount = MappingIO.readVarInt(in);
@@ -73,7 +69,7 @@ public class RhizoRemapper implements Remapper {
                         continue;
                     }
                     val mappedF = MappingIO.readUtf(in);
-                    clazz.acceptField(originalF, mappedF);
+                    mappingF.put(originalF, mappedF);
                 }
             }
         } catch (Exception e) {
@@ -96,14 +92,6 @@ public class RhizoRemapper implements Remapper {
         }
     }
 
-    public Map<String, Clazz> getClazzMappingView() {
-        return Collections.unmodifiableMap(classMap);
-    }
-
-    public Map<String, Clazz> getClazzUnmappingView() {
-        return Collections.unmodifiableMap(classUnmap);
-    }
-
     public static RhizoRemapper instance() {
         if (INSTANCE == null) {
             long start = System.currentTimeMillis();
@@ -113,75 +101,23 @@ public class RhizoRemapper implements Remapper {
         return INSTANCE;
     }
 
-    Clazz acceptClass(String original, String remapped) {
-        val clazz = new Clazz(original, remapped);
-        this.classMap.put(original, clazz);
-        this.classUnmap.put(remapped, clazz);
-        return clazz;
-    }
-
     @Override
     public String remapClass(Class<?> from) {
-        val clz = getClazzFiltered(from);
-        return clz == null ? NOT_REMAPPED : clz.remapped();
-    }
-
-    private @Nullable Clazz getClazzFiltered(Class<?> from) {
-        if (from == null || from == Object.class || JavaPortingHelper.getPackageName(from).startsWith("java.")) {
-            return null;
-        }
-        return classMap.get(from.getName());
+        return mappingC.getOrDefault(from.getName(), NOT_REMAPPED);
     }
 
     @Override
     public String unmapClass(String from) {
-        val un = classUnmap.get(from);
-        return un == null ? NOT_REMAPPED : un.original();
+        return unmappingC.getOrDefault(from, NOT_REMAPPED);
     }
 
     @Override
     public String remapField(Class<?> from, Field field) {
-        val clazz = getClazzFiltered(from);
-        if (clazz == null) {
-            return NOT_REMAPPED;
-        }
-        val fInfo = clazz.fields().get(field.getName());
-        return fInfo == null ? NOT_REMAPPED : fInfo.remapped();
+        return mappingF.getOrDefault(field.getName(), NOT_REMAPPED);
     }
 
     @Override
     public String remapMethod(Class<?> from, Method method) {
-        //class level
-        val clazz = getClazzFiltered(from);
-        if (clazz == null) {
-            return NOT_REMAPPED;
-        }
-        //method level
-        val params = method.getParameterTypes();
-        if (params.length == 0) {
-            val noArgMethod = clazz.noArgMethods().get(method.getName());
-            if (noArgMethod != null) {
-                return noArgMethod.remapped();
-            }
-        } else {
-            val nArgMethods = clazz.nArgMethods().get(method.getName());
-            if (nArgMethods.isEmpty()) {
-                return NOT_REMAPPED;
-            } else if (nArgMethods.size() == 1) {
-                return nArgMethods.get(0).remapped();
-            }
-            val sb = new StringBuilder().append('(');
-            for (val t : params) {
-                sb.append(JavaPortingHelper.descriptorString(t));
-            }
-            val paramDesc = sb.toString();
-            for (val m : nArgMethods) {
-                if (m.paramDescriptor().equals(paramDesc)) {
-                    return m.remapped();
-                }
-            }
-        }
-        //failed
-        return NOT_REMAPPED;
+        return mappingM.getOrDefault(method.getName(), NOT_REMAPPED);
     }
 }

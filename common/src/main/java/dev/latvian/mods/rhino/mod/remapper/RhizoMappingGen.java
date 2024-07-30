@@ -23,7 +23,7 @@ public abstract class RhizoMappingGen {
      */
     private static final String SKIP_MARK = "31";
     public static final int MAPPING_MARK = 21;
-    public static final int MAPPING_VERSION = 2;
+    public static final int MAPPING_VERSION = 3;
     public static final String MAPPING_FILENAME = "rhizo.jsmapping";
 
     /**
@@ -56,7 +56,11 @@ public abstract class RhizoMappingGen {
     /**
      * write mapping data into specified file path, in a special format
      */
-    private static void writeRhizoMapping(@NotNull Path path, @NotNull IMappingFile mapping, @NotNull String mcVersion) throws IOException {
+    private static void writeRhizoMapping(
+        @NotNull Path path,
+        @NotNull IMappingFile mapping,
+        @NotNull String mcVersion
+    ) throws IOException {
         val out = new GZIPOutputStream(Files.newOutputStream(path));
         MappingIO.LOGGER.info("writing Rhizo mapping.");
         //metadata
@@ -72,42 +76,38 @@ public abstract class RhizoMappingGen {
                 MappingIO.writeUtf(out, SKIP_MARK);
                 continue;
             }
-            val originalDot = clazz.getOriginal().replace('/', '.');
-            val mappedDot = clazz.getMapped().replace('/', '.');
-            MappingIO.writeUtf(out, originalDot);
-            MappingIO.writeUtf(out, mappedDot);
-            MappingIO.LOGGER.info("class: '{}' -> '{}'", originalDot, mappedDot);
+            val originalC = clazz.getOriginal().replace('/', '.');
+            val mappedC = clazz.getMapped().replace('/', '.');
+            MappingIO.writeUtf(out, originalC);
+            MappingIO.writeUtf(out, mappedC);
+            MappingIO.LOGGER.info("class: '{}' -> '{}'", originalC, mappedC);
             //method
             val methods = clazz.getMethods();
             MappingIO.writeVarInt(out, methods.size());
             for (IMappingFile.IMethod method : methods) {
-                val original = method.getOriginal();
-                val mapped = method.getMapped();
-                if (mapped.startsWith("lambda$") || mapped.startsWith("<") || original.equals(mapped)) {
+                val originalM = method.getOriginal();
+                val mappedM = method.getMapped();
+                if (mappedM.startsWith("lambda$") || mappedM.startsWith("<") || originalM.equals(mappedM)) {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
-                val paramDesc = method.getDescriptor().substring(0, method.getDescriptor().lastIndexOf(')'));
-                MappingIO.LOGGER.info(
-                    "    method: '{}' -> '{}', with descriptor '{}'", original, mapped, paramDesc
-                );
-                MappingIO.writeUtf(out, original);
-                MappingIO.writeUtf(out, paramDesc);
-                MappingIO.writeUtf(out, mapped);
+                MappingIO.LOGGER.info("    method: '{}' -> '{}'", originalM, mappedM);
+                MappingIO.writeUtf(out, originalM);
+                MappingIO.writeUtf(out, mappedM);
             }
             //field
             val fields = clazz.getFields();
             MappingIO.writeVarInt(out, fields.size());
             for (IMappingFile.IField field : fields) {
-                val original = field.getOriginal();
-                val mapped = field.getMapped();
-                if (mapped.equals(original)) {
+                val originalF = field.getOriginal();
+                val mappedF = field.getMapped();
+                if (mappedF.equals(originalF)) {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
-                MappingIO.writeUtf(out, original);
-                MappingIO.writeUtf(out, mapped);
-                MappingIO.LOGGER.info("    field: '{}' -> '{}'", original, mapped);
+                MappingIO.writeUtf(out, originalF);
+                MappingIO.writeUtf(out, mappedF);
+                MappingIO.LOGGER.info("    field: '{}' -> '{}'", originalF, mappedF);
             }
         }
         out.close();
