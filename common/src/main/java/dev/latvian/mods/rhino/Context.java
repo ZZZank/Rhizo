@@ -298,7 +298,7 @@ public class Context {
         }
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
-        optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
+        optimizationLevel = RhinoProperties.get().optimizationLevel;
         remapper = null;
         customProperties = new HashMap<>();
     }
@@ -2116,7 +2116,7 @@ public class Context {
     }
 
     private Evaluator createCompiler() {
-        if(!RhinoProperties.INSTANCE.enableCompiler) {
+        if(!RhinoProperties.get().enableCompiler) {
             return createInterpreter();
         }
         Evaluator result = null;

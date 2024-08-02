@@ -1,8 +1,7 @@
 package dev.latvian.mods.rhino.mod;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.latvian.mods.rhino.mod.remapper.MappingIO;
-import org.jetbrains.annotations.Contract;
+import dev.latvian.mods.rhino.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
@@ -12,42 +11,30 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
-/**
- * @see dev.latvian.mods.rhino.mod.forge.RhinoPropertiesImpl
- * @see dev.latvian.mods.rhino.mod.fabric.RhinoPropertiesImpl
- */
-public class RhinoProperties {
+public abstract class RhinoProperties {
 
-	public static final RhinoProperties INSTANCE = new RhinoProperties();
+	private static final Lazy<RhinoProperties> implementation = Lazy.serviceLoader(RhinoProperties.class);
+
+	public static RhinoProperties get() {
+		return implementation.get();
+	}
 
 	public boolean generateMapping;
 	public boolean enableCompiler;
 	public int optimizationLevel;
 
-	@ExpectPlatform
-	@Contract(value = " -> _", pure = true)
-	public static Path getGameDir() {
-		throw new AssertionError();
-	}
+	public abstract Path getGameDir();
 
-	@ExpectPlatform
-	@Contract(value = " -> _", pure = true)
-	public static boolean isDev() {
-		throw new AssertionError();
-	}
+	public abstract boolean isDev();
 
-	@ExpectPlatform
 	@NotNull
-	@Contract(value = " -> _", pure = true)
-	public static InputStream openResource(String path) throws Exception {
-		throw new AssertionError();
-	}
+	public abstract InputStream openResource(String path) throws Exception;
 
 	private final Properties properties;
 	// public boolean forceLocalMappings;
 	private boolean writeProperties;
 
-	RhinoProperties() {
+	 public RhinoProperties() {
 		this.properties = new Properties();
 
 		try {
