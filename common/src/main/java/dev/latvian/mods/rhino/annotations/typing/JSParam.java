@@ -2,13 +2,18 @@ package dev.latvian.mods.rhino.annotations.typing;
 
 import java.lang.annotation.*;
 
-/**
- * @author ZZZank
- */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({})
+@JSInfo("""
+    should only be used within {@link JSParams}
+    
+    @author ZZZank
+    """)
 public @interface JSParam {
+    @JSInfo("used for adding descriptions, just like {@link JSInfo}")
+    String value();
+
+    @JSInfo("optional, used for renaming a param, left empty to not rename")
     String rename() default "";
-    String type();
 }
