@@ -18,10 +18,7 @@ import java.util.zip.GZIPOutputStream;
 
 public abstract class RhizoMappingGen {
 
-    /**
-     * the number 31, is obtained by running SHA256 on string "lambda", and calculating `HASH mod 128`
-     */
-    private static final String SKIP_MARK = "31";
+    public static final String SKIP_MARK = "~";
     public static final int MAPPING_MARK = 21;
     public static final int MAPPING_VERSION = 3;
     public static final String MAPPING_FILENAME = "rhizo.jsmapping";
@@ -67,7 +64,6 @@ public abstract class RhizoMappingGen {
         out.write(MAPPING_MARK); //minecraft mapping mark
         out.write(MAPPING_VERSION); //mapping version
         MappingIO.writeUtf(out, mcVersion); //minecraft version
-        MappingIO.writeUtf(out, SKIP_MARK); //skip mark
         //class
         val classes = mapping.getClasses();
         MappingIO.writeVarInt(out, classes.size());

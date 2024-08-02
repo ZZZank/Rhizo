@@ -3,7 +3,6 @@ package dev.latvian.mods.rhino.mod.remapper;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
-import lombok.Getter;
 import lombok.val;
 
 import java.io.InputStream;
@@ -13,6 +12,8 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+
+import static dev.latvian.mods.rhino.mod.remapper.RhizoMappingGen.SKIP_MARK;
 
 /**
  * @author ZZZank
@@ -35,12 +36,17 @@ public class RhizoRemapper implements Remapper {
             if (in.read() != RhizoMappingGen.MAPPING_MARK) {
                 throw new RemapperException("Invalid Rhizo mapping file!");
             }
-            if (in.read() != RhizoMappingGen.MAPPING_VERSION) {
-                throw new RemapperException(
-                    "Rhizo mapping file version not matching expected version " + RhizoMappingGen.MAPPING_VERSION);
+            {
+                val version = in.read();
+                if (version != RhizoMappingGen.MAPPING_VERSION) {
+                    throw new RemapperException(String.format(
+                        "Rhizo mapping file version %d not matching expected version %d",
+                        version,
+                        RhizoMappingGen.MAPPING_VERSION
+                    ));
+                }
             }
             MappingIO.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
-            val SKIP_MARK = MappingIO.readUtf(in);
             //class
             val classCount = MappingIO.readVarInt(in);
             for (int i = 0; i < classCount; i++) {
