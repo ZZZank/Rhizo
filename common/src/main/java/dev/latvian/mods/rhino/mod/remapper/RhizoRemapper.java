@@ -84,13 +84,13 @@ public class RhizoRemapper implements Remapper {
     }
 
     private static InputStream locateMappingFile() {
-        val cfgPath = RhinoProperties.get().getGameDir().resolve("config/" + RhizoMappingGen.MAPPING_FILENAME);
+        val cfgPath = RhinoProperties.getGameDir().resolve("config/" + RhizoMappingGen.MAPPING_FILENAME);
         try {
             if (Files.exists(cfgPath)) {
                 MappingIO.LOGGER.info("Found Rhizo mapping file from config/{}.", RhizoMappingGen.MAPPING_FILENAME);
                 return new GZIPInputStream(Files.newInputStream(cfgPath));
             }
-            val in = new GZIPInputStream(RhinoProperties.get().openResource(RhizoMappingGen.MAPPING_FILENAME));
+            val in = new GZIPInputStream(RhinoProperties.openResource(RhizoMappingGen.MAPPING_FILENAME));
             MappingIO.LOGGER.info("Found Rhizo mapping file from Rhizo mod jar.");
             return in;
         } catch (Exception e) {

@@ -26,7 +26,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * This is the default implementation of the Scriptable interface. This
@@ -1219,9 +1223,8 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
                 && parmTypes[0] == ScriptRuntime.ContextClass
                 && parmTypes[1] == ScriptRuntime.ScriptableClass
                 && parmTypes[2] == Boolean.TYPE
-                && Modifier.isStatic(method.getModifiers())
-			) {
-                Object[] args = {Context.getContext(), scope, Boolean.valueOf(sealed)};
+                && Modifier.isStatic(method.getModifiers())) {
+                Object[] args = {Context.getContext(), scope, sealed ? Boolean.TRUE : Boolean.FALSE};
                 method.invoke(null, args);
                 return null;
             }
@@ -1374,7 +1377,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			names.add(propName);
 			name = propName;
 
-			if (annotation instanceof JSGetter || Objects.equals(prefix, getterPrefix)) {
+			if (annotation instanceof JSGetter || prefix == getterPrefix) {
 				if (!(proto instanceof ScriptableObject)) {
 					throw Context.reportRuntimeError2("msg.extend.scriptable", proto.getClass().toString(), name);
 				}
@@ -1450,20 +1453,19 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		String propName = null;
 		if (annotation instanceof JSGetter) {
 			propName = ((JSGetter) annotation).value();
-			if ((propName == null || propName.length() == 0)
-				&& methodName.length() > 3
-				&& methodName.startsWith("get")
-			) {
-				propName = methodName.substring(3);
-				if (Character.isUpperCase(propName.charAt(0))) {
-					if (propName.length() == 1) {
-						propName = propName.toLowerCase();
-					} else if (!Character.isUpperCase(propName.charAt(1))) {
-						propName = Character.toLowerCase(propName.charAt(0)) + propName.substring(1);
+			if (propName == null || propName.length() == 0) {
+				if (methodName.length() > 3 && methodName.startsWith("get")) {
+					propName = methodName.substring(3);
+					if (Character.isUpperCase(propName.charAt(0))) {
+						if (propName.length() == 1) {
+							propName = propName.toLowerCase();
+						} else if (!Character.isUpperCase(propName.charAt(1))) {
+							propName = Character.toLowerCase(propName.charAt(0)) + propName.substring(1);
+						}
 					}
 				}
 			}
-		} else if (annotation instanceof JSFunction jsFn) {
+		} else if (annotation instanceof JSFunction) {
 			propName = ((JSFunction) annotation).value();
 		} else if (annotation instanceof JSStaticFunction) {
 			propName = ((JSStaticFunction) annotation).value();

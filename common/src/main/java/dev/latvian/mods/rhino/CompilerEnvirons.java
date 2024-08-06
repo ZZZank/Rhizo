@@ -20,7 +20,7 @@ public class CompilerEnvirons {
 		this.strictMode = false;
 		this.warningAsError = false;
 		this.allowSharpComments = false;
-		this.optimizationLevel = RhinoProperties.get().optimizationLevel;
+		this.optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
 	}
 
 	public void initFromContext(Context cx) {
