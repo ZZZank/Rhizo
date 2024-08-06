@@ -6,8 +6,6 @@
 
 package dev.latvian.mods.rhino;
 
-import java.util.Iterator;
-
 public class NativeMap extends IdScriptableObject {
 	private static final long serialVersionUID = 1171922614280016891L;
 	private static final Object MAP_TAG = "Map";

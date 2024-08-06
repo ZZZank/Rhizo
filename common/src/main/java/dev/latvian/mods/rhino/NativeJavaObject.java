@@ -705,14 +705,14 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 
 
 	private static double toDouble(Object value) {
-		if (value instanceof Number) {
-			return ((Number) value).doubleValue();
-		} else if (value instanceof String) {
-			return ScriptRuntime.toNumber((String) value);
+		if (value instanceof Number n) {
+			return n.doubleValue();
+		} else if (value instanceof String s) {
+			return ScriptRuntime.toNumber(s);
 		} else if (value instanceof Scriptable) {
-			if (value instanceof Wrapper) {
+			if (value instanceof Wrapper w) {
 				// XXX: optimize tail-recursion?
-				return toDouble(((Wrapper) value).unwrap());
+				return toDouble(w.unwrap());
 			}
 			return ScriptRuntime.toNumber(value);
 		} else {
