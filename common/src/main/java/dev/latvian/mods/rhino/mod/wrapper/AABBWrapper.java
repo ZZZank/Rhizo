@@ -1,7 +1,11 @@
 package dev.latvian.mods.rhino.mod.wrapper;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 /**
  * @author LatvianModder
@@ -18,30 +22,55 @@ public interface AABBWrapper {
 		return of(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX() + 1D, pos2.getY() + 1D, pos2.getZ() + 1D);
 	}
 
+	static AABB ofBlocksStrict(BlockPos start, BlockPos end) {
+		return new AABB(start, end);
+	}
+
+	static AABB ofBounding(BoundingBox box) {
+		return AABB.of(box);
+	}
+
 	static AABB ofBlock(BlockPos pos) {
-		return ofBlocks(pos, pos);
+		return new AABB(pos);
 	}
 
 	static AABB ofSize(double x, double y, double z) {
 		return AABB.ofSize(x, y, z);
 	}
 
-	static AABB wrap(Object o) {
-		if (o instanceof AABB) {
-			return (AABB) o;
-		} else if (o instanceof BlockPos) {
-			return ofBlock((BlockPos) o);
-		} else if (o instanceof double[] d) {
-
-            if (d.length == 0) {
-				return EMPTY;
-			} else if (d.length == 3) {
-				return ofSize(d[0], d[1], d[2]);
-			} else if (d.length == 6) {
-				return of(d[0], d[1], d[2], d[3], d[4], d[5]);
-			}
-		}
-
-		return EMPTY;
+	static AABB ofVec(Vec3 start, Vec3 end) {
+		return new AABB(start, end);
 	}
+
+	static AABB wrap(Object o) {
+		return switch (o) {
+			case AABB aabb -> aabb;
+			case BlockPos blockPos -> ofBlock(blockPos);
+			case BoundingBox box -> AABB.of(box);
+			case double[] d -> switch (d.length) {
+				case 3 -> ofSize(d[0], d[1], d[2]);
+				case 6 -> of(d[0], d[1], d[2], d[3], d[4], d[5]);
+				default -> EMPTY;
+			};
+			case List<?> l -> switch (l.size()) {
+				case 3 ->
+					l.get(0) instanceof Number n0 && l.get(1) instanceof Number n1 && l.get(2) instanceof Number n2
+						? ofSize(n0.doubleValue(), n1.doubleValue(), n2.doubleValue())
+						: EMPTY;
+				case 6 ->
+					l.get(0) instanceof Number n0 && l.get(1) instanceof Number n1 && l.get(2) instanceof Number n2
+						&& l.get(3) instanceof Number n3 && l.get(4) instanceof Number n4
+						&& l.get(5) instanceof Number n5 ? of(
+						n0.doubleValue(),
+						n1.doubleValue(),
+						n2.doubleValue(),
+						n3.doubleValue(),
+						n4.doubleValue(),
+						n5.doubleValue()
+					) : EMPTY;
+				default -> EMPTY;
+			};
+			case null, default -> EMPTY;
+		};
+    }
 }
