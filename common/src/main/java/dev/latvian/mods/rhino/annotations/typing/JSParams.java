@@ -9,9 +9,20 @@ import java.lang.annotation.*;
  * @author ZZZank
  */
 @Documented
-@JSInfo("Note: ordinal. Use null to skip a param")
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
+@JSInfo("used to provide extra, optional information for parameters in a method ")
 public @interface JSParams {
+
+    @JSInfo("""
+        Each `JSParam` in this array represents information for a parameter.
+        
+        `JSParam`s should be mapped to parameters in ordinal,
+        that is, the first `JSParam` should be mapped to the first parameter, the second mapped to the second, and so on.
+        
+        Use `null` to skip a parameter.
+        
+        If this array holds more `JSParam`s than parameters, extra `JSParam`s should be ignored.
+        """)
     JSParam[] params();
 }
