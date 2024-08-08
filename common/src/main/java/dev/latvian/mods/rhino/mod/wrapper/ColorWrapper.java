@@ -4,6 +4,7 @@ import dev.latvian.mods.rhino.mod.util.color.Color;
 import dev.latvian.mods.rhino.mod.util.color.NoColor;
 import dev.latvian.mods.rhino.mod.util.color.SimpleColor;
 import dev.latvian.mods.rhino.mod.util.color.SimpleColorWithAlpha;
+import lombok.val;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.world.item.DyeColor;
@@ -15,10 +16,10 @@ public interface ColorWrapper {
 	Map<String, Color> MAP = new HashMap<>();
 
 	static Color of(Object o) {
-		if (o instanceof Color) {
-			return (Color) o;
+		if (o instanceof Color color) {
+			return color;
 		} else if (o instanceof String s) {
-			Color c = MAP.get(s);
+			val c = MAP.get(s);
 
 			if (c != null) {
 				return c;
@@ -30,8 +31,8 @@ public interface ColorWrapper {
 			}
 
 			return NONE;
-		} else if (o instanceof Number) {
-			int i = ((Number) o).intValue();
+		} else if (o instanceof Number number) {
+			int i = number.intValue();
 
 			if (i == 0) {
 				return NONE;

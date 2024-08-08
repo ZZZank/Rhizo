@@ -32,46 +32,33 @@ public interface JsonUtils {
 	static JsonElement copy(@Nullable JsonElement element) {
 		if (element == null || element.isJsonNull()) {
 			return JsonNull.INSTANCE;
-		} else if (element instanceof JsonArray) {
-			JsonArray a = new JsonArray();
-
-			for (JsonElement e : (JsonArray) element) {
+		} else if (element instanceof JsonArray jsonArray) {
+			val a = new JsonArray();
+			for (val e : jsonArray) {
 				a.add(copy(e));
 			}
-
 			return a;
-		} else if (element instanceof JsonObject) {
-			JsonObject o = new JsonObject();
-
-			for (Map.Entry<String, JsonElement> entry : ((JsonObject) element).entrySet()) {
+		} else if (element instanceof JsonObject jsonObject) {
+			val o = new JsonObject();
+			for (val entry : jsonObject.entrySet()) {
 				o.add(entry.getKey(), copy(entry.getValue()));
 			}
-
 			return o;
 		}
-
 		return element;
 	}
 
 	static JsonElement of(@Nullable Object o) {
-		if (o == null) {
-			return JsonNull.INSTANCE;
-		} else if (o instanceof JsonSerializable serializable) {
-			return serializable.toJson();
-		} else if (o instanceof JsonElement element) {
-			return element;
-		} else if (o instanceof CharSequence) {
-			return new JsonPrimitive(o.toString());
-		} else if (o instanceof Boolean b) {
-			return new JsonPrimitive(b);
-		} else if (o instanceof Number number) {
-			return new JsonPrimitive(number);
-		} else if (o instanceof Character c) {
-			return new JsonPrimitive(c);
-		}
-
-		return JsonNull.INSTANCE;
-	}
+        return switch (o) {
+            case JsonSerializable serializable -> serializable.toJson();
+            case JsonElement element -> element;
+            case CharSequence charSequence -> new JsonPrimitive(o.toString());
+            case Boolean b -> new JsonPrimitive(b);
+            case Number number -> new JsonPrimitive(number);
+            case Character c -> new JsonPrimitive(c);
+            case null, default -> JsonNull.INSTANCE;
+        };
+    }
 
 	@Nullable
 	static Object toObject(@Nullable JsonElement json) {

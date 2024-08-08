@@ -24,5 +24,7 @@ public interface DirectionWrapper {
 	Direction SOUTH = Direction.SOUTH;
 	Direction WEST = Direction.WEST;
 	Direction EAST = Direction.EAST;
-	Map<String, Direction> ALL = Collections.unmodifiableMap(Arrays.stream(Direction.values()).collect(Collectors.toMap(Direction::getSerializedName, Function.identity())));
+	Map<String, Direction> ALL = Collections
+		.unmodifiableMap(Arrays.stream(Direction.values())
+		.collect(Collectors.toMap(Direction::getSerializedName, Function.identity())));
 }

@@ -26,10 +26,9 @@ public class CountingMap {
 	public long set(Object key, long value) {
 		if (value <= 0L) {
 			return map.removeLong(key);
-		} else {
-			return map.put(key, value);
 		}
-	}
+        return map.put(key, value);
+    }
 
 	public long add(Object key, long value) {
 		return set(key, get(key) + value);
