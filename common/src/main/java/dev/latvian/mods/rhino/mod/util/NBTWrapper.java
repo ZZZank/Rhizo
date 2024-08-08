@@ -32,19 +32,7 @@ public interface NBTWrapper {
 
 	@Nullable
 	static Tag toTag(@Nullable Object v) {
-		if (v == null || v == EndTag.INSTANCE) {
-			return null;
-		} else if (v instanceof Tag) {
-			return (Tag) v;
-		} else if (v instanceof String) {
-			return StringTag.valueOf(v.toString());
-		} else if (v instanceof Number) {
-			return DoubleTag.valueOf(((Number) v).doubleValue());
-		} else if (v instanceof Boolean) {
-			return ByteTag.valueOf((Boolean) v);
-		}
-
-		return null;
+		return NBTUtils.toNBT(v);
 	}
 
 	static Tag compoundTag() {

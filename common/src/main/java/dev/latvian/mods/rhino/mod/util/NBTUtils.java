@@ -19,12 +19,16 @@ import java.util.*;
  * @author LatvianModder
  */
 public class NBTUtils {
+
 	@Nullable
 	public static Tag toNBT(@Nullable Object o) {
 		//already resolved
-		if (o instanceof Tag tag) {
+		if (o == null) {
+			return null;
+		} else if (o instanceof Tag tag) {
 			return tag;
 		} else if (o instanceof NBTSerializable serializable) {
+			//this includes two tag wrappers
 			return serializable.toNBT();
 		}
 		//primitive
@@ -33,18 +37,14 @@ public class NBTUtils {
 		} else if (o instanceof Boolean b) {
 			return ByteTag.valueOf(b);
 		} else if (o instanceof Number number) {
-            if (number instanceof Byte) {
-                return ByteTag.valueOf(number.byteValue());
-            } else if (number instanceof Short) {
-                return ShortTag.valueOf(number.shortValue());
-            } else if (number instanceof Integer) {
-                return IntTag.valueOf(number.intValue());
-            } else if (number instanceof Long) {
-                return LongTag.valueOf(number.longValue());
-            } else if (number instanceof Float) {
-                return FloatTag.valueOf(number.floatValue());
-            }
-            return DoubleTag.valueOf(number.doubleValue());
+            return switch (number) {
+                case Byte b -> ByteTag.valueOf(b);
+                case Short i -> ShortTag.valueOf(i);
+                case Integer i -> IntTag.valueOf(i);
+                case Long l -> LongTag.valueOf(l);
+                case Float v -> FloatTag.valueOf(v);
+                default -> DoubleTag.valueOf(number.doubleValue());
+            };
         }
 		//native json
 		else if (o instanceof JsonPrimitive json) {
