@@ -3,6 +3,7 @@ package dev.latvian.mods.rhino.mod.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import dev.latvian.mods.rhino.util.HideFromJS;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.handler.codec.EncoderException;
 import lombok.val;
@@ -84,6 +85,7 @@ public class NBTUtils {
 		return null;
 	}
 
+	@HideFromJS
 	public static CollectionTag<?> toNBT(Collection<?> c) {
 		if (c.isEmpty()) {
 			return new ListTag();
