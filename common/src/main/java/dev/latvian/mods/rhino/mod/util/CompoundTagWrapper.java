@@ -3,37 +3,23 @@ package dev.latvian.mods.rhino.mod.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.latvian.mods.rhino.util.MapLike;
-import net.minecraft.nbt.CollectionTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.EndTag;
-import net.minecraft.nbt.NumericTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class CompoundTagWrapper implements MapLike<String, Object>, JsonSerializable, ChangeListener<Tag> {
+public class CompoundTagWrapper implements NBTSerializable, MapLike<String, Object>, JsonSerializable, ChangeListener<Tag> {
 	public static Object unwrap(@Nullable Tag t, @Nullable ChangeListener<Tag> l) {
-		if (t == null || t instanceof EndTag) {
-			return null;
-		} else if (t instanceof StringTag) {
-			return t.getAsString();
-		} else if (t instanceof NumericTag numeric) {
-			return numeric.getAsNumber();
-		} else if (t instanceof CompoundTag compound) {
-			CompoundTagWrapper c = new CompoundTagWrapper(compound);
-			c.listener = l;
-			return c;
-		} else if (t instanceof CollectionTag<?> collection) {
-			CollectionTagWrapper<?> c = new CollectionTagWrapper<>(collection);
-			c.listener = l;
-			return c;
-		}
-
-		return t;
-	}
+        return switch (t) {
+            case null -> null;
+            case EndTag end -> null;
+            case StringTag str -> t.getAsString();
+            case NumericTag numeric -> numeric.getAsNumber();
+            case CompoundTag compound -> new CompoundTagWrapper(compound).withListener(l);
+            case CollectionTag<?> collection -> new CollectionTagWrapper<>(collection).withListener(l);
+            default -> t;
+        };
+    }
 
 	public static Tag wrap(@Nullable Object o) {
 		return NBTUtils.toNBT(o);
@@ -94,5 +80,15 @@ public class CompoundTagWrapper implements MapLike<String, Object>, JsonSerializ
 		if (listener != null) {
 			listener.onChanged(minecraftTag);
 		}
+	}
+
+	public CompoundTagWrapper withListener(ChangeListener<Tag> listener) {
+		this.listener = listener;
+		return this;
+	}
+
+	@Override
+	public Tag toNBT() {
+		return this.minecraftTag;
 	}
 }

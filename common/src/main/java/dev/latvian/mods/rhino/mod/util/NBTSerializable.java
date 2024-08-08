@@ -5,6 +5,7 @@ import net.minecraft.nbt.Tag;
 /**
  * @author LatvianModder
  */
+@FunctionalInterface
 public interface NBTSerializable {
 	Tag toNBT();
 }

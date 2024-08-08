@@ -7,7 +7,7 @@ import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 
-public class CollectionTagWrapper<T extends Tag> implements ListLike<Object>, JsonSerializable, ChangeListener<Tag> {
+public class CollectionTagWrapper<T extends Tag> implements NBTSerializable, ListLike<Object>, JsonSerializable, ChangeListener<Tag> {
 	public final CollectionTag<T> minecraftTag;
 	public ChangeListener<Tag> listener;
 
@@ -75,5 +75,15 @@ public class CollectionTagWrapper<T extends Tag> implements ListLike<Object>, Js
 		if (listener != null) {
 			listener.onChanged(minecraftTag);
 		}
+	}
+
+	public CollectionTagWrapper<T> withListener(ChangeListener<Tag> listener) {
+		this.listener = listener;
+		return this;
+	}
+
+	@Override
+	public Tag toNBT() {
+		return this.minecraftTag;
 	}
 }
