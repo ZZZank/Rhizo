@@ -1,13 +1,15 @@
 plugins {
 	id "com.github.johnrengelman.shadow" version "8.1.1" apply false
 	id "architectury-plugin" version "3.4-SNAPSHOT"
-	id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
+	id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
 }
-
 
 architectury {
 	minecraft = rootProject.minecraft_version
 }
+
+def sysProps = System.getProperties()
+println "Java: ${ -> sysProps['java.version']} | JVM: ${ -> sysProps['java.vm.version']} | Vendor: ${ -> sysProps['java.vendor']} | Architecture: ${ -> sysProps['os.arch']}"
 
 subprojects {
 	apply plugin: "com.github.johnrengelman.shadow"
