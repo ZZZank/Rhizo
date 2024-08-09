@@ -6,9 +6,7 @@ import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import lombok.val;
 import net.neoforged.srgutils.IMappingFile;
-import net.neoforged.srgutils.IRenamer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URLConnection;
@@ -31,16 +29,16 @@ public abstract class RhizoMappingGen {
      * should provide raw name <-> in-game name conversion
      *
      * @param mcVersion version of the game, like "1.16.5", "1.20.1"
-     * @param callback  should provide "in-game name -> raw name" conversion
      */
-    public static void generate(@NotNull String mcVersion, NativeMappingLoader callback) {
+    public static void generate(@NotNull String mcVersion) {
         try {
             //mapped -> obf
             val vanillaMapping = loadVanilla(mcVersion);
-            //obf -> in-game
-            val renamer = callback.toRenamer(callback.load(mcVersion, vanillaMapping));
+            //mapped -> in-game
+            val transformer = MappingTransformer.get();
+            val renamed = transformer.transform(vanillaMapping);
             //in-game -> mapped
-            val target = vanillaMapping.rename(renamer).reverse();
+            val target = renamed.reverse();
             //write mapping
             writeRhizoMapping(JavaPortingHelper.ofPath(MAPPING_FILENAME), target, mcVersion);
         } catch (Exception e) {
@@ -58,6 +56,8 @@ public abstract class RhizoMappingGen {
         @NotNull IMappingFile mapping,
         @NotNull String mcVersion
     ) throws IOException {
+        val transformer = MappingTransformer.get();
+
         val out = new GZIPOutputStream(Files.newOutputStream(path));
         MappingIO.LOGGER.info("writing Rhizo mapping.");
         //metadata
@@ -68,7 +68,7 @@ public abstract class RhizoMappingGen {
         val classes = mapping.getClasses();
         MappingIO.writeVarInt(out, classes.size());
         for (IMappingFile.IClass clazz : classes) {
-            if (isAnonymousClass(clazz.getMapped())) {
+            if (!transformer.filterClass(clazz)) {
                 MappingIO.writeUtf(out, SKIP_MARK);
                 continue;
             }
@@ -83,12 +83,12 @@ public abstract class RhizoMappingGen {
             for (IMappingFile.IMethod method : methods) {
                 val originalM = method.getOriginal();
                 val mappedM = method.getMapped();
-                if (mappedM.startsWith("lambda$") || mappedM.startsWith("<") || originalM.equals(mappedM)) {
+                if (!transformer.filterMethod(method)) {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
                 MappingIO.LOGGER.info("    method: '{}' -> '{}'", originalM, mappedM);
-                MappingIO.writeUtf(out, originalM);
+                MappingIO.writeUtf(out, transformer.trimMethod(originalM));
                 MappingIO.writeUtf(out, mappedM);
             }
             //field
@@ -97,11 +97,11 @@ public abstract class RhizoMappingGen {
             for (IMappingFile.IField field : fields) {
                 val originalF = field.getOriginal();
                 val mappedF = field.getMapped();
-                if (mappedF.equals(originalF)) {
+                if (!transformer.filterField(field)) {
                     MappingIO.writeUtf(out, SKIP_MARK);
                     continue;
                 }
-                MappingIO.writeUtf(out, originalF);
+                MappingIO.writeUtf(out, transformer.trimField(originalF));
                 MappingIO.writeUtf(out, mappedF);
                 MappingIO.LOGGER.info("    field: '{}' -> '{}'", originalF, mappedF);
             }
@@ -113,7 +113,7 @@ public abstract class RhizoMappingGen {
      * @param className the one you can get via {@link Class#getName()}
      * @return true if the class that the name represents is an anonymous class
      */
-    private static boolean isAnonymousClass(final String className) {
+    static boolean isAnonymousClass(final String className) {
         val lastIndex = className.lastIndexOf('$');
         if (lastIndex < 0) {
             return false;
@@ -158,52 +158,5 @@ public abstract class RhizoMappingGen {
         }
         //generate mapping
         return IMappingFile.load(mappingUrl.getInputStream());
-    }
-
-    /**
-     * There are two methods that will be called in sequence.
-     * <p>
-     * the mapping file returned by {@link NativeMappingLoader#load(String, IMappingFile)} will be passed to
-     * {@link NativeMappingLoader#toRenamer(IMappingFile)} for renamer generation.
-     * <p>
-     * This means that returned value of {@link NativeMappingLoader#load(String, IMappingFile)} can be null, as long as
-     * {@link NativeMappingLoader#toRenamer(IMappingFile)} can generate renamer correctly.
-     */
-    public interface NativeMappingLoader {
-        /**
-         * obf -> in-game
-         * @param vanillaMapping vanilla mapping which provides mapped -> obf, should not be modified
-         */
-        @Nullable
-        IMappingFile load(String mcVersion, IMappingFile vanillaMapping) throws IOException;
-
-        default IRenamer toRenamer(IMappingFile link) {
-            return new IRenamer() {
-                public String rename(IMappingFile.IPackage value) {
-                    return link.remapPackage(value.getMapped());
-                }
-
-                public String rename(IMappingFile.IClass value) {
-                    return link.remapClass(value.getMapped());
-                }
-
-                public String rename(IMappingFile.IField value) {
-                    val cls = link.getClass(value.getParent().getMapped());
-                    return cls == null ? value.getMapped() : cls.remapField(value.getMapped());
-                }
-
-                public String rename(IMappingFile.IMethod value) {
-                    val cls = link.getClass(value.getParent().getMapped());
-                    return cls == null ? value.getMapped() : cls.remapMethod(value.getMapped(), value.getMappedDescriptor());
-                }
-
-                public String rename(IMappingFile.IParameter value) {
-                    var mtd = value.getParent();
-                    val cls = link.getClass(mtd.getParent().getMapped());
-                    mtd = cls == null ? null : cls.getMethod(mtd.getMapped(), mtd.getMappedDescriptor());
-                    return mtd == null ? value.getMapped() : mtd.remapParameter(value.getIndex(), value.getMapped());
-                }
-            };
-        }
     }
 }

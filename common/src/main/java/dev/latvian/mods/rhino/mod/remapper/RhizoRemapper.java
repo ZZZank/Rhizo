@@ -47,6 +47,7 @@ public class RhizoRemapper implements Remapper {
                 }
             }
             MappingIO.LOGGER.info("Loading mappings for {}", MappingIO.readUtf(in));
+            val transformer = MappingTransformer.get();
             //class
             val classCount = MappingIO.readVarInt(in);
             for (int i = 0; i < classCount; i++) {
@@ -65,7 +66,7 @@ public class RhizoRemapper implements Remapper {
                         continue;
                     }
                     val mappedM = MappingIO.readUtf(in);
-                    mappingM.put(originalM, mappedM);
+                    mappingM.put(transformer.restoreMethod(originalM), mappedM);
                 }
                 //field
                 val fieldCount = MappingIO.readVarInt(in);
@@ -75,7 +76,7 @@ public class RhizoRemapper implements Remapper {
                         continue;
                     }
                     val mappedF = MappingIO.readUtf(in);
-                    mappingF.put(originalF, mappedF);
+                    mappingF.put(transformer.restoreField(originalF), mappedF);
                 }
             }
         } catch (Exception e) {
