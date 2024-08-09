@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.mod.fabric;
 
 import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
+import dev.latvian.mods.rhino.mod.remapper.MappingTransformer;
 import dev.latvian.mods.rhino.mod.remapper.RhizoMappingGen;
 import dev.latvian.mods.rhino.mod.remapper.info.Clazz;
 import lombok.val;
@@ -19,6 +20,8 @@ public class RhinoModFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        MappingTransformer.IMPL.setValue(new MappingTransformerFabric());
+
         if (RhinoProperties.INSTANCE.generateMapping) {
             RhizoMappingGen.generate(
                 "1.16.5",
@@ -27,7 +30,7 @@ public class RhinoModFabric implements ModInitializer {
         }
     }
 
-    private static Map<String, Clazz> loadNativeMappingClassMap() {
+    static Map<String, Clazz> loadNativeMappingClassMap() {
         val runtimeNamespace = FabricLauncherBase.getLauncher().getTargetNamespace();
         val rawNamespace = "official";
         val tree = FabricLauncherBase.getLauncher().getMappingConfiguration().getMappings();
@@ -59,7 +62,48 @@ public class RhinoModFabric implements ModInitializer {
     }
 
     @Desugar
-    private record RenameOnlyMappingLoader(Map<String, Clazz> classMap)
+    record ClazzBasedRenamer(Map<String, Clazz> classMap) implements IRenamer {
+
+        public String rename(IMappingFile.IClass c) {
+            val clazz = classMap.get(c.getMapped());
+            if (clazz == null) {
+                return c.getMapped();
+            }
+            return clazz.remapped();
+        }
+
+        public String rename(IMappingFile.IField f) {
+            val clazz = classMap.get(f.getParent().getMapped());
+            if (clazz == null) {
+                return f.getMapped();
+            }
+            val fInfo = clazz.fields().get(f.getMapped());
+            if (fInfo == null) {
+                return f.getMapped();
+            }
+            return fInfo.remapped();
+        }
+
+        public String rename(IMappingFile.IMethod m) {
+            val clazz = classMap.get(m.getParent().getMapped());
+            if (clazz == null) {
+                return m.getMapped();
+            }
+            val methods = clazz.nArgMethods().get(m.getMapped());
+            if (methods.isEmpty()) {
+                return m.getMapped();
+            }
+            for (val method : methods) {
+                if (m.getMappedDescriptor().startsWith(method.paramDescriptor())) {
+                    return method.remapped();
+                }
+            }
+            return m.getMapped();
+        }
+    }
+
+    @Desugar
+    record RenameOnlyMappingLoader(Map<String, Clazz> classMap)
         implements RhizoMappingGen.NativeMappingLoader, IRenamer {
         /**
          * returning null because there are too many features to cover, if we want to return an actual mapping file,

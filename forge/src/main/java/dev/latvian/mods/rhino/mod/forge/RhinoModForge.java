@@ -12,6 +12,8 @@ import net.neoforged.srgutils.IMappingFile;
 public class RhinoModForge {
 
     public RhinoModForge() {
+        MappingTransformer.IMPL.setValue(new MappingTransformerForge());
+
         FMLJavaModLoadingContext.get().getModEventBus().register(RhinoModForge.class);
     }
 
