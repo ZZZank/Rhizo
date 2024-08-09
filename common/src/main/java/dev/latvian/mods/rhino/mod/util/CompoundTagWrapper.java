@@ -10,15 +10,20 @@ import java.util.Collection;
 
 public class CompoundTagWrapper implements NBTSerializable, MapLike<String, Object>, JsonSerializable, ChangeListener<Tag> {
 	public static Object unwrap(@Nullable Tag t, @Nullable ChangeListener<Tag> l) {
-        return switch (t) {
-            case null -> null;
-            case EndTag end -> null;
-            case StringTag str -> t.getAsString();
-            case NumericTag numeric -> numeric.getAsNumber();
-            case CompoundTag compound -> new CompoundTagWrapper(compound).withListener(l);
-            case CollectionTag<?> collection -> new CollectionTagWrapper<>(collection).withListener(l);
-            default -> t;
-        };
+        if (t == null) {
+            return null;
+        } else if (t instanceof EndTag) {
+            return null;
+        } else if (t instanceof StringTag) {
+            return t.getAsString();
+        } else if (t instanceof NumericTag numeric) {
+            return numeric.getAsNumber();
+        } else if (t instanceof CompoundTag compound) {
+            return new CompoundTagWrapper(compound).withListener(l);
+        } else if (t instanceof CollectionTag<?> collection) {
+            return new CollectionTagWrapper<>(collection).withListener(l);
+        }
+        return t;
     }
 
 	public static Tag wrap(@Nullable Object o) {

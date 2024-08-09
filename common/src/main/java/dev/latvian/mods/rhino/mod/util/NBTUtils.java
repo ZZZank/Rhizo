@@ -38,14 +38,18 @@ public class NBTUtils {
 		} else if (o instanceof Boolean b) {
 			return ByteTag.valueOf(b);
 		} else if (o instanceof Number number) {
-            return switch (number) {
-                case Byte b -> ByteTag.valueOf(b);
-                case Short i -> ShortTag.valueOf(i);
-                case Integer i -> IntTag.valueOf(i);
-                case Long l -> LongTag.valueOf(l);
-                case Float v -> FloatTag.valueOf(v);
-                default -> DoubleTag.valueOf(number.doubleValue());
-            };
+            if (number instanceof Byte b) {
+                return ByteTag.valueOf(b);
+            } else if (number instanceof Short i) {
+                return ShortTag.valueOf(i);
+            } else if (number instanceof Integer i) {
+                return IntTag.valueOf(i);
+            } else if (number instanceof Long l) {
+                return LongTag.valueOf(l);
+            } else if (number instanceof Float v) {
+                return FloatTag.valueOf(v);
+            }
+            return DoubleTag.valueOf(number.doubleValue());
         }
 		//native json
 		else if (o instanceof JsonPrimitive json) {

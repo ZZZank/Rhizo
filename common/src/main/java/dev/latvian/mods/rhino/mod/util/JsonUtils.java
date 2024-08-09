@@ -49,15 +49,20 @@ public interface JsonUtils {
 	}
 
 	static JsonElement of(@Nullable Object o) {
-        return switch (o) {
-            case JsonSerializable serializable -> serializable.toJson();
-            case JsonElement element -> element;
-            case CharSequence charSequence -> new JsonPrimitive(o.toString());
-            case Boolean b -> new JsonPrimitive(b);
-            case Number number -> new JsonPrimitive(number);
-            case Character c -> new JsonPrimitive(c);
-            case null, default -> JsonNull.INSTANCE;
-        };
+        if (o instanceof JsonSerializable serializable) {
+            return serializable.toJson();
+        } else if (o instanceof JsonElement element) {
+            return element;
+        } else if (o instanceof CharSequence) {
+            return new JsonPrimitive(o.toString());
+        } else if (o instanceof Boolean b) {
+            return new JsonPrimitive(b);
+        } else if (o instanceof Number number) {
+            return new JsonPrimitive(number);
+        } else if (o instanceof Character c) {
+            return new JsonPrimitive(c);
+        }
+        return JsonNull.INSTANCE;
     }
 
 	@Nullable
