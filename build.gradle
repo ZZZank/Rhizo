@@ -55,15 +55,19 @@ allprojects {
 	group = project.mod_package
 	archivesBaseName = project.mod_name
 
-	tasks.withType(JavaCompile) {
-		options.encoding = "UTF-8"
+	tasks.withType(JavaCompile.class) {
 		sourceCompatibility = 21
-		options.compilerArgs << '-parameters'
+		options.encoding = "UTF-8"
+		options.compilerArgs << "-parameters"
 
 		// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
 		// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
 		// We'll use that if it's available, but otherwise we'll use the older option.
 		options.release = 8
+
+		javaCompiler = javaToolchains.compilerFor {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
 	}
 
 	repositories {
