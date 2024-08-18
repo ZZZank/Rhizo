@@ -153,7 +153,7 @@ public class Codegen implements Evaluator {
         this.mainClassName = mainClassName;
         this.mainClassSignature = ClassFileWriter.classNameToSignature(mainClassName);
 
-        return generateCode();
+        return generateCode(encodedSource);
     }
 
     private void transform(ScriptNode tree) {
@@ -227,7 +227,7 @@ public class Codegen implements Evaluator {
         }
     }
 
-    private byte[] generateCode() {
+    private byte[] generateCode(String encodedSource) {
         val hasScript = (scriptOrFnNodes[0].getType() == Token.SCRIPT);
         val hasFunctions = (scriptOrFnNodes.length > 1 || !hasScript);
         val isStrictMode = scriptOrFnNodes[0].isInStrictMode();
@@ -252,7 +252,7 @@ public class Codegen implements Evaluator {
         generateCallMethod(cfw, isStrictMode);
         generateResumeGenerator(cfw);
 
-        generateNativeFunctionOverrides(cfw);
+        generateNativeFunctionOverrides(cfw, encodedSource);
 
         int count = scriptOrFnNodes.length;
         for (int i = 0; i != count; ++i) {
@@ -715,7 +715,7 @@ public class Codegen implements Evaluator {
         cfw.stopMethod((short) 3);
     }
 
-    private void generateNativeFunctionOverrides(ClassFileWriter cfw) {
+    private void generateNativeFunctionOverrides(ClassFileWriter cfw, String encodedSource) {
         // Override NativeFunction.getLanguageVersion() with
         // public int getLanguageVersion() { return <version-constant>; }
 
@@ -740,7 +740,7 @@ public class Codegen implements Evaluator {
         val SWITCH_COUNT = 7;
 
         for (int methodIndex = 0; methodIndex != SWITCH_COUNT; ++methodIndex) {
-            if (methodIndex == Do_getEncodedSource) {
+            if (methodIndex == Do_getEncodedSource && encodedSource == null) {
                 continue;
             }
 
@@ -786,6 +786,14 @@ public class Codegen implements Evaluator {
                     cfw.startMethod("isGeneratorFunction", "()Z",
                         ClassFileWriter.ACC_PROTECTED
                     );
+                    break;
+
+                case Do_getEncodedSource:
+                    methodLocals = 1; // Only this
+                    cfw.startMethod("getEncodedSource", "()Ljava/lang/String;",
+                        ClassFileWriter.ACC_PUBLIC
+                    );
+                    cfw.addPush(encodedSource);
                     break;
                 default:
                     throw Kit.codeBug();
@@ -934,6 +942,20 @@ public class Codegen implements Evaluator {
                         }
                         cfw.add(ByteCode.IRETURN);
                         break;
+
+                    case Do_getEncodedSource:
+                        // Push number encoded source start and end
+                        // to prepare for encodedSource.substring(start, end)
+                        cfw.addPush(n.getEncodedSourceStart());
+                        cfw.addPush(n.getEncodedSourceEnd());
+                        cfw.addInvoke(ByteCode.INVOKEVIRTUAL,
+                            "java/lang/String",
+                            "substring",
+                            "(II)Ljava/lang/String;"
+                        );
+                        cfw.add(ByteCode.ARETURN);
+                        break;
+
 
                     // Push number encoded source start and end
                     // to prepare for encodedSource.substring(start, end)
