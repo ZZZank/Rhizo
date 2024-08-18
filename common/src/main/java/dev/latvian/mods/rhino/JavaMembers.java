@@ -446,7 +446,7 @@ public class JavaMembers {
 
     private void reflect(Context cx, Scriptable scope, boolean includeProtected) {
         if (cl.isAnnotationPresent(HideFromJS.class)) {
-            ctors = new NativeJavaMethod(new MemberBox[0], cl.getSimpleName());
+            ctors = new NativeJavaMethod(Kit.emptyArray(), cl.getSimpleName());
             return;
         }
 
@@ -800,7 +800,7 @@ public class JavaMembers {
             return cl.getDeclaredMethods();
         } catch (Throwable t) {
             System.err.println("[Rhino] Failed to get declared methods for " + cl.getName() + ": " + t);
-            return new Method[0];
+            return Kit.emptyArray();
         }
     }
 
@@ -809,7 +809,7 @@ public class JavaMembers {
             return cl.getConstructors();
         } catch (Throwable e) {
             System.err.println("[Rhino] Failed to get constructors for " + cl.getName() + ": " + e);
-            return new Constructor[0];
+            return Kit.emptyArray();
         }
     }
 
@@ -818,7 +818,7 @@ public class JavaMembers {
             return cl.getDeclaredFields();
         } catch (Throwable t) {
             System.err.println("[Rhino] Failed to get declared fields for " + cl.getName() + ": " + t);
-            return new Field[0];
+            return Kit.emptyArray();
         }
     }
 
