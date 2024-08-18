@@ -8,7 +8,8 @@ package dev.latvian.mods.rhino.ast;
 
 import dev.latvian.mods.rhino.Node;
 import dev.latvian.mods.rhino.Token;
-import org.jetbrains.annotations.Contract;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,10 +21,40 @@ import java.util.List;
  */
 public class ScriptNode extends Scope {
 
-	private int encodedSourceStart = -1;
-	private int encodedSourceEnd = -1;
-	private String sourceName;
-	private String encodedSource;
+    /**
+     * -- SETTER --
+     *  Used by code generator.
+     *
+     */
+    @Setter
+    private int encodedSourceStart = -1;
+    /**
+     * -- SETTER --
+     *  Used by code generator.
+     *
+     */
+    @Setter
+    private int encodedSourceEnd = -1;
+    /**
+     * -- GETTER --
+     *  Returns the URI, path or descriptive text indicating the origin
+     *  of this script's source code.
+     * -- SETTER --
+     *  Sets the URI, path or descriptive text indicating the origin
+     *  of this script's source code.
+
+     */
+    @Setter
+    @Getter
+    private String sourceName;
+    /**
+     * -- SETTER --
+     *  Used by the code generator.
+     *
+     */
+    @Getter
+    @Setter
+    private String encodedSource;
 	private int endLineno = -1;
 
 	private List<FunctionNode> functions;
@@ -53,23 +84,7 @@ public class ScriptNode extends Scope {
 		super(pos);
 	}
 
-	/**
-	 * Returns the URI, path or descriptive text indicating the origin
-	 * of this script's source code.
-	 */
-	public String getSourceName() {
-		return sourceName;
-	}
-
-	/**
-	 * Sets the URI, path or descriptive text indicating the origin
-	 * of this script's source code.
-	 */
-	public void setSourceName(String sourceName) {
-		this.sourceName = sourceName;
-	}
-
-	/**
+    /**
 	 * Returns the start offset of the encoded source.
 	 * Only valid if {@link #getEncodedSource} returns non-{@code null}.
 	 */
@@ -77,16 +92,7 @@ public class ScriptNode extends Scope {
 		return encodedSourceStart;
 	}
 
-	/**
-	 * Used by code generator.
-	 *
-	 * @see #getEncodedSource
-	 */
-	public void setEncodedSourceStart(int start) {
-		this.encodedSourceStart = start;
-	}
-
-	/**
+    /**
 	 * Returns the end offset of the encoded source.
 	 * Only valid if {@link #getEncodedSource} returns non-{@code null}.
 	 */
@@ -94,16 +100,7 @@ public class ScriptNode extends Scope {
 		return encodedSourceEnd;
 	}
 
-	/**
-	 * Used by code generator.
-	 *
-	 * @see #getEncodedSource
-	 */
-	public void setEncodedSourceEnd(int end) {
-		this.encodedSourceEnd = end;
-	}
-
-	/**
+    /**
 	 * Used by code generator.
 	 *
 	 * @see #getEncodedSource
@@ -113,24 +110,7 @@ public class ScriptNode extends Scope {
 		this.encodedSourceEnd = end;
 	}
 
-	/**
-	 * Used by the code generator.
-	 *
-	 * @see #getEncodedSource
-	 */
-	public void setEncodedSource(String encodedSource) {
-		this.encodedSource = encodedSource;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	@Contract(value = "-> null")
-	public String getEncodedSource() {
-		return encodedSource;
-	}
-
-	public int getBaseLineno() {
+    public int getBaseLineno() {
 		return lineno;
 	}
 

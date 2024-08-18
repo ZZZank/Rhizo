@@ -156,7 +156,7 @@ public class ClassCompiler {
         for (int i = 0; i != functionCount; ++i) {
             val ofn = tree.getFunctionNode(i);
             val name = ofn.getName();
-            if (name != null && name.length() != 0) {
+            if (name != null && !name.isEmpty()) {
                 functionNames.put(name, ofn.getParamCount());
             }
         }

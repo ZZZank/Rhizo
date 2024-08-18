@@ -70,9 +70,11 @@ public class Codegen implements Evaluator {
         }
 
         val mainClassName = "dev.latvian.mods.rhino.gen." + baseName + "_" + serial;
-
-        byte[] mainClassBytes = compileToClassFile(compilerEnv, mainClassName,
-            tree, encodedSource,
+        val mainClassBytes = compileToClassFile(
+            compilerEnv,
+            mainClassName,
+            tree,
+            encodedSource,
             returnFunction
         );
 
@@ -135,7 +137,8 @@ public class Codegen implements Evaluator {
         String mainClassName,
         ScriptNode scriptOrFn,
         String encodedSource,
-        boolean returnFunction) {
+        boolean returnFunction
+    ) {
         this.compilerEnv = compilerEnv;
 
         transform(scriptOrFn);
