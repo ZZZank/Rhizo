@@ -280,7 +280,13 @@ public class Context {
     private Remapper remapper;
     private final Map<String, Object> customProperties;
     public final Object lock = new Object();
-    private transient Map<Class<?>, JavaMembers> classTable;
+    /**
+     * a map from classes to associated JavaMembers objects
+     * <p>
+     * it uses 1 as concurrency level here and for other concurrent hash maps
+     * as we don't expect high levels of sustained concurrent writes.
+     */
+    public final transient Map<Class<?>, JavaMembers> classTable = new ConcurrentHashMap<>(16, 0.75f, 1);;
 
     /**
      * Creates a new context. Provided as a preferred super constructor for
@@ -2214,14 +2220,10 @@ public class Context {
     }
 
     /**
-     * @return a map from classes to associated JavaMembers objects
+     * @deprecated access this field directly
      */
+    @Deprecated
     Map<Class<?>, JavaMembers> getClassCacheMap() {
-        if (classTable == null) {
-            // Use 1 as concurrency level here and for other concurrent hash maps
-            // as we don't expect high levels of sustained concurrent writes.
-            classTable = new ConcurrentHashMap<>(16, 0.75f, 1);
-        }
         return classTable;
     }
 
