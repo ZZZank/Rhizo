@@ -1021,7 +1021,7 @@ public class Node implements Iterable<Node> {
 					sb.append(" [source name: ");
 					sb.append(sof.getSourceName());
 					sb.append("] [encoded source length: ");
-					sb.append(-1);
+					sb.append(sof.getEncodedSourceEnd() - sof.getEncodedSourceStart());
 					sb.append("] [base line: ");
 					sb.append(sof.getBaseLineno());
 					sb.append("] [end line: ");

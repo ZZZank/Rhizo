@@ -218,6 +218,7 @@ public class FunctionNode extends ScriptNode {
 		int absEnd = body.getPosition() + body.getLength();
 		body.setParent(this);
 		this.setLength(absEnd - this.position);
+		setEncodedSourceBounds(this.position, absEnd);
 	}
 
 	/**
