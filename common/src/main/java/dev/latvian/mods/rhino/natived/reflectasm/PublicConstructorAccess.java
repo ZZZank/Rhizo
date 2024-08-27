@@ -14,8 +14,6 @@
 
 package dev.latvian.mods.rhino.natived.reflectasm;
 
-import com.esotericsoftware.reflectasm.ConstructorAccess;
-
 public abstract class PublicConstructorAccess extends ConstructorAccess {
 
 }

@@ -19,8 +19,6 @@ import static org.objectweb.asm.Opcodes.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import com.esotericsoftware.reflectasm.AccessClassLoader;
-import com.esotericsoftware.reflectasm.PublicConstructorAccess;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
@@ -52,7 +50,7 @@ abstract public class ConstructorAccess<T> {
 		if (accessClassName.startsWith("java.")) accessClassName = "reflectasm." + accessClassName;
 
 		Class accessClass;
-		com.esotericsoftware.reflectasm.AccessClassLoader loader = com.esotericsoftware.reflectasm.AccessClassLoader.get(type);
+		AccessClassLoader loader = AccessClassLoader.get(type);
 		synchronized (loader) {
 			accessClass = loader.loadAccessClass(accessClassName);
 			if (accessClass == null) {
@@ -107,7 +105,7 @@ abstract public class ConstructorAccess<T> {
 		} catch (Throwable t) {
 			throw new RuntimeException("Exception constructing constructor access class: " + accessClassName, t);
 		}
-		if (!(access instanceof PublicConstructorAccess) && !com.esotericsoftware.reflectasm.AccessClassLoader.areInSameRuntimeClassLoader(type, accessClass)) {
+		if (!(access instanceof PublicConstructorAccess) && !AccessClassLoader.areInSameRuntimeClassLoader(type, accessClass)) {
 			// Must test this after the try-catch block, whether the class has been loaded as if has been defined.
 			// Throw a Runtime exception here instead of an IllegalAccessError when invoking newInstance()
 			throw new RuntimeException((!isNonStaticMemberClass

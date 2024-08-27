@@ -21,13 +21,13 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.esotericsoftware.reflectasm.AccessClassLoader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+@SuppressWarnings("rawtypes")
 public abstract class MethodAccess {
 	private String[] methodNames;
 	private Class[][] parameterTypes;

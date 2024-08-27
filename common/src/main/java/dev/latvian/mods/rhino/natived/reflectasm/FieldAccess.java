@@ -20,16 +20,19 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
-import com.esotericsoftware.reflectasm.AccessClassLoader;
+import lombok.Getter;
+import lombok.Setter;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
+@Getter
 public abstract class FieldAccess {
 	private String[] fieldNames;
 	private Class[] fieldTypes;
-	private Field[] fields;
+	@Setter
+    private Field[] fields;
 
 	public int getIndex (String fieldName) {
 		for (int i = 0, n = fieldNames.length; i < n; i++)
@@ -51,27 +54,11 @@ public abstract class FieldAccess {
 		return get(instance, getIndex(fieldName));
 	}
 
-	public String[] getFieldNames () {
-		return fieldNames;
-	}
-
-	public Class[] getFieldTypes () {
-		return fieldTypes;
-	}
-
-	public int getFieldCount () {
+    public int getFieldCount () {
 		return fieldTypes.length;
 	}
 
-	public Field[] getFields () {
-		return fields;
-	}
-
-	public void setFields (Field[] fields) {
-		this.fields = fields;
-	}
-
-	abstract public void set (Object instance, int fieldIndex, Object value);
+    abstract public void set (Object instance, int fieldIndex, Object value);
 
 	abstract public void setBoolean (Object instance, int fieldIndex, boolean value);
 

@@ -14,11 +14,6 @@
 
 package dev.latvian.mods.rhino.natived.reflectasm;
 
-import com.esotericsoftware.reflectasm.ConstructorAccess;
-import com.esotericsoftware.reflectasm.FieldAccess;
-import com.esotericsoftware.reflectasm.MethodAccess;
-import com.esotericsoftware.reflectasm.PublicConstructorAccess;
-
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
@@ -64,8 +59,8 @@ class AccessClassLoader extends ClassLoader {
 
 	protected Class<?> loadClass (String name, boolean resolve) throws ClassNotFoundException {
 		// These classes come from the classloader that loaded AccessClassLoader.
-		if (name.equals(com.esotericsoftware.reflectasm.FieldAccess.class.getName())) return FieldAccess.class;
-		if (name.equals(com.esotericsoftware.reflectasm.MethodAccess.class.getName())) return MethodAccess.class;
+		if (name.equals(FieldAccess.class.getName())) return FieldAccess.class;
+		if (name.equals(MethodAccess.class.getName())) return MethodAccess.class;
 		if (name.equals(ConstructorAccess.class.getName())) return ConstructorAccess.class;
 		if (name.equals(PublicConstructorAccess.class.getName())) return PublicConstructorAccess.class;
 		// All other classes come from the classloader that loaded the type we are accessing.
