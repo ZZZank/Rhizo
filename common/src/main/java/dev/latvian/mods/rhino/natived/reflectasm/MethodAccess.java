@@ -21,6 +21,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import lombok.Getter;
+import lombok.val;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -28,6 +30,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 @SuppressWarnings("rawtypes")
+@Getter
 public abstract class MethodAccess {
 	private static final String CLASS_INTERNAL_NAME = MethodAccess.class.getName().replace('.', '/');
 
@@ -69,26 +72,15 @@ public abstract class MethodAccess {
 			"Unable to find non-private method: " + methodName + " with " + paramsCount + " params.");
 	}
 
-	public String[] getMethodNames () {
-		return methodNames;
-	}
-
-	public Class[][] getParameterTypes () {
-		return parameterTypes;
-	}
-
-	public Class[] getReturnTypes () {
-		return returnTypes;
-	}
-
 	/** Creates a new MethodAccess for the specified type.
 	 * @param type Must not be a primitive type, or void. */
 	static public MethodAccess get (Class type) {
-		boolean isInterface = type.isInterface();
-		if (!isInterface && type.getSuperclass() == null && type != Object.class)
+		val isInterface = type.isInterface();
+		if (!isInterface && type.getSuperclass() == null && type != Object.class) {
 			throw new IllegalArgumentException("The type must not be an interface, a primitive type, or void.");
+		}
 
-		ArrayList<Method> methods = new ArrayList<Method>();
+		val methods = new ArrayList<Method>();
 		if (!isInterface) {
 			Class nextClass = type;
 			while (nextClass != Object.class) {
@@ -98,10 +90,10 @@ public abstract class MethodAccess {
 		} else
 			recursiveAddInterfaceMethodsToList(type, methods);
 
-		int n = methods.size();
-		String[] methodNames = new String[n];
-		Class[][] parameterTypes = new Class[n][];
-		Class[] returnTypes = new Class[n];
+		val n = methods.size();
+		val methodNames = new String[n];
+		val parameterTypes = new Class[n][];
+		val returnTypes = new Class[n];
 		for (int i = 0; i < n; i++) {
 			Method method = methods.get(i);
 			methodNames[i] = method.getName();
@@ -109,9 +101,11 @@ public abstract class MethodAccess {
 			returnTypes[i] = method.getReturnType();
 		}
 
-		String className = type.getName();
+		val className = type.getName();
 		String accessClassName = className + "MethodAccess";
-		if (accessClassName.startsWith("java.")) accessClassName = "reflectasm." + accessClassName;
+		if (accessClassName.startsWith("java.")) {
+			accessClassName = "reflectasm." + accessClassName;
+		}
 
 		Class accessClass;
 		AccessClassLoader loader = AccessClassLoader.get(type);
@@ -291,14 +285,12 @@ public abstract class MethodAccess {
 	}
 
 	static private void addDeclaredMethodsToList (Class type, ArrayList<Method> methods) {
-		Method[] declaredMethods = type.getDeclaredMethods();
-		for (int i = 0, n = declaredMethods.length; i < n; i++) {
-			Method method = declaredMethods[i];
-			int modifiers = method.getModifiers();
-			// if (Modifier.isStatic(modifiers)) continue;
-			if (Modifier.isPrivate(modifiers)) continue;
-			methods.add(method);
-		}
+        for (Method method : type.getDeclaredMethods()) {
+            int modifiers = method.getModifiers();
+            // if (Modifier.isStatic(modifiers)) continue;
+            if (Modifier.isPrivate(modifiers)) continue;
+            methods.add(method);
+        }
 	}
 
 	static private void recursiveAddInterfaceMethodsToList (Class interfaceType, ArrayList<Method> methods) {
