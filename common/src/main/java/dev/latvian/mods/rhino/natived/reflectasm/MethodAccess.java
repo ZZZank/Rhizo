@@ -29,6 +29,8 @@ import org.objectweb.asm.Type;
 
 @SuppressWarnings("rawtypes")
 public abstract class MethodAccess {
+	private static final String CLASS_INTERNAL_NAME = MethodAccess.class.getName().replace('.', '/');
+
 	private String[] methodNames;
 	private Class[][] parameterTypes;
 	private Class[] returnTypes;
@@ -127,7 +129,7 @@ public abstract class MethodAccess {
 					mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 					mv.visitCode();
 					mv.visitVarInsn(ALOAD, 0);
-					mv.visitMethodInsn(INVOKESPECIAL, "com/esotericsoftware/reflectasm/MethodAccess", "<init>", "()V");
+					mv.visitMethodInsn(INVOKESPECIAL, CLASS_INTERNAL_NAME, "<init>", "()V");
 					mv.visitInsn(RETURN);
 					mv.visitMaxs(0, 0);
 					mv.visitEnd();
