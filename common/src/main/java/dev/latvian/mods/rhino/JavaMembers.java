@@ -6,10 +6,10 @@
 
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -192,22 +192,21 @@ public class JavaMembers {
     }
 
     public static JavaMembers lookupClass(
+        Context cx,
         Scriptable scope,
         Class<?> dynamicType,
         Class<?> staticType,
         boolean includeProtected
     ) {
-        JavaMembers members;
-        val cx = Context.getContext();
         val cache = cx.classTable;
 
         Class<?> c = dynamicType;
+        JavaMembers members;
         while (true) {
             members = cache.get(c);
             if (members != null) {
                 if (c != dynamicType) {
-                    // member lookup for the original class failed because of
-                    // missing privileges, cache the result so we don't try again
+                    // member lookup for the original class failed because of missing privileges, cache the result so we don't try again
                     cache.put(dynamicType, members);
                 }
                 return members;
@@ -240,11 +239,19 @@ public class JavaMembers {
 
         cache.put(c, members);
         if (c != dynamicType) {
-            // member lookup for the original class failed because of
-            // missing privileges, cache the result, so we don't try again
+            // member lookup for the original class failed because of missing privileges, cache the result, so we don't try again
             cache.put(dynamicType, members);
         }
         return members;
+    }
+
+    public static JavaMembers lookupClass(
+        Scriptable scope,
+        Class<?> dynamicType,
+        Class<?> staticType,
+        boolean includeProtected
+    ) {
+        return lookupClass(Context.getContext(), scope, dynamicType, staticType, includeProtected);
     }
 
     public final Context localContext;
@@ -530,34 +537,33 @@ public class JavaMembers {
             try {
                 boolean isStatic = Modifier.isStatic(mods);
                 Map<String, Object> ht = isStatic ? staticMembers : members;
-                switch (ht.get(name)) {
-                    case null -> ht.put(name, field);
-                    case NativeJavaMethod method -> {
-                        FieldAndMethods fam = new FieldAndMethods(scope, method.methods, field);
-                        Map<String, FieldAndMethods> fmht = isStatic ? staticFieldAndMethods : fieldAndMethods;
-                        if (fmht == null) {
-                            fmht = new HashMap<>();
-                            if (isStatic) {
-                                staticFieldAndMethods = fmht;
-                            } else {
-                                fieldAndMethods = fmht;
-                            }
-                        }
-                        fmht.put(name, fam);
-                        ht.put(name, fam);
-                    }
-                    case Field oldField -> {
-                        // If this newly reflected field shadows an inherited field,
-                        // then replace it. Otherwise, since access to the field
-                        // would be ambiguous from Java, no field should be
-                        // reflected.
-                        // For now, the first field found wins, unless another field
-                        // explicitly shadows it.
-                        if (oldField.getDeclaringClass().isAssignableFrom(field.getDeclaringClass())) {
-                            ht.put(name, field);
+                Object o = ht.get(name);
+                if (o == null) {
+                    ht.put(name, field);
+                } else if (o instanceof NativeJavaMethod method) {
+                    FieldAndMethods fam = new FieldAndMethods(scope, method.methods, field);
+                    Map<String, FieldAndMethods> fmht = isStatic ? staticFieldAndMethods : fieldAndMethods;
+                    if (fmht == null) {
+                        fmht = new HashMap<>();
+                        if (isStatic) {
+                            staticFieldAndMethods = fmht;
+                        } else {
+                            fieldAndMethods = fmht;
                         }
                     }
-                    default -> Kit.codeBug();// "unknown member type"
+                    fmht.put(name, fam);
+                    ht.put(name, fam);
+                } else if (o instanceof Field oldField) {// If this newly reflected field shadows an inherited field,
+                    // then replace it. Otherwise, since access to the field
+                    // would be ambiguous from Java, no field should be
+                    // reflected.
+                    // For now, the first field found wins, unless another field
+                    // explicitly shadows it.
+                    if (oldField.getDeclaringClass().isAssignableFrom(field.getDeclaringClass())) {
+                        ht.put(name, field);
+                    }
+                } else {
+                    Kit.codeBug();// "unknown member type"
                 }
             } catch (SecurityException e) {
                 // skip this field
@@ -676,7 +682,7 @@ public class JavaMembers {
     public List<Constructor<?>> getAccessibleConstructors() {
         List<Constructor<?>> constructorsList = new ArrayList<>();
 
-        for (Constructor<?> c : getConstructorsSafe(cl)) {
+        for (Constructor<?> c : ReflectsKit.getConstructorsSafe(cl)) {
             if (
                 !c.isAnnotationPresent(HideFromJS.class)
                 && Modifier.isPublic(c.getModifiers())
@@ -699,7 +705,7 @@ public class JavaMembers {
                 // get all declared fields in this class, make them
                 // accessible, and save
 
-                for (val field : getDeclaredFieldsSafe(currentClass)) {
+                for (val field : ReflectsKit.getDeclaredFieldsSafe(currentClass)) {
                     val mods = field.getModifiers();
                     if (Modifier.isTransient(mods)
                         || (!Modifier.isPublic(mods) && (!includeProtected || !Modifier.isProtected(mods)))
@@ -747,7 +753,7 @@ public class JavaMembers {
         while (!stack.isEmpty()) {
             val currentClass = stack.pop();
 
-            for (val method : getDeclaredMethodsSafe(currentClass)) {
+            for (val method : ReflectsKit.getDeclaredMethodsSafe(currentClass)) {
                 val mods = method.getModifiers();
                 if (!Modifier.isPublic(mods) && !(includeProtected && Modifier.isProtected(mods))) {
                     continue;
@@ -807,33 +813,6 @@ public class JavaMembers {
         }
 
         return list;
-    }
-
-    private static Method[] getDeclaredMethodsSafe(Class<?> cl) {
-        try {
-            return cl.getDeclaredMethods();
-        } catch (Throwable t) {
-            System.err.println("[Rhino] Failed to get declared methods for " + cl.getName() + ": " + t);
-            return Kit.emptyArray();
-        }
-    }
-
-    private static Constructor<?> @NotNull [] getConstructorsSafe(Class<?> cl) {
-        try {
-            return cl.getConstructors();
-        } catch (Throwable e) {
-            System.err.println("[Rhino] Failed to get constructors for " + cl.getName() + ": " + e);
-            return Kit.emptyArray();
-        }
-    }
-
-    private static Field[] getDeclaredFieldsSafe(Class<?> cl) {
-        try {
-            return cl.getDeclaredFields();
-        } catch (Throwable t) {
-            System.err.println("[Rhino] Failed to get declared fields for " + cl.getName() + ": " + t);
-            return Kit.emptyArray();
-        }
     }
 
     public Map<String, FieldAndMethods> getFieldAndMethodsObjects(Scriptable scope, Object javaObject, boolean isStatic) {
