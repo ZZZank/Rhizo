@@ -32,7 +32,7 @@ import org.objectweb.asm.Type;
 @SuppressWarnings("rawtypes")
 @Getter
 public abstract class MethodAccess {
-	private static final String CLASS_INTERNAL_NAME = MethodAccess.class.getName().replace('.', '/');
+	public static final String CLASS_INTERNAL_NAME = MethodAccess.class.getName().replace('.', '/');
 
 	private String[] methodNames;
 	private Class[][] parameterTypes;

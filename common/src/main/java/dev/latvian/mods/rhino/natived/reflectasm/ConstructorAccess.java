@@ -23,6 +23,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 
 abstract public class ConstructorAccess<T> {
+	private static final String CLASS_INTERNAL_NAME = ConstructorAccess.class.getName().replace('.', '/');
+
 	boolean isNonStaticMemberClass;
 
 	public boolean isNonStaticMemberClass () {
@@ -85,8 +87,8 @@ abstract public class ConstructorAccess<T> {
 					}
 				}
 				String superclassNameInternal = Modifier.isPublic(modifiers)
-					? "com/esotericsoftware/reflectasm/PublicConstructorAccess"
-					: "com/esotericsoftware/reflectasm/ConstructorAccess";
+					? PublicConstructorAccess.CLASS_INTERNAL_NAME
+					: ConstructorAccess.CLASS_INTERNAL_NAME;
 
 				ClassWriter cw = new ClassWriter(0);
 				cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, accessClassNameInternal, null, superclassNameInternal, null);

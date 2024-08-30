@@ -29,6 +29,8 @@ import org.objectweb.asm.Type;
 
 @Getter
 public abstract class FieldAccess {
+	private static final String CLASS_INTERNAL_NAME = FieldAccess.class.getName().replace('.', '/');
+
 	private String[] fieldNames;
 	private Class[] fieldTypes;
 	@Setter
@@ -176,7 +178,7 @@ public abstract class FieldAccess {
 		MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
 		mv.visitCode();
 		mv.visitVarInsn(ALOAD, 0);
-		mv.visitMethodInsn(INVOKESPECIAL, "com/esotericsoftware/reflectasm/FieldAccess", "<init>", "()V");
+		mv.visitMethodInsn(INVOKESPECIAL, CLASS_INTERNAL_NAME, "<init>", "()V");
 		mv.visitInsn(RETURN);
 		mv.visitMaxs(1, 1);
 		mv.visitEnd();
