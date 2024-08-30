@@ -19,11 +19,6 @@ import java.util.Map;
 public class Kit {
 	public static final Object[] EMPTY_ARRAY = new Object[0];
 
-	@SuppressWarnings("unchecked")
-	public static <T> T[] emptyArray() {
-		return (T[]) EMPTY_ARRAY;
-	}
-
 	public static Class<?> classOrNull(String className) {
 		try {
 			return Class.forName(className);

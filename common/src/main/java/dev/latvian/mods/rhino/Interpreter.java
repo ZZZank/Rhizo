@@ -875,7 +875,7 @@ public final class Interpreter extends Icode implements Evaluator {
 				frame = frame.parentFrame;
 				group.add(new ScriptStackElement(fileName, functionName, lineNumber));
 			}
-			list.add(group.toArray(Kit.emptyArray()));
+			list.add(group.toArray(new ScriptStackElement[0]));
 		}
 		return list.toArray(new ScriptStackElement[list.size()][]);
 	}

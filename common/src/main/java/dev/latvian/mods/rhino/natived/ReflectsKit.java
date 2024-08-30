@@ -20,12 +20,13 @@ public interface ReflectsKit {
         }
     }
 
-    static Constructor<?> @NotNull [] getConstructorsSafe(Class<?> cl) {
+    @NotNull
+    static Constructor<?>[] getConstructorsSafe(Class<?> cl) {
         try {
             return cl.getConstructors();
         } catch (Throwable e) {
             System.err.println("[Rhino] Failed to get constructors for " + cl.getName() + ": " + e);
-            return Kit.emptyArray();
+            return new Constructor[0];
         }
     }
 
@@ -34,7 +35,7 @@ public interface ReflectsKit {
             return cl.getDeclaredFields();
         } catch (Throwable t) {
             System.err.println("[Rhino] Failed to get declared fields for " + cl.getName() + ": " + t);
-            return Kit.emptyArray();
+            return new Field[0];
         }
     }
 }

@@ -39,7 +39,7 @@ public class JavaMembers {
         private final Class<?>[] args;
 
         public MethodSignature(Method method) {
-            this(method.getName(), method.getParameterCount() == 0 ? Kit.emptyArray() : method.getParameterTypes());
+            this(method.getName(), method.getParameterCount() == 0 ? new Class[0] : method.getParameterTypes());
         }
 
         @Override
@@ -461,7 +461,7 @@ public class JavaMembers {
 
     private void reflect(Context cx, Scriptable scope, boolean includeProtected) {
         if (cl.isAnnotationPresent(HideFromJS.class)) {
-            ctors = new NativeJavaMethod(Kit.emptyArray(), cl.getSimpleName());
+            ctors = new NativeJavaMethod(new MemberBox[0], cl.getSimpleName());
             return;
         }
 
