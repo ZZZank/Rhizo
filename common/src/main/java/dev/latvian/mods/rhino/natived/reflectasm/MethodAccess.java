@@ -18,9 +18,9 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
 
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 import lombok.Getter;
 import lombok.val;
 import org.objectweb.asm.ClassWriter;
@@ -80,15 +80,7 @@ public abstract class MethodAccess {
 			throw new IllegalArgumentException("The type must not be an interface, a primitive type, or void.");
 		}
 
-		val methods = new ArrayList<Method>();
-		if (!isInterface) {
-			Class nextClass = type;
-			while (nextClass != Object.class) {
-				addDeclaredMethodsToList(nextClass, methods);
-				nextClass = nextClass.getSuperclass();
-			}
-		} else
-			recursiveAddInterfaceMethodsToList(type, methods);
+		val methods = Arrays.asList(ReflectsKit.getMethodsSafe(type));
 
 		val n = methods.size();
 		val methodNames = new String[n];
@@ -108,7 +100,7 @@ public abstract class MethodAccess {
 		}
 
 		Class accessClass;
-		AccessClassLoader loader = AccessClassLoader.get(type);
+		val loader = AccessClassLoader.get(type);
 		synchronized (loader) {
 			accessClass = loader.loadAccessClass(accessClassName);
 			if (accessClass == null) {
@@ -282,20 +274,5 @@ public abstract class MethodAccess {
 		} catch (Throwable t) {
 			throw new RuntimeException("Error constructing method access class: " + accessClassName, t);
 		}
-	}
-
-	static private void addDeclaredMethodsToList (Class type, ArrayList<Method> methods) {
-        for (Method method : type.getDeclaredMethods()) {
-            int modifiers = method.getModifiers();
-            // if (Modifier.isStatic(modifiers)) continue;
-            if (Modifier.isPrivate(modifiers)) continue;
-            methods.add(method);
-        }
-	}
-
-	static private void recursiveAddInterfaceMethodsToList (Class interfaceType, ArrayList<Method> methods) {
-		addDeclaredMethodsToList(interfaceType, methods);
-		for (Class nextInterface : interfaceType.getInterfaces())
-			recursiveAddInterfaceMethodsToList(nextInterface, methods);
 	}
 }
