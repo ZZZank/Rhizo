@@ -909,22 +909,19 @@ public class ScriptRuntime {
 			setBuiltinProtoAndParent(result, scope, TopLevel.Builtins.Symbol);
 			return result;
 		}
-		if (val instanceof Scriptable) {
-			return (Scriptable) val;
-		}
-		if (val instanceof CharSequence) {
+		if (val instanceof Scriptable scriptable) {
+			return scriptable;
+		} else if (val instanceof CharSequence charSequence) {
 			// FIXME we want to avoid toString() here, especially for concat()
-			NativeString result = new NativeString((CharSequence) val);
+			val result = new NativeString(charSequence);
 			setBuiltinProtoAndParent(result, scope, TopLevel.Builtins.String);
 			return result;
-		}
-		if (val instanceof Number) {
-			NativeNumber result = new NativeNumber(((Number) val).doubleValue());
+		} else if (val instanceof Number num) {
+			val result = new NativeNumber(num.doubleValue());
 			setBuiltinProtoAndParent(result, scope, TopLevel.Builtins.Number);
 			return result;
-		}
-		if (val instanceof Boolean) {
-			NativeBoolean result = new NativeBoolean((Boolean) val);
+		} else if (val instanceof Boolean b) {
+			val result = new NativeBoolean(b);
 			setBuiltinProtoAndParent(result, scope, TopLevel.Builtins.Boolean);
 			return result;
 		}

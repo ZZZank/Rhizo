@@ -53,12 +53,9 @@ public class NBTUtils {
         }
 		//native json
 		else if (o instanceof JsonPrimitive json) {
-			if (json.isNumber()) {
-				return toNBT(json.getAsNumber());
-			} else if (json.isBoolean()) {
-				return ByteTag.valueOf(json.getAsBoolean());
-			}
-            return StringTag.valueOf(json.getAsString());
+            return json.isNumber() ? toNBT(json.getAsNumber())
+				: json.isBoolean() ? ByteTag.valueOf(json.getAsBoolean())
+					: StringTag.valueOf(json.getAsString());
         } else if (o instanceof JsonObject json) {
 			val tag = new OrderedCompoundTag();
 			for (val entry : json.entrySet()) {
@@ -66,7 +63,7 @@ public class NBTUtils {
 			}
 			return tag;
 		} else if (o instanceof JsonArray array) {
-			List<Tag> list = new ArrayList<>(array.size());
+			val list = new ArrayList<Tag>(array.size());
 			for (val element : array) {
 				list.add(toNBT(element));
 			}

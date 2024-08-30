@@ -56,8 +56,8 @@ subprojects {
 		annotationProcessor 'org.projectlombok:lombok:1.18.34'
 		testCompileOnly 'org.projectlombok:lombok:1.18.34'
 		testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
-		// https://mvnrepository.com/artifact/com.esotericsoftware/reflectasm
-		shade 'com.esotericsoftware:reflectasm:1.11.9'
+//		// https://mvnrepository.com/artifact/com.esotericsoftware/reflectasm
+//		shade 'com.esotericsoftware:reflectasm:1.11.9'
 	}
 }
 
@@ -82,10 +82,6 @@ allprojects {
 		// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
 		// We'll use that if it's available, but otherwise we'll use the older option.
 		options.release = 8
-
-		javaCompiler = javaToolchains.compilerFor {
-			languageVersion = JavaLanguageVersion.of(21)
-		}
 	}
 
 	repositories {

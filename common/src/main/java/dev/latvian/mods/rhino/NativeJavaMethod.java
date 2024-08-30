@@ -55,29 +55,28 @@ public class NativeJavaMethod extends BaseFunction {
 		for (int i = 0; i != values.length; ++i) {
 			Object value = values[i];
 
-			String s;
-			if (value == null) {
-				s = "null";
-			} else if (value instanceof Boolean) {
-				s = "boolean";
-			} else if (value instanceof String) {
-				s = "string";
-			} else if (value instanceof Number) {
-				s = "number";
-			} else if (value instanceof Scriptable) {
-				if (value instanceof Undefined) {
-					s = "undefined";
-				} else if (value instanceof Wrapper) {
-					Object wrapped = ((Wrapper) value).unwrap();
-					s = wrapped.getClass().getName();
-				} else if (value instanceof Function) {
-					s = "function";
-				} else {
-					s = "object";
-				}
-			} else {
-				s = JavaMembers.javaSignature(value.getClass());
-			}
+            String s;
+            if (value == null) {
+                s = "null";
+            } else if (value instanceof Boolean) {
+                s = "boolean";
+            } else if (value instanceof String) {
+                s = "string";
+            } else if (value instanceof Number) {
+                s = "number";
+            } else if (value instanceof Scriptable) {
+                if (value instanceof Undefined) {
+                    s = "undefined";
+                } else if (value instanceof Wrapper wrapper) {
+                    s = wrapper.unwrap().getClass().getName();
+                } else if (value instanceof Function) {
+                    s = "function";
+                } else {
+                    s = "object";
+                }
+            } else {
+                s = JavaMembers.javaSignature(value.getClass());
+            }
 
 			if (i != 0) {
 				sig.append(',');

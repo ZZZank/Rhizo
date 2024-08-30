@@ -103,7 +103,6 @@ import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
  * }
  * </pre>
  */
-
 public class ContextFactory {
 	private static final ContextFactory global = new ContextFactory();
 
