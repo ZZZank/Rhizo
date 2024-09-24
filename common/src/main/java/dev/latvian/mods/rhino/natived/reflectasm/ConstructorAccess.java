@@ -43,7 +43,7 @@ abstract public class ConstructorAccess<T> {
 	 *           synthetic this$0 field). */
 	abstract public T newInstance (Object enclosingInstance);
 
-	static public <T> ConstructorAccess<T> get (Class<T> type) {
+	static public <T> ConstructorAccess<T> get (Class<T> type) throws RuntimeException {
 		Class enclosingType = type.getEnclosingClass();
 		boolean isNonStaticMemberClass = enclosingType != null && type.isMemberClass() && !Modifier.isStatic(type.getModifiers());
 

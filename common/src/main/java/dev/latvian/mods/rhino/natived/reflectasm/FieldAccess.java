@@ -19,9 +19,12 @@ import static org.objectweb.asm.Opcodes.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -103,33 +106,23 @@ public abstract class FieldAccess {
 		if (type.getSuperclass() == null)
 			throw new IllegalArgumentException("The type must not be the Object class, an interface, a primitive type, or void.");
 
-		ArrayList<Field> fields = new ArrayList<Field>();
-		Class nextClass = type;
-		while (nextClass != Object.class) {
-			Field[] declaredFields = nextClass.getDeclaredFields();
-			for (int i = 0, n = declaredFields.length; i < n; i++) {
-				Field field = declaredFields[i];
-				int modifiers = field.getModifiers();
-				if (Modifier.isStatic(modifiers)) continue;
-				if (Modifier.isPrivate(modifiers)) continue;
-				fields.add(field);
-			}
-			nextClass = nextClass.getSuperclass();
-		}
+		val fields = new ArrayList<>(Arrays.asList(ReflectsKit.getFieldsSafe(type)));
+		//note that it allows static fields, different from original
 
-		String[] fieldNames = new String[fields.size()];
-		Class[] fieldTypes = new Class[fields.size()];
+		val fieldNames = new String[fields.size()];
+		val fieldTypes = new Class[fields.size()];
 		for (int i = 0, n = fieldNames.length; i < n; i++) {
 			fieldNames[i] = fields.get(i).getName();
 			fieldTypes[i] = fields.get(i).getType();
 		}
 
-		String className = type.getName();
-		String accessClassName = className + "FieldAccess";
-		if (accessClassName.startsWith("java.")) accessClassName = "reflectasm." + accessClassName;
+		val className = type.getName();
+		val accessClassName = className.startsWith("java.")
+			? "reflectasm." + className + "FieldAccess"
+			: className + "FieldAccess";
 
 		Class accessClass;
-		AccessClassLoader loader = AccessClassLoader.get(type);
+		val loader = AccessClassLoader.get(type);
 		synchronized (loader) {
 			accessClass = loader.loadAccessClass(accessClassName);
 			if (accessClass == null) {
@@ -137,8 +130,7 @@ public abstract class FieldAccess {
 				String classNameInternal = className.replace('.', '/');
 
 				ClassWriter cw = new ClassWriter(0);
-				cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER + ACC_SYNTHETIC, accessClassNameInternal, null, "com/esotericsoftware/reflectasm/FieldAccess",
-					null);
+				cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER + ACC_SYNTHETIC, accessClassNameInternal, null, "com/esotericsoftware/reflectasm/FieldAccess", null);
 				insertConstructor(cw);
 				insertGetObject(cw, classNameInternal, fields);
 				insertSetObject(cw, classNameInternal, fields);
@@ -590,5 +582,4 @@ public abstract class FieldAccess {
 		mv.visitInsn(ATHROW);
 		return mv;
 	}
-
 }
