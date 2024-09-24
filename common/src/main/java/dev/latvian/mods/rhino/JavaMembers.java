@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.natived.ReflectsKit;
+import dev.latvian.mods.rhino.natived.original.MemberBox;
 import dev.latvian.mods.rhino.natived.original.NativeJavaConstructor;
 import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
 import dev.latvian.mods.rhino.natived.original.NativeJavaObject;

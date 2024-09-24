@@ -14,7 +14,7 @@ import java.lang.reflect.*;
 
 public abstract class VMBridge {
 
-	static final VMBridge vm = makeVMInstance();
+	public static final VMBridge vm = makeVMInstance();
 
 	private static VMBridge makeVMInstance() {
 		/*
@@ -75,7 +75,7 @@ public abstract class VMBridge {
 	 * @return true if it was possible to make method accessible
 	 * or false otherwise.
 	 */
-	protected abstract boolean tryToMakeAccessible(AccessibleObject accessible);
+	public abstract boolean tryToMakeAccessible(AccessibleObject accessible);
 
 	/**
 	 * Create helper object to create later proxies implementing the specified
@@ -140,7 +140,7 @@ public abstract class VMBridge {
 		}
 
 		@Override
-		protected boolean tryToMakeAccessible(AccessibleObject accessible) {
+        public boolean tryToMakeAccessible(AccessibleObject accessible) {
 			if (accessible.isAccessible()) {
 				return true;
 			}

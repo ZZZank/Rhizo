@@ -4,9 +4,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package dev.latvian.mods.rhino;
+package dev.latvian.mods.rhino.natived.original;
 
+import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.ContinuationPending;
+import dev.latvian.mods.rhino.JavaMembers;
+import dev.latvian.mods.rhino.VMBridge;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.val;
 
 import java.io.Serializable;
@@ -23,9 +28,9 @@ import java.lang.reflect.*;
 public final class MemberBox implements Serializable {
 	private static final long serialVersionUID = 6358550398665688245L;
 
-	@Getter
 	private transient Executable memberObject;
 	transient Class<?>[] argTypes;
+	@Setter
 	transient Object delegateTo;
 	transient boolean vararg;
 
@@ -141,7 +146,7 @@ public final class MemberBox implements Serializable {
 		}
 	}
 
-	Object newInstance(Object[] args) {
+	public Object newInstance(Object[] args) {
 		Constructor<?> ctor = ctor();
 		try {
 			try {

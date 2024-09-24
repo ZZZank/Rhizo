@@ -13,6 +13,7 @@ import dev.latvian.mods.rhino.annotations.JSFunction;
 import dev.latvian.mods.rhino.annotations.JSGetter;
 import dev.latvian.mods.rhino.annotations.JSSetter;
 import dev.latvian.mods.rhino.annotations.JSStaticFunction;
+import dev.latvian.mods.rhino.natived.original.MemberBox;
 import dev.latvian.mods.rhino.util.Deletable;
 
 import java.io.IOException;
@@ -1640,12 +1641,12 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			boolean delegatedForm;
 			if (!Modifier.isStatic(getter.getModifiers())) {
 				delegatedForm = (delegateTo != null);
-				getterBox.delegateTo = delegateTo;
+				getterBox.setDelegateTo(delegateTo);
 			} else {
 				delegatedForm = true;
 				// Ignore delegateTo for static getter but store
 				// non-null delegateTo indicator.
-				getterBox.delegateTo = Void.TYPE;
+				getterBox.setDelegateTo(Void.TYPE);
 			}
 
 			String errorId = null;
@@ -1681,12 +1682,12 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			boolean delegatedForm;
 			if (!Modifier.isStatic(setter.getModifiers())) {
 				delegatedForm = (delegateTo != null);
-				setterBox.delegateTo = delegateTo;
+				setterBox.setDelegateTo(delegateTo);
 			} else {
 				delegatedForm = true;
 				// Ignore delegateTo for static setter but store
 				// non-null delegateTo indicator.
-				setterBox.delegateTo = Void.TYPE;
+				setterBox.setDelegateTo(Void.TYPE);
 			}
 
 			String errorId = null;
