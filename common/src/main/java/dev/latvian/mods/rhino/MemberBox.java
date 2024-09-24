@@ -9,9 +9,6 @@ package dev.latvian.mods.rhino;
 import lombok.Getter;
 import lombok.val;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.*;
 
@@ -22,7 +19,8 @@ import java.lang.reflect.*;
  *
  * @author Igor Bukanov
  */
-final class MemberBox implements Serializable {
+@Getter
+public final class MemberBox implements Serializable {
 	private static final long serialVersionUID = 6358550398665688245L;
 
 	@Getter
@@ -31,11 +29,11 @@ final class MemberBox implements Serializable {
 	transient Object delegateTo;
 	transient boolean vararg;
 
-	MemberBox(Method method) {
+	public MemberBox(Method method) {
 		init(method);
 	}
 
-	MemberBox(Constructor<?> constructor) {
+	public MemberBox(Constructor<?> constructor) {
 		init(constructor);
 	}
 
@@ -51,43 +49,43 @@ final class MemberBox implements Serializable {
 		this.vararg = constructor.isVarArgs();
 	}
 
-	Method method() {
+	public Method method() {
 		return (Method) memberObject;
 	}
 
-	Constructor<?> ctor() {
+	public Constructor<?> ctor() {
 		return (Constructor<?>) memberObject;
 	}
 
-	Member member() {
+	public Member member() {
 		return memberObject;
 	}
 
-	boolean isMethod() {
+	public boolean isMethod() {
 		return memberObject instanceof Method;
 	}
 
-	boolean isCtor() {
+	public boolean isCtor() {
 		return memberObject instanceof Constructor;
 	}
 
-	boolean isStatic() {
+	public boolean isStatic() {
 		return Modifier.isStatic(memberObject.getModifiers());
 	}
 
-	boolean isPublic() {
+	public boolean isPublic() {
 		return Modifier.isPublic(memberObject.getModifiers());
 	}
 
-	String getName() {
+	public String getName() {
 		return memberObject.getName();
 	}
 
-	Class<?> getDeclaringClass() {
+	public Class<?> getDeclaringClass() {
 		return memberObject.getDeclaringClass();
 	}
 
-	String toJavaDeclaration() {
+	public String toJavaDeclaration() {
 		StringBuilder sb = new StringBuilder();
 		if (isMethod()) {
 			Method method = method();
@@ -103,7 +101,7 @@ final class MemberBox implements Serializable {
 			}
 			sb.append(name);
 		}
-		sb.append(JavaMembers.liveConnectSignature(argTypes));
+		sb.append(JavaMembers.liveConnectSignature(getArgTypes()));
 		return sb.toString();
 	}
 
@@ -112,13 +110,13 @@ final class MemberBox implements Serializable {
 		return memberObject.toString();
 	}
 
-	Object invoke(Object target, Object[] args) {
+	public Object invoke(Object target, Object[] args) {
 		Method method = method();
 		try {
 			try {
 				return method.invoke(target, args);
 			} catch (IllegalAccessException ex) {
-				Method accessible = searchAccessibleMethod(method, argTypes);
+				Method accessible = searchAccessibleMethod(method, getArgTypes());
 				if (accessible != null) {
 					memberObject = accessible;
 					method = accessible;
@@ -196,109 +194,8 @@ final class MemberBox implements Serializable {
         return null;
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		Member member = readMember(in);
-		if (member instanceof Method) {
-			init((Method) member);
-		} else {
-			init((Constructor<?>) member);
-		}
-	}
-
-	private void writeObject(ObjectOutputStream out) throws IOException {
-		out.defaultWriteObject();
-		writeMember(out, memberObject);
-	}
-
-	/**
-	 * Writes a Constructor or Method object.
-	 * <p>
-	 * Methods and Constructors are not serializable, so we must serialize
-	 * information about the class, the name, and the parameters and
-	 * recreate upon deserialization.
-	 */
-	private static void writeMember(ObjectOutputStream out, Member member) throws IOException {
-		if (member == null) {
-			out.writeBoolean(false);
-			return;
-		}
-		out.writeBoolean(true);
-		if (!(member instanceof Method || member instanceof Constructor)) {
-			throw new IllegalArgumentException("not Method or Constructor");
-		}
-		out.writeBoolean(member instanceof Method);
-		out.writeObject(member.getName());
-		out.writeObject(member.getDeclaringClass());
-		if (member instanceof Method) {
-			writeParameters(out, ((Method) member).getParameterTypes());
-		} else {
-			writeParameters(out, ((Constructor<?>) member).getParameterTypes());
-		}
-	}
-
-	/**
-	 * Reads a Method or a Constructor from the stream.
-	 */
-	private static Member readMember(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		if (!in.readBoolean()) {
-			return null;
-		}
-		boolean isMethod = in.readBoolean();
-		String name = (String) in.readObject();
-		Class<?> declaring = (Class<?>) in.readObject();
-		Class<?>[] parms = readParameters(in);
-		try {
-			if (isMethod) {
-				return declaring.getMethod(name, parms);
-			}
-			return declaring.getConstructor(parms);
-		} catch (NoSuchMethodException e) {
-			throw new IOException("Cannot find member: " + e);
-		}
-	}
-
-	private static final Class<?>[] primitives = {Boolean.TYPE, Byte.TYPE, Character.TYPE, Double.TYPE, Float.TYPE, Integer.TYPE, Long.TYPE, Short.TYPE, Void.TYPE};
-
-	/**
-	 * Writes an array of parameter types to the stream.
-	 * <p>
-	 * Requires special handling because primitive types cannot be
-	 * found upon deserialization by the default Java implementation.
-	 */
-	private static void writeParameters(ObjectOutputStream out, Class<?>[] parms) throws IOException {
-		out.writeShort(parms.length);
-		outer:
-        for (Class<?> parm : parms) {
-            boolean primitive = parm.isPrimitive();
-            out.writeBoolean(primitive);
-            if (!primitive) {
-                out.writeObject(parm);
-                continue;
-            }
-            for (int j = 0; j < primitives.length; j++) {
-                if (parm.equals(primitives[j])) {
-                    out.writeByte(j);
-                    continue outer;
-                }
-            }
-            throw new IllegalArgumentException("Primitive " + parm + " not found");
-        }
-	}
-
-	/**
-	 * Reads an array of parameter types from the stream.
-	 */
-	private static Class<?>[] readParameters(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		Class<?>[] result = new Class[in.readShort()];
-		for (int i = 0; i < result.length; i++) {
-			if (!in.readBoolean()) {
-				result[i] = (Class<?>) in.readObject();
-				continue;
-			}
-			result[i] = primitives[in.readByte()];
-		}
-		return result;
-	}
+	private static final Class<?>[] primitives = {
+		Boolean.TYPE, Byte.TYPE, Character.TYPE, Double.TYPE, Float.TYPE, Integer.TYPE, Long.TYPE, Short.TYPE, Void.TYPE
+	};
 }
 
