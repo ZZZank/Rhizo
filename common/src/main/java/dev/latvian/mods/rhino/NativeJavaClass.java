@@ -6,10 +6,7 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.natived.original.MemberBox;
-import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
-import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
-import dev.latvian.mods.rhino.natived.original.NativeJavaPackage;
+import dev.latvian.mods.rhino.natived.original.*;
 import lombok.val;
 
 import java.lang.reflect.Array;
@@ -159,7 +156,7 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 		Class<?> classObject = getClassObject();
 		int modifiers = classObject.getModifiers();
 		if (!(Modifier.isInterface(modifiers) || Modifier.isAbstract(modifiers))) {
-			NativeJavaMethod ctors = members.ctors;
+			NativeJavaMethod ctors = members.getCtors();
 			int index = ctors.findCachedFunction(cx, args);
 			if (index < 0) {
 				String sig = NativeJavaMethod.scriptSignature(args);

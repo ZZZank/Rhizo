@@ -1,7 +1,8 @@
-package dev.latvian.mods.rhino;
+package dev.latvian.mods.rhino.natived.original;
 
-import dev.latvian.mods.rhino.natived.original.MemberBox;
-import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
+import dev.latvian.mods.rhino.Context;
+import dev.latvian.mods.rhino.ScriptRuntime;
+import dev.latvian.mods.rhino.Scriptable;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
@@ -9,7 +10,7 @@ import java.lang.reflect.Field;
 @Getter
 public class FieldAndMethods extends NativeJavaMethod {
     private static final long serialVersionUID = -9222428244284796755L;
-    Field field;
+    final Field field;
     Object javaObject;
 
     FieldAndMethods(Scriptable scope, MemberBox[] methods, Field field) {

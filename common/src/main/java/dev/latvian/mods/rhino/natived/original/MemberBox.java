@@ -8,7 +8,6 @@ package dev.latvian.mods.rhino.natived.original;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.ContinuationPending;
-import dev.latvian.mods.rhino.JavaMembers;
 import dev.latvian.mods.rhino.VMBridge;
 import lombok.Getter;
 import lombok.Setter;

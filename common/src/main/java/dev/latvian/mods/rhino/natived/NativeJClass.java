@@ -1,6 +1,6 @@
 package dev.latvian.mods.rhino.natived;
 
-import dev.latvian.mods.rhino.JavaMembers;
+import dev.latvian.mods.rhino.natived.original.JavaMembers;
 import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 import dev.latvian.mods.rhino.Scriptable;
 

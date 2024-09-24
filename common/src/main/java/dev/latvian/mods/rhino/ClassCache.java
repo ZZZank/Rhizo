@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.original.JavaMembers;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

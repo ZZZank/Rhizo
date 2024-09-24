@@ -4,13 +4,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package dev.latvian.mods.rhino;
+package dev.latvian.mods.rhino.natived.original;
 
+import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.natived.ReflectsKit;
-import dev.latvian.mods.rhino.natived.original.MemberBox;
-import dev.latvian.mods.rhino.natived.original.NativeJavaConstructor;
-import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
-import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.*;
 
@@ -263,7 +260,8 @@ public class JavaMembers {
     private final Class<?> cl;
     private final Map<String, Object> members;
     private final Map<String, Object> staticMembers;
-    NativeJavaMethod ctors; // we use NativeJavaMethod for ctor overload resolution
+    @Getter
+    public NativeJavaMethod ctors; // we use NativeJavaMethod for ctor overload resolution
     private Map<String, FieldAndMethods> fieldAndMethods;
     private Map<String, FieldAndMethods> staticFieldAndMethods;
 

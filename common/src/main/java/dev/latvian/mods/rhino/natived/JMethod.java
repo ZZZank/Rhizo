@@ -1,8 +1,7 @@
 package dev.latvian.mods.rhino.natived;
 
 import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.JavaMembers;
-import lombok.AllArgsConstructor;
+import dev.latvian.mods.rhino.natived.original.JavaMembers;
 
 import java.lang.reflect.Method;
 
@@ -12,7 +11,7 @@ import java.lang.reflect.Method;
 public class JMethod {
     public final JavaMembers.MethodSignature signature;
     /**
-     * for native name, use the name from {@link dev.latvian.mods.rhino.JavaMembers.MethodSignature}
+     * for native name, use the name from {@link JavaMembers.MethodSignature}
      */
     public final String remappedName;
     public final int index;
