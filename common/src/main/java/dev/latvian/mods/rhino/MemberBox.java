@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import lombok.Getter;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -121,11 +122,9 @@ final class MemberBox implements Serializable {
 				if (accessible != null) {
 					memberObject = accessible;
 					method = accessible;
-				} else {
-					if (!VMBridge.vm.tryToMakeAccessible(method)) {
-						throw Context.throwAsScriptRuntimeEx(ex);
-					}
-				}
+				} else if (!VMBridge.vm.tryToMakeAccessible(method)) {
+                    throw Context.throwAsScriptRuntimeEx(ex);
+                }
 				// Retry after recovery
 				return method.invoke(target, args);
 			}
@@ -162,41 +161,39 @@ final class MemberBox implements Serializable {
 
 	private static Method searchAccessibleMethod(Method method, Class<?>[] params) {
 		int modifiers = method.getModifiers();
-		if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers)) {
-			Class<?> c = method.getDeclaringClass();
-			if (!Modifier.isPublic(c.getModifiers())) {
-				String name = method.getName();
-				Class<?>[] intfs = c.getInterfaces();
-				for (int i = 0, N = intfs.length; i != N; ++i) {
-					Class<?> intf = intfs[i];
-					if (Modifier.isPublic(intf.getModifiers())) {
-						try {
-							return intf.getMethod(name, params);
-						} catch (NoSuchMethodException ex) {
-						} catch (SecurityException ex) {
-						}
-					}
-				}
-				for (; ; ) {
-					c = c.getSuperclass();
-					if (c == null) {
-						break;
-					}
-					if (Modifier.isPublic(c.getModifiers())) {
-						try {
-							Method m = c.getMethod(name, params);
-							int mModifiers = m.getModifiers();
-							if (Modifier.isPublic(mModifiers) && !Modifier.isStatic(mModifiers)) {
-								return m;
-							}
-						} catch (NoSuchMethodException ex) {
-						} catch (SecurityException ex) {
-						}
-					}
+        if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers)) {
+            return null;
+        }
+        Class<?> c = method.getDeclaringClass();
+        if (Modifier.isPublic(c.getModifiers())) {
+            return null;
+        }
+        String name = method.getName();
+		for (val intf : c.getInterfaces()) {
+			if (Modifier.isPublic(intf.getModifiers())) {
+				try {
+					return intf.getMethod(name, params);
+				} catch (NoSuchMethodException | SecurityException ignored) {
 				}
 			}
 		}
-		return null;
+        for (; ; ) {
+            c = c.getSuperclass();
+            if (c == null) {
+                break;
+            }
+            if (Modifier.isPublic(c.getModifiers())) {
+                try {
+                    Method m = c.getMethod(name, params);
+                    int mModifiers = m.getModifiers();
+                    if (Modifier.isPublic(mModifiers) && !Modifier.isStatic(mModifiers)) {
+                        return m;
+                    }
+                } catch (NoSuchMethodException | SecurityException ignored) {
+                }
+            }
+        }
+        return null;
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

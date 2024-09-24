@@ -15,14 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Mike Shaver
@@ -31,15 +24,24 @@ import java.util.Map;
  * @see NativeJavaClass
  */
 public class JavaMembers {
-    @Accessors(fluent = true)
+
     @AllArgsConstructor
-    @Data
     public static final class MethodSignature {
+        public static final Class<?>[] NO_ARG = new Class[0];
+
         private final String name;
         private final Class<?>[] args;
 
         public MethodSignature(Method method) {
-            this(method.getName(), method.getParameterCount() == 0 ? new Class[0] : method.getParameterTypes());
+            this(method.getName(), method.getParameterCount() == 0 ? NO_ARG : method.getParameterTypes());
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public List<Class<?>> args() {
+            return Collections.unmodifiableList(Arrays.asList(args));
         }
 
         @Override
