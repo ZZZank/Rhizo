@@ -1,5 +1,7 @@
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
+
 public class BeanProperty {
     MemberBox getter;
     MemberBox setter;

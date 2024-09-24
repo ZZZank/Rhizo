@@ -6,6 +6,9 @@
 
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
+import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
+import dev.latvian.mods.rhino.natived.original.NativeJavaPackage;
 import lombok.val;
 
 import java.lang.reflect.Array;
@@ -13,6 +16,8 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
+ * not moving to {@link dev.latvian.mods.rhino.natived} for KubeJS compat
+ * <p>
  * This class reflects Java classes into the JavaScript environment, mainly
  * for constructors and static members.  We lazily reflect properties,
  * and currently do not guarantee that a single j.l.Class is only
@@ -27,7 +32,6 @@ import java.util.Map;
  * @see NativeJavaObject
  * @see NativeJavaPackage
  */
-
 public class NativeJavaClass extends NativeJavaObject implements Function {
 	private static final long serialVersionUID = -6460763940409461664L;
 
@@ -195,7 +199,7 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 		throw Context.reportRuntimeError2("msg.cant.instantiate", msg, classObject.getName());
 	}
 
-	static Scriptable constructSpecific(Context cx, Scriptable scope, Object[] args, MemberBox ctor) {
+	public static Scriptable constructSpecific(Context cx, Scriptable scope, Object[] args, MemberBox ctor) {
 		Object instance = constructInternal(args, ctor);
 		// we need to force this to be wrapped, because construct _has_
 		// to return a scriptable
@@ -204,9 +208,9 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 	}
 
 	static Object constructInternal(Object[] args, MemberBox ctor) {
-		Class<?>[] argTypes = ctor.argTypes;
+		Class<?>[] argTypes = ctor.getArgTypes();
 
-		if (ctor.vararg) {
+		if (ctor.isVararg()) {
 			// marshall the explicit parameter
 			Object[] newArgs = new Object[argTypes.length];
 			for (int i = 0; i < argTypes.length - 1; i++) {

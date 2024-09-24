@@ -4,8 +4,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package dev.latvian.mods.rhino;
+package dev.latvian.mods.rhino.natived.original;
 
+import dev.latvian.mods.rhino.*;
 import lombok.Getter;
 
 import java.lang.reflect.Array;
@@ -26,17 +27,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class NativeJavaMethod extends BaseFunction {
 	private static final long serialVersionUID = -3440381785576412928L;
 
-	NativeJavaMethod(MemberBox[] methods) {
+	public NativeJavaMethod(MemberBox[] methods) {
 		this.functionName = methods[0].getName();
 		this.methods = methods;
 	}
 
-	NativeJavaMethod(MemberBox[] methods, String name) {
+	public NativeJavaMethod(MemberBox[] methods, String name) {
 		this.functionName = name;
 		this.methods = methods;
 	}
 
-	NativeJavaMethod(MemberBox method, String name) {
+	public NativeJavaMethod(MemberBox method, String name) {
 		this.functionName = name;
 		this.methods = new MemberBox[]{method};
 	}
@@ -50,7 +51,7 @@ public class NativeJavaMethod extends BaseFunction {
 		return functionName;
 	}
 
-	static String scriptSignature(Object[] values) {
+	public static String scriptSignature(Object[] values) {
 		StringBuilder sig = new StringBuilder();
 		for (int i = 0; i != values.length; ++i) {
 			Object value = values[i];
@@ -103,7 +104,7 @@ public class NativeJavaMethod extends BaseFunction {
 			} else {
 				sb.append(methods[i].getName());
 			}
-			sb.append(JavaMembers.liveConnectSignature(methods[i].argTypes));
+			sb.append(JavaMembers.liveConnectSignature(methods[i].getArgTypes()));
 		}
 		return sb.toString();
 	}
@@ -123,9 +124,9 @@ public class NativeJavaMethod extends BaseFunction {
 		}
 
 		MemberBox meth = methods[index];
-		Class<?>[] argTypes = meth.argTypes;
+		Class<?>[] argTypes = meth.getArgTypes();
 
-		if (meth.vararg) {
+		if (meth.isVararg()) {
 			// marshall the explicit parameters
 			Object[] newArgs = new Object[argTypes.length];
 			for (int i = 0; i < argTypes.length - 1; i++) {
@@ -223,7 +224,7 @@ public class NativeJavaMethod extends BaseFunction {
 		return wrapped;
 	}
 
-	int findCachedFunction(Context cx, Object[] args) {
+	public int findCachedFunction(Context cx, Object[] args) {
         if (methods.length <= 1) {
             return findFunction(cx, methods, args);
         }
@@ -252,9 +253,9 @@ public class NativeJavaMethod extends BaseFunction {
 			return -1;
 		} else if (methodsOrCtors.length == 1) {
 			MemberBox member = methodsOrCtors[0];
-			int alength = member.argTypes.length;
+			int alength = member.getArgTypes().length;
 
-			if (member.vararg) {
+			if (member.isVararg()) {
 				alength--;
 				if (alength > args.length) {
 					return -1;
@@ -265,7 +266,7 @@ public class NativeJavaMethod extends BaseFunction {
 				}
 			}
 			for (int j = 0; j != alength; ++j) {
-				if (!NativeJavaObject.canConvert(cx, args[j], member.argTypes[j])) {
+				if (!NativeJavaObject.canConvert(cx, args[j], member.getArgTypes()[j])) {
 					if (debug) {
 						printDebug("Rejecting (args can't convert) ", member, args);
 					}
@@ -285,8 +286,8 @@ public class NativeJavaMethod extends BaseFunction {
 		search:
 		for (int i = 0; i < methodsOrCtors.length; i++) {
 			MemberBox member = methodsOrCtors[i];
-			int alength = member.argTypes.length;
-			if (member.vararg) {
+			int alength = member.getArgTypes().length;
+			if (member.isVararg()) {
 				alength--;
 				if (alength > args.length) {
 					continue search;
@@ -297,7 +298,7 @@ public class NativeJavaMethod extends BaseFunction {
 				}
 			}
 			for (int j = 0; j < alength; j++) {
-				if (!NativeJavaObject.canConvert(cx, args[j], member.argTypes[j])) {
+				if (!NativeJavaObject.canConvert(cx, args[j], member.getArgTypes()[j])) {
 					if (debug) {
 						printDebug("Rejecting (args can't convert) ", member, args);
 					}
@@ -336,7 +337,12 @@ public class NativeJavaMethod extends BaseFunction {
 							++worseCount;
 						}
 					} else {
-						int preference = preferSignature(cx, args, member.argTypes, member.vararg, bestFit.argTypes, bestFit.vararg);
+						int preference = preferSignature(cx, args,
+							member.getArgTypes(),
+							member.isVararg(),
+							bestFit.getArgTypes(),
+							bestFit.isVararg()
+						);
 						if (preference == PREFERENCE_AMBIGUOUS) {
 							break;
 						} else if (preference == PREFERENCE_FIRST_ARG) {
@@ -505,7 +511,7 @@ public class NativeJavaMethod extends BaseFunction {
 			if (member.isMethod()) {
 				sb.append(member.getName());
 			}
-			sb.append(JavaMembers.liveConnectSignature(member.argTypes));
+			sb.append(JavaMembers.liveConnectSignature(member.getArgTypes()));
 			sb.append(" for arguments (");
 			sb.append(scriptSignature(args));
 			sb.append(')');
@@ -514,7 +520,7 @@ public class NativeJavaMethod extends BaseFunction {
 	}
 
 	@Getter
-	MemberBox[] methods;
+	public MemberBox[] methods;
 	private final String functionName;
 	private transient final CopyOnWriteArrayList<ResolvedOverload> overloadCache = new CopyOnWriteArrayList<>();
 }

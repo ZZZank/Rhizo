@@ -20,7 +20,7 @@ import java.util.TimeZone;
  * Significant parts of this code are adapted from the venerable jsdate.cpp (also Mozilla):
  * https://dxr.mozilla.dev/latvian/repackaged/org/mozilla-central/source/js/src/jsdate.cpp
  */
-final class NativeDate extends IdScriptableObject {
+public final class NativeDate extends IdScriptableObject {
 	private static final long serialVersionUID = -8307438915861678966L;
 
 	private static final Object DATE_TAG = "Date";
@@ -50,7 +50,7 @@ final class NativeDate extends IdScriptableObject {
 		return super.getDefaultValue(typeHint);
 	}
 
-	double getJSTimeValue() {
+	public double getJSTimeValue() {
 		return date;
 	}
 

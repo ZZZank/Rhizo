@@ -4,10 +4,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package dev.latvian.mods.rhino;
+package dev.latvian.mods.rhino.natived.original;
 
+import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.util.Deletable;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
+import lombok.Getter;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
@@ -259,9 +261,9 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	private static final int JSTYPE_JAVA_ARRAY = 7; // JavaArray
 	private static final int JSTYPE_OBJECT = 8; // Scriptable
 
-	static final byte CONVERSION_TRIVIAL = 1;
-	static final byte CONVERSION_NONTRIVIAL = 0;
-	static final byte CONVERSION_NONE = 99;
+	public static final byte CONVERSION_TRIVIAL = 1;
+	public static final byte CONVERSION_NONTRIVIAL = 0;
+	public static final byte CONVERSION_NONE = 99;
 
 	/**
 	 * Derive a ranking based on how "natural" the conversion is.
@@ -272,7 +274,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	 * <a href="http://www.mozilla.org/js/liveconnect/lc3_method_overloading.html">
 	 * "preferred method conversions" from Live Connect 3</a>
 	 */
-	static int getConversionWeight(Context cx, Object fromObj, Class<?> to) {
+	public static int getConversionWeight(Context cx, Object fromObj, Class<?> to) {
 		if (cx.hasTypeWrappers() && cx.getTypeWrappers().getWrapperFactory(to, fromObj) != null) {
 			return CONVERSION_NONTRIVIAL;
 		}
@@ -453,19 +455,15 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 		} else if (value instanceof Class) {
 			return JSTYPE_JAVA_CLASS;
 		} else {
-			Class<?> valueClass = value.getClass();
-			if (valueClass.isArray()) {
-				return JSTYPE_JAVA_ARRAY;
-			}
-			return JSTYPE_JAVA_OBJECT;
-		}
+            return value.getClass().isArray() ? JSTYPE_JAVA_ARRAY : JSTYPE_JAVA_OBJECT;
+        }
 	}
 
 	/**
 	 * Type-munging for field setting and method invocation.
 	 * Conforms to LC3 specification
 	 */
-	static Object coerceTypeImpl(@Nullable TypeWrappers typeWrappers, Class<?> type, Object value) {
+	public static Object coerceTypeImpl(@Nullable TypeWrappers typeWrappers, Class<?> type, Object value) {
 		if (value == null || value.getClass() == type) {
 			return value;
 		}
@@ -710,12 +708,9 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 		} else if (value instanceof String s) {
 			return ScriptRuntime.toNumber(s);
 		} else if (value instanceof Scriptable) {
-			if (value instanceof Wrapper w) {
-				// XXX: optimize tail-recursion?
-				return toDouble(w.unwrap());
-			}
-			return ScriptRuntime.toNumber(value);
-		} else {
+            // XXX: optimize tail-recursion?
+            return value instanceof Wrapper w ? toDouble(w.unwrap()) : ScriptRuntime.toNumber(value);
+        } else {
 			Method meth;
 			try {
 				meth = value.getClass().getMethod("doubleValue", (Class[]) null);
@@ -828,6 +823,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	protected transient Object javaObject;
 
 	protected transient Class<?> staticType;
+	@Getter
 	protected transient JavaMembers members;
 	private transient Map<String, FieldAndMethods> fieldAndMethods;
 	protected transient boolean isAdapter;

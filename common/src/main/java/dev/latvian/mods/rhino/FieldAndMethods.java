@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
 import lombok.Getter;
 
 import java.lang.reflect.Field;

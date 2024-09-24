@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.original.NativeJavaPackage;
+
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Iterator;

@@ -275,7 +275,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			} else {
 				Context cx = Context.getContext();
 				if (setter instanceof MemberBox nativeSetter) {
-                    Class<?>[] pTypes = nativeSetter.argTypes;
+                    Class<?>[] pTypes = nativeSetter.getArgTypes();
 					// XXX: cache tag since it is already calculated in
 					// defineProperty ?
 					Class<?> valueType = pTypes[pTypes.length - 1];
@@ -283,11 +283,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 					Object actualArg = FunctionObject.convertArg(cx, start, value, tag);
 					Object setterThis;
 					Object[] args;
-					if (nativeSetter.delegateTo == null) {
+					if (nativeSetter.getDelegateTo() == null) {
 						setterThis = start;
 						args = new Object[]{actualArg};
 					} else {
-						setterThis = nativeSetter.delegateTo;
+						setterThis = nativeSetter.getDelegateTo();
 						args = new Object[]{start, actualArg};
 					}
 					nativeSetter.invoke(setterThis, args);
@@ -305,11 +305,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 				if (getter instanceof MemberBox nativeGetter) {
                     Object getterThis;
 					Object[] args;
-					if (nativeGetter.delegateTo == null) {
+					if (nativeGetter.getDelegateTo() == null) {
 						getterThis = start;
 						args = ScriptRuntime.emptyArgs;
 					} else {
-						getterThis = nativeGetter.delegateTo;
+						getterThis = nativeGetter.getDelegateTo();
 						args = new Object[]{start};
 					}
 					return nativeGetter.invoke(getterThis, args);

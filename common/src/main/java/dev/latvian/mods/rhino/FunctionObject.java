@@ -92,7 +92,7 @@ public class FunctionObject extends BaseFunction {
 		}
 		String methodName = member.getName();
 		this.functionName = name;
-		Class<?>[] types = member.argTypes;
+		Class<?>[] types = member.getArgTypes();
 		int arity = types.length;
 		if (arity == 4 && (types[1].isArray() || types[2].isArray())) {
 			// Either variable args or an error.
@@ -462,7 +462,7 @@ public class FunctionObject extends BaseFunction {
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		if (parmsLength > 0) {
-			Class<?>[] types = member.argTypes;
+			Class<?>[] types = member.getArgTypes();
 			typeTags = new byte[parmsLength];
 			for (int i = 0; i != parmsLength; ++i) {
 				typeTags[i] = (byte) getTypeTag(types[i]);

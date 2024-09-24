@@ -7,9 +7,11 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.natived.ReflectsKit;
+import dev.latvian.mods.rhino.natived.original.NativeJavaConstructor;
+import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
+import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -136,7 +138,7 @@ public class JavaMembers {
         for (MemberBox method : methods) {
             // Does getter method have an empty parameter list with a return
             // value (eg. a getSomething() or isSomething())?
-            if (method.argTypes.length == 0 && (!isStatic || method.isStatic())) {
+            if (method.getArgTypes().length == 0 && (!isStatic || method.isStatic())) {
                 Class<?> type = method.method().getReturnType();
                 if (type != Void.TYPE) {
                     return method;
@@ -161,7 +163,7 @@ public class JavaMembers {
                 if (isStatic && !method.isStatic()) {
                     continue;
                 }
-                Class<?>[] params = method.argTypes;
+                Class<?>[] params = method.getArgTypes();
                 if (params.length != 1) {
                     continue;
                 }
@@ -184,7 +186,7 @@ public class JavaMembers {
         for (MemberBox method : methods) {
             if (!isStatic || method.isStatic()) {
                 if (method.method().getReturnType() == Void.TYPE) {
-                    if (method.argTypes.length == 1) {
+                    if (method.getArgTypes().length == 1) {
                         return method;
                     }
                 }
@@ -349,7 +351,7 @@ public class JavaMembers {
             // main setter. Otherwise, let the NativeJavaMethod decide which
             // setter to use:
             if (bp.setters == null || value == null) {
-                Class<?> setType = bp.setter.argTypes[0];
+                Class<?> setType = bp.setter.getArgTypes()[0];
                 Object[] args = {Context.jsToJava(value, setType)};
                 try {
                     bp.setter.invoke(javaObject, args);
@@ -421,7 +423,7 @@ public class JavaMembers {
 
         if (methodsOrCtors != null) {
             for (MemberBox methodsOrCtor : methodsOrCtors) {
-                Class<?>[] type = methodsOrCtor.argTypes;
+                Class<?>[] type = methodsOrCtor.getArgTypes();
                 String sig = liveConnectSignature(type);
                 if (sigStart + sig.length() == name.length() && name.regionMatches(sigStart, sig, 0, sig.length())) {
                     return methodsOrCtor;
@@ -832,7 +834,7 @@ public class JavaMembers {
         return result;
     }
 
-    RuntimeException reportMemberNotFound(String memberName) {
+    public RuntimeException reportMemberNotFound(String memberName) {
         return Context.reportRuntimeError2("msg.java.member.not.found", cl.getName(), memberName);
     }
 }

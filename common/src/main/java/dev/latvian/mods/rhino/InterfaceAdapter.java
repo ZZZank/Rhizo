@@ -24,7 +24,7 @@ public class InterfaceAdapter {
 	 * @return The glue object or null if <code>cl</code> is not interface or
 	 * has methods with different signatures.
 	 */
-	static Object create(Context cx, Class<?> cl, ScriptableObject object) {
+	public static Object create(Context cx, Class<?> cl, ScriptableObject object) {
 		if (!cl.isInterface()) {
 			throw new IllegalArgumentException();
 		}

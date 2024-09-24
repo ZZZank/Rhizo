@@ -8,6 +8,8 @@ package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.classfile.ByteCode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter;
+import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
+import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -181,7 +183,7 @@ public final class JavaAdapter implements IdFunctionCall {
 				System.arraycopy(args, classCount + 1, ctorArgs, 2, argsCount);
 				// TODO: cache class wrapper?
 				NativeJavaClass classWrapper = new NativeJavaClass(scope, adapterClass, true);
-				NativeJavaMethod ctors = classWrapper.members.ctors;
+				NativeJavaMethod ctors = classWrapper.getMembers().ctors;
 				int index = ctors.findCachedFunction(cx, ctorArgs);
 				if (index < 0) {
 					String sig = NativeJavaMethod.scriptSignature(args);
