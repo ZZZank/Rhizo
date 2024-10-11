@@ -130,7 +130,7 @@ public class Scope extends Jump {
 	 * Useful for injecting a new scope in a scope chain.
 	 */
 	public static Scope splitScope(Scope scope) {
-		Scope result = new Scope(scope.getType());
+		Scope result = new Scope(scope.position, scope.length);
 		result.symbolTable = scope.symbolTable;
 		scope.symbolTable = null;
 		result.parent = scope.parent;
