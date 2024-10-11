@@ -9,6 +9,7 @@ package dev.latvian.mods.rhino.natived.original;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.ContinuationPending;
 import dev.latvian.mods.rhino.VMBridge;
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
@@ -105,7 +106,7 @@ public final class MemberBox implements Serializable {
 			}
 			sb.append(name);
 		}
-		sb.append(JavaMembers.liveConnectSignature(getArgTypes()));
+		sb.append(ReflectsKit.liveConnectSignature(getArgTypes()));
 		return sb.toString();
 	}
 

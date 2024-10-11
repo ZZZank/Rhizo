@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino.natived.original;
 
 import dev.latvian.mods.rhino.*;
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 
 /**
  * This class reflects a single Java constructor into the JavaScript
@@ -38,7 +39,7 @@ public class NativeJavaConstructor extends BaseFunction {
 
 	@Override
 	public String getFunctionName() {
-		String sig = JavaMembers.liveConnectSignature(ctor.getArgTypes());
+        String sig = ReflectsKit.liveConnectSignature(ctor.getArgTypes());
 		return "<init>".concat(sig);
 	}
 

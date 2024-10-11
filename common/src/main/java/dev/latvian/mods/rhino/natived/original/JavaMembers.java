@@ -10,6 +10,7 @@ import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.natived.ReflectsKit;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -44,45 +45,18 @@ public class JavaMembers {
         }
     }
 
-    public static String javaSignature(Class<?> type) {
-        if (!type.isArray()) {
-            return type.getName();
-        }
-        int arrayDimension = 0;
-        do {
-            ++arrayDimension;
-            type = type.getComponentType();
-        } while (type.isArray());
-        String name = type.getName();
-        String suffix = "[]";
-        if (arrayDimension == 1) {
-            return name.concat(suffix);
-        }
-        int length = name.length() + arrayDimension * suffix.length();
-        StringBuilder sb = new StringBuilder(length);
-        sb.append(name);
-        while (arrayDimension != 0) {
-            --arrayDimension;
-            sb.append(suffix);
-        }
-        return sb.toString();
+    /**
+     * @deprecated use {@link ReflectsKit#javaSignature(Class)} instead
+     */
+    public static String javaSignature(@NotNull Class<?> type) {
+        return ReflectsKit.javaSignature(type);
     }
 
+    /**
+     * @deprecated use {@link ReflectsKit#liveConnectSignature(Class[])} instead
+     */
     public static String liveConnectSignature(Class<?>[] argTypes) {
-        int N = argTypes.length;
-        if (N == 0) {
-            return "()";
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append('(');
-        for (int i = 0; i != N; ++i) {
-            if (i != 0) {
-                sb.append(',');
-            }
-            sb.append(javaSignature(argTypes[i]));
-        }
-        sb.append(')');
-        return sb.toString();
+        return ReflectsKit.liveConnectSignature(argTypes);
     }
 
     private static MemberBox findGetter(boolean isStatic, Map<String, Object> ht, String prefix, String propertyName) {
@@ -95,11 +69,11 @@ public class JavaMembers {
     private static MemberBox extractGetMethod(MemberBox[] methods, boolean isStatic) {
         // Inspect the list of all MemberBox for the only one having no
         // parameters
-        for (MemberBox method : methods) {
+        for (val method : methods) {
             // Does getter method have an empty parameter list with a return
             // value (eg. a getSomething() or isSomething())?
             if (method.getArgTypes().length == 0 && (!isStatic || method.isStatic())) {
-                Class<?> type = method.method().getReturnType();
+                val type = method.method().getReturnType();
                 if (type != Void.TYPE) {
                     return method;
                 }
@@ -387,7 +361,7 @@ public class JavaMembers {
         if (methodsOrCtors != null) {
             for (MemberBox methodsOrCtor : methodsOrCtors) {
                 Class<?>[] type = methodsOrCtor.getArgTypes();
-                String sig = liveConnectSignature(type);
+                String sig = ReflectsKit.liveConnectSignature(type);
                 if (sigStart + sig.length() == name.length() && name.regionMatches(sigStart, sig, 0, sig.length())) {
                     return methodsOrCtor;
                 }

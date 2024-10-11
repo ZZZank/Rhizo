@@ -6,6 +6,7 @@
 
 package dev.latvian.mods.rhino;
 
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 import dev.latvian.mods.rhino.natived.original.FieldAndMethods;
 import dev.latvian.mods.rhino.natived.original.JavaMembers;
 import dev.latvian.mods.rhino.natived.original.NativeJavaPackage;
@@ -764,7 +765,9 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	static Object reportConversionError(Object value, Class<?> type, Object stringValue) {
 		// It uses String.valueOf(value), not value.toString() since
 		// value can be null, bug 282447.
-		throw Context.reportRuntimeError2("msg.conversion.not.allowed", String.valueOf(stringValue), JavaMembers.javaSignature(type));
+		throw Context.reportRuntimeError2("msg.conversion.not.allowed", String.valueOf(stringValue),
+			ReflectsKit.javaSignature(type)
+		);
 	}
 
 	private void writeObject(ObjectOutputStream out) throws IOException {

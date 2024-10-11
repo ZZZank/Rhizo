@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino.natived.original;
 
 import dev.latvian.mods.rhino.*;
+import dev.latvian.mods.rhino.natived.ReflectsKit;
 import lombok.Getter;
 
 import java.lang.reflect.Array;
@@ -76,7 +77,7 @@ public class NativeJavaMethod extends BaseFunction {
                     s = "object";
                 }
             } else {
-                s = JavaMembers.javaSignature(value.getClass());
+                s = ReflectsKit.javaSignature(value.getClass());
             }
 
 			if (i != 0) {
@@ -98,13 +99,13 @@ public class NativeJavaMethod extends BaseFunction {
 			// Check member type, we also use this for overloaded constructors
 			if (methods[i].isMethod()) {
 				Method method = methods[i].method();
-				sb.append(JavaMembers.javaSignature(method.getReturnType()));
+                sb.append(ReflectsKit.javaSignature(method.getReturnType()));
 				sb.append(' ');
 				sb.append(method.getName());
 			} else {
 				sb.append(methods[i].getName());
 			}
-			sb.append(JavaMembers.liveConnectSignature(methods[i].getArgTypes()));
+			sb.append(ReflectsKit.liveConnectSignature(methods[i].getArgTypes()));
 		}
 		return sb.toString();
 	}
@@ -511,7 +512,7 @@ public class NativeJavaMethod extends BaseFunction {
 			if (member.isMethod()) {
 				sb.append(member.getName());
 			}
-			sb.append(JavaMembers.liveConnectSignature(member.getArgTypes()));
+			sb.append(ReflectsKit.liveConnectSignature(member.getArgTypes()));
 			sb.append(" for arguments (");
 			sb.append(scriptSignature(args));
 			sb.append(')');

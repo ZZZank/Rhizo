@@ -1,11 +1,12 @@
 package dev.latvian.mods.rhino.natived;
 
-import dev.latvian.mods.rhino.Kit;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.StringJoiner;
 
 /**
  * @author ZZZank
@@ -59,5 +60,44 @@ public interface ReflectsKit {
             System.err.println("[Rhino] Failed to get public fields for " + cl.getName() + ": " + t);
             return new Field[0];
         }
+    }
+
+    String ARRAY_SUFFIX = "[]";
+
+    static String javaSignature(Class<?> type) {
+        if (!type.isArray()) {
+            return type.getName();
+        }
+        int arrayDimension = 0;
+        do {
+            ++arrayDimension;
+            type = type.getComponentType();
+        } while (type.isArray());
+        val name = type.getName();
+        if (arrayDimension == 1) {
+            return name.concat(ARRAY_SUFFIX);
+        }
+        val sb = new StringBuilder(name.length() + arrayDimension * ARRAY_SUFFIX.length());
+        sb.append(name);
+        while (arrayDimension != 0) {
+            --arrayDimension;
+            sb.append(ARRAY_SUFFIX);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * provide param info for Rhino precise native accessing, e.g. {@code obj["void someMethod(java.lang.Object[],I)"]}
+     * where {@code (java.lang.Object[],I)} is from this method
+     */
+    static String liveConnectSignature(Class<?>[] argTypes) {
+        if (argTypes.length == 0) {
+            return "()";
+        }
+        val joiner = new StringJoiner(",", "(", ")");
+        for (val argType : argTypes) {
+            joiner.add(javaSignature(argType));
+        }
+        return joiner.toString();
     }
 }
