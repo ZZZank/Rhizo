@@ -32,192 +32,193 @@ public interface Token {
 	 * jsscan.c.
 	 */
 
-	// start enum
-	int ERROR = -1; // well-known as the only code < EOF
-	int EOF = 0;  // end of file token - (not EOF_CHAR)
-	int EOL = 1;  // end of line
+    // start enum
+    int ERROR = -1; // well-known as the only code < EOF
+    int EOF = 0;  // end of file token - (not EOF_CHAR)
+    int EOL = 1;  // end of line
 
-	// Interpreter reuses the following as bytecodes
-	int FIRST_BYTECODE_TOKEN = 2;
+    // Interpreter reuses the following as bytecodes
+    int FIRST_BYTECODE_TOKEN = EOL + 1;
 
-	int ENTERWITH = 2;
-	int LEAVEWITH = 3;
-	int RETURN = 4;
-	int GOTO = 5;
-	int IFEQ = 6;
-	int IFNE = 7;
-	int SETNAME = 8;
-	int BITOR = 9;
-	int BITXOR = 10;
-	int BITAND = 11;
-	int EQ = 12;
-	int NE = 13;
-	int LT = 14;
-	int LE = 15;
-	int GT = 16;
-	int GE = 17;
-	int LSH = 18;
-	int RSH = 19;
-	int URSH = 20;
-	int ADD = 21;
-	int SUB = 22;
-	int MUL = 23;
-	int DIV = 24;
-	int MOD = 25;
-	int NOT = 26;
-	int BITNOT = 27;
-	int POS = 28;
-	int NEG = 29;
-	int NEW = 30;
-	int DELPROP = 31;
-	int TYPEOF = 32;
-	int GETPROP = 33;
-	int GETPROPNOWARN = 34;
-	int SETPROP = 35;
-	int GETELEM = 36;
-	int SETELEM = 37;
-	int CALL = 38;
-	int NAME = 39;
-	int NUMBER = 40;
-	int STRING = 41;
-	int NULL = 42;
-	int THIS = 43;
-	int FALSE = 44;
-	int TRUE = 45;
-	int SHEQ = 46;   // shallow equality (===)
-	int SHNE = 47;   // shallow inequality (!==)
-	int REGEXP = 48;
-	int BINDNAME = 49;
-	int THROW = 50;
-	int RETHROW = 51; // rethrow caught exception: catch (e if ) use it
-	int IN = 52;
-	int INSTANCEOF = 53;
-	int LOCAL_LOAD = 54;
-	int GETVAR = 55;
-	int SETVAR = 56;
-	int CATCH_SCOPE = 57;
-	int ENUM_INIT_KEYS = 58;
-	int ENUM_INIT_VALUES = 59;
-	int ENUM_INIT_ARRAY = 60;
-	int ENUM_INIT_VALUES_IN_ORDER = 61;
-	int ENUM_NEXT = 62;
-	int ENUM_ID = 63;
-	int THISFN = 64;
-	int RETURN_RESULT = 65; // to return previously stored return result
-	int ARRAYLIT = 66; // array literal
-	int OBJECTLIT = 67; // object literal
-	int GET_REF = 68; // *reference
-	int SET_REF = 69; // *reference    = something
-	int DEL_REF = 70; // delete reference
-	int REF_CALL = 71; // f(args)    = something or f(args)++
-	int REF_SPECIAL = 72; // reference for special properties like __proto
-	int YIELD = 73;  // JS 1.7 yield pseudo keyword
-	int STRICT_SETNAME = 74;
-	int NULLISH_COALESCING = 75; // nullish coalescing operator (??)
-	int OPTIONAL_CHAINING = 77; // optional chaining operator (?.), type is GETOPTIONAL
-	int GETOPTIONAL = 78;
+    int ENTERWITH = EOL + 1;
+    int LEAVEWITH = ENTERWITH + 1;
+    int RETURN = LEAVEWITH + 1;
+    int GOTO = RETURN + 1;
+    int IFEQ = GOTO + 1;
+    int IFNE = IFEQ + 1;
+    int SETNAME = IFNE + 1;
+    int BITOR = SETNAME + 1;
+    int BITXOR = BITOR + 1;
+    int BITAND = BITXOR + 1;
+    int EQ = BITAND + 1;
+    int NE = EQ + 1;
+    int LT = NE + 1;
+    int LE = LT + 1;
+    int GT = LE + 1;
+    int GE = GT + 1;
+    int LSH = GE + 1;
+    int RSH = LSH + 1;
+    int URSH = RSH + 1;
+    int ADD = URSH + 1;
+    int SUB = ADD + 1;
+    int MUL = SUB + 1;
+    int DIV = MUL + 1;
+    int MOD = DIV + 1;
+    int NOT = MOD + 1;
+    int BITNOT = NOT + 1;
+    int POS = BITNOT + 1;
+    int NEG = POS + 1;
+    int NEW = NEG + 1;
+    int DELPROP = NEW + 1;
+    int TYPEOF = DELPROP + 1;
+    int GETPROP = TYPEOF + 1;
+    int GETPROPNOWARN = GETPROP + 1;
+    int SETPROP = GETPROPNOWARN + 1;
+    int GETELEM = SETPROP + 1;
+    int SETELEM = GETELEM + 1;
+    int CALL = SETELEM + 1;
+    int NAME = CALL + 1;
+    int NUMBER = NAME + 1;
+    int STRING = NUMBER + 1;
+    int NULL = STRING + 1;
+    int THIS = NULL + 1;
+    int FALSE = THIS + 1;
+    int TRUE = FALSE + 1;
+    int SHEQ = TRUE + 1;   // shallow equality (===)
+    int SHNE = SHEQ + 1;   // shallow inequality (!==)
+    int REGEXP = SHNE + 1;
+    int BINDNAME = REGEXP + 1;
+    int THROW = BINDNAME + 1;
+    int RETHROW = THROW + 1; // rethrow caught exception: catch (e if ) use it
+    int IN = RETHROW + 1;
+    int INSTANCEOF = IN + 1;
+    int LOCAL_LOAD = INSTANCEOF + 1;
+    int GETVAR = LOCAL_LOAD + 1;
+    int SETVAR = GETVAR + 1;
+    int CATCH_SCOPE = SETVAR + 1;
+    int ENUM_INIT_KEYS = CATCH_SCOPE + 1;
+    int ENUM_INIT_VALUES = ENUM_INIT_KEYS + 1;
+    int ENUM_INIT_ARRAY = ENUM_INIT_VALUES + 1;
+    int ENUM_INIT_VALUES_IN_ORDER = ENUM_INIT_ARRAY + 1;
+    int ENUM_NEXT = ENUM_INIT_VALUES_IN_ORDER + 1;
+    int ENUM_ID = ENUM_NEXT + 1;
+    int THISFN = ENUM_ID + 1;
+    int RETURN_RESULT = THISFN + 1; // to return previously stored return result
+    int ARRAYLIT = RETURN_RESULT + 1; // array literal
+    int OBJECTLIT = ARRAYLIT + 1; // object literal
+    int GET_REF = OBJECTLIT + 1; // *reference
+    int SET_REF = GET_REF + 1; // *reference    = something
+    int DEL_REF = SET_REF + 1; // delete reference
+    int REF_CALL = DEL_REF + 1; // f(args)    = something or f(args)++
+    int REF_SPECIAL = REF_CALL + 1; // reference for special properties like __proto
+    int YIELD = REF_SPECIAL + 1;  // JS 1.7 yield pseudo keyword
+    int STRICT_SETNAME = YIELD + 1;
+    int NULLISH_COALESCING = STRICT_SETNAME + 1; // nullish coalescing operator (??)
+    int OPTIONAL_CHAINING = NULLISH_COALESCING + 1; // optional chaining operator (?.), type is GETOPTIONAL
+    int GETOPTIONAL = OPTIONAL_CHAINING + 1;
 
-	// End of interpreter bytecodes
-	int LAST_BYTECODE_TOKEN = GETOPTIONAL;
+    // End of interpreter bytecodes
+    int LAST_BYTECODE_TOKEN = GETOPTIONAL + 1;
 
-	int TRY = 82;
-	int SEMI = 83;  // semicolon
-	int LB = 84;  // left and right brackets
-	int RB = 85;
-	int LC = 86;  // left and right curlies (braces)
-	int RC = 87;
-	int LP = 88;  // left and right parentheses
-	int RP = 89;
-	int COMMA = 90;  // comma operator
+    int TRY = LAST_BYTECODE_TOKEN + 1;
+    int SEMI = TRY + 1;  // semicolon
+    int LB = SEMI + 1;  // left and right brackets
+    int RB = LB + 1;
+    int LC = RB + 1;  // left and right curlies (braces)
+    int RC = LC + 1;
+    int LP = RC + 1;  // left and right parentheses
+    int RP = LP + 1;
+    int COMMA = RP + 1;  // comma operator
 
-	int ASSIGN = 91;  // simple assignment  (=)
-	int ASSIGN_BITOR = 92;  // |=
-	int ASSIGN_BITXOR = 93;  // ^=
-	int ASSIGN_BITAND = 94;  // |=
-	int ASSIGN_LSH = 95;  // <<=
-	int ASSIGN_RSH = 96;  // >>=
-	int ASSIGN_URSH = 97;  // >>>=
-	int ASSIGN_ADD = 98;  // +=
-	int ASSIGN_SUB = 99;  // -=
-	int ASSIGN_MUL = 100;  // *=
-	int ASSIGN_DIV = 101;  // /=
-	int ASSIGN_MOD = 102;  // %=
+    int ASSIGN = COMMA + 1;  // simple assignment  (=)
+    int ASSIGN_BITOR = ASSIGN + 1;  // |=
+    int ASSIGN_BITXOR = ASSIGN_BITOR + 1;  // ^=
+    int ASSIGN_BITAND = ASSIGN_BITXOR + 1;  // |=
+    int ASSIGN_LSH = ASSIGN_BITAND + 1;  // <<=
+    int ASSIGN_RSH = ASSIGN_LSH + 1;  // >>=
+    int ASSIGN_URSH = ASSIGN_RSH + 1;  // >>>=
+    int ASSIGN_ADD = ASSIGN_URSH + 1;  // +=
+    int ASSIGN_SUB = ASSIGN_ADD + 1;  // -=
+    int ASSIGN_MUL = ASSIGN_SUB + 1;  // *=
+    int ASSIGN_DIV = ASSIGN_MUL + 1;  // /=
+    int ASSIGN_MOD = ASSIGN_DIV + 1;  // %=
 
-	int FIRST_ASSIGN = ASSIGN;
-	int LAST_ASSIGN = ASSIGN_MOD;
+    int FIRST_ASSIGN = ASSIGN_MOD + 1;
+    int LAST_ASSIGN = FIRST_ASSIGN + 1;
 
-	int HOOK = 103; // tri-conditional (bool ? a : b)
-	int COLON = 104;
-	int OR = 105; // logical or (||)
-	int AND = 106; // logical and (&&)
-	int INC = 107; // increment/decrement (++ --)
-	int DEC = 108;
-	int DOT = 109; // member operator (.)
-	int FUNCTION = 110; // function keyword
-	int EXPORT = 111; // export keyword
-	int IMPORT = 112; // import keyword
-	int IF = 113; // if keyword
-	int ELSE = 114; // else keyword
-	int SWITCH = 115; // switch keyword
-	int CASE = 116; // case keyword
-	int DEFAULT = 117; // default keyword
-	int WHILE = 118; // while keyword
-	int DO = 119; // do keyword
-	int FOR = 120; // for keyword
-	int BREAK = 121; // break keyword
-	int CONTINUE = 122; // continue keyword
-	int VAR = 123; // var keyword
-	int WITH = 124; // with keyword
-	int CATCH = 125; // catch keyword
-	int FINALLY = 126; // finally keyword
-	int VOID = 127; // void keyword
-	int RESERVED = 128; // reserved keywords
+    int HOOK = LAST_ASSIGN + 1; // tri-conditional (bool ? a : b)
+    int COLON = HOOK + 1;
+    int OR = COLON + 1; // logical or (||)
+    int AND = OR + 1; // logical and (&&)
+    int INC = AND + 1; // increment/decrement (++ --)
+    int DEC = INC + 1;
+    int DOT = DEC + 1; // member operator (.)
+    int FUNCTION = DOT + 1; // function keyword
+    int EXPORT = FUNCTION + 1; // export keyword
+    int IMPORT = EXPORT + 1; // import keyword
+    int IF = IMPORT + 1; // if keyword
+    int ELSE = IF + 1; // else keyword
+    int SWITCH = ELSE + 1; // switch keyword
+    int CASE = SWITCH + 1; // case keyword
+    int DEFAULT = CASE + 1; // default keyword
+    int WHILE = DEFAULT + 1; // while keyword
+    int DO = WHILE + 1; // do keyword
+    int FOR = DO + 1; // for keyword
+    int BREAK = FOR + 1; // break keyword
+    int CONTINUE = BREAK + 1; // continue keyword
+    int VAR = CONTINUE + 1; // var keyword
+    int WITH = VAR + 1; // with keyword
+    int CATCH = WITH + 1; // catch keyword
+    int FINALLY = CATCH + 1; // finally keyword
+    int VOID = FINALLY + 1; // void keyword
+    int RESERVED = VOID + 1; // reserved keywords
 
-	int EMPTY = 129;
+    int EMPTY = RESERVED + 1;
 
-	// types used for the parse tree - these never get returned  by the scanner.
-	int BLOCK = 130; // statement block
-	int LABEL = 131; // label
-	int TARGET = 132;
-	int LOOP = 133;
-	int EXPR_VOID = 134; // expression statement in functions
-	int EXPR_RESULT = 135; // expression statement in scripts
-	int JSR = 136;
-	int SCRIPT = 137; // top-level node for entire script
-	int TYPEOFNAME = 138; // for typeof(simple-name)
-	int USE_STACK = 139;
-	int SETPROP_OP = 140; // x.y op= something
-	int SETELEM_OP = 141; // x[y] op= something
-	int LOCAL_BLOCK = 142;
-	int SET_REF_OP = 143; // *reference op= something
+    // types used for the parse tree - these never get returned  by the scanner.
+    int BLOCK = EMPTY + 1; // statement block
+    int LABEL = BLOCK + 1; // label
+    int TARGET = LABEL + 1;
+    int LOOP = TARGET + 1;
+    int EXPR_VOID = LOOP + 1; // expression statement in functions
+    int EXPR_RESULT = EXPR_VOID + 1; // expression statement in scripts
+    int JSR = EXPR_RESULT + 1;
+    int SCRIPT = JSR + 1; // top-level node for entire script
+    int TYPEOFNAME = SCRIPT + 1; // for typeof(simple-name)
+    int USE_STACK = TYPEOFNAME + 1;
+    int SETPROP_OP = USE_STACK + 1; // x.y op= something
+    int SETELEM_OP = SETPROP_OP + 1; // x[y] op= something
+    int LOCAL_BLOCK = SETELEM_OP + 1;
+    int SET_REF_OP = LOCAL_BLOCK + 1; // *reference op= something
 
-	// Optimizer-only-tokens
-	int TO_OBJECT = 150;
-	int TO_DOUBLE = 151;
+    // Optimizer-only-tokens
+    int TO_OBJECT = SET_REF_OP + 1;
+    int TO_DOUBLE = TO_OBJECT + 1;
 
-	int GET = 152;  // JS 1.5 get pseudo keyword
-	int SET = 153;  // JS 1.5 set pseudo keyword
-	int LET = 154;  // JS 1.7 let pseudo keyword
-	int CONST = 155;
-	int SETCONST = 156;
-	int SETCONSTVAR = 157;
-	int ARRAYCOMP = 158;  // array comprehension
-	int LETEXPR = 159;
-	int WITHEXPR = 160;
-	// int DEBUGGER = 161;
-	int COMMENT = 162;
-	int GENEXPR = 163;
-	int METHOD = 164;  // ES6 MethodDefinition
-	int ARROW = 165;  // ES6 ArrowFunction
-	int YIELD_STAR = 166;  // ES6 "yield *", a specialization of yield
-	int TEMPLATE_LITERAL = 167;  // template literal
-	int TEMPLATE_CHARS = 168;  // template literal - literal section
-	int TEMPLATE_LITERAL_SUBST = 169;  // template literal - substitution
-	int TAGGED_TEMPLATE_LITERAL = 170;  // template literal - tagged/handler
-	int LAST_TOKEN = TAGGED_TEMPLATE_LITERAL;
+    int GET = TO_DOUBLE + 1;  // JS 1.5 get pseudo keyword
+    int SET = GET + 1;  // JS 1.5 set pseudo keyword
+    int LET = SET + 1;  // JS 1.7 let pseudo keyword
+    int CONST = LET + 1;
+    int SETCONST = CONST + 1;
+    int SETCONSTVAR = SETCONST + 1;
+    int ARRAYCOMP = SETCONSTVAR + 1;  // array comprehension
+    int LETEXPR = ARRAYCOMP + 1;
+    int WITHEXPR = LETEXPR + 1;
+    // int DEBUGGER = 161;
+    int COMMENT = WITHEXPR + 1;
+    int GENEXPR = COMMENT + 1;
+    int METHOD = GENEXPR + 1;  // ES6 MethodDefinition
+    int ARROW = METHOD + 1;  // ES6 ArrowFunction
+    int YIELD_STAR = ARROW + 1;  // ES6 "yield *", a specialization of yield
+    int TEMPLATE_LITERAL = YIELD_STAR + 1;  // template literal
+    int TEMPLATE_CHARS = TEMPLATE_LITERAL + 1;  // template literal - literal section
+    int TEMPLATE_LITERAL_SUBST = TEMPLATE_CHARS + 1;  // template literal - substitution
+    int TAGGED_TEMPLATE_LITERAL = TEMPLATE_LITERAL_SUBST + 1;  // template literal - tagged/handler
+
+    int LAST_TOKEN = TAGGED_TEMPLATE_LITERAL;
 
 
-	/**
+    /**
 	 * Returns a name for the token.  If Rhino is compiled with certain
 	 * hardcoded debugging flags in this file, it calls {@code #typeToName};
 	 * otherwise it returns a string whose value is the token number.
