@@ -286,18 +286,18 @@ public class NativeJavaMethod extends BaseFunction {
 		search:
 		for (int i = 0; i < methodsOrCtors.length; i++) {
 			MemberBox member = methodsOrCtors[i];
-			int alength = member.getArgTypes().length;
+			int argLen = member.getArgTypes().length;
 			if (member.isVararg()) {
-				alength--;
-				if (alength > args.length) {
+				argLen--;
+				if (argLen > args.length) {
 					continue search;
 				}
 			} else {
-				if (alength != args.length) {
+				if (argLen != args.length) {
 					continue search;
 				}
 			}
-			for (int j = 0; j < alength; j++) {
+			for (int j = 0; j < argLen; j++) {
 				if (!NativeJavaObject.canConvert(cx, args[j], member.getArgTypes()[j])) {
 					if (debug) {
 						printDebug("Rejecting (args can't convert) ", member, args);
@@ -451,8 +451,8 @@ public class NativeJavaMethod extends BaseFunction {
 
 	/**
 	 * Determine which of two signatures is the closer fit.
-	 * Returns one of PREFERENCE_EQUAL, PREFERENCE_FIRST_ARG,
-	 * PREFERENCE_SECOND_ARG, or PREFERENCE_AMBIGUOUS.
+	 * Returns one of {@link #PREFERENCE_EQUAL}, {@link #PREFERENCE_FIRST_ARG},
+	 * {@link #PREFERENCE_SECOND_ARG}, or {@link #PREFERENCE_AMBIGUOUS}.
 	 */
 	private static int preferSignature(Context cx, Object[] args, Class<?>[] sig1, boolean vararg1, Class<?>[] sig2, boolean vararg2) {
 		int totalPreference = 0;
@@ -523,54 +523,54 @@ public class NativeJavaMethod extends BaseFunction {
 	public MemberBox[] methods;
 	private final String functionName;
 	private transient final CopyOnWriteArrayList<ResolvedOverload> overloadCache = new CopyOnWriteArrayList<>();
-}
 
-class ResolvedOverload {
-	final Class<?>[] types;
-	final int index;
+	static class ResolvedOverload {
+		final Class<?>[] types;
+		final int index;
 
-	ResolvedOverload(Object[] args, int index) {
-		this.index = index;
-		types = new Class<?>[args.length];
-		for (int i = 0, l = args.length; i < l; i++) {
-			Object arg = args[i];
-			if (arg instanceof Wrapper) {
-				arg = ((Wrapper) arg).unwrap();
-			}
-			types[i] = arg == null ? null : arg.getClass();
-		}
-	}
-
-	boolean matches(Object[] args) {
-		if (args.length != types.length) {
-			return false;
-		}
-		for (int i = 0, l = args.length; i < l; i++) {
-			Object arg = args[i];
-			if (arg instanceof Wrapper) {
-				arg = ((Wrapper) arg).unwrap();
-			}
-			if (arg == null) {
-				if (types[i] != null) {
-					return false;
+		ResolvedOverload(Object[] args, int index) {
+			this.index = index;
+			types = new Class<?>[args.length];
+			for (int i = 0, l = args.length; i < l; i++) {
+				Object arg = args[i];
+				if (arg instanceof Wrapper) {
+					arg = ((Wrapper) arg).unwrap();
 				}
-			} else if (arg.getClass() != types[i]) {
+				types[i] = arg == null ? null : arg.getClass();
+			}
+		}
+
+		boolean matches(Object[] args) {
+			if (args.length != types.length) {
 				return false;
 			}
+			for (int i = 0, l = args.length; i < l; i++) {
+				Object arg = args[i];
+				if (arg instanceof Wrapper wrapper) {
+					arg = wrapper.unwrap();
+				}
+				if (arg == null) {
+					if (types[i] != null) {
+						return false;
+					}
+				} else if (arg.getClass() != types[i]) {
+					return false;
+				}
+			}
+			return true;
 		}
-		return true;
-	}
 
-	@Override
-	public boolean equals(Object other) {
-		if (!(other instanceof ResolvedOverload ovl)) {
-			return false;
+		@Override
+		public boolean equals(Object other) {
+            return other instanceof ResolvedOverload overload
+				&& Arrays.equals(types, overload.types)
+				&& index == overload.index;
+        }
+
+		@Override
+		public int hashCode() {
+			return Arrays.hashCode(types);
 		}
-        return Arrays.equals(types, ovl.types) && index == ovl.index;
-	}
-
-	@Override
-	public int hashCode() {
-		return Arrays.hashCode(types);
 	}
 }
+
