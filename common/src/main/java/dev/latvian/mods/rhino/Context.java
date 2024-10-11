@@ -30,6 +30,7 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 /**
  * This class represents the runtime context of an executing script.
@@ -759,33 +760,25 @@ public class Context {
         return new Interpreter();
     }
 
+    private static final Predicate<StackWalker.StackFrame> FRAME_FILTER = stackFrame ->
+        (stackFrame.getFileName() == null || stackFrame.getFileName().endsWith(".java"))
+            && stackFrame.getLineNumber() >= 0;
+
     public static String getSourcePositionFromStack(int[] linep) {
         Context cx = getCurrentContext();
         if (cx == null) {
             return null;
         }
         if (cx.lastInterpreterFrame != null) {
-            Evaluator evaluator = createInterpreter();
-            return evaluator.getSourcePositionFromStack(cx, linep);
+            return createInterpreter().getSourcePositionFromStack(cx, linep);
         }
-        /*
-         * A bit of a hack, but the only way to get filename and line
-         * number from an enclosing frame.
-         */
-        StackTraceElement[] stackTrace = new Throwable().getStackTrace();
-        for (StackTraceElement st : stackTrace) {
-            String file = st.getFileName();
-            if (file == null || file.endsWith(".java")) {
-                continue;
-            }
-            int line = st.getLineNumber();
-            if (line >= 0) {
-                linep[0] = line;
-                return file;
-            }
-        }
-
-        return null;
+        return StackWalker.getInstance()
+            .walk(frame -> frame.filter(FRAME_FILTER).findFirst())
+            .map(frame -> {
+                linep[0] = frame.getLineNumber();
+                return frame.getFileName();
+            })
+            .orElse(null);
     }
 
     /**
