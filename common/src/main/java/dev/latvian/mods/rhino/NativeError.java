@@ -6,6 +6,9 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
@@ -54,14 +57,19 @@ final class NativeError extends IdScriptableObject {
 		NativeCallSite.init(obj, sealed);
 	}
 
-	static NativeError make(Context cx, Scriptable scope, IdFunctionObject ctorObj, Object[] args) {
-		Scriptable proto = (Scriptable) (ctorObj.get("prototype", ctorObj));
+	static @NotNull NativeError makeProto(Scriptable scope, IdFunctionObject ctorObj) {
+		val proto = (Scriptable) (ctorObj.get("prototype", ctorObj));
 
-		NativeError obj = new NativeError();
+		val obj = new NativeError();
 		obj.setPrototype(proto);
 		obj.setParentScope(scope);
+		return obj;
+	}
 
-		int arglen = args.length;
+	static NativeError make(Context cx, Scriptable scope, IdFunctionObject ctorObj, Object[] args) {
+		val obj = makeProto(scope, ctorObj);
+
+		val arglen = args.length;
 		if (arglen >= 1) {
 			if (args[0] != Undefined.instance) {
 				putProperty(obj, "message", ScriptRuntime.toString(args[0]));
@@ -108,9 +116,8 @@ final class NativeError extends IdScriptableObject {
 
 	@Override
 	protected void initPrototypeId(int id) {
-		String s;
-		int arity;
-        s = switch (id) {
+        int arity;
+        String s = switch (id) {
             case Id_constructor -> {
                 arity = 1;
                 yield "constructor";

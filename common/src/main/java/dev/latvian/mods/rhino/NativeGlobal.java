@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+
 import java.io.Serializable;
 
 /**
@@ -60,16 +62,20 @@ public class NativeGlobal implements Serializable, IdFunctionCall {
             Each error constructor gets its own Error object as a prototype,
             with the 'name' property set to the name of the error.
         */
-		for (TopLevel.NativeErrors error : TopLevel.NativeErrors.values()) {
+		for (val error : TopLevel.NativeErrors.values()) {
 			if (error == TopLevel.NativeErrors.Error) {
 				// Error is initialized elsewhere, and we should not overwrite it.
 				continue;
 			}
-			String name = error.name();
-			ScriptableObject errorProto = (ScriptableObject) ScriptRuntime.newBuiltinObject(cx, scope, TopLevel.Builtins.Error, ScriptRuntime.emptyArgs);
+			val name = error.name();
+			val topLevelScope = ScriptableObject.getTopLevelScope(scope);
+			val errorProto = NativeError.makeProto(
+				ScriptableObject.getTopLevelScope(scope),
+				(IdFunctionObject) TopLevel.getBuiltinCtor(cx, topLevelScope, TopLevel.Builtins.Error)
+			);
 			errorProto.put("name", errorProto, name);
 			errorProto.put("message", errorProto, "");
-			IdFunctionObject ctor = new IdFunctionObject(obj, FTAG, Id_new_CommonError, name, 1, scope);
+			val ctor = new IdFunctionObject(obj, FTAG, Id_new_CommonError, name, 1, scope);
 			ctor.markAsConstructor(errorProto);
 			errorProto.put("constructor", errorProto, ctor);
 			errorProto.setAttributes("constructor", ScriptableObject.DONTENUM);
@@ -83,80 +89,29 @@ public class NativeGlobal implements Serializable, IdFunctionCall {
 
 	@Override
 	public Object execIdCall(IdFunctionObject f, Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-		if (f.hasTag(FTAG)) {
-			int methodId = f.methodId();
-			switch (methodId) {
-				case Id_decodeURI:
-				case Id_decodeURIComponent: {
-					String str = ScriptRuntime.toString(args, 0);
-					return decode(str, methodId == Id_decodeURI);
-				}
-
-				case Id_encodeURI:
-				case Id_encodeURIComponent: {
-					String str = ScriptRuntime.toString(args, 0);
-					return encode(str, methodId == Id_encodeURI);
-				}
-
-				case Id_escape:
-					return js_escape(args);
-
-				case Id_eval:
-					return js_eval(cx, scope, args);
-
-				case Id_isFinite: {
-					if (args.length < 1) {
-						return Boolean.FALSE;
-					}
-					return NativeNumber.isFinite(args[0]);
-				}
-
-				case Id_isNaN: {
-					// The global method isNaN, as per ECMA-262 15.1.2.6.
-					boolean result;
-					if (args.length < 1) {
-						result = true;
-					} else {
-						double d = ScriptRuntime.toNumber(args[0]);
-						result = Double.isNaN(d);
-					}
-					return ScriptRuntime.wrapBoolean(result);
-				}
-
-				case Id_isXMLName: {
-					/*
-					Object name = (args.length == 0)
-							? Undefined.instance : args[0];
-					XMLLib xmlLib = XMLLib.extractFromScope(scope);
-					return ScriptRuntime.wrapBoolean(
-							xmlLib.isXMLName(cx, name));
-					 */
-
-					return ScriptRuntime.wrapBoolean(false);
-				}
-
-				case Id_parseFloat:
-					return js_parseFloat(args);
-
-				case Id_parseInt:
-					return js_parseInt(args);
-
-				case Id_unescape:
-					return js_unescape(args);
-
-				case Id_uneval: {
-					Object value = (args.length != 0) ? args[0] : Undefined.instance;
-					return ScriptRuntime.uneval(cx, scope, value);
-				}
-
-				case Id_new_CommonError:
-					// The implementation of all the ECMA error constructors
-					// (SyntaxError, TypeError, etc.)
-					return NativeError.make(cx, scope, f, args);
-			}
-		}
-		throw f.unknown();
-	}
+        if (!f.hasTag(FTAG)) {
+            throw f.unknown();
+        }
+        int methodId = f.methodId();
+        return switch (methodId) {
+            case Id_decodeURI, Id_decodeURIComponent -> decode(ScriptRuntime.toString(args, 0), methodId == Id_decodeURI);
+            case Id_encodeURI, Id_encodeURIComponent -> encode(ScriptRuntime.toString(args, 0), methodId == Id_encodeURI);
+            case Id_escape -> js_escape(args);
+            case Id_eval -> js_eval(cx, scope, args);
+            case Id_isFinite -> args.length < 1 ? Boolean.FALSE : NativeNumber.isFinite(args[0]);
+            case Id_isNaN -> ScriptRuntime.wrapBoolean(
+                Double.isNaN(ScriptRuntime.toNumber(args, 0))
+            ); // The global method isNaN, as per ECMA-262 15.1.2.6.;
+            case Id_isXMLName -> ScriptRuntime.wrapBoolean(false);
+            case Id_parseFloat -> js_parseFloat(args);
+            case Id_parseInt -> js_parseInt(args);
+            case Id_unescape -> js_unescape(args);
+            case Id_uneval -> ScriptRuntime.uneval(cx, scope, (args.length != 0) ? args[0] : Undefined.instance);
+            case Id_new_CommonError ->// (SyntaxError, TypeError, etc.)
+                NativeError.make(cx, scope, f, args);
+            default -> throw f.unknown();
+        };
+    }
 
 	/**
 	 * The global method parseInt, as per ECMA-262 15.1.2.2.
