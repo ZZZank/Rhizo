@@ -1,5 +1,7 @@
 package dev.latvian.mods.rhino.natived;
 
+import lombok.AllArgsConstructor;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -9,14 +11,10 @@ import java.util.List;
  *
  * @author ZZZank
  */
+@AllArgsConstructor
 public class JMethods {
     private final String name;
     private final JMethod[] all;
-
-    public JMethods(String name, JMethod[] all) {
-        this.name = name;
-        this.all = all;
-    }
 
     public String name() {
         return name;
