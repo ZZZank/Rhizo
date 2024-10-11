@@ -12,7 +12,10 @@ import lombok.val;
 
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.*;
+
+import static dev.latvian.mods.rhino.UniqueTag.DOUBLE_MARK;
 
 public final class Interpreter extends Icode implements Evaluator {
 	// data for parsing
@@ -952,7 +955,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		// It is also used for continuation restart in which case
 		// it holds ContinuationJump
 
-		final Object DBL_MRK = UniqueTag.DOUBLE_MARK;
+		final Object DBL_MRK = DOUBLE_MARK;
 		final Object undefined = Undefined.instance;
 
 		final boolean instructionCounting = (cx.instructionThreshold != 0);
@@ -1086,7 +1089,7 @@ public final class Interpreter extends Icode implements Evaluator {
 								frame.resultDbl = sDbl[stackTop];
 								--stackTop;
 
-								NativeIterator.StopIteration si = new NativeIterator.StopIteration((frame.result == UniqueTag.DOUBLE_MARK) ? Double.valueOf(frame.resultDbl) : frame.result);
+								NativeIterator.StopIteration si = new NativeIterator.StopIteration((frame.result == DOUBLE_MARK) ? Double.valueOf(frame.resultDbl) : frame.result);
 
 								int sourceLine = getIndex(iCode, frame.pc);
 								generatorState.returnedException = new JavaScriptException(si, frame.idata.itsSourceFile, sourceLine);
@@ -2094,12 +2097,12 @@ public final class Interpreter extends Icode implements Evaluator {
 
 	private static int doInOrInstanceof(Context cx, int op, Object[] stack, double[] sDbl, int stackTop) {
 		Object rhs = stack[stackTop];
-		if (rhs == UniqueTag.DOUBLE_MARK) {
+		if (rhs == DOUBLE_MARK) {
 			rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		--stackTop;
 		Object lhs = stack[stackTop];
-		if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (lhs == DOUBLE_MARK) {
 			lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		boolean valBln;
@@ -2122,10 +2125,10 @@ public final class Interpreter extends Icode implements Evaluator {
 			number_compare:
 			{
 				double rDbl, lDbl;
-				if (rhs == UniqueTag.DOUBLE_MARK) {
+				if (rhs == DOUBLE_MARK) {
 					rDbl = sDbl[stackTop + 1];
 					lDbl = stack_double(frame, stackTop);
-				} else if (lhs == UniqueTag.DOUBLE_MARK) {
+				} else if (lhs == DOUBLE_MARK) {
 					rDbl = ScriptRuntime.toNumber(rhs);
 					lDbl = sDbl[stackTop];
 				} else {
@@ -2156,7 +2159,7 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static int doBitOp(CallFrame frame, int op, Object[] stack, double[] sDbl, int stackTop) {
 		int lIntValue = stack_int32(frame, stackTop - 1);
 		int rIntValue = stack_int32(frame, stackTop);
-		stack[--stackTop] = UniqueTag.DOUBLE_MARK;
+		stack[--stackTop] = DOUBLE_MARK;
 		sDbl[stackTop] = switch (op) {
 			case Token.BITAND -> lIntValue & rIntValue;
 			case Token.BITOR -> lIntValue | rIntValue;
@@ -2170,12 +2173,12 @@ public final class Interpreter extends Icode implements Evaluator {
 
 	private static int doDelName(Context cx, CallFrame frame, int op, Object[] stack, double[] sDbl, int stackTop) {
 		Object rhs = stack[stackTop];
-		if (rhs == UniqueTag.DOUBLE_MARK) {
+		if (rhs == DOUBLE_MARK) {
 			rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		--stackTop;
 		Object lhs = stack[stackTop];
-		if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (lhs == DOUBLE_MARK) {
 			lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		stack[stackTop] = ScriptRuntime.delete(lhs, rhs, cx, frame.scope, op == Icode_DELNAME);
@@ -2185,12 +2188,12 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static int doGetElem(Context cx, CallFrame frame, Object[] stack, double[] sDbl, int stackTop) {
 		--stackTop;
 		Object lhs = stack[stackTop];
-		if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (lhs == DOUBLE_MARK) {
 			lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		Object value;
 		Object id = stack[stackTop + 1];
-		if (id != UniqueTag.DOUBLE_MARK) {
+		if (id != DOUBLE_MARK) {
 			value = ScriptRuntime.getObjectElem(lhs, id, cx, frame.scope);
 		} else {
 			double d = sDbl[stackTop + 1];
@@ -2203,16 +2206,16 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static int doSetElem(Context cx, CallFrame frame, Object[] stack, double[] sDbl, int stackTop) {
 		stackTop -= 2;
 		Object rhs = stack[stackTop + 2];
-		if (rhs == UniqueTag.DOUBLE_MARK) {
+		if (rhs == DOUBLE_MARK) {
 			rhs = ScriptRuntime.wrapNumber(sDbl[stackTop + 2]);
 		}
 		Object lhs = stack[stackTop];
-		if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (lhs == DOUBLE_MARK) {
 			lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		Object value;
 		Object id = stack[stackTop + 1];
-		if (id != UniqueTag.DOUBLE_MARK) {
+		if (id != DOUBLE_MARK) {
 			value = ScriptRuntime.setObjectElem(lhs, id, rhs, cx, frame.scope);
 		} else {
 			double d = sDbl[stackTop + 1];
@@ -2224,12 +2227,12 @@ public final class Interpreter extends Icode implements Evaluator {
 
 	private static int doElemIncDec(Context cx, CallFrame frame, byte[] iCode, Object[] stack, double[] sDbl, int stackTop) {
 		Object rhs = stack[stackTop];
-		if (rhs == UniqueTag.DOUBLE_MARK) {
+		if (rhs == DOUBLE_MARK) {
 			rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		--stackTop;
 		Object lhs = stack[stackTop];
-		if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (lhs == DOUBLE_MARK) {
 			lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 		}
 		stack[stackTop] = ScriptRuntime.elemIncrDecr(lhs, rhs, cx, frame.scope, iCode[frame.pc]);
@@ -2248,7 +2251,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			stackTop -= indexReg;
 
 			Object function = stack[stackTop];
-			if (function == UniqueTag.DOUBLE_MARK) {
+			if (function == DOUBLE_MARK) {
 				function = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 			}
 			Object[] outArgs = getArgsArray(stack, sDbl, stackTop + 1, indexReg);
@@ -2280,7 +2283,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			}
 		} else {
 			Object val = stack[stackTop];
-			if (val == UniqueTag.DOUBLE_MARK) {
+			if (val == DOUBLE_MARK) {
 				val = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 			}
 			String stringReg = frame.idata.argNames[indexReg];
@@ -2301,7 +2304,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			}
 		} else {
 			Object val = stack[stackTop];
-			if (val == UniqueTag.DOUBLE_MARK) {
+			if (val == DOUBLE_MARK) {
 				val = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 			}
 			String stringReg = frame.idata.argNames[indexReg];
@@ -2329,7 +2332,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		if (!frame.useActivation) {
 			Object varValue = vars[indexReg];
 			double d;
-			if (varValue == UniqueTag.DOUBLE_MARK) {
+			if (varValue == DOUBLE_MARK) {
 				d = varDbls[indexReg];
 			} else {
 				d = ScriptRuntime.toNumber(varValue);
@@ -2337,17 +2340,17 @@ public final class Interpreter extends Icode implements Evaluator {
 			double d2 = ((incrDecrMask & Node.DECR_FLAG) == 0) ? d + 1.0 : d - 1.0;
 			boolean post = ((incrDecrMask & Node.POST_FLAG) != 0);
 			if ((varAttributes[indexReg] & ScriptableObject.READONLY) == 0) {
-				if (varValue != UniqueTag.DOUBLE_MARK) {
-					vars[indexReg] = UniqueTag.DOUBLE_MARK;
+				if (varValue != DOUBLE_MARK) {
+					vars[indexReg] = DOUBLE_MARK;
 				}
 				varDbls[indexReg] = d2;
-				stack[stackTop] = UniqueTag.DOUBLE_MARK;
+				stack[stackTop] = DOUBLE_MARK;
 				sDbl[stackTop] = post ? d : d2;
 			} else {
-				if (post && varValue != UniqueTag.DOUBLE_MARK) {
+				if (post && varValue != DOUBLE_MARK) {
 					stack[stackTop] = varValue;
 				} else {
-					stack[stackTop] = UniqueTag.DOUBLE_MARK;
+					stack[stackTop] = DOUBLE_MARK;
 					sDbl[stackTop] = post ? d : d2;
 				}
 			}
@@ -2371,7 +2374,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		Object[] elements = new Object[indexReg];
 		for (int i = 0; i < indexReg; ++i, ++shift) {
 			Object val = stack[shift];
-			if (val == UniqueTag.DOUBLE_MARK) {
+			if (val == DOUBLE_MARK) {
 				val = ScriptRuntime.wrapNumber(sDbl[shift]);
 			}
 			elements[i] = val;
@@ -2399,13 +2402,13 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static boolean doEquals(Object[] stack, double[] sDbl, int stackTop) {
 		Object rhs = stack[stackTop + 1];
 		Object lhs = stack[stackTop];
-		if (rhs == UniqueTag.DOUBLE_MARK) {
-			if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (rhs == DOUBLE_MARK) {
+			if (lhs == DOUBLE_MARK) {
 				return (sDbl[stackTop] == sDbl[stackTop + 1]);
 			}
 			return ScriptRuntime.eqNumber(sDbl[stackTop + 1], lhs);
 		}
-		if (lhs == UniqueTag.DOUBLE_MARK) {
+		if (lhs == DOUBLE_MARK) {
 			return ScriptRuntime.eqNumber(sDbl[stackTop], rhs);
 		}
 		return ScriptRuntime.eq(lhs, rhs);
@@ -2414,7 +2417,7 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static boolean doShallowEquals(Object[] stack, double[] sDbl, int stackTop) {
 		Object rhs = stack[stackTop + 1];
 		Object lhs = stack[stackTop];
-		final Object DBL_MRK = UniqueTag.DOUBLE_MARK;
+		final Object DBL_MRK = DOUBLE_MARK;
 		double rdbl, ldbl;
 		if (rhs == DBL_MRK) {
 			rdbl = sDbl[stackTop + 1];
@@ -2544,7 +2547,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		frame.savedStackTop = stackTop;
 		frame.pc--; // we want to come back here when we resume
 		ScriptRuntime.exitActivationFunction(cx);
-		final Object result = (frame.result != UniqueTag.DOUBLE_MARK) ? frame.result : ScriptRuntime.wrapNumber(frame.resultDbl);
+		final Object result = (frame.result != DOUBLE_MARK) ? frame.result : ScriptRuntime.wrapNumber(frame.resultDbl);
 		if (yieldStar) {
 			return new ES6Generator.YieldStarResult(result);
 		}
@@ -2577,7 +2580,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		Scriptable applyThis;
 		if (indexReg != 0) {
 			Object obj = stack[stackTop + 2];
-			if (obj == UniqueTag.DOUBLE_MARK) {
+			if (obj == DOUBLE_MARK) {
 				obj = ScriptRuntime.wrapNumber(sDbl[stackTop + 2]);
 			}
 			applyThis = ScriptRuntime.toObjectOrNull(cx, obj, frame.scope);
@@ -2735,15 +2738,23 @@ public final class Interpreter extends Icode implements Evaluator {
 
 	private static int stack_int32(CallFrame frame, int i) {
 		Object x = frame.stack[i];
-		if (x == UniqueTag.DOUBLE_MARK) {
+		if (x == DOUBLE_MARK) {
 			return ScriptRuntime.toInt32(frame.sDbl[i]);
 		}
 		return ScriptRuntime.toInt32(x);
 	}
 
+	private static Number stack_numeric(CallFrame frame, int i) {
+		Object x = frame.stack[i];
+		if (x != DOUBLE_MARK) {
+			return ScriptRuntime.toNumber(x);
+		}
+		return frame.sDbl[i];
+	}
+
 	private static double stack_double(CallFrame frame, int i) {
 		Object x = frame.stack[i];
-		if (x != UniqueTag.DOUBLE_MARK) {
+		if (x != DOUBLE_MARK) {
 			return ScriptRuntime.toNumber(x);
 		}
 		return frame.sDbl[i];
@@ -2756,7 +2767,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			return true;
 		} else if (Boolean.FALSE.equals(x)) {
 			return false;
-		} else if (x == UniqueTag.DOUBLE_MARK) {
+		} else if (x == DOUBLE_MARK) {
 			double d = frame.sDbl[i];
 			return !Double.isNaN(d) && d != 0.0;
 		} else if (x == null || x == Undefined.instance) {
@@ -2774,15 +2785,15 @@ public final class Interpreter extends Icode implements Evaluator {
 		Object lhs = stack[stackTop];
 		double d;
 		boolean leftRightOrder;
-		if (rhs == UniqueTag.DOUBLE_MARK) {
+		if (rhs == DOUBLE_MARK) {
 			d = sDbl[stackTop + 1];
-			if (lhs == UniqueTag.DOUBLE_MARK) {
+			if (lhs == DOUBLE_MARK) {
 				sDbl[stackTop] += d;
 				return;
 			}
 			leftRightOrder = true;
 			// fallthrough to object + number code
-		} else if (lhs == UniqueTag.DOUBLE_MARK) {
+		} else if (lhs == DOUBLE_MARK) {
 			d = sDbl[stackTop];
 			lhs = rhs;
 			leftRightOrder = false;
@@ -2805,7 +2816,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			} else {
 				double lDbl = (lhs instanceof Number) ? ((Number) lhs).doubleValue() : ScriptRuntime.toNumber(lhs);
 				double rDbl = (rhs instanceof Number) ? ((Number) rhs).doubleValue() : ScriptRuntime.toNumber(rhs);
-				stack[stackTop] = UniqueTag.DOUBLE_MARK;
+				stack[stackTop] = DOUBLE_MARK;
 				sDbl[stackTop] = lDbl + rDbl;
 			}
 			return;
@@ -2829,31 +2840,29 @@ public final class Interpreter extends Icode implements Evaluator {
 			}
 		} else {
 			double lDbl = (lhs instanceof Number) ? ((Number) lhs).doubleValue() : ScriptRuntime.toNumber(lhs);
-			stack[stackTop] = UniqueTag.DOUBLE_MARK;
+			stack[stackTop] = DOUBLE_MARK;
 			sDbl[stackTop] = lDbl + d;
 		}
 	}
 
 	private static int doArithmetic(CallFrame frame, int op, Object[] stack, double[] sDbl, int stackTop) {
-		double rDbl = stack_double(frame, stackTop);
-		--stackTop;
-		double lDbl = stack_double(frame, stackTop);
-		stack[stackTop] = UniqueTag.DOUBLE_MARK;
-		switch (op) {
-			case Token.SUB:
-				lDbl -= rDbl;
-				break;
-			case Token.MUL:
-				lDbl *= rDbl;
-				break;
-			case Token.DIV:
-				lDbl /= rDbl;
-				break;
-			case Token.MOD:
-				lDbl %= rDbl;
-				break;
+		val rDbl = stack_numeric(frame, stackTop--);
+		val lDbl = stack_numeric(frame, stackTop);
+
+        val result = switch (op) {
+            case Token.SUB -> ScriptRuntime.NumberMath.subtract(lDbl, rDbl);
+            case Token.MUL -> ScriptRuntime.NumberMath.multiply(lDbl, rDbl);
+            case Token.DIV -> ScriptRuntime.NumberMath.divide(lDbl, rDbl);
+            case Token.MOD -> ScriptRuntime.NumberMath.remainder(lDbl, rDbl);
+            default -> lDbl;
+        };
+
+		if (result instanceof BigInteger) {
+			stack[stackTop] = result;
+		} else {
+			stack[stackTop] = DOUBLE_MARK;
+			sDbl[stackTop] = result.doubleValue();
 		}
-		sDbl[stackTop] = lDbl;
 		return stackTop;
 	}
 
@@ -2864,7 +2873,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		Object[] args = new Object[count];
 		for (int i = 0; i != count; ++i, ++shift) {
 			Object val = stack[shift];
-			if (val == UniqueTag.DOUBLE_MARK) {
+			if (val == DOUBLE_MARK) {
 				val = ScriptRuntime.wrapNumber(sDbl[shift]);
 			}
 			args[i] = val;
