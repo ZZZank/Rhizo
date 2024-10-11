@@ -6,9 +6,11 @@
 package dev.latvian.mods.rhino.optimizer;
 
 import dev.latvian.mods.rhino.Node;
-import dev.latvian.mods.rhino.ObjArray;
 import dev.latvian.mods.rhino.Token;
 import dev.latvian.mods.rhino.ast.ScriptNode;
+import lombok.val;
+
+import java.util.ArrayList;
 
 class Optimizer {
 
@@ -35,10 +37,9 @@ class Optimizer {
         inDirectCallFunction = theFunction.isTargetOfDirectCall();
         this.theFunction = theFunction;
 
-        ObjArray statementsArray = new ObjArray();
+        val statementsArray = new ArrayList<Node>();
         buildStatementList_r(theFunction.fnode, statementsArray);
-        Node[] theStatementNodes = new Node[statementsArray.size()];
-        statementsArray.toArray(theStatementNodes);
+        val theStatementNodes = statementsArray.toArray(new Node[0]);
 
         Block.runFlowAnalyzes(theFunction, theStatementNodes);
 
@@ -425,7 +426,7 @@ class Optimizer {
         }
     }
 
-    private static void buildStatementList_r(Node node, ObjArray statements) {
+    private static void buildStatementList_r(Node node, ArrayList<Node> statements) {
         int type = node.getType();
         if (type == Token.BLOCK
             || type == Token.LOCAL_BLOCK

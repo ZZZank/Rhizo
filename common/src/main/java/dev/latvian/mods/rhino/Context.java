@@ -257,7 +257,7 @@ public class Context {
     Object lastInterpreterFrame;
     // For the interpreter to store information about previous invocations
     // interpreter invocations
-    ObjArray previousInterpreterInvocations;
+    ArrayDeque<Object> previousInterpreterInvocations;
     // For instruction counting (interpreter only)
     int instructionCount;
     int instructionThreshold;

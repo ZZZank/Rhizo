@@ -10,7 +10,9 @@ import dev.latvian.mods.rhino.ast.FunctionNode;
 import dev.latvian.mods.rhino.ast.Jump;
 import dev.latvian.mods.rhino.ast.Scope;
 import dev.latvian.mods.rhino.ast.ScriptNode;
+import lombok.val;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +48,8 @@ public class NodeTransformer {
 	}
 
 	private void transformCompilationUnit(ScriptNode tree, boolean inStrictMode) {
-		loops = new ObjArray();
-		loopEnds = new ObjArray();
+		loops = new ArrayDeque<>();
+		loopEnds = new ArrayDeque<>();
 
 		// to save against upchecks if no finally blocks are used.
 		hasFinally = false;
@@ -156,16 +158,15 @@ public class NodeTransformer {
 						break;     // skip the whole mess.
 					}
 					Node unwindBlock = null;
-					for (int i = loops.size() - 1; i >= 0; i--) {
-						Node n = (Node) loops.get(i);
-						int elemtype = n.getType();
+					for (val n : loops.reversed()) {
+						val elemtype = n.getType();
 						if (elemtype == Token.TRY || elemtype == Token.WITH) {
 							Node unwind;
 							if (elemtype == Token.TRY) {
-								Jump jsrnode = new Jump(Token.JSR);
-								Node jsrtarget = ((Jump) n).getFinally();
-								jsrnode.target = jsrtarget;
-								unwind = jsrnode;
+								val jsrNode = new Jump(Token.JSR);
+								val jsrTarget = ((Jump) n).getFinally();
+								jsrNode.target = jsrTarget;
+								unwind = jsrNode;
 							} else {
 								unwind = new Node(Token.LEAVEWITH);
 							}
@@ -203,15 +204,13 @@ public class NodeTransformer {
 						Kit.codeBug();
 					}
 
-					for (int i = loops.size(); ; ) {
-						if (i == 0) {
-							// Parser/IRFactory ensure that break/continue
-							// always has a jump statement associated with it
-							// which should be found
-							throw Kit.codeBug();
-						}
-						--i;
-						Node n = (Node) loops.get(i);
+					if (loops.isEmpty()) {
+						// Parser/IRFactory ensure that break/continue
+						// always has a jump statement associated with it
+						// which should be found
+						throw Kit.codeBug();
+					}
+					for (Node n : loops.reversed()) {
 						if (n == jumpStatement) {
 							break;
 						}
@@ -527,7 +526,7 @@ public class NodeTransformer {
 		return replacement;
 	}
 
-	private ObjArray loops;
-	private ObjArray loopEnds;
+	private ArrayDeque<Node> loops;
+	private ArrayDeque<Node> loopEnds;
 	private boolean hasFinally;
 }

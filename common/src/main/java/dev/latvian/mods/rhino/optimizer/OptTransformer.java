@@ -8,10 +8,10 @@ package dev.latvian.mods.rhino.optimizer;
 import dev.latvian.mods.rhino.Kit;
 import dev.latvian.mods.rhino.Node;
 import dev.latvian.mods.rhino.NodeTransformer;
-import dev.latvian.mods.rhino.ObjArray;
 import dev.latvian.mods.rhino.Token;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -23,7 +23,7 @@ import java.util.Map;
 
 class OptTransformer extends NodeTransformer {
 
-    OptTransformer(Map<String, OptFunctionNode> possibleDirectCalls, ObjArray directCallTargets) {
+    OptTransformer(Map<String, OptFunctionNode> possibleDirectCalls, ArrayList<OptFunctionNode> directCallTargets) {
         this.possibleDirectCalls = possibleDirectCalls;
         this.directCallTargets = directCallTargets;
     }
@@ -101,5 +101,5 @@ class OptTransformer extends NodeTransformer {
     }
 
     private final Map<String, OptFunctionNode> possibleDirectCalls;
-    private final ObjArray directCallTargets;
+    private final ArrayList<OptFunctionNode> directCallTargets;
 }

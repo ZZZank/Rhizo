@@ -116,14 +116,12 @@ public class JavaMembers {
     }
 
     private static MemberBox extractSetMethod(MemberBox[] methods, boolean isStatic) {
-
-        for (MemberBox method : methods) {
-            if (!isStatic || method.isStatic()) {
-                if (method.method().getReturnType() == Void.TYPE) {
-                    if (method.getArgTypes().length == 1) {
-                        return method;
-                    }
-                }
+        for (val method : methods) {
+            if ((!isStatic || method.isStatic())
+                && method.method().getReturnType() == Void.TYPE
+                && method.getArgTypes().length == 1
+            ) {
+                return method;
             }
         }
         return null;
@@ -410,29 +408,28 @@ public class JavaMembers {
         // names to be allocated to the NativeJavaMethod before the field
         // gets in the way.
 
-        for (MethodInfo methodInfo : getAccessibleMethods(cx, includeProtected)) {
+        for (val methodInfo : getAccessibleMethods(cx, includeProtected)) {
             val method = methodInfo.method;
             val mods = method.getModifiers();
             val isStatic = Modifier.isStatic(mods);
             val ht = isStatic ? staticMembers : members;
             val name = methodInfo.name;
 
-            Object value = ht.get(name);
+            val value = ht.get(name);
             if (value == null) {
                 ht.put(name, method);
             } else {
-                ObjArray overloadedMethods;
-                if (value instanceof ObjArray objArray) {
+                List<Method> overloadedMethods;
+                if (value instanceof List objArray) {
                     overloadedMethods = objArray;
-                } else {
-                    if (!(value instanceof Method)) {
-                        Kit.codeBug();
-                    }
-                    // value should be instance of Method as at this stage
+                } else if (value instanceof Method m) {
+                    // value should be an instance of Method as at this stage
                     // staticMembers and members can only contain methods
-                    overloadedMethods = new ObjArray();
-                    overloadedMethods.add(value);
+                    overloadedMethods = new ArrayList<>();
+                    overloadedMethods.add(m);
                     ht.put(name, overloadedMethods);
+                } else {
+                    throw Kit.codeBug();
                 }
                 overloadedMethods.add(method);
             }
@@ -450,15 +447,14 @@ public class JavaMembers {
                     methodBoxes = new MemberBox[1];
                     methodBoxes[0] = new MemberBox((Method) value);
                 } else {
-                    ObjArray overloadedMethods = (ObjArray) value;
-                    int N = overloadedMethods.size();
+                    val overloadedMethods = (ArrayList<Method>) value;
+                    val N = overloadedMethods.size();
                     if (N < 2) {
                         Kit.codeBug();
                     }
                     methodBoxes = new MemberBox[N];
                     for (int i = 0; i != N; ++i) {
-                        Method method = (Method) overloadedMethods.get(i);
-                        methodBoxes[i] = new MemberBox(method);
+                        methodBoxes[i] = new MemberBox(overloadedMethods.get(i));
                     }
                 }
                 NativeJavaMethod fun = new NativeJavaMethod(methodBoxes);

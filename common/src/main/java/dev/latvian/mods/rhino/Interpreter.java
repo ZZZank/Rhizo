@@ -12,10 +12,7 @@ import lombok.val;
 
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class Interpreter extends Icode implements Evaluator {
 	// data for parsing
@@ -715,7 +712,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			array = new CallFrame[1];
 		} else {
 			int previousCount = cx.previousInterpreterInvocations.size();
-			if (cx.previousInterpreterInvocations.peek() == cx.lastInterpreterFrame) {
+			if (cx.previousInterpreterInvocations.getLast() == cx.lastInterpreterFrame) {
 				// It can happen if exception was generated after
 				// frame was pushed to cx.previousInterpreterInvocations
 				// but before assignment to cx.lastInterpreterFrame.
@@ -972,9 +969,9 @@ public final class Interpreter extends Icode implements Evaluator {
 			// save the top frame from the previous interpretLoop
 			// invocation on the stack
 			if (cx.previousInterpreterInvocations == null) {
-				cx.previousInterpreterInvocations = new ObjArray();
+				cx.previousInterpreterInvocations = new ArrayDeque<>();
 			}
-			cx.previousInterpreterInvocations.push(cx.lastInterpreterFrame);
+			cx.previousInterpreterInvocations.add(cx.lastInterpreterFrame);
 		}
 
 		// When restarting continuation throwable is not null and to jump
@@ -2072,7 +2069,7 @@ public final class Interpreter extends Icode implements Evaluator {
 
 		// Do cleanups/restorations before the final return or throw
 
-		if (cx.previousInterpreterInvocations != null && cx.previousInterpreterInvocations.size() != 0) {
+		if (cx.previousInterpreterInvocations != null && !cx.previousInterpreterInvocations.isEmpty()) {
 			cx.lastInterpreterFrame = cx.previousInterpreterInvocations.pop();
 		} else {
 			// It was the last interpreter frame on the stack

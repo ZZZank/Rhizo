@@ -6,12 +6,13 @@
 
 package dev.latvian.mods.rhino.classfile;
 
-import dev.latvian.mods.rhino.ObjArray;
 import dev.latvian.mods.rhino.UintMap;
+import lombok.val;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -191,7 +192,7 @@ public class ClassFileWriter {
 		int descriptorIndex = itsConstantPool.addUtf8(type);
 		int[] chunk = {nameIndex, descriptorIndex, startPC, register};
 		if (itsVarDescriptors == null) {
-			itsVarDescriptors = new ObjArray();
+			itsVarDescriptors = new ArrayList<>();
 		}
 		itsVarDescriptors.add(chunk);
 	}
@@ -352,12 +353,12 @@ public class ClassFileWriter {
 			index = putInt32(tableAttrLength, codeAttribute, index);
 			index = putInt16(varCount, codeAttribute, index);
 			for (int i = 0; i < varCount; i++) {
-				int[] chunk = (int[]) itsVarDescriptors.get(i);
-				int nameIndex = chunk[0];
-				int descriptorIndex = chunk[1];
-				int startPC = chunk[2];
-				int register = chunk[3];
-				int length = itsCodeBufferTop - startPC;
+				val chunk = itsVarDescriptors.get(i);
+				val nameIndex = chunk[0];
+				val descriptorIndex = chunk[1];
+				val startPC = chunk[2];
+				val register = chunk[3];
+				val length = itsCodeBufferTop - startPC;
 
 				index = putInt16(startPC, codeAttribute, index);
 				index = putInt16(length, codeAttribute, index);
@@ -836,7 +837,7 @@ public class ClassFileWriter {
 		BootstrapEntry bsmEntry = new BootstrapEntry(bsm, bsmArgs);
 
 		if (itsBootstrapMethods == null) {
-			itsBootstrapMethods = new ObjArray();
+			itsBootstrapMethods = new ArrayList<>();
 		}
 		int bootstrapIndex = itsBootstrapMethods.indexOf(bsmEntry);
 		if (bootstrapIndex == -1) {
@@ -2335,7 +2336,7 @@ public class ClassFileWriter {
 				int offsetDelta = current.getStart() - prevOffset - 1;
 
 				if (currentStack.length == 0) {
-					int last = prevLocals.length > currentLocals.length ? currentLocals.length : prevLocals.length;
+					int last = Math.min(prevLocals.length, currentLocals.length);
 					int delta = Math.abs(prevLocals.length - currentLocals.length);
 					int j;
 					// Compare locals until one is different or the end of a
@@ -2617,14 +2618,14 @@ public class ClassFileWriter {
 		size += 2 * itsInterfaces.size();
 
 		size += 2; //writeShort(itsFields.size());
-		for (int i = 0; i < itsFields.size(); i++) {
-			size += ((ClassFileField) (itsFields.get(i))).getWriteSize();
-		}
+        for (val itsField : itsFields) {
+            size += itsField.getWriteSize();
+        }
 
 		size += 2; //writeShort(itsMethods.size());
-		for (int i = 0; i < itsMethods.size(); i++) {
-			size += ((ClassFileMethod) (itsMethods.get(i))).getWriteSize();
-		}
+        for (val itsMethod : itsMethods) {
+            size += itsMethod.getWriteSize();
+        }
 
 		size += 2; //writeShort(1);  attributes count, could be zero
 		if (itsSourceFileNameIndex != 0) {
@@ -2674,30 +2675,26 @@ public class ClassFileWriter {
 		offset = putInt16(itsThisClassIndex, data, offset);
 		offset = putInt16(itsSuperClassIndex, data, offset);
 		offset = putInt16(itsInterfaces.size(), data, offset);
-		for (int i = 0; i < itsInterfaces.size(); i++) {
-			int interfaceIndex = (Short) (itsInterfaces.get(i));
-			offset = putInt16(interfaceIndex, data, offset);
-		}
+        for (int interfaceIndex : itsInterfaces) {
+            offset = putInt16(interfaceIndex, data, offset);
+        }
 		offset = putInt16(itsFields.size(), data, offset);
-		for (int i = 0; i < itsFields.size(); i++) {
-			ClassFileField field = (ClassFileField) itsFields.get(i);
-			offset = field.write(data, offset);
-		}
+        for (val itsField : itsFields) {
+            offset = itsField.write(data, offset);
+        }
 		offset = putInt16(itsMethods.size(), data, offset);
-		for (int i = 0; i < itsMethods.size(); i++) {
-			ClassFileMethod method = (ClassFileMethod) itsMethods.get(i);
-			offset = method.write(data, offset);
-		}
+        for (val method : itsMethods) {
+            offset = method.write(data, offset);
+        }
 		offset = putInt16(attributeCount, data, offset); // attributes count
 		if (itsBootstrapMethods != null) {
 			offset = putInt16(bootstrapMethodsAttrNameIndex, data, offset);
 			offset = putInt32(itsBootstrapMethodsLength + 2, data, offset);
 			offset = putInt16(itsBootstrapMethods.size(), data, offset);
-			for (int i = 0; i < itsBootstrapMethods.size(); i++) {
-				BootstrapEntry entry = (BootstrapEntry) itsBootstrapMethods.get(i);
-				System.arraycopy(entry.code, 0, data, offset, entry.code.length);
-				offset += entry.code.length;
-			}
+            for (val entry : itsBootstrapMethods) {
+                System.arraycopy(entry.code, 0, data, offset, entry.code.length);
+                offset += entry.code.length;
+            }
 		}
 		if (itsSourceFileNameIndex != 0) {
 			offset = putInt16(sourceFileAttributeNameIndex, data, offset);
@@ -3869,9 +3866,9 @@ public class ClassFileWriter {
 	private short itsMaxStack;
 	private short itsMaxLocals;
 
-	private final ObjArray itsMethods = new ObjArray();
-	private final ObjArray itsFields = new ObjArray();
-	private final ObjArray itsInterfaces = new ObjArray();
+	private final ArrayList<ClassFileMethod> itsMethods = new ArrayList<>();
+	private final ArrayList<ClassFileField> itsFields = new ArrayList<>();
+	private final ArrayList<Short> itsInterfaces = new ArrayList<>();
 
 	private short itsFlags;
 	private final short itsThisClassIndex;
@@ -3886,8 +3883,8 @@ public class ClassFileWriter {
 	private static final int MIN_FIXUP_TABLE_SIZE = 40;
 	private long[] itsFixupTable;
 	private int itsFixupTableTop;
-	private ObjArray itsVarDescriptors;
-	private ObjArray itsBootstrapMethods;
+	private ArrayList<int[]> itsVarDescriptors;
+	private ArrayList<BootstrapEntry> itsBootstrapMethods;
 	private int itsBootstrapMethodsLength = 0;
 
 	private char[] tmpCharBuffer = new char[64];

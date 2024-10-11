@@ -5,7 +5,6 @@
 package dev.latvian.mods.rhino.optimizer;
 
 import dev.latvian.mods.rhino.Node;
-import dev.latvian.mods.rhino.ObjArray;
 import dev.latvian.mods.rhino.ObjToIntMap;
 import dev.latvian.mods.rhino.Token;
 import dev.latvian.mods.rhino.ast.Jump;
@@ -13,6 +12,7 @@ import lombok.val;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +91,7 @@ class Block {
     private static Block[] buildBlocks(Node[] statementNodes) {
         // a mapping from each target node to the block it begins
         Map<Node, FatBlock> theTargetBlocks = new HashMap<>();
-        ObjArray theBlocks = new ObjArray();
+        ArrayList<FatBlock> theBlocks = new ArrayList<>();
 
         // there's a block that starts at index 0
         int beginNodeIndex = 0;
@@ -136,13 +136,13 @@ class Block {
         // build successor and predecessor links
 
         for (int i = 0; i < theBlocks.size(); i++) {
-            FatBlock fb = (FatBlock) (theBlocks.get(i));
+            FatBlock fb = theBlocks.get(i);
 
             Node blockEndNode = statementNodes[fb.realBlock.itsEndNodeIndex];
             int blockEndNodeType = blockEndNode.getType();
 
             if ((blockEndNodeType != Token.GOTO) && (i < (theBlocks.size() - 1))) {
-                FatBlock fallThruTarget = (FatBlock) (theBlocks.get(i + 1));
+                FatBlock fallThruTarget = theBlocks.get(i + 1);
                 fb.addSuccessor(fallThruTarget);
                 fallThruTarget.addPredecessor(fb);
             }
@@ -161,7 +161,7 @@ class Block {
         Block[] result = new Block[theBlocks.size()];
 
         for (int i = 0; i < theBlocks.size(); i++) {
-            FatBlock fb = (FatBlock) (theBlocks.get(i));
+            FatBlock fb = theBlocks.get(i);
             Block b = fb.realBlock;
             b.itsSuccessors = fb.getSuccessors();
             b.itsPredecessors = fb.getPredecessors();

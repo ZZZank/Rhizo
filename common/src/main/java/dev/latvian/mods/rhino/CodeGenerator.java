@@ -17,6 +17,7 @@ import dev.latvian.mods.rhino.ast.TemplateCharacters;
 import dev.latvian.mods.rhino.ast.VariableInitializer;
 import dev.latvian.mods.rhino.regexp.RegExp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,7 +49,7 @@ class CodeGenerator extends Icode {
 	// fixupTable[i] = (label_index << 32) | fixup_site
 	private long[] fixupTable;
 	private int fixupTableTop;
-	private final ObjArray literalIds = new ObjArray();
+	private final ArrayList<Object> literalIds = new ArrayList<>();
 
 	private int exceptionTableTop;
 
@@ -173,7 +174,7 @@ class CodeGenerator extends Icode {
 		itsData.encodedSourceStart = scriptOrFn.getEncodedSourceStart();
 		itsData.encodedSourceEnd = scriptOrFn.getEncodedSourceEnd();
 
-		if (literalIds.size() != 0) {
+		if (!literalIds.isEmpty()) {
 			itsData.literalIds = literalIds.toArray();
 		}
 
