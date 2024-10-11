@@ -284,12 +284,10 @@ public class ScriptRuntime {
 		}
 		if (val instanceof CharSequence) {
 			return ((CharSequence) val).length() != 0;
-		}
-		if (val instanceof Number) {
+		} else if (val instanceof Number) {
 			double d = ((Number) val).doubleValue();
 			return (!Double.isNaN(d) && d != 0.0);
-		}
-		if (val instanceof Scriptable) {
+		} else if (val instanceof Scriptable) {
 			return !(val instanceof ScriptableObject) || !((ScriptableObject) val).avoidObjectDetection();
 		}
 		warnAboutNonJSObject(val);
