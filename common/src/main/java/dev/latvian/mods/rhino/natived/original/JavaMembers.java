@@ -86,15 +86,10 @@ public class JavaMembers {
     }
 
     private static MemberBox findGetter(boolean isStatic, Map<String, Object> ht, String prefix, String propertyName) {
-        String getterName = prefix.concat(propertyName);
-        if (ht.containsKey(getterName)) {
-            // Check that the getter is a method.
-            Object member = ht.get(getterName);
-            if (member instanceof NativeJavaMethod njmGet) {
-                return extractGetMethod(njmGet.methods, isStatic);
-            }
-        }
-        return null;
+        val getterName = prefix.concat(propertyName);
+        return ht.get(getterName) instanceof NativeJavaMethod njmGet
+            ? extractGetMethod(njmGet.methods, isStatic)
+            : null;
     }
 
     private static MemberBox extractGetMethod(MemberBox[] methods, boolean isStatic) {
@@ -621,24 +616,19 @@ public class JavaMembers {
                 // setter
                 MemberBox setter = null;
                 NativeJavaMethod setters = null;
-                String setterName = "set".concat(nameComponent);
+                val setterName = "set".concat(nameComponent);
 
-                if (ht.containsKey(setterName)) {
-                    // Is this value a method?
-                    Object member = ht.get(setterName);
-                    if (member instanceof NativeJavaMethod njmSet) {
-                        if (getter != null) {
-                            // We have a getter. Now, do we have a matching
-                            // setter?
-                            Class<?> type = getter.method().getReturnType();
-                            setter = extractSetMethod(type, njmSet.methods, isStatic);
-                        } else {
-                            // No getter, find any set method
-                            setter = extractSetMethod(njmSet.methods, isStatic);
-                        }
-                        if (njmSet.methods.length > 1) {
-                            setters = njmSet;
-                        }
+                if (ht.get(setterName) instanceof NativeJavaMethod njmSetter) {
+                    if (getter != null) {
+                        // We have a getter. Now, do we have a matching setter?
+                        val type = getter.method().getReturnType();
+                        setter = extractSetMethod(type, njmSetter.methods, isStatic);
+                    } else {
+                        // No getter, find any set method
+                        setter = extractSetMethod(njmSetter.methods, isStatic);
+                    }
+                    if (njmSetter.methods.length > 1) {
+                        setters = njmSetter;
                     }
                 }
                 // Make the property.
