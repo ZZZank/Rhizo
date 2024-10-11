@@ -158,14 +158,13 @@ public class NodeTransformer {
 						break;     // skip the whole mess.
 					}
 					Node unwindBlock = null;
-					for (val n : loops.reversed()) {
+					for (val n : Kit.iterable(loops::descendingIterator)) {
 						val elemtype = n.getType();
 						if (elemtype == Token.TRY || elemtype == Token.WITH) {
 							Node unwind;
 							if (elemtype == Token.TRY) {
 								val jsrNode = new Jump(Token.JSR);
-								val jsrTarget = ((Jump) n).getFinally();
-								jsrNode.target = jsrTarget;
+                                jsrNode.target = ((Jump) n).getFinally();
 								unwind = jsrNode;
 							} else {
 								unwind = new Node(Token.LEAVEWITH);
@@ -178,12 +177,12 @@ public class NodeTransformer {
 					}
 					if (unwindBlock != null) {
 						Node returnNode = node;
-						Node returnExpr = returnNode.getFirstChild();
+						val returnExpr = returnNode.getFirstChild();
 						node = replaceCurrent(parent, previous, node, unwindBlock);
 						if (returnExpr == null || isGenerator) {
 							unwindBlock.addChildToBack(returnNode);
 						} else {
-							Node store = new Node(Token.EXPR_RESULT, returnExpr);
+							val store = new Node(Token.EXPR_RESULT, returnExpr);
 							unwindBlock.addChildToFront(store);
 							returnNode = new Node(Token.RETURN_RESULT);
 							unwindBlock.addChildToBack(returnNode);
@@ -198,8 +197,8 @@ public class NodeTransformer {
 
 				case Token.BREAK:
 				case Token.CONTINUE: {
-					Jump jump = (Jump) node;
-					Jump jumpStatement = jump.getJumpStatement();
+					val jump = (Jump) node;
+					val jumpStatement = jump.getJumpStatement();
 					if (jumpStatement == null) {
 						Kit.codeBug();
 					}
@@ -210,12 +209,12 @@ public class NodeTransformer {
 						// which should be found
 						throw Kit.codeBug();
 					}
-					for (Node n : loops.reversed()) {
+					for (val n : Kit.iterable(loops::descendingIterator)) {
 						if (n == jumpStatement) {
 							break;
 						}
 
-						int elemtype = n.getType();
+						val elemtype = n.getType();
 						if (elemtype == Token.WITH) {
 							Node leave = new Node(Token.LEAVEWITH);
 							previous = addBeforeCurrent(parent, previous, node, leave);

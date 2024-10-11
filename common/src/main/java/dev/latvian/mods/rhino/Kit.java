@@ -389,4 +389,11 @@ public class Kit {
 		ex.printStackTrace(System.err);
 		throw ex;
 	}
+
+	/**
+	 * useful for lambda -> iterable
+	 */
+	public static <T> Iterable<T> iterable(Iterable<T> itrProvider) {
+		return itrProvider;
+	}
 }
