@@ -8,7 +8,6 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 import dev.latvian.mods.rhino.util.CustomJavaObjectWrapper;
 
 import java.util.List;

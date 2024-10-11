@@ -9,7 +9,6 @@ package dev.latvian.mods.rhino;
 import dev.latvian.mods.rhino.classfile.ByteCode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter;
 import dev.latvian.mods.rhino.natived.original.NativeJavaMethod;
-import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

@@ -5,7 +5,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 import dev.latvian.mods.rhino.util.Deletable;
 
 import java.util.ArrayList;

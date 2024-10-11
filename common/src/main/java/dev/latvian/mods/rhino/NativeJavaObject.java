@@ -4,9 +4,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package dev.latvian.mods.rhino.natived.original;
+package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.*;
+import dev.latvian.mods.rhino.natived.original.FieldAndMethods;
+import dev.latvian.mods.rhino.natived.original.JavaMembers;
+import dev.latvian.mods.rhino.natived.original.NativeJavaPackage;
 import dev.latvian.mods.rhino.util.Deletable;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import lombok.Getter;

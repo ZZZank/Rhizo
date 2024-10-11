@@ -13,7 +13,6 @@ import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter.ClassFileFormatException;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.natived.original.JavaMembers;
-import dev.latvian.mods.rhino.natived.original.NativeJavaObject;
 import dev.latvian.mods.rhino.optimizer.Codegen;
 import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
