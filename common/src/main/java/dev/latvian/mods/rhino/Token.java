@@ -38,9 +38,9 @@ public interface Token {
     int EOL = 1;  // end of line
 
     // Interpreter reuses the following as bytecodes
-    int FIRST_BYTECODE_TOKEN = EOL + 1;
+    int FIRST_BYTECODE_TOKEN = 2;
 
-    int ENTERWITH = EOL + 1;
+    int ENTERWITH = 2;
     int LEAVEWITH = ENTERWITH + 1;
     int RETURN = LEAVEWITH + 1;
     int GOTO = RETURN + 1;
@@ -118,7 +118,7 @@ public interface Token {
     int GETOPTIONAL = OPTIONAL_CHAINING + 1;
 
     // End of interpreter bytecodes
-    int LAST_BYTECODE_TOKEN = GETOPTIONAL + 1;
+    int LAST_BYTECODE_TOKEN = GETOPTIONAL;
 
     int TRY = LAST_BYTECODE_TOKEN + 1;
     int SEMI = TRY + 1;  // semicolon
@@ -143,8 +143,8 @@ public interface Token {
     int ASSIGN_DIV = ASSIGN_MUL + 1;  // /=
     int ASSIGN_MOD = ASSIGN_DIV + 1;  // %=
 
-    int FIRST_ASSIGN = ASSIGN_MOD + 1;
-    int LAST_ASSIGN = FIRST_ASSIGN + 1;
+    int FIRST_ASSIGN = ASSIGN;
+    int LAST_ASSIGN = ASSIGN_MOD;
 
     int HOOK = LAST_ASSIGN + 1; // tri-conditional (bool ? a : b)
     int COLON = HOOK + 1;
