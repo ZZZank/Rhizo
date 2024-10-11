@@ -214,8 +214,9 @@ public interface Token {
     int TEMPLATE_CHARS = TEMPLATE_LITERAL + 1;  // template literal - literal section
     int TEMPLATE_LITERAL_SUBST = TEMPLATE_CHARS + 1;  // template literal - substitution
     int TAGGED_TEMPLATE_LITERAL = TEMPLATE_LITERAL_SUBST + 1;  // template literal - tagged/handler
+    int DOTDOTDOT = 174; // spread/rest ...
 
-    int LAST_TOKEN = TAGGED_TEMPLATE_LITERAL;
+    int LAST_TOKEN = DOTDOTDOT;
 
 
     /**

@@ -335,6 +335,10 @@ public class ScriptNode extends Scope {
 		return inStrictMode;
 	}
 
+	public boolean hasRestParameter() {
+		return false;
+	}
+
 	@Override
 	public void visit(NodeVisitor v) {
 		if (v.visit(this)) {

@@ -8,6 +8,7 @@ package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.ast.*;
 import dev.latvian.mods.rhino.ast.Symbol;
+import lombok.val;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -637,7 +638,12 @@ public class Parser {
 		do {
 			int tt = peekToken();
 			if (tt == Token.LB || tt == Token.LC) {
-				AstNode expr = destructuringPrimaryExpr();
+				if (fnNode.hasRestParameter()) {
+					// Error: parameter after rest parameter
+					reportError("msg.parm.after.rest", ts.tokenBeg, ts.tokenEnd - ts.tokenBeg);
+				}
+
+				val expr = destructuringPrimaryExpr();
 				markDestructuring(expr);
 				fnNode.addParam(expr);
 				// Destructuring assignment for parameters: add a dummy
@@ -646,18 +652,35 @@ public class Parser {
 				if (destructuring == null) {
 					destructuring = new HashMap<>();
 				}
-				String pname = currentScriptOrFn.getNextTempName();
+				val pname = currentScriptOrFn.getNextTempName();
 				defineSymbol(Token.LP, pname, false);
 				destructuring.put(pname, expr);
 			} else {
+				boolean wasRest = false;
+				if (tt == Token.DOTDOTDOT) {
+					if (fnNode.hasRestParameter()) {
+						// Error: parameter after rest parameter
+						reportError("msg.parm.after.rest", ts.tokenBeg, ts.tokenEnd - ts.tokenBeg);
+					}
+
+					fnNode.setHasRestParameter(true);
+					wasRest = true;
+					consumeToken();
+				}
+
 				if (mustMatchToken(Token.NAME, "msg.no.parm", true)) {
-					Name paramNameNode = createNameNode();
-					Comment jsdocNodeForName = getAndResetJsDoc();
+					if (!wasRest && fnNode.hasRestParameter()) {
+						// Error: parameter after rest parameter
+						reportError("msg.parm.after.rest", ts.tokenBeg, ts.tokenEnd - ts.tokenBeg);
+					}
+
+					val paramNameNode = createNameNode();
+					val jsdocNodeForName = getAndResetJsDoc();
 					if (jsdocNodeForName != null) {
 						paramNameNode.setJsDocNode(jsdocNodeForName);
 					}
 					fnNode.addParam(paramNameNode);
-					String paramName = ts.getString();
+					val paramName = ts.getString();
 					defineSymbol(Token.LP, paramName);
 					if (this.inUseStrictDirective) {
 						if ("eval".equals(paramName) || "arguments".equals(paramName)) {

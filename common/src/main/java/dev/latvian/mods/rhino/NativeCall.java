@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+
 /**
  * This class implements the activation object.
  * <p>
@@ -27,7 +29,15 @@ public final class NativeCall extends IdScriptableObject {
 	NativeCall() {
 	}
 
-	NativeCall(NativeFunction function, Scriptable scope, Object[] args, boolean isArrow, boolean isStrict) {
+	NativeCall(
+		NativeFunction function,
+		Context cx,
+		Scriptable scope,
+		Object[] args,
+		boolean isArrow,
+		boolean isStrict,
+		boolean argsHasRest
+	) {
 		this.function = function;
 
 		setParentScope(scope);
@@ -40,10 +50,27 @@ public final class NativeCall extends IdScriptableObject {
 		int paramAndVarCount = function.getParamAndVarCount();
 		int paramCount = function.getParamCount();
 		if (paramAndVarCount != 0) {
-			for (int i = 0; i < paramCount; ++i) {
-				String name = function.getParamOrVarName(i);
-				Object val = i < args.length ? args[i] : Undefined.instance;
-				defineProperty(name, val, PERMANENT);
+			if (argsHasRest) {
+				Object[] vals;
+				if (args.length >= paramCount) {
+					vals = new Object[args.length - paramCount];
+					System.arraycopy(args, paramCount, vals, 0, args.length - paramCount);
+				} else {
+					vals = ScriptRuntime.emptyArgs;
+				}
+
+				for (int i = 0; i < paramCount; ++i) {
+					val name = function.getParamOrVarName(i);
+					val val = i < args.length ? args[i] : Undefined.instance;
+					defineProperty(name, val, PERMANENT);
+				}
+				defineProperty(function.getParamOrVarName(paramCount), cx.newArray(scope, vals), PERMANENT);
+			} else {
+				for (int i = 0; i < paramCount; ++i) {
+					val name = function.getParamOrVarName(i);
+					val val = i < args.length ? args[i] : Undefined.instance;
+					defineProperty(name, val, PERMANENT);
+				}
 			}
 		}
 
@@ -56,7 +83,7 @@ public final class NativeCall extends IdScriptableObject {
 
 		if (paramAndVarCount != 0) {
 			for (int i = paramCount; i < paramAndVarCount; ++i) {
-				String name = function.getParamOrVarName(i);
+				val name = function.getParamOrVarName(i);
 				if (!super.has(name, this)) {
 					if (function.getParamOrVarConst(i)) {
 						defineProperty(name, Undefined.instance, CONST);

@@ -104,8 +104,8 @@ final class InterpretedFunction extends NativeFunction implements Script {
 
 	@Override
 	protected int getParamCount() {
-		return idata.argCount;
-	}
+        return idata.argsHasRest ? idata.argCount - 1 : idata.argCount;
+    }
 
 	@Override
 	protected int getParamAndVarCount() {

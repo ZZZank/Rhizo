@@ -65,6 +65,7 @@ public class FunctionNode extends ScriptNode {
 	public static final int FUNCTION_EXPRESSION = 2;
 	public static final int FUNCTION_EXPRESSION_STATEMENT = 3;
 	public static final int ARROW_FUNCTION = 4;
+	private boolean hasRestParameter;
 
 	public enum Form {
 		FUNCTION, GETTER, SETTER, METHOD
@@ -395,6 +396,15 @@ public class FunctionNode extends ScriptNode {
 
 	public AstNode getMemberExprNode() {
 		return memberExprNode;
+	}
+
+	@Override
+	public boolean hasRestParameter() {
+		return hasRestParameter;
+	}
+
+	public void setHasRestParameter(boolean hasRestParameter) {
+		this.hasRestParameter = hasRestParameter;
 	}
 
 	/**

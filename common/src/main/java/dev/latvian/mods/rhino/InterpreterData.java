@@ -15,6 +15,7 @@ final class InterpreterData implements Serializable {
 	static final int INITIAL_MAX_ICODE_LENGTH = 1024;
 	static final int INITIAL_STRINGTABLE_SIZE = 64;
 	static final int INITIAL_NUMBERTABLE_SIZE = 64;
+	boolean argsHasRest;
 
 	InterpreterData(String sourceFile, String encodedSource, boolean isStrict) {
 		this.itsSourceFile = sourceFile;

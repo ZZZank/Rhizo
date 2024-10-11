@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static dev.latvian.mods.rhino.classfile.ClassFileWriter.ACC_PUBLIC;
+
 /**
  * This class generates code for a given IR tree.
  *
@@ -383,7 +385,7 @@ public class Codegen implements Evaluator {
                 "Ldev/latvian/mods/rhino/Scriptable;" +
                 "ILjava/lang/Object;" +
                 "Ljava/lang/Object;)Ljava/lang/Object;",
-            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
+            (short) (ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
         );
 
         // load arguments for dispatch to the corresponding *_gen method
@@ -437,7 +439,7 @@ public class Codegen implements Evaluator {
                 "Ldev/latvian/mods/rhino/Scriptable;" +
                 "Ldev/latvian/mods/rhino/Scriptable;" +
                 "[Ljava/lang/Object;)Ljava/lang/Object;",
-            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
+            (short) (ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
         );
 
         // Generate code for:
@@ -549,7 +551,7 @@ public class Codegen implements Evaluator {
 
     private void generateMain(ClassFileWriter cfw) {
         cfw.startMethod("main", "([Ljava/lang/String;)V",
-            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_STATIC)
+            (short) (ACC_PUBLIC | ClassFileWriter.ACC_STATIC)
         );
 
         // load new ScriptImpl()
@@ -576,7 +578,7 @@ public class Codegen implements Evaluator {
             "(Ldev/latvian/mods/rhino/Context;"
                 + "Ldev/latvian/mods/rhino/Scriptable;"
                 + ")Ljava/lang/Object;",
-            (short) (ClassFileWriter.ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
+            (short) (ACC_PUBLIC | ClassFileWriter.ACC_FINAL)
         );
 
         final int CONTEXT_ARG = 1;
@@ -603,7 +605,7 @@ public class Codegen implements Evaluator {
     }
 
     private static void generateScriptCtor(ClassFileWriter cfw) {
-        cfw.startMethod("<init>", "()V", ClassFileWriter.ACC_PUBLIC);
+        cfw.startMethod("<init>", "()V", ACC_PUBLIC);
 
         cfw.addLoadThis();
         cfw.addInvoke(ByteCode.INVOKESPECIAL, SUPER_CLASS_NAME,
@@ -624,7 +626,7 @@ public class Codegen implements Evaluator {
         final int CONTEXT_ARG = 2;
         final int ID_ARG = 3;
 
-        cfw.startMethod("<init>", FUNCTION_CONSTRUCTOR_SIGNATURE, ClassFileWriter.ACC_PUBLIC);
+        cfw.startMethod("<init>", FUNCTION_CONSTRUCTOR_SIGNATURE, ACC_PUBLIC);
         cfw.addALoad(0);
         cfw.addInvoke(ByteCode.INVOKESPECIAL, SUPER_CLASS_NAME,
             "<init>", "()V"
@@ -723,7 +725,7 @@ public class Codegen implements Evaluator {
         // Override NativeFunction.getLanguageVersion() with
         // public int getLanguageVersion() { return <version-constant>; }
 
-        cfw.startMethod("getLanguageVersion", "()I", ClassFileWriter.ACC_PUBLIC);
+        cfw.startMethod("getLanguageVersion", "()I", ACC_PUBLIC);
 
         cfw.addPush(compilerEnv.getLanguageVersion());
         cfw.add(ByteCode.IRETURN);
@@ -741,7 +743,8 @@ public class Codegen implements Evaluator {
         val Do_getEncodedSource = 4;
         val Do_getParamOrVarConst = 5;
         val Do_isGeneratorFunction = 6;
-        val SWITCH_COUNT = 7;
+        val Do_hasRestParameter = 7;
+        val SWITCH_COUNT = Do_hasRestParameter + 1;
 
         for (int methodIndex = 0; methodIndex != SWITCH_COUNT; ++methodIndex) {
             if (methodIndex == Do_getEncodedSource && encodedSource == null) {
@@ -758,31 +761,31 @@ public class Codegen implements Evaluator {
                 case Do_getFunctionName:
                     methodLocals = 1; // Only this
                     cfw.startMethod("getFunctionName", "()Ljava/lang/String;",
-                        ClassFileWriter.ACC_PUBLIC
+                        ACC_PUBLIC
                     );
                     break;
                 case Do_getParamCount:
                     methodLocals = 1; // Only this
                     cfw.startMethod("getParamCount", "()I",
-                        ClassFileWriter.ACC_PUBLIC
+                        ACC_PUBLIC
                     );
                     break;
                 case Do_getParamAndVarCount:
                     methodLocals = 1; // Only this
                     cfw.startMethod("getParamAndVarCount", "()I",
-                        ClassFileWriter.ACC_PUBLIC
+                        ACC_PUBLIC
                     );
                     break;
                 case Do_getParamOrVarName:
                     methodLocals = 1 + 1; // this + paramOrVarIndex
                     cfw.startMethod("getParamOrVarName", "(I)Ljava/lang/String;",
-                        ClassFileWriter.ACC_PUBLIC
+                        ACC_PUBLIC
                     );
                     break;
                 case Do_getParamOrVarConst:
                     methodLocals = 1 + 1 + 1; // this + paramOrVarName
                     cfw.startMethod("getParamOrVarConst", "(I)Z",
-                        ClassFileWriter.ACC_PUBLIC
+                        ACC_PUBLIC
                     );
                     break;
                 case Do_isGeneratorFunction:
@@ -791,13 +794,16 @@ public class Codegen implements Evaluator {
                         ClassFileWriter.ACC_PROTECTED
                     );
                     break;
-
                 case Do_getEncodedSource:
                     methodLocals = 1; // Only this
                     cfw.startMethod("getEncodedSource", "()Ljava/lang/String;",
-                        ClassFileWriter.ACC_PUBLIC
+                        ACC_PUBLIC
                     );
                     cfw.addPush(encodedSource);
+                    break;
+                case Do_hasRestParameter:
+                    methodLocals = 1; // Only this
+                    cfw.startMethod("hasRestParameter", "()Z", ACC_PUBLIC);
                     break;
                 default:
                     throw Kit.codeBug();
@@ -847,7 +853,7 @@ public class Codegen implements Evaluator {
 
                     case Do_getParamCount:
                         // Push number of defined parameters
-                        cfw.addPush(n.getParamCount());
+                        cfw.addPush(n.hasRestParameter() ? n.getParamCount() - 1 : n.getParamCount());
                         cfw.add(ByteCode.IRETURN);
                         break;
 
@@ -944,6 +950,12 @@ public class Codegen implements Evaluator {
                         } else {
                             cfw.addPush(false);
                         }
+                        cfw.add(ByteCode.IRETURN);
+                        break;
+
+                    case Do_hasRestParameter:
+                        // Push boolean of defined hasRestParameter
+                        cfw.addPush(n.hasRestParameter());
                         cfw.add(ByteCode.IRETURN);
                         break;
 

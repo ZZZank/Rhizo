@@ -61,6 +61,7 @@ import dev.latvian.mods.rhino.ast.VariableInitializer;
 import dev.latvian.mods.rhino.ast.WhileLoop;
 import dev.latvian.mods.rhino.ast.WithStatement;
 import dev.latvian.mods.rhino.ast.Yield;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1933,13 +1934,21 @@ public final class IRFactory extends Parser {
 	Node decompileFunctionHeader(FunctionNode fn) {
 		Node mexpr = null;
 		if (fn.getFunctionName() != null) {
+//			decompiler.addName(fn.getName());
 		} else if (fn.getMemberExprNode() != null) {
 			mexpr = transform(fn.getMemberExprNode());
 		}
-		boolean isArrow = fn.getFunctionType() == FunctionNode.ARROW_FUNCTION;
-		boolean noParen = isArrow && fn.getLp() == -1;
-		List<AstNode> params = fn.getParams();
-        for (AstNode param : params) {
+		val isArrow = fn.getFunctionType() == FunctionNode.ARROW_FUNCTION;
+		val noParen = isArrow && fn.getLp() == -1;
+		val params = fn.getParams();
+        for (int i = 0; i < params.size(); i++) {
+//			if (i > 0) {
+//				decompiler.addToken(Token.COMMA);
+//			}
+//			if (fn.hasRestParameter() && i == last) {
+//				decompiler.addToken(Token.DOTDOTDOT);
+//			}
+            val param = params.get(i);
             decompile(param);
         }
 		return mexpr;

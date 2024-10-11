@@ -1178,6 +1178,9 @@ class TokenStream {
 				case ':':
 					return Token.COLON;
 				case '.':
+					if (matchChar('.') && matchChar('.')) {
+						return Token.DOTDOTDOT;
+					}
 					return Token.DOT;
 
 				case '|':
