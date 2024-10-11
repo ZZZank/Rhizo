@@ -12,7 +12,7 @@
  *
  */
 
-package dev.latvian.mods.rhino.natived.reflectasm;
+package dev.latvian.mods.rhino.native_java.reflectasm;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import dev.latvian.mods.rhino.natived.ReflectsKit;
+import dev.latvian.mods.rhino.native_java.ReflectsKit;
 import lombok.Getter;
 import lombok.val;
 import org.objectweb.asm.ClassWriter;

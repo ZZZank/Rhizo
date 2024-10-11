@@ -1,8 +1,8 @@
-package dev.latvian.mods.rhino.natived;
+package dev.latvian.mods.rhino.native_java;
 
 import dev.latvian.mods.rhino.*;
-import dev.latvian.mods.rhino.natived.reflectasm.FieldAccess;
-import dev.latvian.mods.rhino.natived.reflectasm.MethodAccess;
+import dev.latvian.mods.rhino.native_java.reflectasm.FieldAccess;
+import dev.latvian.mods.rhino.native_java.reflectasm.MethodAccess;
 import lombok.val;
 
 import java.util.Map;

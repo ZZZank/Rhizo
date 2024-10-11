@@ -1,6 +1,6 @@
-package dev.latvian.mods.rhino.natived;
+package dev.latvian.mods.rhino.native_java;
 
-import dev.latvian.mods.rhino.natived.reflectasm.MethodAccess;
+import dev.latvian.mods.rhino.native_java.reflectasm.MethodAccess;
 import dev.latvian.mods.rhino.util.remapper.RemapperManager;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import lombok.val;

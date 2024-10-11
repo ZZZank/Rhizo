@@ -6,7 +6,7 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.natived.original.*;
+import dev.latvian.mods.rhino.native_java.original.*;
 import lombok.val;
 
 import java.lang.reflect.Array;
@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
- * not moving to {@link dev.latvian.mods.rhino.natived} for KubeJS compat
+ * not moving to {@link dev.latvian.mods.rhino.native_java} for KubeJS compat
  * <p>
  * This class reflects Java classes into the JavaScript environment, mainly
  * for constructors and static members.  We lazily reflect properties,

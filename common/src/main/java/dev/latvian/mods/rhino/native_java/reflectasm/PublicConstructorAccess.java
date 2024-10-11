@@ -12,7 +12,7 @@
  *
  */
 
-package dev.latvian.mods.rhino.natived.reflectasm;
+package dev.latvian.mods.rhino.native_java.reflectasm;
 
 public abstract class PublicConstructorAccess extends ConstructorAccess {
     public static final String CLASS_INTERNAL_NAME = PublicConstructorAccess.class.getName().replace('.', '/');

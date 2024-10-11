@@ -6,10 +6,10 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.natived.ReflectsKit;
-import dev.latvian.mods.rhino.natived.original.FieldAndMethods;
-import dev.latvian.mods.rhino.natived.original.JavaMembers;
-import dev.latvian.mods.rhino.natived.original.NativeJavaPackage;
+import dev.latvian.mods.rhino.native_java.ReflectsKit;
+import dev.latvian.mods.rhino.native_java.original.FieldAndMethods;
+import dev.latvian.mods.rhino.native_java.original.JavaMembers;
+import dev.latvian.mods.rhino.native_java.original.NativeJavaPackage;
 import dev.latvian.mods.rhino.util.Deletable;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import lombok.Getter;

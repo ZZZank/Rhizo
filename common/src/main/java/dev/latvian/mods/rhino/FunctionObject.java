@@ -8,7 +8,7 @@
 
 package dev.latvian.mods.rhino;
 
-import dev.latvian.mods.rhino.natived.original.MemberBox;
+import dev.latvian.mods.rhino.native_java.original.MemberBox;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

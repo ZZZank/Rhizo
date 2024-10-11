@@ -12,7 +12,7 @@
  *
  */
 
-package dev.latvian.mods.rhino.natived.reflectasm;
+package dev.latvian.mods.rhino.native_java.reflectasm;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;

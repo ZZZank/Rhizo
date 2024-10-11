@@ -1,7 +1,7 @@
-package dev.latvian.mods.rhino.natived;
+package dev.latvian.mods.rhino.native_java;
 
 import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.natived.original.MethodSignature;
+import dev.latvian.mods.rhino.native_java.original.MethodSignature;
 
 import java.lang.reflect.Method;
 

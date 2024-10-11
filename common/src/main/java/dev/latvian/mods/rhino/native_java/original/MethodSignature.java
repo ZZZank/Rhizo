@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.natived.original;
+package dev.latvian.mods.rhino.native_java.original;
 
 import lombok.AllArgsConstructor;
 

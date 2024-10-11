@@ -13,7 +13,7 @@ import dev.latvian.mods.rhino.annotations.JSFunction;
 import dev.latvian.mods.rhino.annotations.JSGetter;
 import dev.latvian.mods.rhino.annotations.JSSetter;
 import dev.latvian.mods.rhino.annotations.JSStaticFunction;
-import dev.latvian.mods.rhino.natived.original.MemberBox;
+import dev.latvian.mods.rhino.native_java.original.MemberBox;
 import dev.latvian.mods.rhino.util.Deletable;
 
 import java.io.IOException;
