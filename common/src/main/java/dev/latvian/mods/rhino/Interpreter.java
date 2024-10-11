@@ -1663,14 +1663,10 @@ public final class Interpreter extends Icode implements Evaluator {
 								continue;
 							}
 							case Icode_ZERO:
-								++stackTop;
-								stack[stackTop] = DBL_MRK;
-								sDbl[stackTop] = 0;
+                                stack[++stackTop] = 0;
 								continue;
 							case Icode_ONE:
-								++stackTop;
-								stack[stackTop] = DBL_MRK;
-								sDbl[stackTop] = 1;
+                                stack[++stackTop] = 1;
 								continue;
 							case Token.NULL:
 								stack[++stackTop] = null;

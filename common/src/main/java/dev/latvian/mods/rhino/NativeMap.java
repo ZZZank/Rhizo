@@ -82,7 +82,7 @@ public class NativeMap extends IdScriptableObject {
 		// Special handling of "negative zero" from the spec.
 		Object key = k;
 		if ((key instanceof Number) && ((Number) key).doubleValue() == ScriptRuntime.negativeZero) {
-			key = ScriptRuntime.zeroObj;
+			key = ScriptRuntime.zeroObjInt;
 		}
 		entries.put(key, value);
 		return this;

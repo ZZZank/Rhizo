@@ -154,7 +154,7 @@ public class RegExp {
 				result = -1;
 			}
 		} else if (data.global) {
-			re.lastIndex = ScriptRuntime.zeroObj;
+			re.lastIndex = ScriptRuntime.zeroObjInt;
 			for (int count = 0; indexp[0] <= str.length(); count++) {
 				result = re.executeRegExp(cx, scope, reImpl, str, indexp, NativeRegExp.TEST);
 				if (result == null || !result.equals(Boolean.TRUE)) {

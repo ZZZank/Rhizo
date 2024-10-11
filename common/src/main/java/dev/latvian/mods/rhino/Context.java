@@ -18,6 +18,7 @@ import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import lombok.Setter;
+import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
 import java.beans.PropertyChangeEvent;
@@ -760,10 +761,6 @@ public class Context {
         return new Interpreter();
     }
 
-    private static final Predicate<StackWalker.StackFrame> FRAME_FILTER = stackFrame ->
-        (stackFrame.getFileName() == null || stackFrame.getFileName().endsWith(".java"))
-            && stackFrame.getLineNumber() >= 0;
-
     public static String getSourcePositionFromStack(int[] linep) {
         Context cx = getCurrentContext();
         if (cx == null) {
@@ -772,13 +769,15 @@ public class Context {
         if (cx.lastInterpreterFrame != null) {
             return createInterpreter().getSourcePositionFromStack(cx, linep);
         }
-        return StackWalker.getInstance()
-            .walk(frame -> frame.filter(FRAME_FILTER).findFirst())
-            .map(frame -> {
-                linep[0] = frame.getLineNumber();
-                return frame.getFileName();
-            })
-            .orElse(null);
+        for (val trace : Thread.currentThread().getStackTrace()) {
+            if ((trace.getFileName() == null || !trace.getFileName().endsWith(".java"))
+                || trace.getLineNumber() < 0) {
+                continue;
+            }
+            linep[0] = trace.getLineNumber();
+            return trace.getFileName();
+        }
+        return null;
     }
 
     /**
@@ -1201,11 +1200,13 @@ public class Context {
      *                       may be null.
      * @return the result of evaluating the string
      */
-    public final Object evaluateString(Scriptable scope,
+    public final Object evaluateString(
+        Scriptable scope,
         String source,
         String sourceName,
         int lineno,
-        Object securityDomain) {
+        Object securityDomain
+    ) {
         Script script = compileString(source, sourceName, lineno, securityDomain);
         if (script != null) {
             return script.exec(this, scope);
@@ -2023,14 +2024,16 @@ public class Context {
         applicationClassLoader = loader;
     }
 
-    private Object compileImpl(Scriptable scope,
+    private Object compileImpl(
+        Scriptable scope,
         String sourceString,
         String sourceName,
         int lineno,
         Object securityDomain,
         boolean returnFunction,
         Evaluator compiler,
-        ErrorReporter compilationErrorReporter) throws IOException {
+        ErrorReporter compilationErrorReporter
+    ) throws IOException {
         if (sourceName == null) {
             sourceName = "unnamed script";
         }
@@ -2075,22 +2078,19 @@ public class Context {
             bytecode = compiler.compile(compilerEnv, tree, tree.getEncodedSource(), returnFunction);
         }
 
-        Object result;
-        if (returnFunction) {
-            result = compiler.createFunctionObject(this, scope, bytecode, securityDomain);
-        } else {
-            result = compiler.createScriptObject(bytecode, securityDomain);
-        }
-
-        return result;
+        return returnFunction
+            ? compiler.createFunctionObject(this, scope, bytecode, securityDomain)
+            : compiler.createScriptObject(bytecode, securityDomain);
     }
 
-    private ScriptNode parse(String sourceString,
+    private ScriptNode parse(
+        String sourceString,
         String sourceName,
         int lineno,
         CompilerEnvirons compilerEnv,
         ErrorReporter compilationErrorReporter,
-        boolean returnFunction) {
+        boolean returnFunction
+    ) {
         Parser p = new Parser(compilerEnv, compilationErrorReporter);
         if (returnFunction) {
             p.calledByCompileFunction = true;

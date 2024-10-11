@@ -236,7 +236,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 			} else {
 				if (hint == ScriptRuntime.NumberClass && javaObject instanceof Boolean) {
 					boolean b = (Boolean) javaObject;
-					value = b ? ScriptRuntime.wrapNumber(1.0) : ScriptRuntime.zeroObj;
+					value = b ? ScriptRuntime.wrapNumber(1.0) : ScriptRuntime.zeroObjInt;
 				} else {
 					value = javaObject.toString();
 				}

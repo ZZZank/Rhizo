@@ -14,6 +14,7 @@ import dev.latvian.mods.rhino.v8dtoa.FastDtoa;
 import lombok.val;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
@@ -343,6 +344,7 @@ public class ScriptRuntime {
 	// Preserve backward-compatibility with historical value of this.
 	public static final double negativeZero = Double.longBitsToDouble(0x8000000000000000L);
 
+	public static final Integer zeroObjInt = 0;
 	public static final Double zeroObj = 0.0;
 	public static final Double negativeZeroObj = -0.0;
 
@@ -2288,6 +2290,9 @@ public class ScriptRuntime {
 
 	public static Object add(Object val1, Object val2, Context cx) {
 		if (val1 instanceof Number && val2 instanceof Number) {
+			if (val1 instanceof Integer int1 && val2 instanceof Integer int2) {
+				return NumberMath.add(int1, int2);
+			}
 			return wrapNumber(((Number) val1).doubleValue() + ((Number) val2).doubleValue());
 		}
 		if ((val1 instanceof Symbol) || (val2 instanceof Symbol)) {
@@ -2299,14 +2304,14 @@ public class ScriptRuntime {
 		if (val2 instanceof Scriptable) {
 			val2 = ((Scriptable) val2).getDefaultValue(null);
 		}
-		if (!(val1 instanceof CharSequence) && !(val2 instanceof CharSequence)) {
-			if ((val1 instanceof Number) && (val2 instanceof Number)) {
-				return wrapNumber(((Number) val1).doubleValue() + ((Number) val2).doubleValue());
-			}
-			return wrapNumber(toNumber(val1) + toNumber(val2));
-		}
-		return new ConsString(toCharSequence(val1), toCharSequence(val2));
-	}
+        if (val1 instanceof CharSequence || val2 instanceof CharSequence) {
+            return new ConsString(toCharSequence(val1), toCharSequence(val2));
+        }
+        if (val1 instanceof Number && val2 instanceof Number) {
+            return wrapNumber(((Number) val1).doubleValue() + ((Number) val2).doubleValue());
+        }
+        return wrapNumber(toNumber(val1) + toNumber(val2));
+    }
 
 	public static CharSequence add(CharSequence val1, Object val2) {
 		return new ConsString(val1, toCharSequence(val2));
@@ -2693,18 +2698,18 @@ public class ScriptRuntime {
 	 *
 	 * @return a instanceof b
 	 */
-	public static boolean instanceOf(Object a, Object b, Context cx) {
+	public static boolean instanceOf(Object instance, Object type, Context cx) {
 		// Check RHS is an object
-		if (!(b instanceof Scriptable)) {
+		if (!(type instanceof Scriptable)) {
 			throw typeError0("msg.instanceof.not.object");
 		}
 
 		// for primitive values on LHS, return false
-		if (!(a instanceof Scriptable)) {
+		if (!(instance instanceof Scriptable)) {
 			return false;
 		}
 
-		return ((Scriptable) b).hasInstance((Scriptable) a);
+		return ((Scriptable) type).hasInstance((Scriptable) instance);
 	}
 
 	/**
@@ -3294,6 +3299,10 @@ public class ScriptRuntime {
 		throw Context.reportRuntimeError(getMessage1("msg.deprec.ctor", name));
 	}
 
+	public static String getMessageById(String messageId, Object... args) {
+		return messageProvider.getMessage(messageId, args);
+	}
+
 	public static String getMessage0(String messageId) {
 		return getMessage(messageId, null);
 	}
@@ -3397,8 +3406,18 @@ public class ScriptRuntime {
 		return constructError("RangeError", message);
 	}
 
+	public static EcmaError rangeErrorById(String messageId, Object... args) {
+		String msg = getMessageById(messageId, args);
+		return rangeError(msg);
+	}
+
 	public static EcmaError typeError(String message) {
 		return constructError("TypeError", message);
+	}
+
+	public static EcmaError typeErrorById(String messageId, Object... args) {
+		String msg = getMessageById(messageId, args);
+		return typeError(msg);
 	}
 
 	public static EcmaError typeError0(String messageId) {
@@ -3626,6 +3645,192 @@ public class ScriptRuntime {
 		return new JavaScriptException(error, filename, linep[0]);
 	}
 
-	public static final Object[] emptyArgs = new Object[0];
+	public static final Object[] emptyArgs = EMPTY_OBJECTS;
 	public static final String[] emptyStrings = new String[0];
+
+	public interface NumberMath {
+
+		// Integer-optimized methods.
+
+		static Object add(Integer i1, Integer i2) {
+			long r = i1.longValue() + i2.longValue();
+			// Account for overflow
+            return r >= Integer.MIN_VALUE && r <= Integer.MAX_VALUE ? (int) r : (double) r;
+        }
+
+		static Number subtract(Integer i1, Integer i2) {
+			long r = i1.longValue() - i2.longValue();
+			// Account for overflow
+            return r >= Integer.MIN_VALUE && r <= Integer.MAX_VALUE ? (int) r : (double) r;
+        }
+
+		static Number multiply(Integer i1, Integer i2) {
+			// Aunt for overflow
+			long r = i1.longValue() * i2.longValue();
+            return r >= Integer.MIN_VALUE && (r <= Integer.MAX_VALUE) ? (int) r : (double) r;
+        }
+
+		//general
+
+		static Number subtract(Number val1, Number val2) {
+			if (val1 instanceof BigInteger bigInt1 && val2 instanceof BigInteger bigInt2) {
+				return bigInt1.subtract(bigInt2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer int1 && val2 instanceof Integer int2) {
+				return subtract(int1, int2);
+			}
+            return val1.doubleValue() - val2.doubleValue();
+        }
+
+		static Number multiply(Number val1, Number val2) {
+			if (val1 instanceof BigInteger bigInt1 && val2 instanceof BigInteger bigInt2) {
+				return bigInt1.multiply(bigInt2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer int1 && val2 instanceof Integer int2) {
+				return multiply(int1, int2);
+			} else {
+				return val1.doubleValue() * val2.doubleValue();
+			}
+		}
+
+		static Number divide(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				if (val2.equals(BigInteger.ZERO)) {
+					throw ScriptRuntime.rangeErrorById("msg.division.zero");
+				}
+				return ((BigInteger) val1).divide((BigInteger) val2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else {
+				// Do not try to optimize for the integer case because JS doesn't
+				// have an integer type.
+				return val1.doubleValue() / val2.doubleValue();
+			}
+		}
+
+		static Number remainder(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				if (val2.equals(BigInteger.ZERO)) {
+					throw ScriptRuntime.rangeError("msg.division.zero");
+				}
+				return ((BigInteger) val1).remainder((BigInteger) val2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else {
+				// Do not try an integer-specific optimization because we need to get
+				// both +0 and -0 right.
+				return val1.doubleValue() % val2.doubleValue();
+			}
+		}
+
+		static Number exponentiate(Number base, Number exponent) {
+			if (base instanceof BigInteger bigInt1 && exponent instanceof BigInteger bigInt2) {
+				if (bigInt2.signum() == -1) {
+					throw ScriptRuntime.rangeErrorById("msg.bigint.negative.exponent");
+				}
+
+				try {
+					int intVal2 = bigInt2.intValueExact();
+					return bigInt1.pow(intVal2);
+				} catch (ArithmeticException e) {
+					// This is outside the scope of the ECMA262 specification.
+					throw ScriptRuntime.rangeErrorById("msg.bigint.out.of.range.arithmetic");
+				}
+			} else if (base instanceof BigInteger || exponent instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else {
+				return Math.pow(base.doubleValue(), exponent.doubleValue());
+			}
+		}
+
+		static Number bitwiseAND(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				return ((BigInteger) val1).and((BigInteger) val2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer && val2 instanceof Integer) {
+				return val1.intValue() & val2.intValue();
+			} else {
+				int result = toInt32(val1.doubleValue()) & toInt32(val2.doubleValue());
+				return (double) result;
+			}
+		}
+
+		static Number bitwiseOR(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				return ((BigInteger) val1).or((BigInteger) val2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer && val2 instanceof Integer) {
+				return val1.intValue() | val2.intValue();
+			} else {
+				int result = toInt32(val1.doubleValue()) | toInt32(val2.doubleValue());
+				return (double) result;
+			}
+		}
+
+		static Number bitwiseXOR(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				return ((BigInteger) val1).xor((BigInteger) val2);
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer && val2 instanceof Integer) {
+				return val1.intValue() ^ val2.intValue();
+			} else {
+				int result = toInt32(val1.doubleValue()) ^ toInt32(val2.doubleValue());
+				return (double) result;
+			}
+		}
+
+		static Number leftShift(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				try {
+					int intVal2 = ((BigInteger) val2).intValueExact();
+					return ((BigInteger) val1).shiftLeft(intVal2);
+				} catch (ArithmeticException e) {
+					// This is outside the scope of the ECMA262 specification.
+					throw ScriptRuntime.rangeErrorById("msg.bigint.out.of.range.arithmetic");
+				}
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer && val2 instanceof Integer) {
+				return val1.intValue() << val2.intValue();
+			} else {
+				int result = toInt32(val1.doubleValue()) << toInt32(val2.doubleValue());
+				return (double) result;
+			}
+		}
+
+		static Number signedRightShift(Number val1, Number val2) {
+			if (val1 instanceof BigInteger && val2 instanceof BigInteger) {
+				try {
+					int intVal2 = ((BigInteger) val2).intValueExact();
+					return ((BigInteger) val1).shiftRight(intVal2);
+				} catch (ArithmeticException e) {
+					// This is outside the scope of the ECMA262 specification.
+					throw ScriptRuntime.rangeErrorById("msg.bigint.out.of.range.arithmetic");
+				}
+			} else if (val1 instanceof BigInteger || val2 instanceof BigInteger) {
+				throw ScriptRuntime.typeErrorById("msg.cant.convert.to.number", "BigInt");
+			} else if (val1 instanceof Integer && val2 instanceof Integer) {
+				return val1.intValue() >> val2.intValue();
+			} else {
+				int result = toInt32(val1.doubleValue()) >> toInt32(val2.doubleValue());
+				return (double) result;
+			}
+		}
+
+		static Number bitwiseNOT(Number val) {
+			if (val instanceof BigInteger) {
+				return ((BigInteger) val).not();
+			} else if (val instanceof Integer) {
+				return ~val.intValue();
+			} else {
+				int result = ~toInt32(val.doubleValue());
+				return (double) result;
+			}
+		}
+	}
 }

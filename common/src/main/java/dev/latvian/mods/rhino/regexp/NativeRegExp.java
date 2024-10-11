@@ -137,7 +137,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 	NativeRegExp(Scriptable scope, RECompiled regexpCompiled) {
 		this.re = regexpCompiled;
-		setLastIndex(ScriptRuntime.zeroObj);
+		setLastIndex(ScriptRuntime.zeroObjInt);
 		ScriptRuntime.setBuiltinProtoAndParent(this, scope, TopLevel.Builtins.RegExp);
 	}
 
@@ -180,7 +180,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 		String s = args.length == 0 || args[0] instanceof Undefined ? "" : escapeRegExp(args[0]);
 		String global = args.length > 1 && args[1] != Undefined.instance ? ScriptRuntime.toString(args[1]) : null;
 		this.re = compileRE(cx, s, global, false);
-		setLastIndex(ScriptRuntime.zeroObj);
+		setLastIndex(ScriptRuntime.zeroObjInt);
 		return this;
 	}
 
@@ -256,14 +256,14 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 		Object rval;
 		if (d < 0 || str.length() < d) {
-			setLastIndex(ScriptRuntime.zeroObj);
+			setLastIndex(ScriptRuntime.zeroObjInt);
 			rval = null;
 		} else {
 			int[] indexp = {(int) d};
 			rval = executeRegExp(cx, scopeObj, reImpl, str, indexp, matchType);
 			if ((re.flags & JSREG_GLOB) != 0) {
 				if (rval == null || rval == Undefined.instance) {
-					setLastIndex(ScriptRuntime.zeroObj);
+					setLastIndex(ScriptRuntime.zeroObjInt);
 				} else {
 					setLastIndex((double) indexp[0]);
 				}
@@ -2737,7 +2737,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 	// #/string_id_map#
 
 	private RECompiled re;
-	Object lastIndex = ScriptRuntime.zeroObj;     /* index after last match, for //g iterator */
+	Object lastIndex = ScriptRuntime.zeroObjInt;     /* index after last match, for //g iterator */
 	private int lastIndexAttr = DONTENUM | PERMANENT;
 
 }       // class NativeRegExp
