@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.test.example;
+package dev.latvian.mods.rhino.test.impl;
 
 import java.util.function.Consumer;
 

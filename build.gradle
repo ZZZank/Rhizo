@@ -53,13 +53,21 @@ subprojects {
 		testCompileOnly('com.pkware.jabel:jabel-javac-plugin:1.0.1-1')
 
 		// https://mvnrepository.com/artifact/net.neoforged/srgutils
-		shade 'net.neoforged:srgutils:1.0.9'
+		shade('net.neoforged:srgutils:1.0.9')
 
 		//lombok, see https://projectlombok.org/setup/gradle
-		compileOnly 'org.projectlombok:lombok:1.18.34'
-		annotationProcessor 'org.projectlombok:lombok:1.18.34'
-		testCompileOnly 'org.projectlombok:lombok:1.18.34'
-		testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+		compileOnly("org.projectlombok:lombok:$lombok_version")
+		annotationProcessor("org.projectlombok:lombok:$lombok_version")
+		testCompileOnly("org.projectlombok:lombok:$lombok_version")
+		testAnnotationProcessor("org.projectlombok:lombok:$lombok_version")
+
+		// Unit Testing
+		testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+	}
+
+	test {
+		useJUnitPlatform()
 	}
 }
 

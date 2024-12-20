@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.test.example.generic;
+package dev.latvian.mods.rhino.test.impl.generic;
 
 /**
  * @author ZZZank

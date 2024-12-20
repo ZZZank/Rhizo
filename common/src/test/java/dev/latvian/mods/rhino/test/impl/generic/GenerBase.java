@@ -1,6 +1,6 @@
-package dev.latvian.mods.rhino.test.example.generic;
+package dev.latvian.mods.rhino.test.impl.generic;
 
-import dev.latvian.mods.rhino.test.TestConsole;
+import dev.latvian.mods.rhino.test.impl.TestConsole;
 
 /**
  * @author ZZZank
