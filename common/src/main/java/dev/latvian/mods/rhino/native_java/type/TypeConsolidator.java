@@ -85,8 +85,7 @@ public final class TypeConsolidator {
         //collect current `level` mapping
         //current level types will only be consolidated by mappings from its subclasses
         val parent = type.getSuperclass();
-        val superType = type.getGenericSuperclass();
-        extractSuperMapping(superType, mapping);
+        extractSuperMapping(type.getGenericSuperclass(), mapping);
         for (val genericInterface : type.getGenericInterfaces()) {
             extractSuperMapping(genericInterface, mapping);
         }
@@ -110,13 +109,10 @@ public final class TypeConsolidator {
         if (superType instanceof ParameterizedType parameterized
             && parameterized.getRawType() instanceof Class<?> parent
         ) {
-            val args = parameterized.getActualTypeArguments();
-            final var params = parent.getTypeParameters();
+            final var params = parent.getTypeParameters(); // T
+            val args = parameterized.getActualTypeArguments(); // T is mapped to
             for (int i = 0; i < args.length; i++) {
-                pushTo.put(
-                    (VariableTypeInfo) TypeInfo.of(params[i]), // T
-                    TypeInfo.of(args[i]) // replacing T, might be already consolidated or NOT
-                );
+                pushTo.put(TypeInfo.of(params[i]), TypeInfo.of(args[i]));
             }
         }
     }

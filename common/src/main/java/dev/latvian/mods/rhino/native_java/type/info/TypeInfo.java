@@ -176,6 +176,12 @@ public interface TypeInfo {
 		}
 	}
 
+	static VariableTypeInfo of(TypeVariable<?> variable) {
+		synchronized (VariableTypeInfo.CACHE) {
+			return VariableTypeInfo.CACHE.computeIfAbsent(variable, VariableTypeInfo::new);
+		}
+	}
+
 	static TypeInfo of(Type type) {
         if (type instanceof Class<?> clz) {
             return of(clz);
@@ -184,8 +190,7 @@ public interface TypeInfo {
         } else if (type instanceof GenericArrayType arrType) {
             return of(arrType.getGenericComponentType()).asArray();
         } else if (type instanceof TypeVariable<?> variable) {
-			return VariableTypeInfo.of(variable);
-//			return NONE;
+			return of(variable);
         } else if (type instanceof WildcardType wildcard) {
             val upper = wildcard.getUpperBounds();
             if (upper.length != 0 && upper[0] != Object.class) {

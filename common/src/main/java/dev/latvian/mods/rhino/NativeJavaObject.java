@@ -257,7 +257,10 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	public Map<VariableTypeInfo, TypeInfo> extractMapping() {
-		if (typeInfo instanceof ParameterizedTypeInfo parameterized && this.javaObject != null) {
+		if (this.javaObject == null) {
+			return Collections.emptyMap();
+		}
+		if (typeInfo instanceof ParameterizedTypeInfo parameterized) {
             final var variables = javaObject.getClass().getTypeParameters();
 			if (variables.length == 0) {
 				return Collections.emptyMap();
@@ -265,9 +268,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 			val params = parameterized.params();
 			val builder = ImmutableMap.<VariableTypeInfo, TypeInfo>builder();
 			for (int i = 0; i < variables.length; i++) {
-				val param = params[i];
-				val variable = variables[i];
-				builder.put((VariableTypeInfo) TypeInfo.of(variable), param);
+                builder.put(TypeInfo.of(variables[i]), params[i]);
 			}
 			return builder.build();
 		}
