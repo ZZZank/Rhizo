@@ -9,5 +9,5 @@ import lombok.AllArgsConstructor;
 public class TypeWrapper<T> {
 	public final Class<T> target;
 	public final TypeWrapperValidator validator;
-	public final TypeWrapperFactory<T> factory;
+	public final NewTypeWrapperFactory<T> factory;
 }
