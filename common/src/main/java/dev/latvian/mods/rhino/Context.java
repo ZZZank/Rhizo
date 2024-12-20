@@ -19,7 +19,6 @@ import dev.latvian.mods.rhino.optimizer.Codegen;
 import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
-import lombok.Setter;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
 
@@ -280,8 +279,6 @@ public class Context {
     private Object propertyListeners;
     private Map<Object, Object> threadLocalMap;
     private ClassLoader applicationClassLoader;
-    @Setter
-    private Remapper remapper;
     private final Map<String, Object> customProperties;
     public final Object lock = new Object();
     /**
@@ -310,7 +307,6 @@ public class Context {
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
         optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
-        remapper = null;
         customProperties = new HashMap<>();
     }
 
@@ -815,7 +811,7 @@ public class Context {
     }
 
     public Remapper getRemapper() {
-        return remapper == null ? factory.remapper : remapper;
+        return factory.getRemapper();
     }
 
     public Object getCustomProperty(String name) {
@@ -2207,11 +2203,7 @@ public class Context {
     }
 
     public TypeWrappers getTypeWrappers() {
-        if (factory.typeWrappers == null) {
-            factory.typeWrappers = new TypeWrappers();
-        }
-
-        return factory.typeWrappers;
+        return factory.getTypeWrappers();
     }
 
     public boolean hasTypeWrappers() {

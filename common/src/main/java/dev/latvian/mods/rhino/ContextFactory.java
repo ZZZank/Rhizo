@@ -119,6 +119,20 @@ public class ContextFactory {
         remapper = RemapperManager.getDefault();
     }
 
+	public TypeWrappers getTypeWrappers() {
+		if (typeWrappers == null) {
+			typeWrappers = new TypeWrappers();
+		}
+		return this.typeWrappers;
+	}
+
+	public Remapper getRemapper() {
+		if (remapper == null) {
+			remapper = RemapperManager.getDefault();
+		}
+		return this.remapper;
+	}
+
 	/**
 	 * Listener of {@link Context} creation and release events.
 	 */
@@ -146,28 +160,26 @@ public class ContextFactory {
 	}
 
 	/**
+	 * @see #getGlobal()
+	 * @see #initGlobal(ContextFactory)
 	 * @deprecated Such method has been removed, DO NOT USE
 	 * <p>
 	 * Check if global factory was set.
 	 * Return true to indicate that {@link #initGlobal(ContextFactory)} was
 	 * already called and false to indicate that the global factory was not
 	 * explicitly set.
-	 *
-	 * @see #getGlobal()
-	 * @see #initGlobal(ContextFactory)
 	 */
 	public static boolean hasExplicitGlobal() {
 		return false;
 	}
 
 	/**
+	 * @see #getGlobal()
+	 * @see #hasExplicitGlobal()
 	 * @deprecated Such method has been removed, DO NOT USE
 	 * <p>
 	 * Set global ContextFactory.
 	 * The method can only be called once.
-	 *
-	 * @see #getGlobal()
-	 * @see #hasExplicitGlobal()
 	 */
 	public synchronized static void initGlobal(ContextFactory factory) {
 		throw new IllegalStateException("This method has been depecrated");
@@ -265,10 +277,9 @@ public class ContextFactory {
 	}
 
 	/**
+	 * @see #getApplicationClassLoader()
 	 * @deprecated Such method has been removed, DO NOT USE
 	 * Set explicit class loader to use when searching for Java classes.
-	 *
-	 * @see #getApplicationClassLoader()
 	 */
 	public final void initApplicationClassLoader(ClassLoader loader) {
 		throw new IllegalStateException("This method has been depecrated");
