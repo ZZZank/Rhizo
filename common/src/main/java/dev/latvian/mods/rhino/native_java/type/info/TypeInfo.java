@@ -59,15 +59,15 @@ public interface TypeInfo {
 	TypeInfo CLASS = new BasicClassTypeInfo(Class.class);
 	TypeInfo DATE = new BasicClassTypeInfo(Date.class);
 
-	TypeInfo RUNNABLE = new InterfaceTypeInfo(Runnable.class, Boolean.TRUE);
-	TypeInfo RAW_CONSUMER = new InterfaceTypeInfo(Consumer.class, Boolean.TRUE);
-	TypeInfo RAW_SUPPLIER = new InterfaceTypeInfo(Supplier.class, Boolean.TRUE);
-	TypeInfo RAW_FUNCTION = new InterfaceTypeInfo(Function.class, Boolean.TRUE);
-	TypeInfo RAW_PREDICATE = new InterfaceTypeInfo(Predicate.class, Boolean.TRUE);
+	TypeInfo RUNNABLE = new InterfaceTypeInfo(Runnable.class, InterfaceTypeInfo.B_TRUE);
+	TypeInfo RAW_CONSUMER = new InterfaceTypeInfo(Consumer.class, InterfaceTypeInfo.B_TRUE);
+	TypeInfo RAW_SUPPLIER = new InterfaceTypeInfo(Supplier.class, InterfaceTypeInfo.B_TRUE);
+	TypeInfo RAW_FUNCTION = new InterfaceTypeInfo(Function.class, InterfaceTypeInfo.B_TRUE);
+	TypeInfo RAW_PREDICATE = new InterfaceTypeInfo(Predicate.class, InterfaceTypeInfo.B_TRUE);
 
-	TypeInfo RAW_LIST = new InterfaceTypeInfo(List.class, Boolean.FALSE);
-	TypeInfo RAW_SET = new InterfaceTypeInfo(Set.class, Boolean.FALSE);
-	TypeInfo RAW_MAP = new InterfaceTypeInfo(Map.class, Boolean.FALSE);
+	TypeInfo RAW_LIST = new InterfaceTypeInfo(List.class, InterfaceTypeInfo.B_FALSE);
+	TypeInfo RAW_SET = new InterfaceTypeInfo(Set.class, InterfaceTypeInfo.B_FALSE);
+	TypeInfo RAW_MAP = new InterfaceTypeInfo(Map.class, InterfaceTypeInfo.B_FALSE);
 	TypeInfo RAW_OPTIONAL = new BasicClassTypeInfo(Optional.class);
 	TypeInfo RAW_ENUM_SET = new BasicClassTypeInfo(EnumSet.class);
 
