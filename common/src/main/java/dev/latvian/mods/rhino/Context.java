@@ -782,7 +782,7 @@ public class Context {
         // using compiler instead of interpreter
         for (val trace : Thread.currentThread().getStackTrace()) {
             val name = trace.getFileName();
-            if (name != null && name.endsWith(".js") && trace.getLineNumber() >= 0) {
+            if (name != null && !name.endsWith(".java") && trace.getLineNumber() >= 0) {
                 linep[0] = trace.getLineNumber();
                 return name;
             }
