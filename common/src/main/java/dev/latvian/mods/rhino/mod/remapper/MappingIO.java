@@ -10,6 +10,8 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collection;
 
 public interface MappingIO {
 
@@ -25,9 +27,20 @@ public interface MappingIO {
     }
 
     static void writeUtf(OutputStream stream, String value) throws IOException {
-        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        val bytes = value.getBytes(StandardCharsets.UTF_8);
         writeVarInt(stream, bytes.length);
         stream.write(bytes);
+    }
+
+    static void writeUtfs(OutputStream stream, String... values) throws IOException {
+        writeUtfs(stream, Arrays.asList(values));
+    }
+
+    static void writeUtfs(OutputStream stream, Collection<String> values) throws IOException {
+        writeVarInt(stream, values.size());
+        for (val value : values) {
+            writeUtf(stream, value);
+        }
     }
 
     static int readVarInt(InputStream stream) throws IOException {
@@ -47,13 +60,23 @@ public interface MappingIO {
     }
 
     static String readUtf(InputStream stream) throws IOException {
-        byte[] bytes = new byte[readVarInt(stream)];
+        val size = readVarInt(stream);
+        val bytes = new byte[size];
 
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) stream.read();
         }
 
         return new String(bytes, StandardCharsets.UTF_8);
+    }
+
+    static String[] readUtfs(InputStream stream) throws IOException {
+        val size = readVarInt(stream);
+        val values = new String[size];
+        for (int i = 0; i < size; i++) {
+            values[i] = readUtf(stream);
+        }
+        return values;
     }
 
     static Reader createUrlReader(String url) throws IOException {
