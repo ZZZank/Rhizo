@@ -15,7 +15,6 @@ import dev.latvian.mods.rhino.ast.Scope;
 import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.ast.TemplateCharacters;
 import dev.latvian.mods.rhino.ast.VariableInitializer;
-import dev.latvian.mods.rhino.regexp.RegExp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,7 +214,7 @@ class CodeGenerator extends Icode {
 		}
 
 		Context cx = Context.getContext();
-		RegExp rep = ScriptRuntime.checkRegExpProxy(cx);
+		RegExpProxy rep = ScriptRuntime.checkRegExpProxy(cx);
 		Object[] array = new Object[N];
 		for (int i = 0; i != N; i++) {
 			String string = scriptOrFn.getRegexpString(i);

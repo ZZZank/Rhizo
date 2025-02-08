@@ -9,30 +9,33 @@ package dev.latvian.mods.rhino.regexp;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.Function;
 import dev.latvian.mods.rhino.Kit;
+import dev.latvian.mods.rhino.RegExpProxy;
 import dev.latvian.mods.rhino.ScriptRuntime;
 import dev.latvian.mods.rhino.Scriptable;
 import dev.latvian.mods.rhino.ScriptableObject;
 import dev.latvian.mods.rhino.Undefined;
 
-public class RegExp {
+/**
+ *
+ */
+public class RegExpImpl implements RegExpProxy {
 
-	// Types of regexp actions
-	public static final int RA_MATCH = 1;
-	public static final int RA_REPLACE = 2;
-	public static final int RA_SEARCH = 3;
-
+	@Override
 	public boolean isRegExp(Scriptable obj) {
 		return obj instanceof NativeRegExp;
 	}
 
+	@Override
 	public Object compileRegExp(Context cx, String source, String flags) {
 		return NativeRegExp.compileRE(cx, source, flags, false);
 	}
 
+	@Override
 	public Scriptable wrapRegExp(Context cx, Scriptable scope, Object compiled) {
 		return new NativeRegExp(scope, (RECompiled) compiled);
 	}
 
+	@Override
 	public Object action(Context cx, Scriptable scope, Scriptable thisObj, Object[] args, int actionType) {
 		GlobData data = new GlobData();
 		data.mode = actionType;
@@ -141,7 +144,7 @@ public class RegExp {
 	/**
 	 * Analog of C match_or_replace.
 	 */
-	private static Object matchOrReplace(Context cx, Scriptable scope, Scriptable thisObj, Object[] args, RegExp reImpl, GlobData data, NativeRegExp re) {
+	private static Object matchOrReplace(Context cx, Scriptable scope, Scriptable thisObj, Object[] args, RegExpImpl reImpl, GlobData data, NativeRegExp re) {
 		String str = data.str;
 		data.global = (re.getFlags() & NativeRegExp.JSREG_GLOB) != 0;
 		int[] indexp = {0};
@@ -186,6 +189,8 @@ public class RegExp {
 		return result;
 	}
 
+
+	@Override
 	public int find_split(Context cx, Scriptable scope, String target, String separator, Scriptable reObj, int[] ip, int[] matchlen, boolean[] matched, String[][] parensp) {
 		int i = ip[0];
 		int length = target.length();
@@ -263,7 +268,7 @@ public class RegExp {
 	/*
 	 * Analog of match_glob() in jsstr.c
 	 */
-	private static void match_glob(GlobData mdata, Context cx, Scriptable scope, int count, RegExp reImpl) {
+	private static void match_glob(GlobData mdata, Context cx, Scriptable scope, int count, RegExpImpl reImpl) {
 		if (mdata.arrayobj == null) {
 			mdata.arrayobj = cx.newArray(scope, 0);
 		}
@@ -275,7 +280,7 @@ public class RegExp {
 	/*
 	 * Analog of replace_glob() in jsstr.c
 	 */
-	private static void replace_glob(GlobData rdata, Context cx, Scriptable scope, RegExp reImpl, int leftIndex, int leftlen) {
+	private static void replace_glob(GlobData rdata, Context cx, Scriptable scope, RegExpImpl reImpl, int leftIndex, int leftlen) {
 		int replen;
 		String lambdaStr;
 		if (rdata.lambda != null) {
@@ -299,10 +304,10 @@ public class RegExp {
 			// JS function which can run new regexps modifing
 			// regexp that are used later by the engine.
 			// TODO: redesign is necessary
-			if (reImpl != ScriptRuntime.getRegExp(cx)) {
+			if (reImpl != ScriptRuntime.getRegExpProxy(cx)) {
 				Kit.codeBug();
 			}
-			RegExp re2 = new RegExp();
+			RegExpImpl re2 = new RegExpImpl();
 			re2.multiline = reImpl.multiline;
 			re2.input = reImpl.input;
 			ScriptRuntime.setRegExpProxy(cx, re2);
@@ -350,7 +355,7 @@ public class RegExp {
 		}
 	}
 
-	private static SubString interpretDollar(Context cx, RegExp res, String da, int dp, int[] skip) {
+	private static SubString interpretDollar(Context cx, RegExpImpl res, String da, int dp, int[] skip) {
 		char dc;
 		int num, tmp;
 
@@ -406,7 +411,7 @@ public class RegExp {
 	/**
 	 * Analog of do_replace in jsstr.c
 	 */
-	private static void do_replace(GlobData rdata, Context cx, RegExp regExp) {
+	private static void do_replace(GlobData rdata, Context cx, RegExpImpl regExpImpl) {
 		StringBuilder charBuf = rdata.charBuf;
 		int cp = 0;
 		String da = rdata.repstr;
@@ -417,7 +422,7 @@ public class RegExp {
 				int len = dp - cp;
 				charBuf.append(da, cp, dp);
 				cp = dp;
-				SubString sub = interpretDollar(cx, regExp, da, dp, skip);
+				SubString sub = interpretDollar(cx, regExpImpl, da, dp, skip);
 				if (sub != null) {
 					len = sub.length;
 					if (len > 0) {
@@ -442,6 +447,7 @@ public class RegExp {
 	 * a limit argument and accepts a regular expression as the split
 	 * argument.
 	 */
+	@Override
 	public Object js_split(Context cx, Scriptable scope, String target, Object[] args) {
 		// create an empty Array to return;
 		Scriptable result = cx.newArray(scope, 0);
@@ -469,9 +475,9 @@ public class RegExp {
 		String separator = null;
 		int[] matchlen = new int[1];
 		Scriptable re = null;
-		RegExp reProxy = null;
+		RegExpProxy reProxy = null;
 		if (args[0] instanceof Scriptable) {
-			reProxy = ScriptRuntime.getRegExp(cx);
+			reProxy = ScriptRuntime.getRegExpProxy(cx);
 			if (reProxy != null) {
 				Scriptable test = (Scriptable) args[0];
 				if (reProxy.isRegExp(test)) {
@@ -537,7 +543,7 @@ public class RegExp {
 	 * separator occurrence if found, or the string length if no
 	 * separator is found.
 	 */
-	private static int find_split(Context cx, Scriptable scope, String target, String separator, RegExp reProxy, Scriptable re, int[] ip, int[] matchlen, boolean[] matched, String[][] parensp) {
+	private static int find_split(Context cx, Scriptable scope, String target, String separator, RegExpProxy reProxy, Scriptable re, int[] ip, int[] matchlen, boolean[] matched, String[][] parensp) {
 		int i = ip[0];
 		int length = target.length();
 

@@ -16,7 +16,6 @@ import dev.latvian.mods.rhino.native_java.JavaMembers;
 import dev.latvian.mods.rhino.native_java.type.Converter;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.optimizer.Codegen;
-import dev.latvian.mods.rhino.regexp.RegExp;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import lombok.val;
@@ -247,7 +246,7 @@ public class Context {
     // so they don't print themselves out recursively.
     // Use ObjToIntMap instead of java.util.HashSet for JDK 1.1 compatibility
     ObjToIntMap iterating;
-    RegExp regExp;
+    RegExpProxy regExpProxy;
     boolean useDynamicScope;
     /**
      * This is the list of names of objects forcing the creation of
@@ -2149,11 +2148,14 @@ public class Context {
         return result;
     }
 
-    RegExp getRegExp() {
-        if (regExp == null) {
-            regExp = new RegExp();
+    RegExpProxy getRegExpProxy() {
+        if (regExpProxy == null) {
+            Class<?> cl = Kit.classOrNull("dev.latvian.mods.rhino.regexp.RegExpImpl");
+            if (cl != null) {
+                regExpProxy = (RegExpProxy) Kit.newInstanceOrNull(cl);
+            }
         }
-        return regExp;
+        return regExpProxy;
     }
 
     /**

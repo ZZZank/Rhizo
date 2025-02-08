@@ -63,9 +63,9 @@ class NativeRegExpCtor extends BaseFunction {
 		return re;
 	}
 
-	private static RegExp getImpl() {
+	private static RegExpImpl getImpl() {
 		Context cx = Context.getCurrentContext();
-		return ScriptRuntime.getRegExp(cx);
+		return (RegExpImpl) ScriptRuntime.getRegExpProxy(cx);
 	}
 
 	// #string_id_map#
@@ -302,7 +302,7 @@ class NativeRegExpCtor extends BaseFunction {
 	protected Object getInstanceIdValue(int id) {
 		int shifted = id - super.getMaxInstanceId();
 		if (1 <= shifted && shifted <= MAX_INSTANCE_ID) {
-			RegExp impl = getImpl();
+			RegExpImpl impl = getImpl();
 			Object stringResult;
 			switch (shifted) {
 				case Id_multiline:

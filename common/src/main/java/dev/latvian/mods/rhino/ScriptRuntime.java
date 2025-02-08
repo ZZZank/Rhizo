@@ -3557,19 +3557,19 @@ public class ScriptRuntime {
 		}
 	}
 
-	public static RegExp getRegExp(Context cx) {
-		return cx.getRegExp();
+	public static RegExpProxy getRegExpProxy(Context cx) {
+		return cx.getRegExpProxy();
 	}
 
-	public static void setRegExpProxy(Context cx, RegExp proxy) {
+	public static void setRegExpProxy(Context cx, RegExpProxy proxy) {
 		if (proxy == null) {
 			throw new IllegalArgumentException();
 		}
-		cx.regExp = proxy;
+		cx.regExpProxy = proxy;
 	}
 
-	public static RegExp checkRegExpProxy(Context cx) {
-		RegExp result = getRegExp(cx);
+	public static RegExpProxy checkRegExpProxy(Context cx) {
+		RegExpProxy result = getRegExpProxy(cx);
 		if (result == null) {
 			throw Context.reportRuntimeError0("msg.no.regexp");
 		}
@@ -3577,7 +3577,7 @@ public class ScriptRuntime {
 	}
 
 	public static Scriptable wrapRegExp(Context cx, Scriptable scope, Object compiled) {
-		return cx.getRegExp().wrapRegExp(cx, scope, compiled);
+		return cx.getRegExpProxy().wrapRegExp(cx, scope, compiled);
 	}
 
 	public static Scriptable getTemplateLiteralCallSite(Context cx, Scriptable scope, Object[] strings, int index) {
