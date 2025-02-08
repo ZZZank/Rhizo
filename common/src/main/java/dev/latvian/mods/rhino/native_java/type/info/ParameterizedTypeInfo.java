@@ -1,6 +1,7 @@
 package dev.latvian.mods.rhino.native_java.type.info;
 
 import dev.latvian.mods.rhino.native_java.type.TypeConsolidator;
+import dev.latvian.mods.rhino.util.ByteAsBool;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,6 +15,7 @@ public final class ParameterizedTypeInfo extends TypeInfoBase {
 	private final TypeInfo rawType;
 	private final TypeInfo[] params;
 	private int hashCode;
+	private byte canConsolidate = ByteAsBool.UNKNOWN;
 
 	ParameterizedTypeInfo(TypeInfo rawType, TypeInfo[] params) {
 		this.rawType = rawType;
@@ -124,9 +126,16 @@ public final class ParameterizedTypeInfo extends TypeInfoBase {
 
 	@Override
 	public @NotNull TypeInfo consolidate(@NotNull Map<VariableTypeInfo, TypeInfo> mapping) {
-		val consolidatedParams = TypeConsolidator.consolidateAll(this.params, mapping);
-		return consolidatedParams == this.params
-			? this
-			: new ParameterizedTypeInfo(rawType, consolidatedParams);
-	}
+		if (ByteAsBool.isUnknown(canConsolidate)) {
+			val consolidatedParams = TypeConsolidator.consolidateAll(this.params, mapping);
+			canConsolidate = ByteAsBool.fromBool(consolidatedParams != this.params);
+			return ByteAsBool.isTrue(canConsolidate)
+				? new ParameterizedTypeInfo(rawType, consolidatedParams)
+				: this;
+		}
+        if (ByteAsBool.isTrue(canConsolidate)) {
+            return new ParameterizedTypeInfo(rawType, TypeConsolidator.consolidateAll(this.params, mapping));
+        }
+        return this;
+    }
 }
