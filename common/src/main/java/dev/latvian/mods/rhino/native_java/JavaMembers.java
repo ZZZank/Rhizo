@@ -687,13 +687,14 @@ public final class JavaMembers {
 
     public Map<String, FieldAndMethods> getFieldAndMethodsObjects(Scriptable scope, Object javaObject, boolean isStatic) {
         val ht = isStatic ? staticFieldAndMethods : fieldAndMethods;
-        Map<String, FieldAndMethods> result = new HashMap<>(ht.size());
-        for (val fam : ht.values()) {
+        val copied = new HashMap<>(ht);
+        for (val e : copied.entrySet()) {
+            val fam = e.getValue();
             val famNew = new FieldAndMethods(scope, fam, fam.field);
             famNew.javaObject = javaObject;
-            result.put(fam.functionName, famNew);
+            e.setValue(famNew);
         }
-        return result;
+        return copied;
     }
 
     public RuntimeException reportMemberNotFound(String memberName) {
