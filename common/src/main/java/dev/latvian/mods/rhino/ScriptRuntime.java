@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 /**
  * This is the class that implements the runtime.
  *
- * @see dev.latvian.mods.rhino.optimizer.BodyCodegen#addScriptRuntimeInvoke(String, String)
  * @author Norris Boyd
  */
 public class ScriptRuntime {
@@ -769,25 +768,17 @@ public class ScriptRuntime {
 	public static String toString(Object val) {
 		if (val == null) {
 			return "null";
-		}
-		if (val == Undefined.instance || val == Undefined.SCRIPTABLE_UNDEFINED) {
+		} else if (val == Undefined.instance || val == Undefined.SCRIPTABLE_UNDEFINED) {
 			return "undefined";
-		}
-		if (val instanceof String) {
-			return (String) val;
-		}
-		if (val instanceof CharSequence) {
+		} else if (val instanceof CharSequence) {
 			return val.toString();
-		}
-		if (val instanceof Number) {
+		} else if (val instanceof Number) {
 			// XXX should we just teach NativeNumber.stringValue()
 			// about Numbers?
 			return numberToString(((Number) val).doubleValue(), 10);
-		}
-		if (val instanceof Symbol) {
+		} else if (val instanceof Symbol) {
 			throw typeError0("msg.not.a.string");
-		}
-		if (val instanceof Scriptable) {
+		} else if (val instanceof Scriptable) {
 			val = ((Scriptable) val).getDefaultValue(StringClass);
 			if ((val instanceof Scriptable) && !isSymbol(val)) {
 				throw errorWithClassName("msg.primitive.expected", val);

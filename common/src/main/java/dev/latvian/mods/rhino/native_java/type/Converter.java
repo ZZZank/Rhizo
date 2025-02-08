@@ -242,12 +242,11 @@ public final class Converter {
                 }
 
                 return result;
-            } else {
-                // Convert a single value to an array
-                Object result = componentType.newArray(1);
-                Array.set(result, 0, jsToJava(from, componentType));
-                return result;
             }
+            // Convert a single value to an array
+            val result = componentType.newArray(1);
+            Array.set(result, 0, jsToJava(from, componentType));
+            return result;
         }
 
         Object unwrappedValue = Wrapper.unwrapped(from);

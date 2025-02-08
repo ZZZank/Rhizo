@@ -42,7 +42,6 @@ public class ScriptNode extends Scope {
      * -- SETTER --
      *  Sets the URI, path or descriptive text indicating the origin
      *  of this script's source code.
-
      */
     @Setter
     @Getter
