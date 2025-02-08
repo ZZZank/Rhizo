@@ -47,6 +47,8 @@ public class RhinoTest {
 			ex.printStackTrace();
 			console.info("Error: " + ex.getMessage());
 			// ex.printStackTrace();
+		} finally {
+			Context.exit();
 		}
 
 		Assertions.assertEquals(match.trim(), console.getConsoleOutput().trim());

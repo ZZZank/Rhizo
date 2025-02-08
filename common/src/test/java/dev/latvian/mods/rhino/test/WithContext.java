@@ -1,10 +1,12 @@
 package dev.latvian.mods.rhino.test;
 
+import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 
 import java.util.Objects;
 
+@Desugar
 public record WithContext<T>(Context cx, T value) {
 	public static WithContext<?> of(Context cx, Object from, TypeInfo target) {
 		var type = target.param(0);

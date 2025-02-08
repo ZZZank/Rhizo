@@ -1,11 +1,10 @@
-package dev.latvian.mods.rhino.test;
+package dev.latvian.mods.rhino.test.impl;
 
-import dev.latvian.mods.rhino.Context;
-import dev.latvian.mods.rhino.test.impl.EventPriority;
-import dev.latvian.mods.rhino.test.impl.TestConsole;
+import com.github.bsideup.jabel.Desugar;
 
 import java.util.function.Consumer;
 
+@Desugar
 public record EventBus(TestConsole console) {
 	public static class Event {
 	}
@@ -14,7 +13,6 @@ public record EventBus(TestConsole console) {
 	}
 
 	public <T extends Event> void addListener(
-		Context cx,
 		EventPriority priority,
 		boolean receiveCanceled,
 		Class<T> eventType,

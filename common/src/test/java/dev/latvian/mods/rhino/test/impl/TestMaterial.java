@@ -1,8 +1,11 @@
 package dev.latvian.mods.rhino.test.impl;
 
+import com.github.bsideup.jabel.Desugar;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Desugar
 public record TestMaterial(String name) {
 	public static final Map<String, TestMaterial> MATERIALS = new HashMap<>();
 

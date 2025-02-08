@@ -27,8 +27,4 @@ public class GenerBase<T extends GenerBase<T>> {
     public static GenerBase<Impl1> ofImpl() {
         return new Impl1(); //but this not when calling `accept`
     }
-
-    public void accept(T dummy) {
-        TestConsole.log("dummy got");
-    }
 }
