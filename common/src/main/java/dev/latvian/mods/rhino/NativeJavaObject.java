@@ -455,7 +455,10 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
     }
 
 	public static Object reportConversionError(Object value, TypeInfo type) {
-		throw Context.reportRuntimeError2("msg.conversion.not.allowed", String.valueOf(value), type.signature());
+		val formattedValue = value == null
+			? "null"
+			: String.format("%s(value: %s)", value.getClass(), value);
+		throw Context.reportRuntimeError2("msg.conversion.not.allowed", formattedValue, type.signature());
 	}
 
 	public static Object createInterfaceAdapter(Context cx, Class<?> type, ScriptableObject so) {
