@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.native_java.type.info;
 
+import dev.latvian.mods.rhino.util.ByteAsBool;
 import lombok.val;
 
 import java.util.IdentityHashMap;
@@ -8,14 +9,10 @@ import java.util.Map;
 public class InterfaceTypeInfo extends ClassTypeInfo {
 	static final Map<Class<?>, InterfaceTypeInfo> CACHE = new IdentityHashMap<>();
 
-	public static final byte B_UNKNOWN = -1;
-	public static final byte B_TRUE = 1;
-	public static final byte B_FALSE = 0;
-
 	private byte functional;
 
 	InterfaceTypeInfo(Class<?> type) {
-		this(type, B_UNKNOWN);
+		this(type, ByteAsBool.UNKNOWN);
 	}
 
 	InterfaceTypeInfo(Class<?> type, byte functional) {
@@ -25,12 +22,11 @@ public class InterfaceTypeInfo extends ClassTypeInfo {
 
 	@Override
 	public boolean isFunctionalInterface() {
-		if (functional < 0) {
-			functional = B_FALSE;
+		if (ByteAsBool.isUnknown(functional)) {
 
 			try {
 				if (asClass().isAnnotationPresent(FunctionalInterface.class)) {
-					functional = B_TRUE;
+					functional = ByteAsBool.TRUE;
 				} else {
 					int count = 0;
 
@@ -44,16 +40,15 @@ public class InterfaceTypeInfo extends ClassTypeInfo {
 						}
 					}
 
-					if (count == 1) {
-						functional = B_TRUE;
-					}
+					functional = ByteAsBool.fromBool(count == 1);
 				}
 			} catch (Throwable ex) {
 				ex.printStackTrace();
+				functional = ByteAsBool.FALSE;
 			}
 		}
 
-		return functional > 0;
+		return ByteAsBool.isTrue(functional);
 	}
 
 	@Override

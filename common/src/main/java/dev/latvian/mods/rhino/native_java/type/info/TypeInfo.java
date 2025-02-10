@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.native_java.type.info;
 
 import com.google.common.collect.ImmutableList;
 import dev.latvian.mods.rhino.native_java.type.info.js.JSOrTypeInfo;
+import dev.latvian.mods.rhino.util.ByteAsBool;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,15 +60,15 @@ public interface TypeInfo {
 	TypeInfo CLASS = new BasicClassTypeInfo(Class.class);
 	TypeInfo DATE = new BasicClassTypeInfo(Date.class);
 
-	TypeInfo RUNNABLE = new InterfaceTypeInfo(Runnable.class, InterfaceTypeInfo.B_TRUE);
-	TypeInfo RAW_CONSUMER = new InterfaceTypeInfo(Consumer.class, InterfaceTypeInfo.B_TRUE);
-	TypeInfo RAW_SUPPLIER = new InterfaceTypeInfo(Supplier.class, InterfaceTypeInfo.B_TRUE);
-	TypeInfo RAW_FUNCTION = new InterfaceTypeInfo(Function.class, InterfaceTypeInfo.B_TRUE);
-	TypeInfo RAW_PREDICATE = new InterfaceTypeInfo(Predicate.class, InterfaceTypeInfo.B_TRUE);
+	TypeInfo RUNNABLE = new InterfaceTypeInfo(Runnable.class, ByteAsBool.TRUE);
+	TypeInfo RAW_CONSUMER = new InterfaceTypeInfo(Consumer.class, ByteAsBool.TRUE);
+	TypeInfo RAW_SUPPLIER = new InterfaceTypeInfo(Supplier.class, ByteAsBool.TRUE);
+	TypeInfo RAW_FUNCTION = new InterfaceTypeInfo(Function.class, ByteAsBool.TRUE);
+	TypeInfo RAW_PREDICATE = new InterfaceTypeInfo(Predicate.class, ByteAsBool.TRUE);
 
-	TypeInfo RAW_LIST = new InterfaceTypeInfo(List.class, InterfaceTypeInfo.B_FALSE);
-	TypeInfo RAW_SET = new InterfaceTypeInfo(Set.class, InterfaceTypeInfo.B_FALSE);
-	TypeInfo RAW_MAP = new InterfaceTypeInfo(Map.class, InterfaceTypeInfo.B_FALSE);
+	TypeInfo RAW_LIST = new InterfaceTypeInfo(List.class, ByteAsBool.FALSE);
+	TypeInfo RAW_SET = new InterfaceTypeInfo(Set.class, ByteAsBool.FALSE);
+	TypeInfo RAW_MAP = new InterfaceTypeInfo(Map.class, ByteAsBool.FALSE);
 	TypeInfo RAW_OPTIONAL = new BasicClassTypeInfo(Optional.class);
 	TypeInfo RAW_ENUM_SET = new BasicClassTypeInfo(EnumSet.class);
 
