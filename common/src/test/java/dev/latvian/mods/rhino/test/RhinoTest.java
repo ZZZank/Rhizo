@@ -35,6 +35,11 @@ public class RhinoTest {
 	}
 
 	public void test(String name, String script, String match) {
+		test(name, script, match, false);
+		test(name, script, match, true);
+	}
+
+	private void test(String name, String script, String match, boolean compile) {
 		try {
 			val cx = (TestContext) factory.enterContext();
 			val rootScope = cx.initStandardObjects();
@@ -42,11 +47,13 @@ public class RhinoTest {
 			addToScope(cx, rootScope, "shared", shared);
 			addToScope(cx, rootScope, "EventBus", new EventBus(console));
 			cx.testName = name;
+			if (compile) {
+				cx.setOptimizationLevel(9);
+			}
 			cx.evaluateString(rootScope, script, testName + "/" + name, 1, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			console.info("Error: " + ex.getMessage());
-			// ex.printStackTrace();
+			console.info(String.format("Error(compile=%s): %s", compile, ex.getMessage()));
 		} finally {
 			Context.exit();
 		}
