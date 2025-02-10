@@ -8,6 +8,7 @@ import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import lombok.val;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RemapPrefixForJS("test1$")
 @RemapPrefixForJS("test2$")
@@ -18,6 +19,10 @@ public class TestConsole {
 
 	public TestConsole(ContextFactory factory) {
 		this.factory = factory;
+	}
+
+	public void log(Object... objects) {
+		info(Arrays.stream(objects).map(ScriptRuntime::toString).collect(Collectors.joining(" ")));
 	}
 
 	public void info(Object o) {
