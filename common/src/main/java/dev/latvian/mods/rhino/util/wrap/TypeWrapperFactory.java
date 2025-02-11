@@ -4,10 +4,12 @@ import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 
 /**
+ * named as "TypeWrapperFactory" instead of "SimpleTypeWrapper" just for the sake of backward compat
+ *
  * @author LatvianModder
  */
 @FunctionalInterface
-public interface TypeWrapperFactory<T> extends NewTypeWrapperFactory<T> {
+public interface TypeWrapperFactory<T> extends TypeWrapper.Always<T> {
 
 	T wrap(Object o);
 

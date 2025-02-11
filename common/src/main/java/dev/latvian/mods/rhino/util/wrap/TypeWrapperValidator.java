@@ -1,26 +1,23 @@
 package dev.latvian.mods.rhino.util.wrap;
 
 
+import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 
-import java.util.function.Predicate;
-
 @FunctionalInterface
-public interface TypeWrapperValidator extends Predicate<Object> {
-	TypeWrapperValidator.New ALWAYS_VALID = (from, target) -> true;
+public interface TypeWrapperValidator {
+    TypeWrapperValidator ALWAYS = (cx, from, target) -> true;
 
-	default boolean test(Object from, TypeInfo target) {
-		return test(from);
-	}
+    boolean canWrap(Context cx, Object from, TypeInfo target);
 
-	@FunctionalInterface
-	interface New extends TypeWrapperValidator {
-		@Override
-        default boolean test(Object o) {
-			throw new IllegalStateException();
-		}
+    @FunctionalInterface
+    interface Old extends TypeWrapperValidator {
 
-		@Override
-		boolean test(Object from, TypeInfo target);
-	}
+        boolean canWrap(Object o);
+
+        @Override
+        default boolean canWrap(Context cx, Object from, TypeInfo target) {
+            return canWrap(from);
+        }
+    }
 }

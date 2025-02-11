@@ -34,7 +34,7 @@ public final class Converter {
     private final Context cx;
 
     public static int getConversionWeight(Context cx, Object from, TypeInfo target) {
-        if (cx.hasTypeWrappers() && cx.getTypeWrappers().hasWrapper(from, target)) {
+        if (cx.hasTypeWrappers() && cx.getTypeWrappers().hasWrapper(cx, from, target)) {
             return CONVERSION_NONTRIVIAL;
         }
 
@@ -251,8 +251,7 @@ public final class Converter {
 
         Object unwrappedValue = Wrapper.unwrapped(from);
 
-        val typeWrapper = cx.getTypeWrappers().getWrapperFactory(unwrappedValue, target);
-
+        val typeWrapper = cx.getTypeWrappers().getWrapper(cx, unwrappedValue, target);
         if (typeWrapper != null) {
             return typeWrapper.wrap(cx, unwrappedValue, target);
         }
