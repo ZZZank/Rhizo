@@ -246,7 +246,7 @@ public final class JavaMembers {
                 if (bp.getter == null) {
                     return Scriptable.NOT_FOUND;
                 }
-                returned = bp.getter.invoke(javaObject, ScriptRuntime.EMPTY_OBJECTS);
+                returned = bp.getter.invoke(javaObject, ScriptRuntime.emptyArgs);
                 type = bp.getter.getReturnTypeInfo();
             } else {
                 val field = (NativeJavaField) member;
@@ -324,7 +324,7 @@ public final class JavaMembers {
     }
 
     public Object[] getIds(boolean isStatic) {
-        return membersMap(isStatic).keySet().toArray(ScriptRuntime.EMPTY_OBJECTS);
+        return membersMap(isStatic).keySet().toArray(ScriptRuntime.emptyArgs);
     }
 
     private MemberBox findExplicitFunction(String name, boolean isStatic) {

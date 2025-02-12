@@ -18,6 +18,7 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -27,8 +28,6 @@ import java.util.ResourceBundle;
  * @author Norris Boyd
  */
 public class ScriptRuntime {
-
-	public static final Object[] EMPTY_OBJECTS = new Object[0];
 
 	/**
 	 * No instances should be created.
@@ -101,13 +100,19 @@ public class ScriptRuntime {
 	 * that they won't cause problems by being loaded early.
 	 */
 
-	public final static Class<?> BooleanClass = Kit.classOrNull("java.lang.Boolean"), ByteClass =
-		Kit.classOrNull("java.lang.Byte"), CharacterClass = Kit.classOrNull("java.lang.Character"), ClassClass =
-		Kit.classOrNull("java.lang.Class"), DoubleClass = Kit.classOrNull("java.lang.Double"), FloatClass =
-		Kit.classOrNull("java.lang.Float"), IntegerClass = Kit.classOrNull("java.lang.Integer"), LongClass =
-		Kit.classOrNull("java.lang.Long"), NumberClass = Kit.classOrNull("java.lang.Number"), ObjectClass =
-		Kit.classOrNull("java.lang.Object"), ShortClass = Kit.classOrNull("java.lang.Short"), StringClass =
-		Kit.classOrNull("java.lang.String"), DateClass = Kit.classOrNull("java.util.Date");
+	public final static Class<?> BooleanClass = Boolean.class;
+    public final static Class<?> ByteClass = Byte.class;
+    public final static Class<?> CharacterClass = Character.class;
+    public final static Class<?> ClassClass = Class.class;
+    public final static Class<?> DoubleClass = Double.class;
+    public final static Class<?> FloatClass = Float.class;
+    public final static Class<?> IntegerClass = Integer.class;
+    public final static Class<?> LongClass = Long.class;
+    public final static Class<?> NumberClass = Number.class;
+    public final static Class<?> ObjectClass = Object.class;
+    public final static Class<?> ShortClass = Short.class;
+    public final static Class<?> StringClass = String.class;
+    public final static Class<?> DateClass = Date.class;
 
 	public final static Class<?> ContextClass = Kit.classOrNull("dev.latvian.mods.rhino.Context");
     public final static Class<?> ContextFactoryClass = Kit.classOrNull("dev.latvian.mods.rhino.ContextFactory");
@@ -1779,23 +1784,15 @@ public class ScriptRuntime {
 	}
 
 	private static Object enumInitInOrder(Context cx, IdEnumeration x) {
-		if (!(x.obj instanceof SymbolScriptable) || !ScriptableObject.hasProperty(x.obj, SymbolKey.ITERATOR)) {
-			throw typeError1("msg.not.iterable", toString(x.obj));
-		}
-
-        val iterator = ScriptableObject.getProperty(x.obj, SymbolKey.ITERATOR);
-		if (!(iterator instanceof Callable f)) {
-			throw typeError1("msg.not.iterable", toString(x.obj));
-		}
-        val scope = x.obj.getParentScope();
-        val args = new Object[]{};
-        val v = f.call(cx, scope, x.obj, args);
-		if (!(v instanceof Scriptable)) {
-			throw typeError1("msg.not.iterable", toString(x.obj));
-		}
-		x.iterator = (Scriptable) v;
-		return x;
-	}
+        if (x.obj instanceof SymbolScriptable
+			&& ScriptableObject.getProperty(x.obj, SymbolKey.ITERATOR) instanceof Callable iterFn
+			&& iterFn.call(cx, x.obj.getParentScope(), x.obj, ScriptRuntime.emptyArgs) instanceof Scriptable iter
+		) {
+            x.iterator = iter;
+            return x;
+        }
+        throw typeError1("msg.not.iterable", toString(x.obj));
+    }
 
 	public static void setEnumNumbers(Object enumObj, boolean enumNumbers) {
 		((IdEnumeration) enumObj).enumNumbers = enumNumbers;
@@ -1807,8 +1804,7 @@ public class ScriptRuntime {
 			if (x.enumType == ENUMERATE_VALUES_IN_ORDER) {
 				return enumNextInOrder(x);
 			}
-            val v = ScriptableObject.getProperty(x.iterator, "next");
-			if (!(v instanceof Callable f)) {
+            if (!(ScriptableObject.getProperty(x.iterator, "next") instanceof Callable f)) {
 				return Boolean.FALSE;
 			}
             val cx = Context.getContext();
@@ -3719,7 +3715,7 @@ public class ScriptRuntime {
 		return new JavaScriptException(error, filename, linep[0]);
 	}
 
-	public static final Object[] emptyArgs = EMPTY_OBJECTS;
+	public static final Object[] emptyArgs = new Object[0];
 	public static final String[] emptyStrings = new String[0];
 
 	public interface NumberMath {
