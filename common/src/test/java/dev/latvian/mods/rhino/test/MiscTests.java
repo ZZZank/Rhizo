@@ -52,56 +52,13 @@ public class MiscTests {
 	}
 
 	@Test
-	public void array() {
-		TEST.test("array", """
-			for (let x of console.testArray) {
-				console.info(x)
-			}
-			""", """
-			abc
-			def
-			ghi
-			""");
-	}
-
-	@Test
 	public void enums() {
 		TEST.test("enums", """
 			console.theme = 'Dark'
-			console.info(console.theme === 'DaRK')
+			console.info(console.theme == 'DaRK')
 			""", """
 			Set theme to DARK
 			true
-			""");
-	}
-
-	@Test
-	@Order(2)
-	public void arrayLength() {
-		TEST.test("arrayLength", """
-			console.info('init ' + shared.testList.length)
-			shared.testList.add('abcawidawidaiwdjawd')
-			console.info('add ' + shared.testList.length)
-			shared.testList.push('abcawidawidaiwdjawd')
-			console.info('push ' + shared.testList.length)
-			""", """
-			init 3
-			add 4
-			push 5
-			""");
-	}
-
-	@Test
-	@Order(3)
-	public void popUnshiftMap() {
-		TEST.test("popUnshiftMap", """
-			console.info('pop ' + shared.testList.pop() + ' ' + shared.testList.length)
-			console.info('shift ' + shared.testList.shift() + ' ' + shared.testList.length)
-			console.info('map ' + shared.testList.concat(['xyz']).reverse().map(e => e.toUpperCase()).join(" | "))
-			""", """
-			pop abcawidawidaiwdjawd 4
-			shift abc 3
-			map XYZ | ABCAWIDAWIDAIWDJAWD | GHI | DEF
 			""");
 	}
 

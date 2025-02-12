@@ -9,6 +9,9 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,8 +39,7 @@ public class TestBuilder {
 
     @NotNull
     public Function<ContextFactory, Context> context = ContextFactory::enterContext;
-    @Nullable
-    public BiConsumer<ContextFactory, Context> contextModifier;
+    public final List<ContextModifier> contextModifiers = new ArrayList<>();
 
     @NotNull
     public Function<Context, Scriptable> scope = Context::initStandardObjects;
@@ -59,8 +61,10 @@ public class TestBuilder {
         }
 
         val context = this.context.apply(factory);
-        if (contextModifier != null) {
-            contextModifier.accept(factory, context);
+        if (contextModifiers != null) {
+            for (val contextModifier : contextModifiers) {
+                contextModifier.accept(factory, context);
+            }
         }
 
         val scope = this.scope.apply(context);
@@ -69,5 +73,9 @@ public class TestBuilder {
         }
 
         context.evaluateString(scope, script, name, lineNumber, securityDomain);
+    }
+
+    public void addContextModifier(@Nullable ContextModifier... contextModifiers) {
+        this.contextModifiers.addAll(Arrays.asList(contextModifiers));
     }
 }

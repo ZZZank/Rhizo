@@ -14,6 +14,13 @@ public class RegexTest {
             const reg = /^prefi/
             const test = reg.test.bind(reg)
             
-            console.log(test("prefi yes"), test("prefNo"), test("andPref"))""", "true false false");
+            console.log(test("prefi yes"))
+            console.log(test("prefNo"))
+            console.log(test("andPref"))
+            """, """
+            true
+            false
+            false"""
+        );
     }
 }

@@ -22,8 +22,8 @@ public class RhinoTest {
 
 		var typeWrappers = factory.getTypeWrappers();
 		typeWrappers.register(TestMaterial.class, TestMaterial::get);
-		typeWrappers.registerNew(WithContext.class, WithContext::of);
-		typeWrappers.registerNew(Holder.class, Holder::of);
+		typeWrappers.register(WithContext.class, WithContext::of);
+		typeWrappers.register(Holder.class, Holder::of);
 	}
 
 	public static void addToScope(Context cx, Scriptable scope, String name, Object value) {
