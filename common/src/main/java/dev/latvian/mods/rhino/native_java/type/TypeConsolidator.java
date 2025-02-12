@@ -3,24 +3,27 @@ package dev.latvian.mods.rhino.native_java.type;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.VariableTypeInfo;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 /**
  * @author ZZZank
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TypeConsolidator {
     private static final Map<Class<?>, Map<VariableTypeInfo, TypeInfo>> MAPPINGS = new Reference2ObjectOpenHashMap<>();
 
     private static final boolean DEBUG = false;
+
+    private TypeConsolidator() {
+    }
 
     @NotNull
     public static Map<VariableTypeInfo, TypeInfo> getMapping(Class<?> type) {
@@ -82,23 +85,52 @@ public final class TypeConsolidator {
     private static Map<VariableTypeInfo, TypeInfo> collect(Class<?> type) {
         val mapping = new IdentityHashMap<VariableTypeInfo, TypeInfo>();
 
-        //collect current `level` mapping
+        /**
+         * let's consider the most extreme case:
+         * classes are named as 'XXX': A, B, C, ...
+         * type variables are named as 'Tx': Ta, Tb, Tc, ...
+         * <p>
+         * there are 3 classes:
+         * class A<Ta> {}
+         * interface B<Tb> {}
+         * class C<Tc> extends A<Tc> {}
+         * class D<Td> extends C<Td> implements B<A<Td>> {}
+         *
+         * assuming that input 'type' is C.class
+         */
+
+        //collect current level mapping
         //current level types will only be consolidated by mappings from its subclasses
         val parent = type.getSuperclass();
+
+        //in our D.class example, this will collect mapping from C<Td>, forming Tc -> Td
         extractSuperMapping(type.getGenericSuperclass(), mapping);
+
+        //in our D.class example, this will collect mapping from B<A<Td>>, forming Tb -> A<Td>
         for (val genericInterface : type.getGenericInterfaces()) {
             extractSuperMapping(genericInterface, mapping);
         }
+
         //mapping from super
+        //in our D.class example, super mapping will only include Ta -> Tc
         val superMapping = getImpl(parent);
-        if (superMapping == null) {
+
+        if (superMapping == null || superMapping.isEmpty()) {
             return postMapping(mapping);
         }
-        val merged = new IdentityHashMap<VariableTypeInfo, TypeInfo>();
-        for (val entry : superMapping.entrySet()) {
-            merged.put(entry.getKey(), entry.getValue().consolidate(mapping));
+
+        //'flatten' super mapping
+        val merged = new IdentityHashMap<>(superMapping);
+        for (val entry : merged.entrySet()) {
+            //in our D.class example, super mapping Ta -> Tc will be 'flattened' to Ta -> Td
+            entry.setValue(entry.getValue().consolidate(mapping));
         }
+        //merge two mapping
         merged.putAll(mapping);
+
+        //in our D.class example, our mapping will include Ta -> Td, Tb -> A<Td>, Tc -> Td.
+        //the 'flattened' means that all related type (Ta, Tb, Tc) can be directly mapped to
+        //the type used by D.class (Td), so we only need to apply the mapping ONCE
         return postMapping(merged);
     }
 
