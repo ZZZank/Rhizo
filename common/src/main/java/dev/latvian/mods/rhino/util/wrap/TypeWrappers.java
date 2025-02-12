@@ -47,10 +47,17 @@ public class TypeWrappers {
 		register(target, (TypeWrapper<T>) wrapper);
 	}
 
-	public <T> void register(Class<T> target, Predicate<Object> validator, TypeWrapperFactory<T> factory) {
-		register(target, (TypeWrapperValidator.Old) validator::test, factory);
+	/**
+	 * kept for backward compat, using {@link #register(Class, TypeWrapperValidator, TypeWrapper.Always)} or
+	 * {@link #register(Class, TypeWrapper)} instead of this is recommended
+	 */
+	public <T> void register(Class<T> target, Predicate<Object> validator, TypeWrapperFactory<T> wrapper) {
+		register(target, new LegacyDynamicWrapper<>(validator, wrapper));
 	}
 
+	/**
+	 * kept for backward compat, using {@link #register(Class, TypeWrapper.Always)} instead of this is recommended
+	 */
 	public <T> void register(Class<T> target, TypeWrapperFactory<T> wrapper) {
 		register(target, (TypeWrapper<T>) wrapper);
 	}
