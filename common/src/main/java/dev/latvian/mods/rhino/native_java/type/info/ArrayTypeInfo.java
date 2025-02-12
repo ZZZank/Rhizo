@@ -67,6 +67,11 @@ public final class ArrayTypeInfo extends TypeInfoBase {
 	}
 
 	@Override
+	public boolean isArray() {
+		return true;
+	}
+
+	@Override
 	public @NotNull TypeInfo consolidate(@NotNull Map<VariableTypeInfo, TypeInfo> mapping) {
 		val componentC = component.consolidate(mapping);
 		return componentC == component

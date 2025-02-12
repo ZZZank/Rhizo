@@ -42,4 +42,9 @@ public record JSFixedArrayTypeInfo(List<JSOptionalParam> types) implements TypeI
 			type.type().collectContainedComponentClasses(classes);
 		}
 	}
+
+	@Override
+	public boolean isArray() {
+		return true;
+	}
 }

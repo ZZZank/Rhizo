@@ -322,6 +322,10 @@ public interface TypeInfo {
 		return false;
 	}
 
+	default boolean isArray() {
+		return false;
+	}
+
 	@NotNull
 	default TypeInfo consolidate(@NotNull Map<VariableTypeInfo, TypeInfo> mapping) {
 		return this;
