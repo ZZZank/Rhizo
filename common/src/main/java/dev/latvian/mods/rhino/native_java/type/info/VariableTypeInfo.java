@@ -3,9 +3,9 @@ package dev.latvian.mods.rhino.native_java.type.info;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author ZZZank
@@ -13,34 +13,51 @@ import java.util.Map;
 public class VariableTypeInfo extends TypeInfoBase {
     static final Map<TypeVariable<?>, VariableTypeInfo> CACHE = new IdentityHashMap<>();
 
-    private Object bound;
+    private final TypeVariable<?> raw;
+    private TypeInfo[] bounds = null;
 
-    VariableTypeInfo(TypeVariable<?> rawType) {
-        this.bound = rawType;
+    VariableTypeInfo(TypeVariable<?> raw) {
+        this.raw = raw;
     }
 
-    public TypeInfo getBound() {
-        if (bound instanceof TypeVariable<?> t) {
-            // a variable type can have multiple bounds, but we only resolves the first one, since type wrapper cannot
-            // magically find or create a class that meets multiple bounds
-            val bound = t.getBounds()[0];
-            if (bound == Object.class) {
-                this.bound = TypeInfo.NONE;
+    /**
+     * NOTE: {@link Object} class in original bound will be skipped
+     */
+    public TypeInfo[] getBounds() {
+        if (bounds == null) {
+            val rawBounds = raw.getBounds();
+            if (rawBounds.length == 1 && rawBounds[0] == Object.class) {
+                // shortcut for most variable types with no bounds
+                bounds = TypeInfo.EMPTY_ARRAY;
             } else {
-                this.bound = TypeInfo.of(bound);
+                val filtered = new ArrayList<Type>(rawBounds.length);
+                for (val t : rawBounds) {
+                    if (t != Object.class) {
+                        filtered.add(t);
+                    }
+                }
+                bounds = TypeInfo.ofArray(filtered.toArray(new Type[0]));
             }
         }
-        return (TypeInfo) bound;
+        return bounds;
+    }
+
+    public String getName() {
+        return raw.getName();
     }
 
     @Override
     public Class<?> asClass() {
-        return getBound().asClass();
+        return Object.class;
+    }
+
+    @Override
+    public String toString() {
+        return raw.getName();
     }
 
     @Override
     public @NotNull TypeInfo consolidate(@NotNull Map<VariableTypeInfo, TypeInfo> mapping) {
-        val got = mapping.get(this);
-        return got == null ? this : got;
+        return mapping.getOrDefault(this, this);
     }
 }
