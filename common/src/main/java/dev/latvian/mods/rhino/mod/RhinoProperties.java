@@ -2,12 +2,11 @@ package dev.latvian.mods.rhino.mod;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.latvian.mods.rhino.mod.remapper.MappingIO;
+import lombok.val;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +27,7 @@ public class RhinoProperties {
 	@ExpectPlatform
 	@Contract(value = " -> _", pure = true)
 	public static Path getGameDir() {
-		return FileSystems.getDefault().getPath("/mapping_test");
+		return FileSystems.getDefault().getPath("/_dev_running");
 	}
 
 	@ExpectPlatform
@@ -39,7 +38,7 @@ public class RhinoProperties {
 
 	@ExpectPlatform
 	@NotNull
-	@Contract(value = " -> _", pure = true)
+	@Contract(value = "_ -> _", pure = true)
 	public static InputStream openResource(String path) throws Exception {
 		throw new AssertionError();
 	}
@@ -52,11 +51,11 @@ public class RhinoProperties {
 		this.properties = new Properties();
 
 		try {
-			var propertiesFile = getGameDir().resolve("rhino.local.properties");
+			val propertiesFile = getGameDir().resolve("rhino.local.properties").toAbsolutePath();
 			writeProperties = false;
 
 			if (Files.exists(propertiesFile)) {
-				try (Reader reader = Files.newBufferedReader(propertiesFile)) {
+				try (val reader = Files.newBufferedReader(propertiesFile)) {
 					properties.load(reader);
 				}
 			} else {
@@ -69,13 +68,12 @@ public class RhinoProperties {
 			this.optimizationLevel = Integer.parseInt(get("optimizationLevel", "1"));
 
 			if (writeProperties) {
-				try (Writer writer = Files.newBufferedWriter(propertiesFile)) {
+				try (val writer = Files.newBufferedWriter(propertiesFile)) {
 					properties.store(writer, "Local properties for Rhino, please do not push this to version control if you don't know what you're doing!");
 				}
 			}
 		} catch (Exception ex) {
-			MappingIO.LOGGER.info("Error happened during Rhino properties loading.");
-			ex.printStackTrace();
+			MappingIO.LOGGER.info("Error happened during Rhino properties loading.", ex);
 		} catch (AssertionError e) {
 			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
 		}

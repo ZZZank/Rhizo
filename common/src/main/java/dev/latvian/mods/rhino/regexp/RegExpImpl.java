@@ -15,9 +15,6 @@ import dev.latvian.mods.rhino.Scriptable;
 import dev.latvian.mods.rhino.ScriptableObject;
 import dev.latvian.mods.rhino.Undefined;
 
-/**
- *
- */
 public class RegExpImpl implements RegExpProxy {
 
 	@Override

@@ -59,7 +59,6 @@ public class ScriptNode extends Scope {
 	private List<FunctionNode> functions;
 	private List<RegExpLiteral> regexps;
 	private List<TemplateLiteral> templateLiterals;
-	private final List<FunctionNode> EMPTY_LIST = Collections.emptyList();
 
 	private List<Symbol> symbols = new ArrayList<>(4);
 	private int paramCount = 0;
@@ -146,7 +145,7 @@ public class ScriptNode extends Scope {
 	}
 
 	public List<FunctionNode> getFunctions() {
-		return functions == null ? EMPTY_LIST : functions;
+		return functions == null ? Collections.emptyList() : functions;
 	}
 
 	/**
