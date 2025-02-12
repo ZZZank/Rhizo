@@ -17,6 +17,7 @@ import dev.latvian.mods.rhino.native_java.type.Converter;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.optimizer.Codegen;
 import dev.latvian.mods.rhino.util.remapper.Remapper;
+import dev.latvian.mods.rhino.util.remapper.RemapperManager;
 import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;

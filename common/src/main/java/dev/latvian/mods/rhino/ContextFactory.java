@@ -112,11 +112,9 @@ public class ContextFactory {
 	private volatile Object listeners;
 	private boolean disabledListening;
 	TypeWrappers typeWrappers;
-	Remapper remapper;
 
     public ContextFactory() {
         listenersLock = new Object();
-        remapper = RemapperManager.getDefault();
     }
 
 	public TypeWrappers getTypeWrappers() {
@@ -127,10 +125,7 @@ public class ContextFactory {
 	}
 
 	public Remapper getRemapper() {
-		if (remapper == null) {
-			remapper = RemapperManager.getDefault();
-		}
-		return this.remapper;
+		return RemapperManager.getDefault();
 	}
 
 	/**
