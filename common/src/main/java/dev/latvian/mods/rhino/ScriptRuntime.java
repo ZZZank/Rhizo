@@ -14,6 +14,7 @@ import dev.latvian.mods.rhino.v8dtoa.FastDtoa;
 import lombok.val;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -767,27 +768,47 @@ public class ScriptRuntime {
 	 * <p>
 	 * See ECMA 9.8.
 	 */
-	public static String toString(Object val) {
-		if (val == null) {
+	public static String toString(Object value) {
+		if (value == null) {
 			return "null";
-		} else if (val == Undefined.instance || val == Undefined.SCRIPTABLE_UNDEFINED) {
+		} else if (value == Undefined.instance || value == Undefined.SCRIPTABLE_UNDEFINED) {
 			return "undefined";
-		} else if (val instanceof CharSequence) {
-			return val.toString();
-		} else if (val instanceof Number) {
+		} else if (value instanceof CharSequence) {
+			return value.toString();
+		} else if (value instanceof Number) {
 			// XXX should we just teach NativeNumber.stringValue()
 			// about Numbers?
-			return numberToString(((Number) val).doubleValue(), 10);
-		} else if (val instanceof Symbol) {
+			return numberToString(((Number) value).doubleValue(), 10);
+		} else if (value instanceof Symbol) {
 			throw typeError0("msg.not.a.string");
-		} else if (val instanceof Scriptable) {
-			val = ((Scriptable) val).getDefaultValue(StringClass);
-			if ((val instanceof Scriptable) && !isSymbol(val)) {
-				throw errorWithClassName("msg.primitive.expected", val);
+		} else if (value instanceof Scriptable) {
+			value = ((Scriptable) value).getDefaultValue(StringClass);
+			if ((value instanceof Scriptable) && !isSymbol(value)) {
+				throw errorWithClassName("msg.primitive.expected", value);
 			}
-			return toString(val);
+			return toString(value);
 		}
-		return val.toString();
+
+		if (value.getClass().isArray()) {
+			val length = Array.getLength(value);
+			if (length == 0) {
+				return "[]";
+			}
+
+			val builder = new StringBuilder().append('[');
+
+            for (int i = 0; i < length; i++) {
+                if (i > 0) {
+                    builder.append(", ");
+                }
+
+                builder.append(toString(Array.get(value, i)));
+            }
+
+            return builder.append(']').toString();
+		}
+
+		return value.toString();
 	}
 
 	static String defaultObjectToString(Scriptable obj) {
