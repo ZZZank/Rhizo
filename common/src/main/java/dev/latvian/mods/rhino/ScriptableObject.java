@@ -320,15 +320,15 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 					return f.call(cx, f.getParentScope(), start, ScriptRuntime.emptyArgs);
 				}
 			}
-			Object val = this.value;
-			if (val instanceof LazilyLoadedCtor initializer) {
+			Object value = this.value;
+			if (value instanceof LazilyLoadedCtor initializer) {
                 try {
 					initializer.init();
 				} finally {
-					this.value = val = initializer.getValue();
+					this.value = value = initializer.getValue();
 				}
 			}
-			return val;
+			return value;
 		}
 	}
 
@@ -1311,7 +1311,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 			}
 		}
 
-		val ctor = new FunctionObject(className, ctorMember, scope, clazz);
+        final var ctor = new FunctionObject(className, ctorMember, scope, clazz);
 		if (ctor.isVarArgsMethod()) {
 			throw Context.reportRuntimeError1("msg.varargs.ctor", ctorMember.getName());
 		}
