@@ -8,7 +8,10 @@ package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.ScriptableObject.Slot;
 import dev.latvian.mods.rhino.ScriptableObject.SlotAccess;
+import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -27,12 +30,14 @@ class SlotMapContainer implements SlotMap {
 	protected SlotMap map;
 
 	SlotMapContainer(int initialSize) {
-		if (initialSize > LARGE_HASH_SIZE) {
-			map = new HashSlotMap();
-		} else {
+		if (initialSize == 0) {
+			map = EMPTY_SLOT_MAP;
+		} else if (initialSize <= LARGE_HASH_SIZE) {
 			map = new EmbeddedSlotMap();
+		} else {
+			map = new HashSlotMap();
 		}
-	}
+    }
 
 	@Override
 	public int size() {
@@ -91,12 +96,52 @@ class SlotMapContainer implements SlotMap {
 	 * map to a HashMap that is more robust against large numbers of hash collisions.
 	 */
 	protected void checkMapSize() {
-		if ((map instanceof EmbeddedSlotMap) && map.size() >= LARGE_HASH_SIZE) {
-			SlotMap newMap = new HashSlotMap();
-			for (Slot s : map) {
+		if (map == EMPTY_SLOT_MAP) {
+			map = new EmbeddedSlotMap();
+		} else if ((map instanceof EmbeddedSlotMap) && map.size() >= LARGE_HASH_SIZE) {
+			val newMap = new HashSlotMap();
+			for (val s : map) {
 				newMap.addSlot(s);
 			}
 			map = newMap;
 		}
 	}
+
+	private static class EmptySlotMap implements SlotMap {
+		@Override
+		public @NotNull Iterator<Slot> iterator() {
+			return Collections.emptyIterator();
+		}
+
+		@Override
+		public int size() {
+			return 0;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return true;
+		}
+
+		@Override
+		public Slot get(Object key, int index, SlotAccess accessType) {
+			return null;
+		}
+
+		@Override
+		public Slot query(Object key, int index) {
+			return null;
+		}
+
+		@Override
+		public void addSlot(Slot newSlot) {
+			throw new IllegalStateException();
+		}
+
+		@Override
+		public void remove(Object key, int index) {
+		}
+	}
+
+	private static final EmptySlotMap EMPTY_SLOT_MAP = new EmptySlotMap();
 }
