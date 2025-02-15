@@ -2524,10 +2524,8 @@ public class ScriptRuntime {
 
 		if (x1 == y1) {
 			return true;
-		} else if (x1 instanceof SpecialEquality) {
-			return ((SpecialEquality) x1).specialEquals(y1, false);
-		} else if (y1 instanceof SpecialEquality) {
-			return ((SpecialEquality) y1).specialEquals(x1, false);
+		} else if (SpecialEquality.check(x1, y1, false)) {
+			return true;
 		} else if (x instanceof Number) {
 			return eqNumber(((Number) x).doubleValue(), y);
 		} else if (x instanceof CharSequence) {
@@ -2561,7 +2559,7 @@ public class ScriptRuntime {
 				if (x instanceof Wrapper && y instanceof Wrapper) {
 					// See bug 413838. Effectively an extension to ECMA for
 					// the LiveConnect case.
-					return x1 == y1 || (isPrimitive(x1) && isPrimitive(y1) && eq(x1, y1));
+					return isPrimitive(x1) && isPrimitive(y1) && eq(x1, y1);
 				}
 				return false;
 			} else if (y instanceof Boolean) {
@@ -2575,16 +2573,15 @@ public class ScriptRuntime {
 				return eqNumber(d, x);
 			} else if (y instanceof Number) {
 				return eqNumber(((Number) y).doubleValue(), x);
-			} else if (y instanceof CharSequence) {
-				return eqString((CharSequence) y, x);
+			} else if (y instanceof CharSequence charSequence) {
+				return eqString(charSequence, x);
 			}
 			// covers the case when y == Undefined.instance as well
 			return false;
-		} else {
-			warnAboutNonJSObject(x);
-			return x == y;
 		}
-	}
+        warnAboutNonJSObject(x);
+        return false;
+    }
 
 	/*
 	 * Implement "SameValue" as in ECMA 7.2.9. This is not the same as "eq" because it handles
@@ -2708,10 +2705,8 @@ public class ScriptRuntime {
 
 		if (x1 == y1) {
 			return true;
-		} else if (x1 instanceof SpecialEquality) {
-			return ((SpecialEquality) x1).specialEquals(y1, true);
-		} else if (y1 instanceof SpecialEquality) {
-			return ((SpecialEquality) y1).specialEquals(x1, true);
+		} else if (SpecialEquality.check(x1, y1, true)) {
+			return true;
 		} else if (x1 instanceof Number) {
 			if (y1 instanceof Number) {
 				return ((Number) x1).doubleValue() == ((Number) y1).doubleValue();
