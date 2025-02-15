@@ -96,8 +96,6 @@ public final class Converter {
                 return CONVERSION_NONTRIVIAL;
             } else if (target == TypeInfo.OBJECT) {
                 return 3;
-            } else if (target == TypeInfo.STRING) {
-                return 4;
             }
         }
 
@@ -114,9 +112,8 @@ public final class Converter {
                     return (fromCode == JSTYPE_JAVA_ARRAY) ? CONVERSION_NONE : 2 + NativeJavaObject.getSizeRank(target);
                 } else if (target instanceof ArrayTypeInfo) {
                     return 3;
-                } else {
-                    return CONVERSION_NONE;
                 }
+                return CONVERSION_NONE;
             }
             case JSTYPE_OBJECT -> {
                 // Other objects takes #1-#3 spots
@@ -130,9 +127,8 @@ public final class Converter {
                         // Array conversions are all equal, and preferable to object
                         // and string conversion, per LC3.
                         return 2;
-                    } else {
-                        return CONVERSION_TRIVIAL;
                     }
+                    return CONVERSION_TRIVIAL;
                 } else if (target == TypeInfo.OBJECT) {
                     return 3;
                 } else if (target == TypeInfo.STRING) {
@@ -510,23 +506,12 @@ public final class Converter {
         if (from instanceof NativeJavaClass n) {
             return n.getClassObject();
         } else if (from instanceof Class<?> c) {
-            if (cx.getClassShutter() == null || cx.getClassShutter().visibleToScripts(c.getName(), ClassShutter.TYPE_MEMBER)) {
-                return c;
-            } else {
+            if (cx.getClassShutter() != null
+                && !cx.getClassShutter().visibleToScripts(c.getName(), ClassShutter.TYPE_MEMBER)) {
                 throw Context.reportRuntimeError("Class " + c.getName() + " not allowed");
             }
-        } else {
-            val s = ScriptRuntime.toString(from);
-
-            if (cx.getClassShutter() == null || cx.getClassShutter().visibleToScripts(s, ClassShutter.TYPE_MEMBER)) {
-                try {
-                    return Class.forName(s);
-                } catch (ClassNotFoundException e) {
-                    throw Context.reportRuntimeError("Failed to load class " + s);
-                }
-            } else {
-                throw Context.reportRuntimeError("Class " + from + " not allowed");
-            }
+            return c;
         }
+        return NativeJavaObject.reportConversionError(from, TypeInfo.CLASS);
     }
 }
