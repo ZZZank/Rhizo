@@ -1,8 +1,9 @@
 package dev.latvian.mods.rhino.native_java.type.info;
 
 import com.google.common.collect.ImmutableList;
+import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.native_java.type.RemappedEnumConstant;
-import dev.latvian.mods.rhino.util.wrap.TypeWrapperFactory;
+import dev.latvian.mods.rhino.util.wrap.TypeWrapper;
 import lombok.val;
 
 import java.util.IdentityHashMap;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EnumTypeInfo extends ClassTypeInfo implements TypeWrapperFactory<Object> {
+public class EnumTypeInfo extends ClassTypeInfo implements TypeWrapper<Object> {
 	static final Map<Class<?>, EnumTypeInfo> CACHE = new IdentityHashMap<>();
 
 	public static String getName(Object e) {
@@ -41,7 +42,12 @@ public class EnumTypeInfo extends ClassTypeInfo implements TypeWrapperFactory<Ob
 	}
 
 	@Override
-	public Object wrap(Object from) {
+	public boolean canWrap(Context cx, Object from, TypeInfo target) {
+		return from instanceof CharSequence || from instanceof Number;
+	}
+
+	@Override
+	public Object wrap(Context cx, Object from, TypeInfo target) {
 		if (from instanceof CharSequence) {
 			val s = from.toString();
 			if (s.isEmpty()) {
@@ -69,6 +75,6 @@ public class EnumTypeInfo extends ClassTypeInfo implements TypeWrapperFactory<Ob
 			return enumConstants().get(index);
 		}
 
-		return from;
+		return null;
 	}
 }

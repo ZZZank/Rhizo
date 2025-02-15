@@ -3,7 +3,7 @@ package dev.latvian.mods.rhino.native_java.type;
 import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.native_java.type.info.ArrayTypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
-import dev.latvian.mods.rhino.util.wrap.TypeWrapperFactory;
+import dev.latvian.mods.rhino.util.wrap.TypeWrapper;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
@@ -363,8 +363,8 @@ public final class Converter {
     }
 
     private Object internalJsToJavaLast(Object from, TypeInfo target) {
-        if (target instanceof TypeWrapperFactory<?> f) {
-            return f.wrap(cx, from, target);
+        if (target instanceof TypeWrapper<?> typeWrapper && typeWrapper.canWrap(cx, from, target)) {
+            return typeWrapper.wrap(cx, from, target);
         }
 
         return NativeJavaObject.reportConversionError(from, target);
