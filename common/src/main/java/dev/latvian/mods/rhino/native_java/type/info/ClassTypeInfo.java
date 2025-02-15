@@ -17,6 +17,14 @@ public abstract class ClassTypeInfo extends TypeInfoBase {
 	}
 
 	@Override
+	public boolean is(TypeInfo info) {
+		if (info instanceof ParameterizedTypeInfo) {
+			return info.is(this);
+		}
+		return super.is(info);
+	}
+
+	@Override
 	public boolean shouldConvert() {
 		return type != Object.class;
 	}

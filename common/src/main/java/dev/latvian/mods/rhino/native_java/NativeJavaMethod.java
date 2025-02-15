@@ -390,7 +390,7 @@ public class NativeJavaMethod extends BaseFunction {
 		for (int j = 0; j < args.length; j++) {
 			val type1 = member1.vararg && j >= types1.length ? types1[types1.length - 1] : types1[j];
 			val type2 = member2.vararg && j >= types2.length ? types2[types2.length - 1] : types2[j];
-			if (type1 == type2) {
+			if (type1.asClass() == type2.asClass()) {
 				continue;
 			}
 			val arg = args[j];

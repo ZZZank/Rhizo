@@ -16,6 +16,11 @@ public final class ArrayTypeInfo extends TypeInfoBase {
 	}
 
 	@Override
+	public boolean is(TypeInfo info) {
+		return info.isArray() && super.is(info);
+	}
+
+	@Override
 	public Class<?> asClass() {
 		if (asClass == null) {
 			asClass = component.newArray(0).getClass();
