@@ -306,7 +306,7 @@ public final class Converter {
                 }
             }
             case JSTYPE_JAVA_CLASS -> {
-                if (target == TypeInfo.CLASS || target == TypeInfo.OBJECT) {
+                if (target.asClass().isAssignableFrom(Class.class)) {
                     return unwrappedValue;
                 } else if (target == TypeInfo.STRING) {
                     return unwrappedValue.toString();
