@@ -29,6 +29,8 @@ public class EventTest {
                 console.log(e.value)
             })
             """, """
+            event: 'class dev.latvian.mods.rhino.test.impl.event.TestEvent', priority: 'HIGH'
+            TestEvent::value
             """);
     }
 }

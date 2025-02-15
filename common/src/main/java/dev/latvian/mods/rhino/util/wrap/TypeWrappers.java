@@ -63,7 +63,7 @@ public class TypeWrappers {
 	}
 
 	public boolean hasWrapper(Context cx, Object from, TypeInfo target) {
-		if (target instanceof TypeWrapperFactory<?>) {
+		if (target instanceof TypeWrapper<?> wrapper && wrapper.canWrap(cx, from, target)) {
 			return true;
 		}
 

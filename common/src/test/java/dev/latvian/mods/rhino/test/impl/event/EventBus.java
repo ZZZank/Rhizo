@@ -20,15 +20,10 @@ public record EventBus(TestConsole console) {
 		String eventType,
 		Consumer<? extends TestEvent> consumer
 	) throws Exception {
-		listen(
-			EventPriority.NORMAL,
-			false,
-			(Class) Class.forName(eventType),
-			consumer
-		);
+		listen(loadClass(eventType), consumer);
 	}
 
-    public <T extends TestEvent> void listen(
+	public <T extends TestEvent> void listen(
 		EventPriority priority,
 		boolean receiveCanceled,
 		Class<T> eventType,
@@ -38,9 +33,26 @@ public record EventBus(TestConsole console) {
 		consumer.accept(eventType.newInstance());
 	}
 
+	public void listen(
+		EventPriority priority,
+		boolean receiveCanceled,
+		String eventType,
+		Consumer<? extends TestEvent> consumer
+	) throws Exception {
+		listen(priority, receiveCanceled, loadClass(eventType), consumer);
+	}
+
 	public static @NotNull String format(EventPriority priority, Class<?> eventType) {
 		return String.format("event: '%s', priority: '%s'", eventType, priority);
 	}
+
+	private static <T> Class<T> loadClass(String name) {
+        try {
+            return (Class<T>) Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	public <T extends TestEvent> void callback(Consumer<T> consumer) throws Exception {
 		consumer.accept(null);
