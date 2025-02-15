@@ -1210,12 +1210,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	}
 
 	static <T extends Scriptable> BaseFunction buildClassCtor(Scriptable scope, Class<T> clazz, boolean sealed, boolean mapInheritance) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-		val methods = FunctionObject.getMethodList(clazz);
-        for (val method : methods) {
+        for (final var method : FunctionObject.getMethodList(clazz)) {
             if (!method.getName().equals("init")) {
                 continue;
             }
-            val parmTypes = method.getParameterTypes();
+            final var parmTypes = method.getParameterTypes();
             if (parmTypes.length == 3
                 && parmTypes[0] == ScriptRuntime.ContextClass
                 && parmTypes[1] == ScriptRuntime.ScriptableClass
@@ -1230,7 +1229,6 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
                 method.invoke(null, scope);
                 return null;
             }
-
         }
 
 		// If we got here, there isn't an "init" method with the right
@@ -1287,12 +1285,12 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		final String setterPrefix = "jsSet_";
 		final String ctorName = "jsConstructor";
 
-		Member ctorMember = findAnnotatedMember(methods, JSConstructor.class);
+		Member ctorMember = findAnnotatedMember(FunctionObject.getMethodList(clazz), JSConstructor.class);
 		if (ctorMember == null) {
 			ctorMember = findAnnotatedMember(ctors, JSConstructor.class);
 		}
 		if (ctorMember == null) {
-			ctorMember = FunctionObject.findSingleMethod(methods, ctorName);
+			ctorMember = FunctionObject.findSingleMethod(FunctionObject.getMethodList(clazz), ctorName);
 		}
 		if (ctorMember == null) {
 			if (ctors.length == 1) {
@@ -1317,7 +1315,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 
 		Method finishInit = null;
 		HashSet<String> staticNames = new HashSet<>(), instanceNames = new HashSet<>();
-		for (Method method : methods) {
+		for (final var method : FunctionObject.getMethodList(clazz)) {
 			if (method == ctorMember) {
 				continue;
 			}
@@ -1376,7 +1374,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 				if (!(proto instanceof ScriptableObject)) {
 					throw Context.reportRuntimeError2("msg.extend.scriptable", proto.getClass().toString(), name);
 				}
-				Method setter = findSetterMethod(methods, name, setterPrefix);
+				Method setter = findSetterMethod(FunctionObject.getMethodList(clazz), name, setterPrefix);
 				int attr = ScriptableObject.PERMANENT | ScriptableObject.DONTENUM | (setter != null ? 0 : ScriptableObject.READONLY);
 				((ScriptableObject) proto).defineProperty(name, null, method, setter, attr, clazz);
 				continue;
@@ -1576,9 +1574,9 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		buf[0] = 's';
 		String setterName = new String(buf);
 
-		val methods = FunctionObject.getMethodList(clazz);
-		val getter = FunctionObject.findSingleMethod(methods, getterName);
-		val setter = FunctionObject.findSingleMethod(methods, setterName);
+		final var methods = FunctionObject.getMethodList(clazz);
+		final var getter = FunctionObject.findSingleMethod(methods, getterName);
+		final var setter = FunctionObject.findSingleMethod(methods, setterName);
 		if (setter == null) {
 			attributes |= ScriptableObject.READONLY;
 		}
@@ -1994,13 +1992,13 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @see FunctionObject
 	 */
 	public void defineFunctionProperties(String[] names, Class<?> clazz, int attributes) {
-		val methods = FunctionObject.getMethodList(clazz);
-        for (val name : names) {
-            val m = FunctionObject.findSingleMethod(methods, name);
+		final var methods = FunctionObject.getMethodList(clazz);
+        for (final var name : names) {
+            final var m = FunctionObject.findSingleMethod(methods, name);
             if (m == null) {
                 throw Context.reportRuntimeError2("msg.method.not.found", name, clazz.getName());
             }
-            val f = new FunctionObject(name, m, this, clazz);
+            final var f = new FunctionObject(name, m, this, clazz);
             defineProperty(name, f, attributes);
         }
 	}
