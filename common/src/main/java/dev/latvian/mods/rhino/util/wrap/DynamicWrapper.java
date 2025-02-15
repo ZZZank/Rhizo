@@ -9,8 +9,8 @@ import java.util.Objects;
  * @author ZZZank
  */
 public final class DynamicWrapper<T> implements TypeWrapper<T> {
-    public final TypeWrapperValidator validator;
-    public final TypeWrapper.Always<T> wrapper;
+    private final TypeWrapperValidator validator;
+    private final TypeWrapper.Always<T> wrapper;
 
     public DynamicWrapper(TypeWrapperValidator validator, TypeWrapper.Always<T> wrapper) {
         this.validator = Objects.requireNonNull(validator);

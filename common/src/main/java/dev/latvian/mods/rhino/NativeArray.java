@@ -2442,13 +2442,24 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		return id;
 	}
 
-	private static final int Id_constructor = 1, Id_toString = 2, Id_toLocaleString = 3, Id_toSource = 4, Id_join = 5, Id_reverse = 6, Id_sort = 7, Id_push = 8, Id_pop = 9, Id_shift = 10, Id_unshift = 11, Id_splice = 12, Id_concat = 13, Id_slice = 14, Id_indexOf = 15, Id_lastIndexOf = 16, Id_every = 17, Id_filter = 18, Id_forEach = 19, Id_map = 20, Id_some = 21, Id_find = 22, Id_findIndex = 23, Id_reduce = 24, Id_reduceRight = 25, Id_fill = 26, Id_keys = 27, Id_values = 28, Id_entries = 29, Id_includes = 30, Id_copyWithin = 31, SymbolId_iterator = 32,
+	private static final int Id_constructor = 1, Id_toString = 2, Id_toLocaleString = 3, Id_toSource = 4, Id_join = 5,
+		Id_reverse = 6, Id_sort = 7, Id_push = 8, Id_pop = 9, Id_shift = 10, Id_unshift = 11, Id_splice = 12,
+		Id_concat = 13, Id_slice = 14, Id_indexOf = 15, Id_lastIndexOf = 16, Id_every = 17, Id_filter = 18, Id_forEach =
+		19, Id_map = 20, Id_some = 21, Id_find = 22, Id_findIndex = 23, Id_reduce = 24, Id_reduceRight = 25, Id_fill =
+		26, Id_keys = 27, Id_values = 28, Id_entries = 29, Id_includes = 30, Id_copyWithin = 31, SymbolId_iterator = 32,
 
 	MAX_PROTOTYPE_ID = SymbolId_iterator;
 
 	// #/string_id_map#
 
-	private static final int ConstructorId_join = -Id_join, ConstructorId_reverse = -Id_reverse, ConstructorId_sort = -Id_sort, ConstructorId_push = -Id_push, ConstructorId_pop = -Id_pop, ConstructorId_shift = -Id_shift, ConstructorId_unshift = -Id_unshift, ConstructorId_splice = -Id_splice, ConstructorId_concat = -Id_concat, ConstructorId_slice = -Id_slice, ConstructorId_indexOf = -Id_indexOf, ConstructorId_lastIndexOf = -Id_lastIndexOf, ConstructorId_every = -Id_every, ConstructorId_filter = -Id_filter, ConstructorId_forEach = -Id_forEach, ConstructorId_map = -Id_map, ConstructorId_some = -Id_some, ConstructorId_find = -Id_find, ConstructorId_findIndex = -Id_findIndex, ConstructorId_reduce = -Id_reduce, ConstructorId_reduceRight = -Id_reduceRight, ConstructorId_isArray = -26, ConstructorId_of = -27, ConstructorId_from = -28;
+	private static final int ConstructorId_join = -Id_join, ConstructorId_reverse = -Id_reverse, ConstructorId_sort =
+		-Id_sort, ConstructorId_push = -Id_push, ConstructorId_pop = -Id_pop, ConstructorId_shift = -Id_shift,
+		ConstructorId_unshift = -Id_unshift, ConstructorId_splice = -Id_splice, ConstructorId_concat = -Id_concat,
+		ConstructorId_slice = -Id_slice, ConstructorId_indexOf = -Id_indexOf, ConstructorId_lastIndexOf =
+		-Id_lastIndexOf, ConstructorId_every = -Id_every, ConstructorId_filter = -Id_filter, ConstructorId_forEach =
+		-Id_forEach, ConstructorId_map = -Id_map, ConstructorId_some = -Id_some, ConstructorId_find = -Id_find,
+		ConstructorId_findIndex = -Id_findIndex, ConstructorId_reduce = -Id_reduce, ConstructorId_reduceRight =
+		-Id_reduceRight, ConstructorId_isArray = -26, ConstructorId_of = -27, ConstructorId_from = -28;
 
 	/**
 	 * Internal representation of the JavaScript array's length property.

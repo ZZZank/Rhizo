@@ -21,7 +21,7 @@ public final class NativeJavaIterator extends ES6Iterator {
 		return (cx, scope, thiz, args) -> new NativeJavaIterator(scope, raw);
 	}
 
-	public NativeJavaIterator() {
+	private NativeJavaIterator() {
 		raw = null;
 	}
 
