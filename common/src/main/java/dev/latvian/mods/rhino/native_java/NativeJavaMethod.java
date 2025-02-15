@@ -337,9 +337,23 @@ public class NativeJavaMethod extends BaseFunction {
 			buf.append(methodsOrCtors[bestFitIndex].toJavaDeclaration(cx));
 		}
 
-        return Context.reportRuntimeError3(
-			methodsOrCtors[0].isCtor() ? "msg.constructor.ambiguous" : "msg.method.ambiguous",
-            methodsOrCtors[bestFits.getInt(0)].getName(),
+		val firstFitMember = methodsOrCtors[bestFits.getInt(0)];
+		val memberName = firstFitMember.getName();
+		val memberClass = firstFitMember.getDeclaringClass().getName();
+
+		if (methodsOrCtors[0].isCtor()) {
+			throw Context.reportRuntimeError3(
+				"msg.constructor.ambiguous",
+				memberName,
+				scriptSignature(args),
+				buf.toString()
+			);
+		}
+
+		throw Context.reportRuntimeError4(
+			"msg.method.ambiguous",
+			memberClass,
+			memberName,
 			scriptSignature(args),
 			buf.toString()
 		);
