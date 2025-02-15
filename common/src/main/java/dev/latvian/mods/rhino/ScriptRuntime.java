@@ -307,36 +307,31 @@ public class ScriptRuntime {
 	 * <p>
 	 * See ECMA 9.3.
 	 */
-	public static double toNumber(Object val) {
-		if (val instanceof Number) {
-			return ((Number) val).doubleValue();
+	public static double toNumber(Object o) {
+		if (o instanceof Number) {
+			return ((Number) o).doubleValue();
 		}
-		if (val == null) {
+		if (o == null) {
 			return +0.0;
 		}
-		if (val == Undefined.instance) {
+		if (o == Undefined.instance) {
 			return NaN;
 		}
-		if (val instanceof String) {
-			return toNumber((String) val);
-		}
-		if (val instanceof CharSequence) {
-			return toNumber(val.toString());
-		}
-		if (val instanceof Boolean) {
-			return (Boolean) val ? 1 : +0.0;
-		}
-		if (val instanceof Symbol) {
+		if (o instanceof CharSequence) {
+			return toNumber(o.toString());
+		} else if (o instanceof Boolean b) {
+			return b ? 1 : +0.0;
+		} else if (o instanceof Symbol) {
 			throw typeError0("msg.not.a.number");
 		}
-		if (val instanceof Scriptable) {
-			val = ((Scriptable) val).getDefaultValue(NumberClass);
-			if ((val instanceof Scriptable) && !isSymbol(val)) {
-				throw errorWithClassName("msg.primitive.expected", val);
+		if (o instanceof Scriptable) {
+			o = ((Scriptable) o).getDefaultValue(NumberClass);
+			if ((o instanceof Scriptable) && !isSymbol(o)) {
+				throw errorWithClassName("msg.primitive.expected", o);
 			}
-			return toNumber(val);
+			return toNumber(o);
 		}
-		warnAboutNonJSObject(val);
+		warnAboutNonJSObject(o);
 		return NaN;
 	}
 

@@ -61,8 +61,8 @@ public final class NativeCall extends IdScriptableObject {
 
 				for (int i = 0; i < paramCount; ++i) {
 					val name = function.getParamOrVarName(i);
-					val val = i < args.length ? args[i] : Undefined.instance;
-					defineProperty(name, val, PERMANENT);
+					val value = i < args.length ? args[i] : Undefined.instance;
+					defineProperty(name, value, PERMANENT);
 				}
 				defineProperty(function.getParamOrVarName(paramCount), cx.newArray(scope, vals), PERMANENT);
 			} else {

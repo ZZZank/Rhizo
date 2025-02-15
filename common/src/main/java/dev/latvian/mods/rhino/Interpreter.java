@@ -975,10 +975,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		// It is also used for continuation restart in which case
 		// it holds ContinuationJump
 
-		final Object DBL_MRK = DOUBLE_MARK;
-		final Object undefined = Undefined.instance;
-
-		final boolean instructionCounting = (cx.instructionThreshold != 0);
+        final boolean instructionCounting = (cx.instructionThreshold != 0);
 		// arbitrary number to add to instructionCount when calling
 		// other functions
 		final int INVOCATION_COST = 100;
@@ -1117,7 +1114,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.THROW: {
 								Object value = stack[stackTop];
-								if (value == DBL_MRK) {
+								if (value == DOUBLE_MARK) {
 									value = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1182,7 +1179,7 @@ public final class Interpreter extends Icode implements Evaluator {
 								break jumplessRun;
 							case Icode_GOSUB:
 								++stackTop;
-								stack[stackTop] = DBL_MRK;
+								stack[stackTop] = DOUBLE_MARK;
 								sDbl[stackTop] = frame.pc + 2;
 								break jumplessRun;
 							case Icode_STARTSUB:
@@ -1207,7 +1204,7 @@ public final class Interpreter extends Icode implements Evaluator {
 								}
 								indexReg += frame.localShift;
 								Object value = stack[indexReg];
-								if (value != DBL_MRK) {
+								if (value != DOUBLE_MARK) {
 									// Invocation from exception handler, restore object to rethrow
 									throwable = value;
 									break withoutExceptions;
@@ -1258,11 +1255,11 @@ public final class Interpreter extends Icode implements Evaluator {
 							case Token.RETURN_RESULT:
 								break Loop;
 							case Icode_RETUNDEF:
-								frame.result = undefined;
+								frame.result = Undefined.instance;
 								break Loop;
 							case Token.BITNOT: {
 								int rIntValue = stack_int32(frame, stackTop);
-								stack[stackTop] = DBL_MRK;
+								stack[stackTop] = DOUBLE_MARK;
 								sDbl[stackTop] = ~rIntValue;
 								continue;
 							}
@@ -1280,14 +1277,14 @@ public final class Interpreter extends Icode implements Evaluator {
 							case Token.URSH: {
 								double lDbl = stack_double(frame, stackTop - 1);
 								int rIntValue = stack_int32(frame, stackTop) & 0x1F;
-								stack[--stackTop] = DBL_MRK;
+								stack[--stackTop] = DOUBLE_MARK;
 								sDbl[stackTop] = ScriptRuntime.toUint32(lDbl) >>> rIntValue;
 								continue;
 							}
 							case Token.NEG:
 							case Token.POS: {
 								double rDbl = stack_double(frame, stackTop);
-								stack[stackTop] = DBL_MRK;
+								stack[stackTop] = DOUBLE_MARK;
 								if (op == Token.NEG) {
 									rDbl = -rDbl;
 								}
@@ -1314,7 +1311,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							case Token.STRICT_SETNAME:
 							case Token.SETNAME: {
 								Object rhs = stack[stackTop];
-								if (rhs == DBL_MRK) {
+								if (rhs == DOUBLE_MARK) {
 									rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1324,7 +1321,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Icode_SETCONST: {
 								Object rhs = stack[stackTop];
-								if (rhs == DBL_MRK) {
+								if (rhs == DOUBLE_MARK) {
 									rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1339,7 +1336,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.GETPROPNOWARN: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.getObjectPropNoWarn(lhs, stringReg, cx, frame.scope);
@@ -1347,7 +1344,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.GETPROP: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.getObjectProp(lhs, stringReg, cx, frame.scope);
@@ -1355,7 +1352,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.GETOPTIONAL: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.getObjectPropOptional(lhs, stringReg, cx, frame.scope);
@@ -1363,12 +1360,12 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.SETPROP: {
 								Object rhs = stack[stackTop];
-								if (rhs == DBL_MRK) {
+								if (rhs == DOUBLE_MARK) {
 									rhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.setObjectProp(lhs, stringReg, rhs, cx, frame.scope);
@@ -1376,7 +1373,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Icode_PROP_INC_DEC: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.propIncrDecr(lhs, stringReg, cx, frame.scope, iCode[frame.pc]);
@@ -1402,7 +1399,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.SET_REF: {
 								Object value = stack[stackTop];
-								if (value == DBL_MRK) {
+								if (value == DOUBLE_MARK) {
 									value = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1440,7 +1437,7 @@ public final class Interpreter extends Icode implements Evaluator {
 								continue;
 							case Icode_PROP_AND_THIS: {
 								Object obj = stack[stackTop];
-								if (obj == DBL_MRK) {
+								if (obj == DOUBLE_MARK) {
 									obj = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								// stringReg: property
@@ -1451,11 +1448,11 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Icode_ELEM_AND_THIS: {
 								Object obj = stack[stackTop - 1];
-								if (obj == DBL_MRK) {
+								if (obj == DOUBLE_MARK) {
 									obj = ScriptRuntime.wrapNumber(sDbl[stackTop - 1]);
 								}
 								Object id = stack[stackTop];
-								if (id == DBL_MRK) {
+								if (id == DOUBLE_MARK) {
 									id = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop - 1] = ScriptRuntime.getElemFunctionAndThis(obj, id, cx, frame.scope);
@@ -1464,7 +1461,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Icode_VALUE_AND_THIS: {
 								Object value = stack[stackTop];
-								if (value == DBL_MRK) {
+								if (value == DOUBLE_MARK) {
 									value = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.getValueFunctionAndThis(value, cx);
@@ -1542,7 +1539,7 @@ public final class Interpreter extends Icode implements Evaluator {
 									// continuation result is the first argument if any
 									// of continuation call
 									if (indexReg == 0) {
-										cjump.result = undefined;
+										cjump.result = Undefined.instance;
 									} else {
 										cjump.result = stack[stackTop + 2];
 										cjump.resultDbl = sDbl[stackTop + 2];
@@ -1608,7 +1605,7 @@ public final class Interpreter extends Icode implements Evaluator {
 									continue StateLoop;
 								}
 								if (!(lhs instanceof Function fun)) {
-									if (lhs == DBL_MRK) {
+									if (lhs == DOUBLE_MARK) {
 										lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 									}
 									throw ScriptRuntime.notFunctionError(lhs);
@@ -1627,7 +1624,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Token.TYPEOF: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.typeof(lhs);
@@ -1641,19 +1638,19 @@ public final class Interpreter extends Icode implements Evaluator {
 								continue;
 							case Icode_SHORTNUMBER:
 								++stackTop;
-								stack[stackTop] = DBL_MRK;
+								stack[stackTop] = DOUBLE_MARK;
 								sDbl[stackTop] = getShort(iCode, frame.pc);
 								frame.pc += 2;
 								continue;
 							case Icode_INTNUMBER:
 								++stackTop;
-								stack[stackTop] = DBL_MRK;
+								stack[stackTop] = DOUBLE_MARK;
 								sDbl[stackTop] = getInt(iCode, frame.pc);
 								frame.pc += 4;
 								continue;
 							case Token.NUMBER:
 								++stackTop;
-								stack[stackTop] = DBL_MRK;
+								stack[stackTop] = DOUBLE_MARK;
 								sDbl[stackTop] = frame.idata.itsDoubleTable[indexReg];
 								continue;
 							case Token.NAME:
@@ -1707,11 +1704,11 @@ public final class Interpreter extends Icode implements Evaluator {
 								stack[++stackTop] = Boolean.TRUE;
 								continue;
 							case Icode_UNDEF:
-								stack[++stackTop] = undefined;
+								stack[++stackTop] = Undefined.instance;
 								continue;
 							case Token.ENTERWITH: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1745,7 +1742,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							case Token.ENUM_INIT_ARRAY:
 							case Token.ENUM_INIT_VALUES_IN_ORDER: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1765,7 +1762,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							case Token.REF_SPECIAL: {
 								//stringReg: name of special property
 								Object obj = stack[stackTop];
-								if (obj == DBL_MRK) {
+								if (obj == DOUBLE_MARK) {
 									obj = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								stack[stackTop] = ScriptRuntime.specialRef(obj, stringReg, cx, frame.scope);
@@ -1808,7 +1805,7 @@ public final class Interpreter extends Icode implements Evaluator {
 								continue;
 							case Icode_LITERAL_SET: {
 								Object value = stack[stackTop];
-								if (value == DBL_MRK) {
+								if (value == DOUBLE_MARK) {
 									value = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -1857,7 +1854,7 @@ public final class Interpreter extends Icode implements Evaluator {
 							}
 							case Icode_ENTERDQ: {
 								Object lhs = stack[stackTop];
-								if (lhs == DBL_MRK) {
+								if (lhs == DOUBLE_MARK) {
 									lhs = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 								}
 								--stackTop;
@@ -2105,7 +2102,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			throw (Error) throwable;
 		}
 
-		return (interpreterResult != DBL_MRK) ? interpreterResult : ScriptRuntime.wrapNumber(interpreterResultDbl);
+		return (interpreterResult != DOUBLE_MARK) ? interpreterResult : ScriptRuntime.wrapNumber(interpreterResultDbl);
 	}
 
 	private static int doNullishCoalescing(CallFrame frame, Object[] stack, double[] sDbl, int stackTop) {

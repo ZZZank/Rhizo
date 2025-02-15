@@ -4,6 +4,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+
 import java.io.Closeable;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -68,10 +70,10 @@ public class IteratorLikeIterable implements Iterable<Object>, Closeable {
 
 		@Override
 		public boolean hasNext() {
-			Object val = next.call(cx, scope, iterator, ScriptRuntime.emptyArgs);
-			// This will throw if "val" is not an object. 
+			val gotNext = next.call(cx, scope, iterator, ScriptRuntime.emptyArgs);
+			// This will throw if "gotNext" is not an object.
 			// "getObjectPropNoWarn" won't, so do this as follows.
-			Object doneval = ScriptableObject.getProperty(ScriptableObject.ensureScriptable(val), ES6Iterator.DONE_PROPERTY);
+			Object doneval = ScriptableObject.getProperty(ScriptableObject.ensureScriptable(gotNext), ES6Iterator.DONE_PROPERTY);
 			if (doneval == Scriptable.NOT_FOUND) {
 				doneval = Undefined.instance;
 			}
@@ -80,7 +82,7 @@ public class IteratorLikeIterable implements Iterable<Object>, Closeable {
 				isDone = true;
 				return false;
 			}
-			nextVal = ScriptRuntime.getObjectPropNoWarn(val, ES6Iterator.VALUE_PROPERTY, cx, scope);
+			nextVal = ScriptRuntime.getObjectPropNoWarn(gotNext, ES6Iterator.VALUE_PROPERTY, cx, scope);
 			return true;
 		}
 

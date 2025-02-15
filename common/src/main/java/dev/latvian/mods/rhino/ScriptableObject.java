@@ -1210,26 +1210,24 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	}
 
 	static <T extends Scriptable> BaseFunction buildClassCtor(Scriptable scope, Class<T> clazz, boolean sealed, boolean mapInheritance) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-		Method[] methods = FunctionObject.getMethodList(clazz);
-        for (Method method : methods) {
+		val methods = FunctionObject.getMethodList(clazz);
+        for (val method : methods) {
             if (!method.getName().equals("init")) {
                 continue;
             }
-            Class<?>[] parmTypes = method.getParameterTypes();
+            val parmTypes = method.getParameterTypes();
             if (parmTypes.length == 3
                 && parmTypes[0] == ScriptRuntime.ContextClass
                 && parmTypes[1] == ScriptRuntime.ScriptableClass
                 && parmTypes[2] == Boolean.TYPE
                 && Modifier.isStatic(method.getModifiers())) {
-                Object[] args = {Context.getContext(), scope, sealed ? Boolean.TRUE : Boolean.FALSE};
-                method.invoke(null, args);
+                method.invoke(null, Context.getContext(), scope, sealed ? Boolean.TRUE : Boolean.FALSE);
                 return null;
             }
             if (parmTypes.length == 1
                 && parmTypes[0] == ScriptRuntime.ScriptableClass
                 && Modifier.isStatic(method.getModifiers())) {
-                Object[] args = {scope};
-                method.invoke(null, args);
+                method.invoke(null, scope);
                 return null;
             }
 
@@ -1400,8 +1398,7 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 
 		// Call user code to complete initialization if necessary.
 		if (finishInit != null) {
-			Object[] finishArgs = {scope, ctor, proto};
-			finishInit.invoke(null, finishArgs);
+            finishInit.invoke(null, scope, ctor, proto);
 		}
 
 		// Seal the object if necessary.

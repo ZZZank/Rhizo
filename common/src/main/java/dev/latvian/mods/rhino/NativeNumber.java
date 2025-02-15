@@ -111,13 +111,13 @@ final class NativeNumber extends IdScriptableObject {
 		}
 		int id = f.methodId();
 		if (id == Id_constructor) {
-			double val = (args.length >= 1) ? ScriptRuntime.toNumber(args[0]) : 0.0;
+			double value = (args.length > 0) ? ScriptRuntime.toNumber(args[0]) : 0.0;
 			if (thisObj == null) {
-				// new Number(val) creates a new Number object.
-				return new NativeNumber(val);
+				// new Number(value) creates a new Number object.
+				return new NativeNumber(value);
 			}
-			// Number(val) converts val to a number value.
-			return ScriptRuntime.wrapNumber(val);
+			// Number(value) converts value to a number value.
+			return ScriptRuntime.wrapNumber(value);
 
 		} else if (id < Id_constructor) {
 			return execConstructorCall(id, args);
