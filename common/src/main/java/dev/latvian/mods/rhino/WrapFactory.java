@@ -122,7 +122,7 @@ public class WrapFactory {
 		if (javaObject instanceof Map<?, ?> map) {
 			return new NativeJavaMap(cx, scope, map, target);
 		} else if (javaObject instanceof List<?> list) {
-			return new NativeJavaList(cx, scope, list, list, target);
+			return new NativeJavaList(cx, scope, list, target);
 //		} else if (javaObject instanceof Set<?> set) {
 //			return new NativeJavaList(cx, scope, set, new JavaSetWrapper<>(set), target);
 		} else if (javaObject instanceof Class<?> c) {

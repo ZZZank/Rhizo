@@ -15,13 +15,11 @@ import java.util.List;
 
 public class NativeJavaList extends NativeJavaObject implements Iterable<Object> {
 
-	public final List<Object> list;
-	public final TypeInfo listType;
+    public final TypeInfo listType;
 
-	public NativeJavaList(Context cx, Scriptable scope, Object jo, List list, TypeInfo type) {
-		super(cx, scope, jo, type);
-		this.list = list;
-		this.listType = type.param(0);
+	public NativeJavaList(Context cx, Scriptable scope, List list, TypeInfo type) {
+		super(cx, scope, list, type);
+        this.listType = type.param(0);
 	}
 
 	@Override
@@ -56,7 +54,7 @@ public class NativeJavaList extends NativeJavaObject implements Iterable<Object>
 	@Override
 	public Object get(String name, Scriptable start) {
 		if ("length".equals(name)) {
-			return list.size();
+			return list().size();
 		}
 		return super.get(name, start);
 	}
@@ -65,7 +63,7 @@ public class NativeJavaList extends NativeJavaObject implements Iterable<Object>
 	public Object get(int index, Scriptable start) {
 		if (isWithValidIndex(index)) {
 			Context cx = Context.getContext();
-			Object obj = list.get(index);
+			Object obj = list().get(index);
 			return cx.getWrapFactory().wrap(cx, this, obj, this.listType);
 		}
 		return Undefined.instance;
@@ -82,7 +80,7 @@ public class NativeJavaList extends NativeJavaObject implements Iterable<Object>
 	@Override
 	public void put(int index, Scriptable start, Object value) {
 		if (isWithValidIndex(index)) {
-			list.set(index, Context.jsToJava(Context.getContext(), value, TypeInfo.OBJECT));
+			list().set(index, Context.jsToJava(Context.getContext(), value, TypeInfo.OBJECT));
 			return;
 		}
 		super.put(index, start, value);
@@ -90,8 +88,8 @@ public class NativeJavaList extends NativeJavaObject implements Iterable<Object>
 
 	@Override
 	public Object[] getIds() {
-		val result = new Object[list.size()];
-		int i = list.size();
+		val result = new Object[list().size()];
+		int i = list().size();
 		while (--i >= 0) {
 			result[i] = i;
 		}
@@ -99,13 +97,13 @@ public class NativeJavaList extends NativeJavaObject implements Iterable<Object>
 	}
 
 	private boolean isWithValidIndex(int index) {
-		return index >= 0 && index < list.size();
+		return index >= 0 && index < list().size();
 	}
 
 	@Override
 	public void delete(int index) {
 		if (isWithValidIndex(index)) {
-			Object obj = list.remove(index);
+			Object obj = list().remove(index);
 			Deletable.deleteObject(obj);
 		}
 	}
@@ -113,6 +111,10 @@ public class NativeJavaList extends NativeJavaObject implements Iterable<Object>
 	@NotNull
 	@Override
 	public Iterator<Object> iterator() {
-		return this.list.iterator();
+		return this.list().iterator();
+	}
+
+	public List<Object> list() {
+		return (List<Object>) javaObject;
 	}
 }

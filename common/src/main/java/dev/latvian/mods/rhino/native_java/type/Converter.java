@@ -386,7 +386,7 @@ public final class Converter {
         if (value instanceof NativeArray array) {
             return ArrayValueProvider.fromNativeArray(array);
         } else if (value instanceof NativeJavaList list) {
-            return ArrayValueProvider.fromJavaList(list.list, list);
+            return ArrayValueProvider.fromJavaList(list.list(), list);
         } else if (value instanceof List<?> list) {
             return ArrayValueProvider.fromJavaList(list, list);
         } else if (value instanceof Iterable<?> itr) {
@@ -420,14 +420,14 @@ public final class Converter {
         if (from instanceof NativeJavaList n) {
             if (target == null) {
                 // No conversion necessary
-                return n.list;
+                return n.list();
             } else if (target.equals(n.listType)) {
                 // No conversion necessary
-                return n.list;
+                return n.list();
             } else {
-                var list = new ArrayList<>(n.list.size());
+                var list = new ArrayList<>(n.list().size());
 
-                for (var o : n.list) {
+                for (var o : n.list()) {
                     list.add(jsToJava(o, target));
                 }
 
@@ -442,14 +442,14 @@ public final class Converter {
         if (from instanceof NativeJavaList n) {
             if (target == null) {
                 // No conversion necessary
-                return new LinkedHashSet<>(n.list);
+                return new LinkedHashSet<>(n.list());
             } else if (target.equals(n.listType)) {
                 // No conversion necessary
-                return new LinkedHashSet<>(n.list);
+                return new LinkedHashSet<>(n.list());
             } else {
-                var set = new LinkedHashSet<>(n.list.size());
+                var set = new LinkedHashSet<>(n.list().size());
 
-                for (var o : n.list) {
+                for (var o : n.list()) {
                     set.add(jsToJava(o, target));
                 }
 
@@ -464,18 +464,18 @@ public final class Converter {
         if (from instanceof NativeJavaMap n) {
             if (!kTarget.shouldConvert() && !vTarget.shouldConvert()) {
                 // No conversion necessary
-                return n.map;
+                return n.map();
             } else if (kTarget.equals(n.mapKeyType) && vTarget.equals(n.mapValueType)) {
                 // No conversion necessary
-                return n.map;
+                return n.map();
             } else {
-                if (n.map.isEmpty()) {
+                if (n.map().isEmpty()) {
                     return Collections.emptyMap();
                 }
 
-                val map = new LinkedHashMap<>(n.map.size());
+                val map = new LinkedHashMap<>(n.map().size());
 
-                for (val entry : ((Map<?, ?>) n.map).entrySet()) {
+                for (val entry : ((Map<?, ?>) n.map()).entrySet()) {
                     map.put(jsToJava(entry.getKey(), kTarget), jsToJava(entry.getValue(), vTarget));
                 }
 

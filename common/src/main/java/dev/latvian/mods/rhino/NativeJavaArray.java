@@ -25,13 +25,11 @@ import java.lang.reflect.Array;
 public class NativeJavaArray extends NativeJavaObject implements SymbolScriptable {
 	private static final long serialVersionUID = -924022554283675333L;
 
-	Object array;
-	int length;
-	TypeInfo componentType;
+	final int length;
+	final TypeInfo componentType;
 
 	public NativeJavaArray(Context cx, Scriptable scope, Object array, ArrayTypeInfo type) {
 		super(cx, scope, array, type);
-		this.array = array;
 		this.length = Array.getLength(array);
 		this.componentType = type.componentType();
 	}
@@ -39,11 +37,6 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	@Override
 	public String getClassName() {
 		return "JavaArray";
-	}
-
-	@Override
-	public Object unwrap() {
-		return array;
 	}
 
 	@Override
@@ -68,7 +61,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 		}
 		Object result = super.get(id, start);
 		if (result == NOT_FOUND && !ScriptableObject.hasProperty(getPrototype(), id)) {
-			throw Context.reportRuntimeError2("msg.java.member.not.found", array.getClass().getName(), id);
+			throw Context.reportRuntimeError2("msg.java.member.not.found", javaObject.getClass().getName(), id);
 		}
 		return result;
 	}
@@ -77,7 +70,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	public Object get(int index, Scriptable start) {
 		if (0 <= index && index < length) {
 			val cx = Context.getContext();
-			val obj = Array.get(array, index);
+			val obj = Array.get(javaObject, index);
 			return cx.getWrapFactory().wrap(cx, this, obj, componentType);
 		}
 		return Undefined.instance;
@@ -104,7 +97,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
         if (0 > index || index >= length) {
             throw Context.reportRuntimeError2("msg.java.array.index.out.of.bounds", String.valueOf(index), String.valueOf(length - 1));
         }
-        Array.set(array, index, Context.jsToJava(Context.getContext(), value, componentType));
+        Array.set(javaObject, index, Context.jsToJava(Context.getContext(), value, componentType));
     }
 
 	@Override
@@ -115,7 +108,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	@Override
 	public Object getDefaultValue(Class<?> hint) {
 		if (hint == null || hint == ScriptRuntime.StringClass) {
-			return array.toString();
+			return javaObject.toString();
 		}
 		if (hint == ScriptRuntime.BooleanClass) {
 			return Boolean.TRUE;
