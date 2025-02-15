@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.test.impl.*;
+import dev.latvian.mods.rhino.test.impl.event.EventBus;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 
