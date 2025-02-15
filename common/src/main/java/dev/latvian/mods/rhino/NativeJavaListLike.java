@@ -8,15 +8,22 @@ package dev.latvian.mods.rhino;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.util.Deletable;
 import dev.latvian.mods.rhino.util.ListLike;
+import lombok.val;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
 
 public class NativeJavaListLike extends NativeJavaObject {
 	private final ListLike<Object> list;
+	private final TypeInfo componentType;
 
 	public NativeJavaListLike(Context cx, Scriptable scope, ListLike object, TypeInfo type) {
 		super(cx, scope, object, type);
 		this.list = object;
+		this.componentType = type.param(0);
 	}
 
 	@Override
@@ -59,9 +66,9 @@ public class NativeJavaListLike extends NativeJavaObject {
 	@Override
 	public Object get(int index, Scriptable start) {
 		if (isWithValidIndex(index)) {
-			Context cx = Context.getContext();
-			Object obj = list.getLL(index);
-			return cx.getWrapFactory().wrap(cx, this, obj, obj.getClass());
+			val cx = Context.getContext();
+			val obj = list.getLL(index);
+			return cx.getWrapFactory().wrap(cx, this, obj, componentType);
 		}
 		return Undefined.instance;
 	}
@@ -77,7 +84,7 @@ public class NativeJavaListLike extends NativeJavaObject {
 	@Override
 	public void put(int index, Scriptable start, Object value) {
 		if (isWithValidIndex(index)) {
-			list.setLL(index, Context.jsToJava(Context.getContext(), value, TypeInfo.OBJECT));
+			list.setLL(index, Context.jsToJava(Context.getContext(), value, this.componentType));
 			return;
 		}
 		super.put(index, start, value);
@@ -85,12 +92,9 @@ public class NativeJavaListLike extends NativeJavaObject {
 
 	@Override
 	public Object[] getIds() {
-		List<?> list = (List<?>) javaObject;
-		Object[] result = new Object[list.size()];
-		int i = list.size();
-		while (--i >= 0) {
-			result[i] = i;
-		}
+		val list = (List<?>) javaObject;
+		val result = new Object[list.size()];
+		Arrays.setAll(result, i -> i);
 		return result;
 	}
 
