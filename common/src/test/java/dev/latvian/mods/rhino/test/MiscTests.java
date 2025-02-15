@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.test;
 
+import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
 import dev.latvian.mods.rhino.test.impl.generic.GenericObject;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;

@@ -1,7 +1,7 @@
 package dev.latvian.mods.rhino.test.impl.event;
 
 import com.github.bsideup.jabel.Desugar;
-import dev.latvian.mods.rhino.test.impl.TestConsole;
+import dev.latvian.mods.rhino.test.impl.base.TestConsole;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;

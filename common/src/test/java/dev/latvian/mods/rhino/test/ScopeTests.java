@@ -1,6 +1,7 @@
 package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.WrappedException;
+import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unused")

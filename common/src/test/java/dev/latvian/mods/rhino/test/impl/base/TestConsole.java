@@ -1,9 +1,11 @@
-package dev.latvian.mods.rhino.test.impl;
+package dev.latvian.mods.rhino.test.impl.base;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.ContextFactory;
 import dev.latvian.mods.rhino.ScriptRuntime;
-import dev.latvian.mods.rhino.test.WithContext;
+import dev.latvian.mods.rhino.test.impl.WithContext;
+import dev.latvian.mods.rhino.test.impl.Holder;
+import dev.latvian.mods.rhino.test.impl.TestMaterial;
 import dev.latvian.mods.rhino.util.RemapPrefixForJS;
 import lombok.val;
 

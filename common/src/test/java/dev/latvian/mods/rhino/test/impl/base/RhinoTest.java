@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.test;
+package dev.latvian.mods.rhino.test.impl.base;
 
 import dev.latvian.mods.rhino.*;
 import dev.latvian.mods.rhino.test.impl.*;

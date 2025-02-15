@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.test;
 
+import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -80,24 +81,5 @@ public class GenericsTests {
 	@Test
 	public void materialHolder() {
 		TEST.test("materialHolder", "console.registerMaterial('minecraft:iron');", "Registered material: minecraft:iron");
-	}
-
-	@Test
-	public void eventBus() {
-		TEST.test("eventBus", """
-			EventBus.addListener('lowest', false, 'dev.latvian.mods.rhino.test.EventBus$TestEvent', (event) => { console.info('hi') })
-			""", """
-			Listening for dev.latvian.mods.rhino.test.EventBus$TestEvent
-			hi
-			""");
-	}
-
-	@Test
-	public void eventBusCallback() {
-		TEST.test("eventBusCallback", """
-			EventBus.callback((event) => { console.info('hi') })
-			""", """
-			hi
-			""");
 	}
 }

@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.test.impl;
+package dev.latvian.mods.rhino.test.impl.base;
 
 public enum TestConsoleTheme {
 	LIGHT,

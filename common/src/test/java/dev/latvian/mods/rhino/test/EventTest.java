@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.test;
 
+import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,5 +33,14 @@ public class EventTest {
             event: 'class dev.latvian.mods.rhino.test.impl.event.TestEvent', priority: 'HIGH'
             TestEvent::value
             """);
+    }
+
+    @Test
+    public void callback() {
+        TEST.test("callback", """
+			EventBus.callback((event) => { console.info('hi') })
+			""", """
+			hi
+			""");
     }
 }

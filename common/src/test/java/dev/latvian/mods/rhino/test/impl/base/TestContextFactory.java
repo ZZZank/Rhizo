@@ -1,8 +1,7 @@
-package dev.latvian.mods.rhino.test.impl;
+package dev.latvian.mods.rhino.test.impl.base;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.ContextFactory;
-import lombok.val;
 
 public class TestContextFactory extends ContextFactory {
 	@Override
