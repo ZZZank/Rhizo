@@ -4,6 +4,8 @@ import dev.latvian.mods.rhino.mod.remapper.RhizoRemapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 /**
  * @author ZZZank
  */
@@ -17,7 +19,7 @@ public final class RemapperManager {
     }
 
     public static void setDefault(Remapper defaultRemapper) {
-        RemapperManager.defaultRemapper = defaultRemapper;
+        RemapperManager.defaultRemapper = Objects.requireNonNull(defaultRemapper);
     }
 
     public static boolean isRemapped(String mapped) {

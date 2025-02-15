@@ -814,6 +814,11 @@ public class Context {
         return factory.getRemapper();
     }
 
+    @Deprecated
+    public void setRemapper(Remapper remapper) {
+        RemapperManager.setDefault(remapper);
+    }
+
     public Object getCustomProperty(String name) {
         return customProperties.get(name);
     }
