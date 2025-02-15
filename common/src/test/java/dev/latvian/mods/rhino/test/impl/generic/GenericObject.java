@@ -1,4 +1,4 @@
-package dev.latvian.mods.rhino.test;
+package dev.latvian.mods.rhino.test.impl.generic;
 
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import org.junit.jupiter.api.Assertions;
@@ -8,22 +8,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GenericObject<T> {
-	public static final Map<String, String> ASSERTIONS;
+	public static final Map<String, String> ASSERTIONS = new HashMap<>();
 
     static {
-        ASSERTIONS = new HashMap<>();
         ASSERTIONS.put("none", "?");
         ASSERTIONS.put("any", "?");
         ASSERTIONS.put("object", "?");
         ASSERTIONS.put("string", "java.lang.String");
         ASSERTIONS.put("anyString", "java.lang.CharSequence");
-        ASSERTIONS.put("anySuperString", "java.lang.CharSequence");
-        ASSERTIONS.put("t", "?");
+        ASSERTIONS.put("anySuperString", "java.lang.String");
+        ASSERTIONS.put("t", "T_");
         ASSERTIONS.put("tString", "java.lang.CharSequence");
-        ASSERTIONS.put("k", "dev.latvian.mods.rhino.test.GenericObject<java.lang.CharSequence>");
+        ASSERTIONS.put("k", "dev.latvian.mods.rhino.test.impl.generic.GenericObject<java.lang.CharSequence>");
     }
 
-    public static String test = "";
+    public static String testing = "";
 
 	public static void test(String name, Type type) {
 		var typeInfo = TypeInfo.of(type).param(0);
@@ -50,11 +49,11 @@ public class GenericObject<T> {
 		return null;
 	}
 
-	public GenericObject<? super CharSequence> anySuperString() {
+	public GenericObject<? super String> anySuperString() {
 		return null;
 	}
 
-	public <T> GenericObject<T> t() {
+	public <T_> GenericObject<T_> t() {
 		return null;
 	}
 

@@ -1,5 +1,6 @@
 package dev.latvian.mods.rhino.test;
 
+import dev.latvian.mods.rhino.test.impl.generic.GenericObject;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -116,11 +117,11 @@ public class MiscTests {
 	public void types() {
 		for (var method : GenericObject.class.getDeclaredMethods()) {
 			if (!Modifier.isStatic(method.getModifiers())) {
-				GenericObject.test = method.getName();
+				GenericObject.testing = method.getName();
 				GenericObject.test(method.getName(), method.getGenericReturnType());
 			}
 		}
 
-		GenericObject.test = "";
+		GenericObject.testing = "";
 	}
 }
