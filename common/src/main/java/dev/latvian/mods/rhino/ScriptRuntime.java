@@ -7,6 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.ast.FunctionNode;
+import dev.latvian.mods.rhino.native_java.NativeJavaIterator;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.util.SpecialEquality;
 import dev.latvian.mods.rhino.v8dtoa.DoubleConversion;
@@ -170,6 +171,8 @@ public class ScriptRuntime {
 
 		NativeArrayIterator.init(scope, sealed);
 		NativeStringIterator.init(scope, sealed);
+
+		NativeJavaIterator.init(scope, sealed);
 
 		// define lazy-loaded properties using their class name
 		new LazilyLoadedCtor(scope, "RegExp", "dev.latvian.mods.rhino.regexp.NativeRegExp", sealed, true);

@@ -14,26 +14,7 @@ import java.lang.reflect.Modifier;
 public class MiscTests {
 	public static final RhinoTest TEST = new RhinoTest("misc");
 
-	@Test
-	public void testFunctionAssignment() {
-		TEST.test("functionAssignment",
-			"""
-				let x = () => {};
-				x.abc = 1;
-				console.info(x.abc);
-				""",
-			"1"
-		);
-	}
-
-	@Test
-	public void testDelete() {
-		TEST.test("delete", "let x = {a: 1}; delete x.a; console.info(x.a);", "undefined");
-	}
-
-	@Test
-	@Order(1)
-	public void init() {
+	static {
 		TEST.test("init", """
 			const testObject = {
 				a: -39, b: 2, c: 3439438
@@ -51,6 +32,23 @@ public class MiscTests {
 			def
 			ghi
 			""");
+	}
+
+	@Test
+	public void testFunctionAssignment() {
+		TEST.test("functionAssignment",
+			"""
+				let x = () => {};
+				x.abc = 1;
+				console.info(x.abc);
+				""",
+			"1"
+		);
+	}
+
+	@Test
+	public void testDelete() {
+		TEST.test("delete", "let x = {a: 1}; delete x.a; console.info(x.a);", "undefined");
 	}
 
 	@Test
@@ -82,7 +80,8 @@ public class MiscTests {
 	@Order(4)
 	public void deconstruction() {
 		TEST.test("deconstruction", """
-			for (let [key, value] of Object.entries(shared.testObject)) {
+			const entries = Object.entries(shared.testObject)
+			for (let [key, value] of entries) {
 				console.info(`${key} : ${value}`)
 			}
 			""", """

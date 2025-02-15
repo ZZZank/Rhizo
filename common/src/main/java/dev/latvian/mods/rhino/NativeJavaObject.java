@@ -7,10 +7,7 @@
 package dev.latvian.mods.rhino;
 
 import com.google.common.collect.ImmutableMap;
-import dev.latvian.mods.rhino.native_java.ReflectsKit;
-import dev.latvian.mods.rhino.native_java.FieldAndMethods;
-import dev.latvian.mods.rhino.native_java.JavaMembers;
-import dev.latvian.mods.rhino.native_java.NativeJavaPackage;
+import dev.latvian.mods.rhino.native_java.*;
 import dev.latvian.mods.rhino.native_java.type.Converter;
 import dev.latvian.mods.rhino.native_java.type.info.ParameterizedTypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
@@ -89,6 +86,9 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 
 	@Override
 	public boolean has(Symbol key, Scriptable start) {
+		if (javaObject instanceof Iterable<?> && SymbolKey.ITERATOR.equals(key)) {
+			return true;
+		}
 		return false;
 	}
 
@@ -107,6 +107,10 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 
 	@Override
 	public Object get(Symbol key, Scriptable start) {
+		if (javaObject instanceof Iterable<?> itr && SymbolKey.ITERATOR.equals(key)) {
+			return NativeJavaIterator.ofGetter(itr.iterator());
+		}
+
 		// Native Java objects have no Symbol members
 		return Scriptable.NOT_FOUND;
 	}
