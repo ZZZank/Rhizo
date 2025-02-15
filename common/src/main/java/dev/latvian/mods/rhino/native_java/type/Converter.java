@@ -17,8 +17,8 @@ import java.util.*;
 @AllArgsConstructor
 public final class Converter {
 
+    public static final byte CONVERSION_EXACT = 0;
     public static final byte CONVERSION_TRIVIAL = 1;
-    public static final byte CONVERSION_NONTRIVIAL = 0;
     public static final byte CONVERSION_NONE = 99;
 
     public static final int JSTYPE_UNDEFINED = 0; // undefined type
@@ -33,17 +33,21 @@ public final class Converter {
 
     private final Context cx;
 
+    /**
+     * higher weight -> conversion is harder
+     */
     public static int getConversionWeight(Context cx, Object from, TypeInfo target) {
         if (cx.hasTypeWrappers() && cx.getTypeWrappers().hasWrapper(cx, from, target)) {
-            return CONVERSION_NONTRIVIAL;
+            return CONVERSION_EXACT;
         }
 
         if (target instanceof ArrayTypeInfo || Collection.class.isAssignableFrom(target.asClass())) {
-            return CONVERSION_NONTRIVIAL;
+            return CONVERSION_EXACT;
         } else if (target.is(TypeInfo.CLASS)) {
-            return from instanceof Class<?> || from instanceof NativeJavaClass
-                ? CONVERSION_TRIVIAL
-                : CONVERSION_NONTRIVIAL;
+            if (from instanceof Class<?> || from instanceof NativeJavaClass) {
+                return CONVERSION_TRIVIAL;
+            }
+            return CONVERSION_NONE;
         } else if (from == null) {
             if (!target.isPrimitive()) {
                 return CONVERSION_TRIVIAL;
@@ -93,7 +97,7 @@ public final class Converter {
             }
         } else if (from instanceof Class || from instanceof NativeJavaClass) {
             if (target.is(TypeInfo.CLASS)) {
-                return CONVERSION_NONTRIVIAL;
+                return CONVERSION_EXACT;
             } else if (target == TypeInfo.OBJECT) {
                 return 3;
             }
@@ -105,11 +109,14 @@ public final class Converter {
             case JSTYPE_JAVA_OBJECT, JSTYPE_JAVA_ARRAY -> {
                 Object javaObj = Wrapper.unwrapped(from);
                 if (target.asClass().isInstance(javaObj)) {
-                    return CONVERSION_NONTRIVIAL;
+                    return CONVERSION_EXACT;
                 } else if (target == TypeInfo.STRING) {
                     return 2;
                 } else if (target.isPrimitive() && !target.isBoolean()) {
-                    return (fromCode == JSTYPE_JAVA_ARRAY) ? CONVERSION_NONE : 2 + NativeJavaObject.getSizeRank(target);
+                    if (fromCode == JSTYPE_JAVA_ARRAY) {
+                        return CONVERSION_NONE;
+                    }
+                    return 2 + NativeJavaObject.getSizeRank(target);
                 } else if (target instanceof ArrayTypeInfo) {
                     return 3;
                 }
@@ -338,10 +345,9 @@ public final class Converter {
                     return NativeJavaObject.coerceToNumber(target, from);
                 } else if (target.asClass().isInstance(from)) {
                     return from;
-                } else if (target == TypeInfo.DATE && from instanceof NativeDate) {
-                    double time = ((NativeDate) from).getJSTimeValue();
+                } else if (target == TypeInfo.DATE && from instanceof NativeDate date) {
                     // XXX: This will replace NaN by 0
-                    return new Date((long) time);
+                    return new Date((long) date.getJSTimeValue());
                 } else if (from instanceof Wrapper) {
                     if (target.asClass().isInstance(unwrappedValue)) {
                         return unwrappedValue;
