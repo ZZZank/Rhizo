@@ -2208,11 +2208,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @since 1.7R3
 	 */
 	public static <T> T getTypedProperty(Scriptable s, int index, Class<T> type) {
-		Object val = getProperty(s, index);
-		if (val == NOT_FOUND) {
-			val = null;
+		Object prop = getProperty(s, index);
+		if (prop == NOT_FOUND) {
+			prop = null;
 		}
-		return type.cast(Context.jsToJava(val, type));
+		return type.cast(Context.jsToJava(prop, type));
 	}
 
 	/**
@@ -2262,11 +2262,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @since 1.7R3
 	 */
 	public static <T> T getTypedProperty(Scriptable s, String name, Class<T> type) {
-		Object val = getProperty(s, name);
-		if (val == NOT_FOUND) {
-			val = null;
+		Object prop = getProperty(s, name);
+		if (prop == NOT_FOUND) {
+			prop = null;
 		}
-		return type.cast(Context.jsToJava(val, type));
+		return type.cast(Context.jsToJava(prop, type));
 	}
 
 	/**
