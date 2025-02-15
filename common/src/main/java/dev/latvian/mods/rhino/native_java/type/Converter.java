@@ -310,9 +310,8 @@ public final class Converter {
                     return unwrappedValue;
                 } else if (target == TypeInfo.STRING) {
                     return unwrappedValue.toString();
-                } else {
-                    return internalJsToJavaLast(unwrappedValue, target);
                 }
+                return internalJsToJavaLast(unwrappedValue, target);
             }
             case JSTYPE_JAVA_OBJECT, JSTYPE_JAVA_ARRAY -> {
                 if (target.isPrimitive()) {

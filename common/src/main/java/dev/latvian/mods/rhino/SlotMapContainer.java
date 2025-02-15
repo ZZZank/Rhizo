@@ -98,7 +98,7 @@ class SlotMapContainer implements SlotMap {
 	protected void checkMapSize() {
 		if (map == EMPTY_SLOT_MAP) {
 			map = new EmbeddedSlotMap();
-		} else if ((map instanceof EmbeddedSlotMap) && map.size() >= LARGE_HASH_SIZE) {
+		} else if (map instanceof EmbeddedSlotMap && map.size() >= LARGE_HASH_SIZE) {
 			val newMap = new HashSlotMap();
 			for (val s : map) {
 				newMap.addSlot(s);
