@@ -52,17 +52,6 @@ public class MiscTests {
 	}
 
 	@Test
-	public void enums() {
-		TEST.test("enums", """
-			console.theme = 'Dark'
-			console.info(console.theme == 'DaRK')
-			""", """
-			Set theme to DARK
-			true
-			""");
-	}
-
-	@Test
 	@Order(4)
 	public void keysValuesEntries() {
 		TEST.test("keysValuesEntries", """

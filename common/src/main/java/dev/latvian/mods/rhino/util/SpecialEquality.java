@@ -14,14 +14,24 @@ public interface SpecialEquality {
         return checkLeftBased(x, y, shallow) || checkLeftBased(y, x, shallow);
     }
 
+    /**
+     * @param base the object to be compared against
+     * @param shallow {@code true} for {@code ===} and {@code !==}, {@code false} for {@code ==} and {@code !=}
+     * @return whether the {@code base} and {@code o} is equal
+     */
     static boolean checkLeftBased(Object base, Object o, boolean shallow) {
         if (base instanceof SpecialEquality s) {
             return s.specialEquals(o, shallow);
         } else if (base instanceof Enum<?> e) {
-            if (o instanceof Number) {
-                return e.ordinal() == ((Number) o).intValue();
+            if (o instanceof Enum<?> e2) {
+                return e.equals(e2);
             }
-            return EnumTypeInfo.getName(base).equalsIgnoreCase(String.valueOf(o));
+            if (!shallow) {
+                if (o instanceof Number num) {
+                    return e.ordinal() == num.intValue();
+                }
+                return EnumTypeInfo.getName(base).equalsIgnoreCase(String.valueOf(o));
+            }
         }
 
         return false;
