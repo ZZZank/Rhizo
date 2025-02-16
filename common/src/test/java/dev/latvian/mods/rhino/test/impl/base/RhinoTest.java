@@ -54,7 +54,7 @@ public class RhinoTest {
 			cx.evaluateString(rootScope, script, testName + "/" + name, 1, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			console.info(String.format("Error(compile=%s): %s", compile, ex.getMessage()));
+			console.info(TestConsole.formatException(compile, ex.getMessage()));
 		} finally {
 			Context.exit();
 		}
