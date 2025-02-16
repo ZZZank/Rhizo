@@ -73,7 +73,7 @@ public class RhinoProperties {
 				}
 			}
 		} catch (Exception ex) {
-			MappingIO.LOGGER.info("Error happened during Rhino properties loading.", ex);
+			MappingIO.LOGGER.info("Error happened during Rhino properties loading: \n\t{}", ex.getMessage());
 		} catch (AssertionError e) {
 			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
 		}
