@@ -968,6 +968,15 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		}
 	}
 
+	/**
+	 * do not use, because:
+	 * <p>
+	 * - `toSource` is removed
+	 * <p>
+	 * - this will change array formatting, causing KubeJS `console.log(...)` to behave differently
+	 */
+	private static final boolean TO_SOURCE = false;
+
 	private static String toStringHelper(Context cx, Scriptable scope, Scriptable thisObj, boolean toLocale) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);
 
@@ -979,9 +988,13 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 		StringBuilder result = new StringBuilder(256);
 
 		// whether to return '4,unquoted,5' or '[4, "quoted", 5]'
-		String separator;
-
-		separator = ",";
+        String separator;
+		if (TO_SOURCE) {
+			result.append('[');
+			separator = ", ";
+		} else {
+			separator = ",";
+		}
 
 		boolean haslast = false;
 		long i = 0;
@@ -1015,7 +1028,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 					}
 					haslast = true;
 
-					if (false) {
+					if (TO_SOURCE) {
 						result.append(ScriptRuntime.uneval(cx, scope, elem));
 
 					} else if (elem instanceof String) {
@@ -1043,7 +1056,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 			}
 		}
 
-		if (false) {
+		if (TO_SOURCE) {
 			//for [,,].length behavior; we want toString to be symmetric.
 			if (!haslast && i > 0) {
 				result.append(", ]");
