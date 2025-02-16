@@ -975,7 +975,7 @@ public class NativeArray extends IdScriptableObject implements List, DataObject 
 	 * <p>
 	 * - this will change array formatting, causing KubeJS `console.log(...)` to behave differently
 	 */
-	private static final boolean TO_SOURCE = false;
+	public static final boolean TO_SOURCE = false;
 
 	private static String toStringHelper(Context cx, Scriptable scope, Scriptable thisObj, boolean toLocale) {
 		Scriptable o = ScriptRuntime.toObject(cx, scope, thisObj);

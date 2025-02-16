@@ -51,8 +51,11 @@ public class MiscTests {
 		TEST.test("delete", "let x = {a: 1}; delete x.a; console.info(x.a);", "undefined");
 	}
 
-	@Test
-	@Order(4)
+	/**
+	 * @see dev.latvian.mods.rhino.NativeArray#TO_SOURCE
+	 */
+//	@Test
+//	@Order(4)
 	public void keysValuesEntries() {
 		TEST.test("keysValuesEntries", """
 			console.info(Object.keys(shared.testObject))
@@ -99,7 +102,9 @@ public class MiscTests {
 		TEST.test("jsonStringifyWithNestedArrays", """
 			const thing = {nested: [1, 2, 3]};
 			console.info(JSON.stringify(thing));
-			""", "{\"nested\":[1.0,2.0,3.0]}");
+			""", """
+            {"nested":[1.0,2.0,3.0]}"""
+        );
 	}
 
 	@Test

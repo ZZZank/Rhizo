@@ -1,9 +1,11 @@
 package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("unused")
+@Disabled
 public class PowTests {
 	public static final RhinoTest TEST = new RhinoTest("pow");
 

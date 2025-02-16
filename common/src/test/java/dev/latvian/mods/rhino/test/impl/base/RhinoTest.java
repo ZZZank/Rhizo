@@ -40,7 +40,7 @@ public class RhinoTest {
 		test(name, script, match, true);
 	}
 
-	private void test(String name, String script, String match, boolean compile) {
+	public void test(String name, String script, String match, boolean compile) {
 		try {
 			val cx = (TestContext) factory.enterContext();
 			val rootScope = cx.initStandardObjects();
