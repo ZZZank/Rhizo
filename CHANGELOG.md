@@ -1,3 +1,23 @@
+## Rhizo 3.5.1 -> 3.6.0
+
+Enum equality & `for..of` for Java Iterables
+
+- You can use `enum == "EnumNameHere"` or `enum == 1` (enum index) to compare enum now
+    - Note: special equality is NOT added to `===` and `!==`, that is, `enum === "EnumNameHere"` or `enum == 1` (enum
+index) will still always return `false`
+- you can now iterate through Java Iterables, just like native JS array
+    - `for (let element of someJavaList) {}` for example
+- using RegEx (for example `/^somePattern+/`) with `enableCompiler` enabled now works again
+- fix error message when method choice is ambiguous
+- type wrapper is rewritten for less function calling jump and more flexibility
+- fix some arrays (array obtained from java codes) in a strange format when converted to string
+- better type support for MapLike and ArrayLike
+- throw error early when trying to wrap illegal object to an enum
+- performance improvements
+- and some other fixes, mostly for developers
+
+---
+
 ## Rhizo 3.5 -> 3.5.1
 
 Fix NBTUtils
