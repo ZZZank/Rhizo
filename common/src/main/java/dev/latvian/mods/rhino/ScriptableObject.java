@@ -2577,11 +2577,11 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 	 * @see #associateValue(Object key, Object value)
 	 */
 	public final Object getAssociatedValue(Object key) {
-		Map<Object, Object> h = associatedValues;
-		if (h == null) {
+		val associated = this.associatedValues;
+		if (associated == null) {
 			return null;
 		}
-		return h.get(key);
+		return associated.get(key);
 	}
 
 	/**
@@ -2628,12 +2628,10 @@ public abstract class ScriptableObject implements Scriptable, SymbolScriptable, 
 		if (value == null) {
 			throw new IllegalArgumentException();
 		}
-		Map<Object, Object> h = associatedValues;
-		if (h == null) {
-			h = new HashMap<>();
-			associatedValues = h;
+		if (associatedValues == null) {
+			associatedValues = new HashMap<>();
 		}
-		return Kit.initHash(h, key, value);
+		return Kit.initHash(associatedValues, key, value);
 	}
 
 	/**

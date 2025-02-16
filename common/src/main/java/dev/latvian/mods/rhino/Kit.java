@@ -6,6 +6,8 @@
 
 package dev.latvian.mods.rhino;
 
+import lombok.val;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -278,14 +280,10 @@ public class Kit {
 
 	static Object initHash(Map<Object, Object> h, Object key, Object initialValue) {
 		synchronized (h) {
-			Object current = h.get(key);
-			if (current == null) {
-				h.put(key, initialValue);
-			} else {
-				initialValue = current;
-			}
+			// it will return the 'old' value
+			val old = h.putIfAbsent(key, initialValue);
+			return old == null ? initialValue : old;
 		}
-		return initialValue;
 	}
 
 	private final static class ComplexKey {
