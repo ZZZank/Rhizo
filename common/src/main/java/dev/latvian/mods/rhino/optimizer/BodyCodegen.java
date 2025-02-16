@@ -1395,15 +1395,17 @@ class BodyCodegen {
                 generateExpression(child, node); // object
                 generateExpression(child.getNext(), node);  // id
                 cfw.addALoad(contextLocal);
-                if (node.getIntProp(Node.ISNUMBER_PROP, -1) != -1) {
+                cfw.addALoad(variableObjectLocal);
+                if (node.getIntProp(Node.ISNUMBER_PROP, -1) != -1) { // 'index' is number
                     addScriptRuntimeInvoke(
                         "getObjectIndex",
-                        "(Ljava/lang/Object;D"
+                        "(Ljava/lang/Object;"
+                            + "D"
                             + "Ldev/latvian/mods/rhino/Context;"
+                            + "Ldev/latvian/mods/rhino/Scriptable;"
                             + ")Ljava/lang/Object;"
                     );
                 } else {
-                    cfw.addALoad(variableObjectLocal);
                     addScriptRuntimeInvoke(
                         "getObjectElem",
                         "(Ljava/lang/Object;"
@@ -4122,7 +4124,8 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
                 cfw.addALoad(variableObjectLocal);
                 addScriptRuntimeInvoke(
                     "getObjectIndex",
-                    "(Ljava/lang/Object;D"
+                    "(Ljava/lang/Object;"
+                        + "D"
                         + "Ldev/latvian/mods/rhino/Context;"
                         + "Ldev/latvian/mods/rhino/Scriptable;"
                         + ")Ljava/lang/Object;"
