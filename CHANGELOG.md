@@ -1,3 +1,11 @@
+## Rhizo 3.6.0 -> 3.6.1
+
+Compiler Mode Fix
+
+- Fix `getObjectIndex` calling in compiler mode
+
+---
+
 ## Rhizo 3.5.1 -> 3.6.0
 
 Enum equality & `for..of` for Java Iterables
