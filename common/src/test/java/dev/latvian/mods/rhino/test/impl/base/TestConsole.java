@@ -27,8 +27,8 @@ public class TestConsole {
 		info(Arrays.stream(objects).map(ScriptRuntime::toString).collect(Collectors.joining(" ")));
 	}
 
-	public static String formatException(boolean compile, String errorMessage) {
-		return String.format("Error(compile=%s): %s", compile, errorMessage);
+	public static String formatException(String errorMessage) {
+		return "Error: " + errorMessage;
 	}
 
 	public void info(Object o) {

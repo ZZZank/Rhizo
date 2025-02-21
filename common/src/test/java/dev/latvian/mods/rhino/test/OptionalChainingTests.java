@@ -1,7 +1,6 @@
 package dev.latvian.mods.rhino.test;
 
 import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
-import dev.latvian.mods.rhino.test.impl.base.TestConsole;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -32,32 +31,11 @@ public class OptionalChainingTests {
                 console.info(shared.a.b.c)
                 console.info(shared.e.f.g)
                 console.info(shared.h.i.j)
-                """, String.format(
-                """
-                    d
-                    undefined
-                    %s""",
-                TestConsole.formatException(
-                    false,
-                    "TypeError: Cannot read property \"i\" from null (optionalChaining/shouldError#3)"
-                )
-            ), false
-        );
-        TEST.test(
-            "shouldError", """
-                console.info(shared.a.b.c)
-                console.info(shared.e.f.g)
-                console.info(shared.h.i.j)
-                """, String.format(
-                """
-                    d
-                    undefined
-                    %s""",
-                TestConsole.formatException(
-                    true,
-                    "TypeError: Cannot read property \"i\" from null (optionalChaining/shouldError#3)"
-                )
-            ), true
+                """,
+            """
+                d
+                undefined
+                Error: TypeError: Cannot read property "i" from null (optionalChaining/shouldError#3)"""
         );
     }
 
