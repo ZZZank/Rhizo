@@ -7,7 +7,6 @@
 package dev.latvian.mods.rhino;
 
 import dev.latvian.mods.rhino.ast.ErrorCollector;
-import dev.latvian.mods.rhino.mod.RhinoProperties;
 
 import java.util.Set;
 
@@ -20,7 +19,6 @@ public class CompilerEnvirons {
 		this.strictMode = false;
 		this.warningAsError = false;
 		this.allowSharpComments = false;
-		this.optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
 	}
 
 	public void initFromContext(Context cx) {

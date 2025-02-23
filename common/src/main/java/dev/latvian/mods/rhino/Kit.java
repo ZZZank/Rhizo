@@ -24,9 +24,7 @@ public class Kit {
 	public static Class<?> classOrNull(String className) {
 		try {
 			return Class.forName(className);
-		} catch (ClassNotFoundException ex) {
-		} catch (SecurityException ex) {
-		} catch (LinkageError ex) {
+		} catch (ClassNotFoundException | LinkageError | SecurityException ignored) {
 		} catch (IllegalArgumentException e) {
 			// Can be thrown if name has characters that a class name
 			// can not contain

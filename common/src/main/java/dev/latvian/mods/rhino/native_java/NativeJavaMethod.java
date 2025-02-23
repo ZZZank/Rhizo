@@ -205,7 +205,7 @@ public class NativeJavaMethod extends BaseFunction {
 		return index;
 	}
 
-	private static int @Nullable [] failFastConvWeight(Context cx, MemberBox member, Object[] args) {
+	private static int @Nullable [] failFastConvWeights(Context cx, MemberBox member, Object[] args) {
 		int argsLength = member.getArgTypeInfos().length;
 
 		if (member.vararg) {
@@ -246,7 +246,7 @@ public class NativeJavaMethod extends BaseFunction {
 			return -1;
 		}
 		if (members.length == 1) {
-			if (failFastConvWeight(cx, members[0], args) == null) {
+			if (failFastConvWeights(cx, members[0], args) == null) {
 				return -1;
 			}
 			if (DEBUG) {
@@ -259,7 +259,7 @@ public class NativeJavaMethod extends BaseFunction {
 		BEST_WEIGHT_BUFFER.clear();
         for (int i = 0, membersLength = members.length; i < membersLength; i++) {
             val member = members[i];
-            val weights = failFastConvWeight(cx, member, args);
+            val weights = failFastConvWeights(cx, member, args);
             if (weights == null) {
                 continue;
             }

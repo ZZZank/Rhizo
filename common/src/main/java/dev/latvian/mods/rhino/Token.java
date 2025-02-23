@@ -38,9 +38,9 @@ public interface Token {
     int EOL = 1;  // end of line
 
     // Interpreter reuses the following as bytecodes
-    int FIRST_BYTECODE_TOKEN = 2;
+    int FIRST_BYTECODE_TOKEN = EOL + 1;
 
-    int ENTERWITH = 2;
+    int ENTERWITH = FIRST_BYTECODE_TOKEN;
     int LEAVEWITH = ENTERWITH + 1;
     int RETURN = LEAVEWITH + 1;
     int GOTO = RETURN + 1;

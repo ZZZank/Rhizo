@@ -306,7 +306,13 @@ public class Context {
         }
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
-        optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
+
+        if (RhinoProperties.INSTANCE.enableCompiler) {
+            optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
+        } else {
+            optimizationLevel = -1;
+        }
+
         customProperties = new HashMap<>();
     }
 
@@ -1631,32 +1637,6 @@ public class Context {
     }
 
     /**
-     * Tell whether source information is being generated.
-     *
-     * @since 1.3
-     */
-    public final boolean isGeneratingSource() {
-        return false;
-    }
-
-    /**
-     * Specify whether or not source information should be generated.
-     * <p>
-     * Without source information, evaluating the "toString" method
-     * on JavaScript functions produces only "[native code]" for
-     * the body of the function.
-     * Note that code generated without source is not fully ECMA
-     * conformant.
-     *
-     * @since 1.3
-     */
-    public final void setGeneratingSource(boolean generatingSource) {
-        if (sealed) {
-            onSealedMutation();
-        }
-    }
-
-    /**
      * Get the current optimization level.
      * <p>
      * The optimization level is expressed as an integer between -1 and
@@ -2141,17 +2121,10 @@ public class Context {
     }
 
     private Evaluator createCompiler() {
-        if(!RhinoProperties.INSTANCE.enableCompiler) {
+        if(optimizationLevel < 0) {
             return createInterpreter();
         }
-        Evaluator result = null;
-        if (optimizationLevel >= 0) {
-            result = new Codegen();
-        }
-        if (result == null) {
-            result = createInterpreter();
-        }
-        return result;
+        return new Codegen();
     }
 
     RegExpProxy getRegExpProxy() {
