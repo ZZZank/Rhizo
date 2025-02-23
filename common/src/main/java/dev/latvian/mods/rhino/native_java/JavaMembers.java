@@ -131,7 +131,7 @@ public final class JavaMembers {
                 return members;
             }
             try {
-                members = new JavaMembers(c, includeProtected, cx, scope);
+                members = new JavaMembers(c, includeProtected, cx, ScriptableObject.getTopLevelScope(scope));
                 break;
             } catch (SecurityException e) {
                 // Reflection may fail for objects that are in a restricted
