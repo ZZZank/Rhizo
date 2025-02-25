@@ -102,7 +102,7 @@ public class InterfaceAdapter {
 		} else {
 			val s = (Scriptable) target;
 			val methodName = method.getName();
-			val value = ScriptableObject.getProperty(s, methodName);
+			val value = ScriptableObject.getProperty(cx, s, methodName);
 			if (value == Scriptable.NOT_FOUND) {
 				// We really should throw an error here, but for the sake of
 				// compatibility with JavaAdapter we silently ignore undefined

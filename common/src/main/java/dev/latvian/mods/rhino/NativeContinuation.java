@@ -17,7 +17,7 @@ public final class NativeContinuation extends IdScriptableObject implements Func
 
 	public static void init(Context cx, Scriptable scope, boolean sealed) {
 		NativeContinuation obj = new NativeContinuation();
-		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	public Object getImplementation() {

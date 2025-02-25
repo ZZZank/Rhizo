@@ -371,7 +371,7 @@ public final class JavaMembers {
         val methodOrCtor = findExplicitFunction(name, isStatic);
 
         if (methodOrCtor != null) {
-            val prototype = ScriptableObject.getFunctionPrototype(scope);
+            val prototype = ScriptableObject.getFunctionPrototype(cx, scope);
 
             if (methodOrCtor.isCtor()) {
                 val fun = new NativeJavaConstructor(methodOrCtor);

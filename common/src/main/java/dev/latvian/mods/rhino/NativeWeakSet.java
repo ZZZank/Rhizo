@@ -28,7 +28,7 @@ public class NativeWeakSet extends IdScriptableObject {
 
 	static void init(Scriptable scope, boolean sealed) {
 		NativeWeakSet m = new NativeWeakSet();
-		m.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		m.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	@Override

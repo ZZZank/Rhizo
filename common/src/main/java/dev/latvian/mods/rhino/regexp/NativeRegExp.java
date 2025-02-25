@@ -116,12 +116,12 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 		proto.re = compileRE(cx, "", null, false);
 		proto.activatePrototypeMap(MAX_PROTOTYPE_ID);
 		proto.setParentScope(scope);
-		proto.setPrototype(getObjectPrototype(scope));
+		proto.setPrototype(getObjectPrototype(cx, scope));
 
 		NativeRegExpCtor ctor = new NativeRegExpCtor();
 		// Bug #324006: ECMA-262 15.10.6.1 says "The initial value of
 		// RegExp.prototype.constructor is the builtin RegExp constructor."
-		proto.defineProperty("constructor", ctor, ScriptableObject.DONTENUM);
+		proto.defineProperty(cx, "constructor", ctor, ScriptableObject.DONTENUM);
 
 		ScriptRuntime.setFunctionProtoAndParent(ctor, scope);
 
@@ -132,7 +132,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			ctor.sealObject();
 		}
 
-		defineProperty(scope, "RegExp", ctor, ScriptableObject.DONTENUM);
+		defineProperty(cx, scope, "RegExp", ctor, ScriptableObject.DONTENUM);
 	}
 
 	NativeRegExp(Scriptable scope, RECompiled regexpCompiled) {
@@ -2402,7 +2402,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			obj = (Scriptable) result;
 
 			String matchstr = str.substring(index, index + matchlen);
-			obj.put(0, obj, matchstr);
+			obj.put(cx, 0, obj, matchstr);
 		}
 
 		if (re.parenCount == 0) {
@@ -2419,11 +2419,11 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 					parsub = new SubString(str, cap_index, cap_length);
 					res.parens[num] = parsub;
 					if (matchType != TEST) {
-						obj.put(num + 1, obj, parsub.toString());
+						obj.put(cx, num + 1, obj, parsub.toString());
 					}
 				} else {
 					if (matchType != TEST) {
-						obj.put(num + 1, obj, Undefined.instance);
+						obj.put(cx, num + 1, obj, Undefined.instance);
 					}
 				}
 			}
@@ -2435,8 +2435,8 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			 * Define the index and input properties last for better for/in loop
 			 * order (so they come after the elements).
 			 */
-			obj.put("index", obj, start + gData.skipped);
-			obj.put("input", obj, str);
+			obj.put(cx, "index", obj, start + gData.skipped);
+			obj.put(cx, "input", obj, str);
 		}
 
 		if (res.lastMatch == null) {
@@ -2487,7 +2487,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 	}
 
 	@Override
-	protected int findInstanceIdInfo(String s) {
+	protected int findInstanceIdInfo(Context cx, String s) {
 		int id;
 		// #generated# Last update: 2007-05-09 08:16:24 EDT
 		L0:
@@ -2527,7 +2527,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 		// #/string_id_map#
 
 		if (id == 0) {
-			return super.findInstanceIdInfo(s);
+			return super.findInstanceIdInfo(cx, s);
 		}
 
 		int attr = switch (id) {
@@ -2551,14 +2551,14 @@ public class NativeRegExp extends IdScriptableObject implements Function {
     }
 
 	@Override
-	protected Object getInstanceIdValue(int id) {
+	protected Object getInstanceIdValue(Context cx, int id) {
         return switch (id) {
             case Id_lastIndex -> lastIndex;
             case Id_source -> new String(re.source);
             case Id_global -> ScriptRuntime.wrapBoolean((re.flags & JSREG_GLOB) != 0);
             case Id_ignoreCase -> ScriptRuntime.wrapBoolean((re.flags & JSREG_FOLD) != 0);
             case Id_multiline -> ScriptRuntime.wrapBoolean((re.flags & JSREG_MULTILINE) != 0);
-            default -> super.getInstanceIdValue(id);
+            default -> super.getInstanceIdValue(cx, id);
         };
     }
 
@@ -2571,7 +2571,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 
 
 	@Override
-	protected void setInstanceIdValue(int id, Object value) {
+	protected void setInstanceIdValue(Context cx, int id, Object value) {
 		switch (id) {
 			case Id_lastIndex:
 				setLastIndex(value);
@@ -2582,7 +2582,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
 			case Id_multiline:
 				return;
 		}
-		super.setInstanceIdValue(id, value);
+		super.setInstanceIdValue(cx, id, value);
 	}
 
 	@Override
@@ -2656,7 +2656,7 @@ public class NativeRegExp extends IdScriptableObject implements Function {
             case SymbolId_match -> realThis(thisObj, f).execSub(cx, scope, args, MATCH);
             case SymbolId_search -> {
                 Scriptable scriptable = (Scriptable) realThis(thisObj, f).execSub(cx, scope, args, MATCH);
-                yield scriptable.get("index", scriptable);
+                yield scriptable.get(cx, "index", scriptable);
             }
             default -> throw new IllegalArgumentException(String.valueOf(id));
         };

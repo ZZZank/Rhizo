@@ -160,7 +160,7 @@ public class NativeJavaMethod extends BaseFunction {
                         break;
                     }
                 }
-                o = o.getPrototype();
+                o = o.getPrototype(cx);
             }
         }
 		if (DEBUG) {

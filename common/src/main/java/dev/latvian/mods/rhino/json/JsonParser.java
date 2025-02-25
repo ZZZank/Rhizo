@@ -103,9 +103,9 @@ public class JsonParser {
 
 					long index = ScriptRuntime.indexFromString(id);
 					if (index < 0) {
-						object.put(id, object, value);
+						object.put(cx, id, object, value);
 					} else {
-						object.put((int) index, object, value);
+						object.put(cx, (int) index, object, value);
 					}
 
 					needsComma = true;

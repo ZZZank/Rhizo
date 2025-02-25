@@ -32,7 +32,7 @@ import java.util.EnumMap;
  * built-in classes after initialization. For other setups involving
  * top-level scopes that inherit global properties from their proptotypes
  * (e.g. with dynamic scopes) embeddings should explicitly call
- * {@link #cacheBuiltins()} to initialize the class cache for each top-level
+ * {@link #cacheBuiltins(Context, Scriptable, boolean)} to initialize the class cache for each top-level
  * scope.</p>
  */
 public class TopLevel extends IdScriptableObject {
@@ -143,10 +143,10 @@ public class TopLevel extends IdScriptableObject {
 	 * called by the embedding if a top-level scope is not initialized through
 	 * <code>initStandardObjects()</code>.
 	 */
-	public void cacheBuiltins(Scriptable scope, boolean sealed) {
+	public void cacheBuiltins(Context cx, Scriptable scope, boolean sealed) {
 		ctors = new EnumMap<>(Builtins.class);
 		for (Builtins builtin : Builtins.values()) {
-			Object value = getProperty(this, builtin.name());
+			Object value = getProperty(cx, this, builtin.name());
 			if (value instanceof BaseFunction) {
 				ctors.put(builtin, (BaseFunction) value);
 			} else if (builtin == Builtins.GeneratorFunction) {
@@ -157,7 +157,7 @@ public class TopLevel extends IdScriptableObject {
 		}
 		errors = new EnumMap<>(NativeErrors.class);
 		for (NativeErrors error : NativeErrors.values()) {
-			Object value = getProperty(this, error.name());
+			Object value = getProperty(cx, this, error.name());
 			if (value instanceof BaseFunction) {
 				errors.put(error, (BaseFunction) value);
 			}
@@ -231,7 +231,7 @@ public class TopLevel extends IdScriptableObject {
 	 * @param type  the built-in type
 	 * @return the built-in prototype
 	 */
-	public static Scriptable getBuiltinPrototype(Scriptable scope, Builtins type) {
+	public static Scriptable getBuiltinPrototype(Context cx, Scriptable scope, Builtins type) {
 		// must be called with top level scope
 		assert scope.getParentScope() == null;
 		if (scope instanceof TopLevel) {
@@ -250,12 +250,12 @@ public class TopLevel extends IdScriptableObject {
 		} else {
 			typeName = type.name();
 		}
-		return getClassPrototype(scope, typeName);
+		return getClassPrototype(cx, scope, typeName);
 	}
 
 	/**
 	 * Get the cached built-in object constructor from this scope with the
-	 * given <code>type</code>. Returns null if {@link #cacheBuiltins()} has not
+	 * given <code>type</code>. Returns null if {@link #cacheBuiltins(Context, Scriptable, boolean)} has not
 	 * been called on this object.
 	 *
 	 * @param type the built-in type
@@ -267,7 +267,7 @@ public class TopLevel extends IdScriptableObject {
 
 	/**
 	 * Get the cached native error constructor from this scope with the
-	 * given <code>type</code>. Returns null if {@link #cacheBuiltins()} has not
+	 * given <code>type</code>. Returns null if {@link #cacheBuiltins(Context, Scriptable, boolean)} has not
 	 * been called on this object.
 	 *
 	 * @param type the native error type
@@ -279,7 +279,7 @@ public class TopLevel extends IdScriptableObject {
 
 	/**
 	 * Get the cached built-in object prototype from this scope with the
-	 * given <code>type</code>. Returns null if {@link #cacheBuiltins()} has not
+	 * given <code>type</code>. Returns null if {@link #cacheBuiltins(Context, Scriptable, boolean)} has not
 	 * been called on this object.
 	 *
 	 * @param type the built-in type

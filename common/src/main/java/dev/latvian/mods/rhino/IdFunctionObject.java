@@ -68,21 +68,21 @@ public class IdFunctionObject extends BaseFunction {
 		setImmunePrototypeProperty(prototypeProperty);
 	}
 
-	public final void addAsProperty(Scriptable target) {
-		defineProperty(target, functionName, this, DONTENUM);
+	public final void addAsProperty(Context cx, Scriptable target) {
+		defineProperty(cx, target, functionName, this, DONTENUM);
 	}
 
-	public void exportAsScopeProperty() {
-		addAsProperty(getParentScope());
+	public void exportAsScopeProperty(Context cx) {
+		addAsProperty(cx, getParentScope());
 	}
 
 	@Override
-	public Scriptable getPrototype() {
+	public Scriptable getPrototype(Context cx) {
 		// Lazy initialization of prototype: for native functions this
 		// may not be called at all
-		Scriptable proto = super.getPrototype();
+		Scriptable proto = super.getPrototype(cx);
 		if (proto == null) {
-			proto = getFunctionPrototype(getParentScope());
+			proto = getFunctionPrototype(cx, getParentScope());
 			setPrototype(proto);
 		}
 		return proto;
@@ -125,8 +125,8 @@ public class IdFunctionObject extends BaseFunction {
 		return new IllegalArgumentException("BAD FUNCTION ID=" + methodId + " MASTER=" + idcall);
 	}
 
-	static boolean equalObjectGraphs(IdFunctionObject f1, IdFunctionObject f2, EqualObjectGraphs eq) {
-		return f1.methodId == f2.methodId && f1.hasTag(f2.tag) && eq.equalGraphs(f1.idcall, f2.idcall);
+	static boolean equalObjectGraphs(Context cx, IdFunctionObject f1, IdFunctionObject f2, EqualObjectGraphs eq) {
+		return f1.methodId == f2.methodId && f1.hasTag(f2.tag) && eq.equalGraphs(cx, f1.idcall, f2.idcall);
 	}
 
 	private final IdFunctionCall idcall;

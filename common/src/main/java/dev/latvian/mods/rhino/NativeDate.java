@@ -31,7 +31,7 @@ public final class NativeDate extends IdScriptableObject {
 		NativeDate obj = new NativeDate();
 		// Set the value of the prototype Date to NaN ('invalid date');
 		obj.date = ScriptRuntime.NaN;
-		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	private NativeDate() {
@@ -43,11 +43,11 @@ public final class NativeDate extends IdScriptableObject {
 	}
 
 	@Override
-	public Object getDefaultValue(Class<?> typeHint) {
+	public Object getDefaultValue(Context cx, Class<?> typeHint) {
 		if (typeHint == null) {
 			typeHint = ScriptRuntime.StringClass;
 		}
-		return super.getDefaultValue(typeHint);
+		return super.getDefaultValue(cx, typeHint);
 	}
 
 	public double getJSTimeValue() {
@@ -55,11 +55,11 @@ public final class NativeDate extends IdScriptableObject {
 	}
 
 	@Override
-	protected void fillConstructorProperties(IdFunctionObject ctor) {
-		addIdFunctionProperty(ctor, DATE_TAG, ConstructorId_now, "now", 0);
-		addIdFunctionProperty(ctor, DATE_TAG, ConstructorId_parse, "parse", 1);
-		addIdFunctionProperty(ctor, DATE_TAG, ConstructorId_UTC, "UTC", 7);
-		super.fillConstructorProperties(ctor);
+	protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
+		addIdFunctionProperty(cx, ctor, DATE_TAG, ConstructorId_now, "now", 0);
+		addIdFunctionProperty(cx, ctor, DATE_TAG, ConstructorId_parse, "parse", 1);
+		addIdFunctionProperty(cx, ctor, DATE_TAG, ConstructorId_UTC, "UTC", 7);
+		super.fillConstructorProperties(cx, ctor);
 	}
 
 	@Override
@@ -298,7 +298,7 @@ public final class NativeDate extends IdScriptableObject {
 						return null;
 					}
 				}
-				Object toISO = getProperty(o, toISOString);
+				Object toISO = getProperty(cx, o, toISOString);
 				if (toISO == NOT_FOUND) {
 					throw ScriptRuntime.typeError2("msg.function.not.found.in", toISOString, ScriptRuntime.toString(o));
 				}
@@ -1411,7 +1411,7 @@ public final class NativeDate extends IdScriptableObject {
 				return obj;
 			}
 			if (arg0 instanceof Scriptable) {
-				arg0 = ((Scriptable) arg0).getDefaultValue(null);
+				arg0 = ((Scriptable) arg0).getDefaultValue(cx, null);
 			}
 			double date;
 			if (arg0 instanceof CharSequence) {

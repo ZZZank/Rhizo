@@ -51,12 +51,18 @@ public class NativeGlobal implements Serializable, IdFunctionCall {
 			if (sealed) {
 				f.sealObject();
 			}
-			f.exportAsScopeProperty();
+			f.exportAsScopeProperty(cx);
 		}
 
-		ScriptableObject.defineProperty(scope, "NaN", ScriptRuntime.NaNobj, ScriptableObject.READONLY | ScriptableObject.DONTENUM | ScriptableObject.PERMANENT);
-		ScriptableObject.defineProperty(scope, "Infinity", ScriptRuntime.wrapNumber(Double.POSITIVE_INFINITY), ScriptableObject.READONLY | ScriptableObject.DONTENUM | ScriptableObject.PERMANENT);
-		ScriptableObject.defineProperty(scope, "undefined", Undefined.instance, ScriptableObject.READONLY | ScriptableObject.DONTENUM | ScriptableObject.PERMANENT);
+		ScriptableObject.defineProperty(
+			cx,
+			scope, "NaN", ScriptRuntime.NaNobj, ScriptableObject.READONLY | ScriptableObject.DONTENUM | ScriptableObject.PERMANENT);
+		ScriptableObject.defineProperty(
+			cx,
+			scope, "Infinity", ScriptRuntime.wrapNumber(Double.POSITIVE_INFINITY), ScriptableObject.READONLY | ScriptableObject.DONTENUM | ScriptableObject.PERMANENT);
+		ScriptableObject.defineProperty(
+			cx,
+			scope, "undefined", Undefined.instance, ScriptableObject.READONLY | ScriptableObject.DONTENUM | ScriptableObject.PERMANENT);
 
         /*
             Each error constructor gets its own Error object as a prototype,
@@ -70,20 +76,20 @@ public class NativeGlobal implements Serializable, IdFunctionCall {
 			val name = error.name();
 			val topLevelScope = ScriptableObject.getTopLevelScope(scope);
 			val errorProto = NativeError.makeProto(
-				ScriptableObject.getTopLevelScope(scope),
+				cx, ScriptableObject.getTopLevelScope(scope),
 				(IdFunctionObject) TopLevel.getBuiltinCtor(cx, topLevelScope, TopLevel.Builtins.Error)
 			);
-			errorProto.put("name", errorProto, name);
-			errorProto.put("message", errorProto, "");
+			errorProto.put(cx, "name", errorProto, name);
+			errorProto.put(cx, "message", errorProto, "");
 			val ctor = new IdFunctionObject(obj, FTAG, Id_new_CommonError, name, 1, scope);
 			ctor.markAsConstructor(errorProto);
-			errorProto.put("constructor", errorProto, ctor);
-			errorProto.setAttributes("constructor", ScriptableObject.DONTENUM);
+			errorProto.put(cx, "constructor", errorProto, ctor);
+			errorProto.setAttributes(cx, "constructor", ScriptableObject.DONTENUM);
 			if (sealed) {
 				errorProto.sealObject();
 				ctor.sealObject();
 			}
-			ctor.exportAsScopeProperty();
+			ctor.exportAsScopeProperty(cx);
 		}
 	}
 

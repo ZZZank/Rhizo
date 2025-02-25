@@ -86,9 +86,9 @@ public final class OptRuntime extends ScriptRuntime {
         return f.call(cx, scope, thisObj, ScriptRuntime.emptyArgs);
     }
 
-    public static Object add(Object val1, double val2) {
+    public static Object add(Context cx, Object val1, double val2) {
         if (val1 instanceof Scriptable) {
-            val1 = ((Scriptable) val1).getDefaultValue(null);
+            val1 = ((Scriptable) val1).getDefaultValue(cx, null);
         }
         if (!(val1 instanceof CharSequence)) {
             return wrapDouble(toNumber(val1) + val2);
@@ -96,9 +96,9 @@ public final class OptRuntime extends ScriptRuntime {
         return new ConsString((CharSequence) val1, toString(val2));
     }
 
-    public static Object add(double val1, Object val2) {
+    public static Object add(Context cx, double val1, Object val2) {
         if (val2 instanceof Scriptable) {
-            val2 = ((Scriptable) val2).getDefaultValue(null);
+            val2 = ((Scriptable) val2).getDefaultValue(cx, null);
         }
         if (!(val2 instanceof CharSequence)) {
             return wrapDouble(toNumber(val2) + val1);

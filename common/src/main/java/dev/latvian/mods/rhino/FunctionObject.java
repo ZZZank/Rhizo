@@ -302,6 +302,7 @@ public class FunctionObject extends BaseFunction {
 	 * <code>prototype.getClassName()</code>
 	 * as the name of the property.
 	 *
+	 * @param cx
 	 * @param scope     the scope in which to define the constructor (typically
 	 *                  the global object)
 	 * @param prototype the prototype object
@@ -309,18 +310,18 @@ public class FunctionObject extends BaseFunction {
 	 * @see Scriptable#setPrototype
 	 * @see Scriptable#getClassName
 	 */
-	public void addAsConstructor(Scriptable scope, Scriptable prototype) {
-		initAsConstructor(scope, prototype);
-		defineProperty(scope, prototype.getClassName(), this, DONTENUM);
+	public void addAsConstructor(Context cx, Scriptable scope, Scriptable prototype) {
+		initAsConstructor(cx, scope, prototype);
+		defineProperty(cx, scope, prototype.getClassName(), this, DONTENUM);
 	}
 
-	void initAsConstructor(Scriptable scope, Scriptable prototype) {
+	void initAsConstructor(Context cx, Scriptable scope, Scriptable prototype) {
 		ScriptRuntime.setFunctionProtoAndParent(this, scope);
 		setImmunePrototypeProperty(prototype);
 
 		prototype.setParentScope(this);
 
-		defineProperty(prototype, "constructor", this, DONTENUM | PERMANENT | READONLY);
+		defineProperty(cx, prototype, "constructor", this, DONTENUM | PERMANENT | READONLY);
 		setParentScope(scope);
 	}
 

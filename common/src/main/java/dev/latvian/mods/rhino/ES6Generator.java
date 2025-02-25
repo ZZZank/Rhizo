@@ -16,7 +16,7 @@ public final class ES6Generator extends IdScriptableObject {
 		ES6Generator prototype = new ES6Generator();
 		if (scope != null) {
 			prototype.setParentScope(scope);
-			prototype.setPrototype(getObjectPrototype(scope));
+			prototype.setPrototype(getObjectPrototype(cx, scope));
 		}
 		prototype.activatePrototypeMap(MAX_PROTOTYPE_ID);
 		if (sealed) {
@@ -48,7 +48,7 @@ public final class ES6Generator extends IdScriptableObject {
 		// prototype in the top scope's associated value.
 		Scriptable top = ScriptableObject.getTopLevelScope(scope);
 		this.setParentScope(top);
-		ES6Generator prototype = (ES6Generator) ScriptableObject.getTopScopeValue(top, GENERATOR_TAG);
+		ES6Generator prototype = (ES6Generator) ScriptableObject.getTopScopeValue(cx, top, GENERATOR_TAG);
 		this.setPrototype(prototype);
 	}
 
@@ -135,7 +135,7 @@ public final class ES6Generator extends IdScriptableObject {
 				// Iterator is "done".
 				delegee = null;
 				// Return a result to the original generator
-				return resumeLocal(cx, scope, ScriptableObject.getProperty(nextResult, ES6Iterator.VALUE_PROPERTY));
+				return resumeLocal(cx, scope, ScriptableObject.getProperty(cx, nextResult, ES6Iterator.VALUE_PROPERTY));
 			}
 			// Otherwise, we have a normal result and should continue
 			return nextResult;
@@ -253,14 +253,14 @@ public final class ES6Generator extends IdScriptableObject {
 				return delResult;
 			}
 
-			ScriptableObject.putProperty(result, ES6Iterator.VALUE_PROPERTY, r);
+			ScriptableObject.putProperty(cx, result, ES6Iterator.VALUE_PROPERTY, r);
 
 		} catch (GeneratorState.GeneratorClosedException gce) {
 			state = State.COMPLETED;
 		} catch (JavaScriptException jse) {
 			state = State.COMPLETED;
 			if (jse.getValue() instanceof NativeIterator.StopIteration) {
-				ScriptableObject.putProperty(result, ES6Iterator.VALUE_PROPERTY, ((NativeIterator.StopIteration) jse.getValue()).getValue());
+				ScriptableObject.putProperty(cx, result, ES6Iterator.VALUE_PROPERTY, ((NativeIterator.StopIteration) jse.getValue()).getValue());
 			} else {
 				lineNumber = jse.lineNumber();
 				lineSource = jse.lineSource();
@@ -275,7 +275,7 @@ public final class ES6Generator extends IdScriptableObject {
 			throw re;
 		} finally {
 			if (state == State.COMPLETED) {
-				ScriptableObject.putProperty(result, ES6Iterator.DONE_PROPERTY, Boolean.TRUE);
+				ScriptableObject.putProperty(cx, result, ES6Iterator.DONE_PROPERTY, Boolean.TRUE);
 			} else {
 				state = State.SUSPENDED_YIELD;
 			}
@@ -297,7 +297,7 @@ public final class ES6Generator extends IdScriptableObject {
 			if (op == GeneratorState.GENERATOR_THROW) {
 				throw new JavaScriptException(value, lineSource, lineNumber);
 			}
-			ScriptableObject.putProperty(result, ES6Iterator.DONE_PROPERTY, Boolean.TRUE);
+			ScriptableObject.putProperty(cx, result, ES6Iterator.DONE_PROPERTY, Boolean.TRUE);
 			return result;
 		}
 
@@ -318,7 +318,7 @@ public final class ES6Generator extends IdScriptableObject {
 
 		try {
 			Object r = function.resumeGenerator(cx, scope, op, savedState, throwValue);
-			ScriptableObject.putProperty(result, ES6Iterator.VALUE_PROPERTY, r);
+			ScriptableObject.putProperty(cx, result, ES6Iterator.VALUE_PROPERTY, r);
 			// If we get here without an exception we can still run.
 			state = State.SUSPENDED_YIELD;
 
@@ -327,7 +327,7 @@ public final class ES6Generator extends IdScriptableObject {
 		} catch (JavaScriptException jse) {
 			state = State.COMPLETED;
 			if (jse.getValue() instanceof NativeIterator.StopIteration) {
-				ScriptableObject.putProperty(result, ES6Iterator.VALUE_PROPERTY, ((NativeIterator.StopIteration) jse.getValue()).getValue());
+				ScriptableObject.putProperty(cx, result, ES6Iterator.VALUE_PROPERTY, ((NativeIterator.StopIteration) jse.getValue()).getValue());
 			} else {
 				lineNumber = jse.lineNumber();
 				lineSource = jse.lineSource();
@@ -346,7 +346,7 @@ public final class ES6Generator extends IdScriptableObject {
 			// and we will never delegate to the delegee again
 			if (state == State.COMPLETED) {
 				delegee = null;
-				ScriptableObject.putProperty(result, ES6Iterator.DONE_PROPERTY, Boolean.TRUE);
+				ScriptableObject.putProperty(cx, result, ES6Iterator.DONE_PROPERTY, Boolean.TRUE);
 			}
 		}
 		return result;

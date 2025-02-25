@@ -42,7 +42,7 @@ public class ClassCache implements Serializable {
 	 * @see #associate(ScriptableObject topScope)
 	 */
 	public static ClassCache get(Scriptable scope) {
-		ClassCache cache = (ClassCache) ScriptableObject.getTopScopeValue(scope, AKEY);
+		ClassCache cache = (ClassCache) ScriptableObject.getTopScopeValue(cx, scope, AKEY);
 		if (cache == null) {
 			throw new RuntimeException("Can't find top level scope for " + "ClassCache.get");
 		}

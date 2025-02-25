@@ -1267,14 +1267,20 @@ class BodyCodegen {
                 generateExpression(child.getNext(), node);
                 switch (node.getIntProp(Node.ISNUMBER_PROP, -1)) {
                     case Node.BOTH -> cfw.add(ByteCode.DADD);
-                    case Node.LEFT -> addOptRuntimeInvoke(
-                        "add",
-                        "(DLjava/lang/Object;)Ljava/lang/Object;"
-                    );
-                    case Node.RIGHT -> addOptRuntimeInvoke(
-                        "add",
-                        "(Ljava/lang/Object;D)Ljava/lang/Object;"
-                    );
+                    case Node.LEFT -> {
+                        cfw.addALoad(this.contextLocal);
+                        addOptRuntimeInvoke(
+                            "add",
+                            "(DLjava/lang/Object;)Ljava/lang/Object;"
+                        );
+                    }
+                    case Node.RIGHT -> {
+                        cfw.addALoad(this.contextLocal);
+                        addOptRuntimeInvoke(
+                            "add",
+                            "(Ljava/lang/Object;D)Ljava/lang/Object;"
+                        );
+                    }
                     default -> {
                         if (child.getType() == Token.STRING) {
                             addScriptRuntimeInvoke(

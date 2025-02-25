@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 /**
  * An annotation that marks a Java method as JavaScript static function. This can
  * be used as an alternative to the <code>jsStaticFunction_</code> prefix described in
- * {@link ScriptableObject#defineClass(Scriptable, Class)}.
+ * {@link ScriptableObject#defineClass(dev.latvian.mods.rhino.Context, Scriptable, Class)}.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

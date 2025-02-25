@@ -23,19 +23,19 @@ public final class NativeIterator extends IdScriptableObject {
 	static void init(Context cx, ScriptableObject scope, boolean sealed) {
 		// Iterator
 		NativeIterator iterator = new NativeIterator();
-		iterator.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		iterator.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
 
 		// Generator
 		ES6Generator.init(scope, sealed);
 
 		// StopIteration
 		NativeObject obj = new StopIteration();
-		obj.setPrototype(getObjectPrototype(scope));
+		obj.setPrototype(getObjectPrototype(cx, scope));
 		obj.setParentScope(scope);
 		if (sealed) {
 			obj.sealObject();
 		}
-		defineProperty(scope, STOP_ITERATION, obj, DONTENUM);
+		defineProperty(cx, scope, STOP_ITERATION, obj, DONTENUM);
 		// Use "associateValue" so that generators can continue to
 		// throw StopIteration even if the property of the global
 		// scope is replaced or deleted.
@@ -63,7 +63,7 @@ public final class NativeIterator extends IdScriptableObject {
 	 */
 	public static Object getStopIterationObject(Scriptable scope) {
 		Scriptable top = getTopLevelScope(scope);
-		return getTopScopeValue(top, ITERATOR_TAG);
+		return getTopScopeValue(cx, top, ITERATOR_TAG);
 	}
 
 	private static final String STOP_ITERATION = "StopIteration";
@@ -94,7 +94,7 @@ public final class NativeIterator extends IdScriptableObject {
 		 * doesn't have a constructor.
 		 */
 		@Override
-		public boolean hasInstance(Scriptable instance) {
+		public boolean hasInstance(Context cx, Scriptable instance) {
 			return instance instanceof StopIteration;
 		}
 	}
@@ -187,7 +187,7 @@ public final class NativeIterator extends IdScriptableObject {
 		Object objectIterator = ScriptRuntime.enumInit(obj, cx, scope, keyOnly ? ScriptRuntime.ENUMERATE_KEYS_NO_ITERATOR : ScriptRuntime.ENUMERATE_ARRAY_NO_ITERATOR);
 		ScriptRuntime.setEnumNumbers(objectIterator, true);
 		NativeIterator result = new NativeIterator(objectIterator);
-		result.setPrototype(getClassPrototype(scope, result.getClassName()));
+		result.setPrototype(getClassPrototype(cx, scope, result.getClassName()));
 		result.setParentScope(scope);
 		return result;
 	}

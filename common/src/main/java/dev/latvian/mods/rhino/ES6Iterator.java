@@ -13,7 +13,7 @@ public abstract class ES6Iterator extends IdScriptableObject {
 	protected static void init(ScriptableObject scope, boolean sealed, IdScriptableObject prototype, String tag) {
 		if (scope != null) {
 			prototype.setParentScope(scope);
-			prototype.setPrototype(getObjectPrototype(scope));
+			prototype.setPrototype(getObjectPrototype(cx, scope));
 		}
 		prototype.activatePrototypeMap(MAX_PROTOTYPE_ID);
 		if (sealed) {
@@ -42,7 +42,7 @@ public abstract class ES6Iterator extends IdScriptableObject {
 		this.tag = tag;
 		Scriptable top = ScriptableObject.getTopLevelScope(scope);
 		this.setParentScope(top);
-		IdScriptableObject prototype = (IdScriptableObject) ScriptableObject.getTopScopeValue(top, tag);
+		IdScriptableObject prototype = (IdScriptableObject) ScriptableObject.getTopScopeValue(cx, top, tag);
 		setPrototype(prototype);
 	}
 
@@ -125,8 +125,8 @@ public abstract class ES6Iterator extends IdScriptableObject {
 
 	static Scriptable makeIteratorResult(Context cx, Scriptable scope, Boolean done, Object value) {
 		final Scriptable iteratorResult = cx.newObject(scope);
-		ScriptableObject.putProperty(iteratorResult, VALUE_PROPERTY, value);
-		ScriptableObject.putProperty(iteratorResult, DONE_PROPERTY, done);
+		ScriptableObject.putProperty(cx, iteratorResult, VALUE_PROPERTY, value);
+		ScriptableObject.putProperty(cx, iteratorResult, DONE_PROPERTY, done);
 		return iteratorResult;
 	}
 

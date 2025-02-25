@@ -21,9 +21,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * This class implements the JSON native object.
@@ -55,12 +53,12 @@ public final class NativeJSON extends IdScriptableObject {
 	static void init(Scriptable scope, boolean sealed) {
 		NativeJSON obj = new NativeJSON();
 		obj.activatePrototypeMap(MAX_ID);
-		obj.setPrototype(getObjectPrototype(scope));
+		obj.setPrototype(getObjectPrototype(cx, scope));
 		obj.setParentScope(scope);
 		if (sealed) {
 			obj.sealObject();
 		}
-		defineProperty(scope, "JSON", obj, DONTENUM);
+		defineProperty(cx, scope, "JSON", obj, DONTENUM);
 	}
 
 	private NativeJSON() {
@@ -154,16 +152,16 @@ public final class NativeJSON extends IdScriptableObject {
 	public static Object parse(Context cx, Scriptable scope, String jtext, Callable reviver) {
 		Object unfiltered = parse(cx, scope, jtext);
 		Scriptable root = cx.newObject(scope);
-		root.put("", root, unfiltered);
+		root.put(cx, "", root, unfiltered);
 		return walk(cx, scope, reviver, root, "");
 	}
 
 	private static Object walk(Context cx, Scriptable scope, Callable reviver, Scriptable holder, Object name) {
 		final Object property;
 		if (name instanceof Number) {
-			property = holder.get(((Number) name).intValue(), holder);
+			property = holder.get(cx, ((Number) name).intValue(), holder);
 		} else {
-			property = holder.get(((String) name), holder);
+			property = holder.get(cx, ((String) name), holder);
 		}
 
 		if (property instanceof Scriptable val) {
@@ -175,35 +173,35 @@ public final class NativeJSON extends IdScriptableObject {
 						String id = Long.toString(i);
 						Object newElement = walk(cx, scope, reviver, val, id);
 						if (newElement == Undefined.instance) {
-							val.delete(id);
+							val.delete(cx, id);
 						} else {
-							val.put(id, val, newElement);
+							val.put(cx, id, val, newElement);
 						}
 					} else {
 						int idx = (int) i;
 						Object newElement = walk(cx, scope, reviver, val, idx);
 						if (newElement == Undefined.instance) {
-							val.delete(idx);
+							val.delete(cx, idx);
 						} else {
-							val.put(idx, val, newElement);
+							val.put(cx, idx, val, newElement);
 						}
 					}
 				}
 			} else {
-				Object[] keys = val.getIds();
+				Object[] keys = val.getIds(cx);
 				for (Object p : keys) {
 					Object newElement = walk(cx, scope, reviver, val, p);
 					if (newElement == Undefined.instance) {
 						if (p instanceof Number) {
-							val.delete(((Number) p).intValue());
+							val.delete(cx, ((Number) p).intValue());
 						} else {
-							val.delete((String) p);
+							val.delete(cx, (String) p);
 						}
 					} else {
 						if (p instanceof Number) {
-							val.put(((Number) p).intValue(), val, newElement);
+							val.put(cx, ((Number) p).intValue(), val, newElement);
 						} else {
-							val.put((String) p, val, newElement);
+							val.put(cx, (String) p, val, newElement);
 						}
 					}
 				}

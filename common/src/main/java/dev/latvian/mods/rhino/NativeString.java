@@ -32,7 +32,7 @@ final class NativeString extends IdScriptableObject {
 
 	static void init(Scriptable scope, boolean sealed) {
 		NativeString obj = new NativeString("");
-		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	NativeString(CharSequence s) {
@@ -52,12 +52,12 @@ final class NativeString extends IdScriptableObject {
 	}
 
 	@Override
-	protected int findInstanceIdInfo(String s) {
+	protected int findInstanceIdInfo(Context cx, String s) {
         return switch (s) {
             case "length" -> instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_length);
             case "namespace" -> instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_namespace);
             case "path" -> instanceIdInfo(DONTENUM | READONLY | PERMANENT, Id_path);
-            default -> super.findInstanceIdInfo(s);
+            default -> super.findInstanceIdInfo(cx, s);
         };
     }
 
@@ -72,7 +72,7 @@ final class NativeString extends IdScriptableObject {
 	}
 
 	@Override
-	protected Object getInstanceIdValue(int id) {
+	protected Object getInstanceIdValue(Context cx, int id) {
 		switch (id) {
 			case Id_length:
 				return ScriptRuntime.wrapInt(string.length());
@@ -87,33 +87,33 @@ final class NativeString extends IdScriptableObject {
 				return colon == -1 ? str : str.substring(colon + 1);
 			}
 			default:
-				return super.getInstanceIdValue(id);
+				return super.getInstanceIdValue(cx, id);
 		}
 	}
 
 	@Override
-	protected void fillConstructorProperties(IdFunctionObject ctor) {
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_fromCharCode, "fromCharCode", 1);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_fromCodePoint, "fromCodePoint", 1);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_raw, "raw", 1);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_charAt, "charAt", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_charCodeAt, "charCodeAt", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_indexOf, "indexOf", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_lastIndexOf, "lastIndexOf", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_split, "split", 3);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_substring, "substring", 3);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_toLowerCase, "toLowerCase", 1);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_toUpperCase, "toUpperCase", 1);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_substr, "substr", 3);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_concat, "concat", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_slice, "slice", 3);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_equalsIgnoreCase, "equalsIgnoreCase", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_match, "match", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_search, "search", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_replace, "replace", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_localeCompare, "localeCompare", 2);
-		addIdFunctionProperty(ctor, STRING_TAG, ConstructorId_toLocaleLowerCase, "toLocaleLowerCase", 1);
-		super.fillConstructorProperties(ctor);
+	protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_fromCharCode, "fromCharCode", 1);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_fromCodePoint, "fromCodePoint", 1);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_raw, "raw", 1);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_charAt, "charAt", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_charCodeAt, "charCodeAt", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_indexOf, "indexOf", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_lastIndexOf, "lastIndexOf", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_split, "split", 3);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_substring, "substring", 3);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_toLowerCase, "toLowerCase", 1);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_toUpperCase, "toUpperCase", 1);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_substr, "substr", 3);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_concat, "concat", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_slice, "slice", 3);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_equalsIgnoreCase, "equalsIgnoreCase", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_match, "match", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_search, "search", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_replace, "replace", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_localeCompare, "localeCompare", 2);
+		addIdFunctionProperty(cx, ctor, STRING_TAG, ConstructorId_toLocaleLowerCase, "toLocaleLowerCase", 1);
+		super.fillConstructorProperties(cx, ctor);
 	}
 
 	@Override
@@ -712,43 +712,42 @@ final class NativeString extends IdScriptableObject {
 	 * XXX is this ECMA?  A version check is probably needed. In js too.
 	 */
 	@Override
-	public Object get(int index, Scriptable start) {
+	public Object get(Context cx, int index, Scriptable start) {
 		if (0 <= index && index < string.length()) {
 			return String.valueOf(string.charAt(index));
 		}
-		return super.get(index, start);
+		return super.get(cx, index, start);
 	}
 
 	@Override
-	public void put(int index, Scriptable start, Object value) {
+	public void put(Context cx, int index, Scriptable start, Object value) {
 		if (0 <= index && index < string.length()) {
 			return;
 		}
-		super.put(index, start, value);
+		super.put(cx, index, start, value);
 	}
 
 	@Override
-	public boolean has(int index, Scriptable start) {
+	public boolean has(Context cx, int index, Scriptable start) {
 		if (0 <= index && index < string.length()) {
 			return true;
 		}
-		return super.has(index, start);
+		return super.has(cx, index, start);
 	}
 
 	@Override
-	public int getAttributes(int index) {
+	public int getAttributes(Context cx, int index) {
 		if (0 <= index && index < string.length()) {
 			return READONLY | PERMANENT;
 		}
-		return super.getAttributes(index);
+		return super.getAttributes(cx, index);
 	}
 
 	@Override
-	protected Object[] getIds(boolean nonEnumerable, boolean getSymbols) {
+	protected Object[] getIds(Context cx, boolean nonEnumerable, boolean getSymbols) {
 		// In ES6, Strings have entries in the property map for each character.
-		Context cx = Context.getCurrentContext();
 		if ((cx != null)) {
-			Object[] sids = super.getIds(nonEnumerable, getSymbols);
+			Object[] sids = super.getIds(cx, nonEnumerable, getSymbols);
 			Object[] a = new Object[sids.length + string.length()];
 			int i;
 			for (i = 0; i < string.length(); i++) {
@@ -757,7 +756,7 @@ final class NativeString extends IdScriptableObject {
 			System.arraycopy(sids, 0, a, i, sids.length);
 			return a;
 		}
-		return super.getIds(nonEnumerable, getSymbols);
+		return super.getIds(cx, nonEnumerable, getSymbols);
 	}
 
 	@Override
@@ -779,10 +778,10 @@ final class NativeString extends IdScriptableObject {
 		}
 		ScriptableObject desc = new NativeObject();
 		ScriptRuntime.setBuiltinProtoAndParent(desc, scope, TopLevel.Builtins.Object);
-		desc.defineProperty("value", value, EMPTY);
-		desc.defineProperty("writable", Boolean.FALSE, EMPTY);
-		desc.defineProperty("enumerable", Boolean.TRUE, EMPTY);
-		desc.defineProperty("configurable", Boolean.FALSE, EMPTY);
+		desc.defineProperty(cx, "value", value, EMPTY);
+		desc.defineProperty(cx, "writable", Boolean.FALSE, EMPTY);
+		desc.defineProperty(cx, "enumerable", Boolean.TRUE, EMPTY);
+		desc.defineProperty(cx, "configurable", Boolean.FALSE, EMPTY);
 		return desc;
 	}
 
@@ -1065,13 +1064,13 @@ final class NativeString extends IdScriptableObject {
 		Object arg0 = args.length > 0 ? args[0] : undefined;
 		Scriptable cooked = ScriptRuntime.toObject(cx, scope, arg0);
 		/* step 4-6 */
-		Object rawValue = cooked.get("raw", cooked);
+		Object rawValue = cooked.get(cx, "raw", cooked);
 		if (rawValue == NOT_FOUND) {
 			rawValue = undefined;
 		}
 		Scriptable raw = ScriptRuntime.toObject(cx, scope, rawValue);
 		/* step 7-9 */
-		Object len = raw.get("length", raw);
+		Object len = raw.get(cx, "length", raw);
 		if (len == NOT_FOUND) {
 			len = undefined;
 		}
@@ -1087,9 +1086,9 @@ final class NativeString extends IdScriptableObject {
 			/* step 13 a-e */
 			Object next;
 			if (nextIndex > Integer.MAX_VALUE) {
-				next = raw.get(Long.toString(nextIndex), raw);
+				next = raw.get(cx, Long.toString(nextIndex), raw);
 			} else {
-				next = raw.get((int) nextIndex, raw);
+				next = raw.get(cx, (int) nextIndex, raw);
 			}
 			if (next == NOT_FOUND) {
 				next = undefined;

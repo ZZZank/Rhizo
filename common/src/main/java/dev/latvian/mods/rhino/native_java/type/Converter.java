@@ -243,7 +243,7 @@ public final class Converter {
                 val result = componentType.newArray((int) length);
                 for (int i = 0; i < length; ++i) {
                     try {
-                        Array.set(result, i, jsToJava(array.get(i, array), componentType));
+                        Array.set(result, i, jsToJava(array.get(cx, i, array), componentType));
                     } catch (EvaluatorException ee) {
                         return NativeJavaObject.reportConversionError(from, target);
                     }
@@ -487,11 +487,11 @@ public final class Converter {
                 return map;
             }
         } else if (from instanceof NativeObject obj) {
-            val keys = obj.getIds();
+            val keys = obj.getIds(cx);
             val map = new LinkedHashMap<>(keys.length);
 
             for (val key : keys) {
-                map.put(jsToJava(key, kTarget), jsToJava(obj.get(key), vTarget));
+                map.put(jsToJava(key, kTarget), jsToJava(obj.get(cx, key), vTarget));
             }
 
             return map;

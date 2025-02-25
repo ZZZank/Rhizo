@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 /**
  * An annotation that marks a Java method as JavaScript setter. This can
  * be used as an alternative to the <code>jsSet_</code> prefix described in
- * {@link ScriptableObject#defineClass(Scriptable, Class)}.
+ * {@link ScriptableObject#defineClass(dev.latvian.mods.rhino.Context, Scriptable, Class)}.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

@@ -19,12 +19,12 @@ public class NativeSet extends IdScriptableObject {
 
 	static void init(Context cx, Scriptable scope, boolean sealed) {
 		NativeSet obj = new NativeSet();
-		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, false);
+		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, false);
 
 		ScriptableObject desc = (ScriptableObject) cx.newObject(scope);
-		desc.put("enumerable", desc, Boolean.FALSE);
-		desc.put("configurable", desc, Boolean.TRUE);
-		desc.put("get", desc, obj.get(GETSIZE, obj));
+		desc.put(cx, "enumerable", desc, Boolean.FALSE);
+		desc.put(cx, "configurable", desc, Boolean.TRUE);
+		desc.put(cx, "get", desc, obj.get(cx, GETSIZE, obj));
 		obj.defineOwnProperty(cx, "size", desc);
 
 		if (sealed) {
@@ -150,7 +150,7 @@ public class NativeSet extends IdScriptableObject {
 		// been replaced. Since we're not fully constructed yet, create a dummy instance
 		// so that we can get our own prototype.
 		ScriptableObject dummy = ensureScriptableObject(cx.newObject(scope, set.getClassName()));
-		final Callable add = ScriptRuntime.getPropFunctionAndThis(dummy.getPrototype(), "add", cx, scope);
+		final Callable add = ScriptRuntime.getPropFunctionAndThis(dummy.getPrototype(cx), "add", cx, scope);
 		// Clean up the value left around by the previous function
 		ScriptRuntime.lastStoredScriptable(cx);
 

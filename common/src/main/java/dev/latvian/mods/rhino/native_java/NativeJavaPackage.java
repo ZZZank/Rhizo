@@ -40,51 +40,51 @@ public class NativeJavaPackage extends ScriptableObject {
 	}
 
 	@Override
-	public boolean has(String id, Scriptable start) {
+	public boolean has(Context cx, String id, Scriptable start) {
 		return true;
 	}
 
 	@Override
-	public boolean has(int index, Scriptable start) {
+	public boolean has(Context cx, int index, Scriptable start) {
 		return false;
 	}
 
 	@Override
-	public void put(String id, Scriptable start, Object value) {
+	public void put(Context cx, String id, Scriptable start, Object value) {
 		// Can't add properties to Java packages.  Sorry.
 	}
 
 	@Override
-	public void put(int index, Scriptable start, Object value) {
+	public void put(Context cx, int index, Scriptable start, Object value) {
 		throw Context.reportRuntimeError0("msg.pkg.int");
 	}
 
 	@Override
-	public Object get(String id, Scriptable start) {
-		return getPkgProperty(id, start, true);
+	public Object get(Context cx, String id, Scriptable start) {
+		return getPkgProperty(cx, id, start, true);
 	}
 
 	@Override
-	public Object get(int index, Scriptable start) {
+	public Object get(Context cx, int index, Scriptable start) {
 		return NOT_FOUND;
 	}
 
 	// set up a name which is known to be a package so we don't
 	// need to look for a class by that name
-	NativeJavaPackage forcePackage(String name, Scriptable scope) {
-		Object cached = super.get(name, this);
+	NativeJavaPackage forcePackage(Context cx, String name, Scriptable scope) {
+		Object cached = super.get(cx, name, this);
 		if (cached != null && cached instanceof NativeJavaPackage) {
 			return (NativeJavaPackage) cached;
 		}
 		String newPackage = packageName.length() == 0 ? name : packageName + "." + name;
 		NativeJavaPackage pkg = new NativeJavaPackage(true, newPackage, classLoader);
 		ScriptRuntime.setObjectProtoAndParent(pkg, scope);
-		super.put(name, this, pkg);
+		super.put(cx, name, this, pkg);
 		return pkg;
 	}
 
-	synchronized Object getPkgProperty(String name, Scriptable start, boolean createPkg) {
-		Object cached = super.get(name, start);
+	synchronized Object getPkgProperty(Context cx, String name, Scriptable start, boolean createPkg) {
+		Object cached = super.get(cx, name, start);
 		if (cached != NOT_FOUND) {
 			return cached;
 		}
@@ -94,7 +94,6 @@ public class NativeJavaPackage extends ScriptableObject {
 		}
 
 		String className = (packageName.length() == 0) ? name : packageName + '.' + name;
-		Context cx = Context.getContext();
 		ClassShutter shutter = cx.getClassShutter();
 		Scriptable newValue = null;
 		if (shutter == null || shutter.visibleToScripts(className, ClassShutter.TYPE_CLASS_IN_PACKAGE)) {
@@ -107,7 +106,7 @@ public class NativeJavaPackage extends ScriptableObject {
 			if (cl != null) {
 				WrapFactory wrapFactory = cx.getWrapFactory();
 				newValue = wrapFactory.wrapJavaClass(cx, getTopLevelScope(this), cl);
-				newValue.setPrototype(getPrototype());
+				newValue.setPrototype(getPrototype(cx));
 			}
 		}
 		if (newValue == null) {
@@ -127,13 +126,13 @@ public class NativeJavaPackage extends ScriptableObject {
 		if (newValue != null) {
 			// Make it available for fast lookup and sharing of
 			// lazily-reflected constructors and static members.
-			super.put(name, start, newValue);
+			super.put(cx, name, start, newValue);
 		}
 		return newValue;
 	}
 
 	@Override
-	public Object getDefaultValue(Class<?> ignored) {
+	public Object getDefaultValue(Context cx, Class<?> ignored) {
 		return toString();
 	}
 

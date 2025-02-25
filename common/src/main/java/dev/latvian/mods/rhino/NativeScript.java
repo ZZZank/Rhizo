@@ -27,7 +27,7 @@ class NativeScript extends BaseFunction {
 
 	static void init(Scriptable scope, boolean sealed) {
 		NativeScript obj = new NativeScript(null);
-		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	private NativeScript(Script script) {

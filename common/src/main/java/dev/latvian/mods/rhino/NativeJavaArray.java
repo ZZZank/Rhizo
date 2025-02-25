@@ -40,36 +40,35 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	}
 
 	@Override
-	public boolean has(String id, Scriptable start) {
-		return id.equals("length") || super.has(id, start);
+	public boolean has(Context cx, String id, Scriptable start) {
+		return id.equals("length") || super.has(cx, id, start);
 	}
 
 	@Override
-	public boolean has(int index, Scriptable start) {
+	public boolean has(Context cx, int index, Scriptable start) {
 		return 0 <= index && index < length;
 	}
 
 	@Override
-	public boolean has(Symbol key, Scriptable start) {
+	public boolean has(Context cx, Symbol key, Scriptable start) {
 		return SymbolKey.IS_CONCAT_SPREADABLE.equals(key);
 	}
 
 	@Override
-	public Object get(String id, Scriptable start) {
+	public Object get(Context cx, String id, Scriptable start) {
 		if (id.equals("length")) {
 			return length;
 		}
-		Object result = super.get(id, start);
-		if (result == NOT_FOUND && !ScriptableObject.hasProperty(getPrototype(), id)) {
+		Object result = super.get(cx, id, start);
+		if (result == NOT_FOUND && !ScriptableObject.hasProperty(cx, getPrototype(cx), id)) {
 			throw Context.reportRuntimeError2("msg.java.member.not.found", javaObject.getClass().getName(), id);
 		}
 		return result;
 	}
 
 	@Override
-	public Object get(int index, Scriptable start) {
+	public Object get(Context cx, int index, Scriptable start) {
 		if (0 <= index && index < length) {
-			val cx = Context.getContext();
 			val obj = Array.get(javaObject, index);
 			return cx.getWrapFactory().wrap(cx, this, obj, componentType);
 		}
@@ -77,7 +76,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	}
 
 	@Override
-	public Object get(Symbol key, Scriptable start) {
+	public Object get(Context cx, Symbol key, Scriptable start) {
 		if (SymbolKey.IS_CONCAT_SPREADABLE.equals(key)) {
 			return Boolean.TRUE;
 		}
@@ -85,7 +84,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	}
 
 	@Override
-	public void put(String id, Scriptable start, Object value) {
+	public void put(Context cx, String id, Scriptable start, Object value) {
 		// Ignore assignments to "length"--it's readonly.
 		if (!id.equals("length")) {
 			throw Context.reportRuntimeError1("msg.java.array.member.not.found", id);
@@ -93,7 +92,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	}
 
 	@Override
-	public void put(int index, Scriptable start, Object value) {
+	public void put(Context cx, int index, Scriptable start, Object value) {
         if (0 > index || index >= length) {
             throw Context.reportRuntimeError2("msg.java.array.index.out.of.bounds", String.valueOf(index), String.valueOf(length - 1));
         }
@@ -101,12 +100,12 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
     }
 
 	@Override
-	public void delete(Symbol key) {
+	public void delete(Context cx, Symbol key) {
 		// All symbols are read-only
 	}
 
 	@Override
-	public Object getDefaultValue(Class<?> hint) {
+	public Object getDefaultValue(Context cx, Class<?> hint) {
 		if (hint == null || hint == ScriptRuntime.StringClass) {
 			return javaObject.toString();
 		}
@@ -120,7 +119,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	}
 
 	@Override
-	public Object[] getIds() {
+	public Object[] getIds(Context cx) {
 		Object[] result = new Object[length];
 		int i = length;
 		while (--i >= 0) {
@@ -130,7 +129,7 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
 	}
 
 	@Override
-	public boolean hasInstance(Scriptable value) {
+	public boolean hasInstance(Context cx, Scriptable value) {
         if (value instanceof Wrapper wrapper) {
             return componentType.asClass().isInstance(wrapper.unwrap());
         }
@@ -138,9 +137,9 @@ public class NativeJavaArray extends NativeJavaObject implements SymbolScriptabl
     }
 
 	@Override
-	public Scriptable getPrototype() {
+	public Scriptable getPrototype(Context cx) {
 		if (prototype == null) {
-			prototype = ScriptableObject.getArrayPrototype(this.getParentScope());
+			prototype = ScriptableObject.getArrayPrototype(cx, this.getParentScope());
 		}
 		return prototype;
 	}

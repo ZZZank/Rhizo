@@ -25,10 +25,10 @@ public class ArrowFunction extends BaseFunction {
 
 		Function thrower = ScriptRuntime.typeErrorThrower(cx);
 		NativeObject throwing = new NativeObject();
-		throwing.put("get", throwing, thrower);
-		throwing.put("set", throwing, thrower);
-		throwing.put("enumerable", throwing, Boolean.FALSE);
-		throwing.put("configurable", throwing, Boolean.FALSE);
+		throwing.put(cx, "get", throwing, thrower);
+		throwing.put(cx, "set", throwing, thrower);
+		throwing.put(cx, "enumerable", throwing, Boolean.FALSE);
+		throwing.put(cx, "configurable", throwing, Boolean.FALSE);
 		throwing.preventExtensions();
 
 		this.defineOwnProperty(cx, "caller", throwing, false);
@@ -47,9 +47,9 @@ public class ArrowFunction extends BaseFunction {
 	}
 
 	@Override
-	public boolean hasInstance(Scriptable instance) {
+	public boolean hasInstance(Context cx, Scriptable instance) {
 		if (targetFunction instanceof Function fn) {
-			return fn.hasInstance(instance);
+			return fn.hasInstance(cx, instance);
 		}
 		throw ScriptRuntime.typeError0("msg.not.ctor");
 	}
@@ -67,8 +67,8 @@ public class ArrowFunction extends BaseFunction {
 		return getLength();
 	}
 
-	static boolean equalObjectGraphs(ArrowFunction f1, ArrowFunction f2, EqualObjectGraphs eq) {
-		return eq.equalGraphs(f1.boundThis, f2.boundThis) && eq.equalGraphs(f1.targetFunction, f2.targetFunction);
+	static boolean equalObjectGraphs(Context cx, ArrowFunction f1, ArrowFunction f2, EqualObjectGraphs eq) {
+		return eq.equalGraphs(cx, f1.boundThis, f2.boundThis) && eq.equalGraphs(cx, f1.targetFunction, f2.targetFunction);
 	}
 
 	@Override
