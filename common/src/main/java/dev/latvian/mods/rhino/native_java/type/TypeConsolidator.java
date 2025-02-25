@@ -96,7 +96,7 @@ public final class TypeConsolidator {
          * class C<Tc> extends A<Tc> {}
          * class D<Td> extends C<Td> implements B<A<Td>> {}
          *
-         * assuming that input 'type' is C.class
+         * assuming that input 'type' is D.class
          */
 
         //collect current level mapping

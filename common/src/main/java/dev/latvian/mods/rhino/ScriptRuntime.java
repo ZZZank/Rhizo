@@ -3189,7 +3189,7 @@ public class ScriptRuntime {
 	}
 
 	public static Scriptable leaveWith(Scriptable scope) {
-        val nw = (NativeWith) scope;
+        val nw = (NativeWith) scope; // todo: not guaranteed to be NativeWith
 		return nw.getParentScope();
 	}
 
@@ -3645,9 +3645,8 @@ public class ScriptRuntime {
 	}
 
 	private static void storeScriptable(Context cx, Scriptable value) {
-		// The previously stored scratchScriptable should be consumed
 		if (cx.scratchScriptable != null) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("previously stored scratchScriptable not consumed");
 		}
 		cx.scratchScriptable = value;
 	}

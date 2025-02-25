@@ -36,7 +36,8 @@ class BodyCodegen {
                 "Ldev/latvian/mods/rhino/Context;" +
                 "Ldev/latvian/mods/rhino/Scriptable;" +
                 "Ljava/lang/Object;" +
-                "Ljava/lang/Object;I)Ljava/lang/Object;";
+                "Ljava/lang/Object;" +
+                "I)Ljava/lang/Object;";
             cfw.startMethod(
                 codegen.getBodyMethodName(scriptOrFn) + "_gen",
                 type,
