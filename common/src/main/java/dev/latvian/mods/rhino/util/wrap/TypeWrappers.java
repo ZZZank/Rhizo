@@ -2,6 +2,7 @@ package dev.latvian.mods.rhino.util.wrap;
 
 import dev.latvian.mods.rhino.Context;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,10 @@ import java.util.function.Predicate;
  */
 public class TypeWrappers {
 	private final Map<Class<?>, @NotNull TypeWrapper<?>> wrappers = new Reference2ObjectOpenHashMap<>();
+	/**
+	 * we have known how many wrappers in KubeJS will be redirected to fallback wrapper
+	 */
+	private final Map<Class<?>, @NotNull TypeWrapper<?>> fallbackWrappers = new Reference2ObjectArrayMap<>();
 
 	public void removeAll() {
 		wrappers.clear();
@@ -33,10 +38,17 @@ public class TypeWrappers {
 			throw new IllegalArgumentException("target can't be Object.class!");
 		} else if (target.isArray()) {
 			throw new IllegalArgumentException("target can't be an array!");
-		} else if (wrappers.containsKey(target)) {
+		} else if (target.isPrimitive()) {
+			throw new IllegalArgumentException("target can't be a primitive class!");
+		} else if (wrappers.containsKey(target) || fallbackWrappers.containsKey(target)) {
 			throw new IllegalArgumentException("Wrapper for class " + target.getName() + " already exists!");
 		}
-		wrappers.put(target, typeWrapper);
+		if (target.getName().startsWith("java.lang")) {
+			// trying to register type wrapper for fundamental types
+			fallbackWrappers.put(target, typeWrapper);
+		} else {
+			wrappers.put(target, typeWrapper);
+		}
     }
 
 	public <T> void register(Class<T> target, TypeWrapperValidator validator, TypeWrapper.Always<T> wrapper) {
@@ -78,5 +90,17 @@ public class TypeWrappers {
 		}
         val wrapper = wrappers.get(target.asClass());
         return wrapper != null && wrapper.canWrap(cx, from, target) ? wrapper : null;
+    }
+
+	@Nullable
+	public TypeWrapper<?> getFallbackWrapper(Context cx, @Nullable Object from, TypeInfo target) {
+		if (!target.shouldConvert()) {
+			return null;
+		}
+		val wrapper = fallbackWrappers.get(target.asClass());
+        if (wrapper == null || !wrapper.canWrap(cx, from, target)) {
+            return null;
+        }
+        return wrapper;
     }
 }

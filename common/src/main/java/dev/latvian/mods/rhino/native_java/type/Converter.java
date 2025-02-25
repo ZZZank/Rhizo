@@ -120,7 +120,6 @@ public final class Converter {
                 } else if (target instanceof ArrayTypeInfo) {
                     return 3;
                 }
-                return CONVERSION_NONE;
             }
             case JSTYPE_OBJECT -> {
                 // Other objects takes #1-#3 spots
@@ -128,7 +127,7 @@ public final class Converter {
                     // No conversion required, but don't apply for java.lang.Object
                     return CONVERSION_TRIVIAL;
                 }
-                if (target instanceof ArrayTypeInfo) {
+                if (target.isArray()) {
                     if (from instanceof NativeArray) {
                         // This is a native array conversion to a java array
                         // Array conversions are all equal, and preferable to object
@@ -149,8 +148,7 @@ public final class Converter {
                     if (from instanceof BaseFunction) {
                         // See comments in createInterfaceAdapter
                         return CONVERSION_TRIVIAL;
-                    }
-                    if (from instanceof NativeObject) {
+                    } else if (from instanceof NativeObject) {
                         return 2;
                     }
                     return 12;
@@ -158,6 +156,13 @@ public final class Converter {
                     return 4 + NativeJavaObject.getSizeRank(target);
                 }
             }
+        }
+
+        val fallbackWrapper = cx.hasTypeWrappers()
+            ? cx.getTypeWrappers().getFallbackWrapper(cx, from, target)
+            : null;
+        if (fallbackWrapper != null) {
+            return CONVERSION_EXACT;
         }
 
         return CONVERSION_NONE;
