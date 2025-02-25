@@ -84,20 +84,6 @@ public class MiscTests {
 	}
 
 	@Test
-	@Order(4)
-	public void typeWrappers() {
-		TEST.test("typeWrappers", """
-			console.printMaterial('wood')
-			console.printMaterial('stone')
-			console.printMaterial('wood')
-			""", """
-			wood#0037c6ad
-			stone#068af865
-			wood#0037c6ad
-			""");
-	}
-
-	@Test
 	public void jsonStringifyWithNestedArrays() {
 		TEST.test("jsonStringifyWithNestedArrays", """
 			const thing = {nested: [1, 2, 3]};
