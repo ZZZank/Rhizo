@@ -21,20 +21,20 @@ public interface SymbolScriptable {
 	 * Return the value of the property with the specified key, or
 	 * NOT_FOUND.
 	 */
-	Object get(Context cx, Symbol key, Scriptable start);
+	Object get(Symbol key, Scriptable start);
 
 	/**
 	 * Return true if the specified property exists.
 	 */
-	boolean has(Context cx, Symbol key, Scriptable start);
+	boolean has(Symbol key, Scriptable start);
 
 	/**
-	 * Add a new property to the object.
+	 * Add a new property to to the object.
 	 */
-	void put(Context cx, Symbol key, Scriptable start, Object value);
+	void put(Symbol key, Scriptable start, Object value);
 
 	/**
 	 * Delete a property with the specified key.
 	 */
-	void delete(Context cx, Symbol key);
+	void delete(Symbol key);
 }

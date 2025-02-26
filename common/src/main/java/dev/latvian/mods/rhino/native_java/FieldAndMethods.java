@@ -13,19 +13,20 @@ public final class FieldAndMethods extends NativeJavaMethod {
         super(methods.methods, methods.functionName);
         this.field = field;
         setParentScope(scope);
-        setPrototype(getFunctionPrototype(cx, scope));
+        setPrototype(getFunctionPrototype(scope));
     }
 
     @Override
-    public Object getDefaultValue(Context cx, Class<?> hint) {
+    public Object getDefaultValue(Class<?> hint) {
         if (hint == ScriptRuntime.FunctionClass) {
             return this;
         }
         Object rval = field.get(javaObject);
         val type = field.getType();
+        val cx = Context.getContext();
         rval = cx.getWrapFactory().wrap(cx, this, rval, type);
         if (rval instanceof Scriptable) {
-            rval = ((Scriptable) rval).getDefaultValue(cx, hint);
+            rval = ((Scriptable) rval).getDefaultValue(hint);
         }
         return rval;
     }

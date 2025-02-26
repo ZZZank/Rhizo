@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 /**
  * An annotation that marks a Java method as JavaScript constructor. This can
  * be used as an alternative to the <code>jsConstructor</code> naming convention described in
- * {@link ScriptableObject#defineClass(dev.latvian.mods.rhino.Context, Scriptable, Class)}.
+ * {@link ScriptableObject#defineClass(Scriptable, Class)}.
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

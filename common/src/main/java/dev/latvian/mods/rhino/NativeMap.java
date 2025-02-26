@@ -19,12 +19,12 @@ public class NativeMap extends IdScriptableObject {
 
 	static void init(Context cx, Scriptable scope, boolean sealed) {
 		NativeMap obj = new NativeMap();
-		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, false);
+		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, false);
 
 		ScriptableObject desc = (ScriptableObject) cx.newObject(scope);
-		desc.put(cx, "enumerable", desc, Boolean.FALSE);
-		desc.put(cx, "configurable", desc, Boolean.TRUE);
-		desc.put(cx, "get", desc, obj.get(cx, NativeSet.GETSIZE, obj));
+		desc.put("enumerable", desc, Boolean.FALSE);
+		desc.put("configurable", desc, Boolean.TRUE);
+		desc.put("get", desc, obj.get(NativeSet.GETSIZE, obj));
 		obj.defineOwnProperty(cx, "size", desc);
 
 		if (sealed) {
@@ -169,7 +169,7 @@ public class NativeMap extends IdScriptableObject {
 		// been replaced. Since we're not fully constructed yet, create a dummy instance
 		// so that we can get our own prototype.
 		ScriptableObject dummy = ensureScriptableObject(cx.newObject(scope, map.getClassName()));
-		final Callable set = ScriptRuntime.getPropFunctionAndThis(dummy.getPrototype(cx), "set", cx, scope);
+		final Callable set = ScriptRuntime.getPropFunctionAndThis(dummy.getPrototype(), "set", cx, scope);
 		ScriptRuntime.lastStoredScriptable(cx);
 
 		// Finally, run through all the iterated values and add them!
@@ -179,11 +179,11 @@ public class NativeMap extends IdScriptableObject {
 				if (sVal instanceof Symbol) {
 					throw ScriptRuntime.typeError1("msg.arg.not.object", ScriptRuntime.typeof(sVal));
 				}
-				Object finalKey = sVal.get(cx, 0, sVal);
+				Object finalKey = sVal.get(0, sVal);
 				if (finalKey == NOT_FOUND) {
 					finalKey = Undefined.instance;
 				}
-				Object finalVal = sVal.get(cx, 1, sVal);
+				Object finalVal = sVal.get(1, sVal);
 				if (finalVal == NOT_FOUND) {
 					finalVal = Undefined.instance;
 				}

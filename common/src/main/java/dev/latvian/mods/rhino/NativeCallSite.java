@@ -17,14 +17,14 @@ public class NativeCallSite extends IdScriptableObject {
 	private static final String CALLSITE_TAG = "CallSite";
 	private ScriptStackElement element;
 
-	static void init(Context cx, Scriptable scope, boolean sealed) {
+	static void init(Scriptable scope, boolean sealed) {
 		NativeCallSite cs = new NativeCallSite();
-		cs.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+		cs.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
-	static NativeCallSite make(Context cx, Scriptable scope, Scriptable ctorObj) {
+	static NativeCallSite make(Scriptable scope, Scriptable ctorObj) {
 		NativeCallSite cs = new NativeCallSite();
-		Scriptable proto = (Scriptable) (ctorObj.get(cx, "prototype", ctorObj));
+		Scriptable proto = (Scriptable) (ctorObj.get("prototype", ctorObj));
 		cs.setParentScope(scope);
 		cs.setPrototype(proto);
 		return cs;
@@ -119,7 +119,7 @@ public class NativeCallSite extends IdScriptableObject {
 		}
 		int id = f.methodId();
         return switch (id) {
-            case Id_constructor -> make(cx, scope, f);
+            case Id_constructor -> make(scope, f);
             case Id_getFunctionName -> getFunctionName(thisObj);
             case Id_getFileName -> getFileName(thisObj);
             case Id_getLineNumber -> getLineNumber(thisObj);
@@ -141,7 +141,7 @@ public class NativeCallSite extends IdScriptableObject {
 
 	private static Object js_toString(Scriptable obj) {
 		while (obj != null && !(obj instanceof NativeCallSite)) {
-			obj = obj.getPrototype(cx);
+			obj = obj.getPrototype();
 		}
 		if (obj == null) {
 			return NOT_FOUND;
@@ -154,7 +154,7 @@ public class NativeCallSite extends IdScriptableObject {
 
 	private static Object getFunctionName(Scriptable obj) {
 		while (obj != null && !(obj instanceof NativeCallSite)) {
-			obj = obj.getPrototype(cx);
+			obj = obj.getPrototype();
 		}
 		if (obj == null) {
 			return NOT_FOUND;
@@ -165,7 +165,7 @@ public class NativeCallSite extends IdScriptableObject {
 
 	private static Object getFileName(Scriptable obj) {
 		while (obj != null && !(obj instanceof NativeCallSite)) {
-			obj = obj.getPrototype(cx);
+			obj = obj.getPrototype();
 		}
 		if (obj == null) {
 			return NOT_FOUND;
@@ -176,7 +176,7 @@ public class NativeCallSite extends IdScriptableObject {
 
 	private static Object getLineNumber(Scriptable obj) {
 		while (obj != null && !(obj instanceof NativeCallSite)) {
-			obj = obj.getPrototype(cx);
+			obj = obj.getPrototype();
 		}
 		if (obj == null) {
 			return NOT_FOUND;

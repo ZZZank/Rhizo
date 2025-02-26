@@ -23,12 +23,12 @@ final class NativeMath extends IdScriptableObject {
 	static void init(Scriptable scope, boolean sealed) {
 		NativeMath obj = new NativeMath();
 		obj.activatePrototypeMap(MAX_ID);
-		obj.setPrototype(getObjectPrototype(cx, scope));
+		obj.setPrototype(getObjectPrototype(scope));
 		obj.setParentScope(scope);
 		if (sealed) {
 			obj.sealObject();
 		}
-		defineProperty(cx, scope, "Math", obj, DONTENUM);
+		defineProperty(scope, "Math", obj, DONTENUM);
 	}
 
 	private NativeMath() {

@@ -188,7 +188,7 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 			return value;
 		}
 
-		final void set(Context cx, int id, Scriptable start, Object value) {
+		final void set(int id, Scriptable start, Object value) {
 			if (value == NOT_FOUND) {
 				throw new IllegalArgumentException();
 			}
@@ -208,10 +208,10 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 					Object name = valueArray[nameSlot];
 					if (name instanceof Symbol) {
 						if (start instanceof SymbolScriptable) {
-							((SymbolScriptable) start).put(cx, (Symbol) name, start, value);
+							((SymbolScriptable) start).put((Symbol) name, start, value);
 						}
 					} else {
-						start.put(cx, (String) name, start, value);
+						start.put((String) name, start, value);
 					}
 				}
 			}
@@ -328,28 +328,28 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 		super(scope, prototype);
 	}
 
-	protected final boolean defaultHas(Context cx, String name) {
-		return super.has(cx, name, this);
+	protected final boolean defaultHas(String name) {
+		return super.has(name, this);
 	}
 
-	protected final Object defaultGet(Context cx, String name) {
-		return super.get(cx, name, this);
+	protected final Object defaultGet(String name) {
+		return super.get(name, this);
 	}
 
-	protected final void defaultPut(Context cx, String name, Object value) {
-		super.put(cx, name, this, value);
+	protected final void defaultPut(String name, Object value) {
+		super.put(name, this, value);
 	}
 
 	@Override
-	public boolean has(Context cx, String name, Scriptable start) {
-		int info = findInstanceIdInfo(cx, name);
+	public boolean has(String name, Scriptable start) {
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			int attr = (info >>> 16);
 			if ((attr & PERMANENT) != 0) {
 				return true;
 			}
 			int id = (info & 0xFFFF);
-			return NOT_FOUND != getInstanceIdValue(cx, id);
+			return NOT_FOUND != getInstanceIdValue(id);
 		}
 		if (prototypeValues != null) {
 			int id = prototypeValues.findId(name);
@@ -357,20 +357,20 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return prototypeValues.has(id);
 			}
 		}
-		return super.has(cx, name, start);
+		return super.has(name, start);
 	}
 
 
 	@Override
-	public boolean has(Context cx, Symbol key, Scriptable start) {
-		int info = findInstanceIdInfo(cx, key);
+	public boolean has(Symbol key, Scriptable start) {
+		int info = findInstanceIdInfo(key);
 		if (info != 0) {
 			int attr = (info >>> 16);
 			if ((attr & PERMANENT) != 0) {
 				return true;
 			}
 			int id = (info & 0xFFFF);
-			return NOT_FOUND != getInstanceIdValue(cx, id);
+			return NOT_FOUND != getInstanceIdValue(id);
 		}
 		if (prototypeValues != null) {
 			int id = prototypeValues.findId(key);
@@ -378,21 +378,21 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return prototypeValues.has(id);
 			}
 		}
-		return super.has(cx, key, start);
+		return super.has(key, start);
 	}
 
 	@Override
-	public Object get(Context cx, String name, Scriptable start) {
+	public Object get(String name, Scriptable start) {
 		// Check for slot first for performance. This is a very hot code
 		// path that should be further optimized.
-		Object value = super.get(cx, name, start);
+		Object value = super.get(name, start);
 		if (value != NOT_FOUND) {
 			return value;
 		}
-		int info = findInstanceIdInfo(cx, name);
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			int id = (info & 0xFFFF);
-			value = getInstanceIdValue(cx, id);
+			value = getInstanceIdValue(id);
 			if (value != NOT_FOUND) {
 				return value;
 			}
@@ -408,15 +408,15 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 	}
 
 	@Override
-	public Object get(Context cx, Symbol key, Scriptable start) {
-		Object value = super.get(cx, key, start);
+	public Object get(Symbol key, Scriptable start) {
+		Object value = super.get(key, start);
 		if (value != NOT_FOUND) {
 			return value;
 		}
-		int info = findInstanceIdInfo(cx, key);
+		int info = findInstanceIdInfo(key);
 		if (info != 0) {
 			int id = (info & 0xFFFF);
-			value = getInstanceIdValue(cx, id);
+			value = getInstanceIdValue(id);
 			if (value != NOT_FOUND) {
 				return value;
 			}
@@ -432,8 +432,8 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 	}
 
 	@Override
-	public void put(Context cx, String name, Scriptable start, Object value) {
-		int info = findInstanceIdInfo(cx, name);
+	public void put(String name, Scriptable start, Object value) {
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			if (start == this && isSealed()) {
 				throw Context.reportRuntimeError1("msg.modify.sealed", name);
@@ -442,9 +442,9 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 			if ((attr & READONLY) == 0) {
 				if (start == this) {
 					int id = (info & 0xFFFF);
-					setInstanceIdValue(cx, id, value);
+					setInstanceIdValue(id, value);
 				} else {
-					start.put(cx, name, start, value);
+					start.put(name, start, value);
 				}
 			}
 			return;
@@ -455,16 +455,16 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				if (start == this && isSealed()) {
 					throw Context.reportRuntimeError1("msg.modify.sealed", name);
 				}
-				prototypeValues.set(cx, id, start, value);
+				prototypeValues.set(id, start, value);
 				return;
 			}
 		}
-		super.put(cx, name, start, value);
+		super.put(name, start, value);
 	}
 
 	@Override
-	public void put(Context cx, Symbol key, Scriptable start, Object value) {
-		int info = findInstanceIdInfo(cx, key);
+	public void put(Symbol key, Scriptable start, Object value) {
+		int info = findInstanceIdInfo(key);
 		if (info != 0) {
 			if (start == this && isSealed()) {
 				throw Context.reportRuntimeError0("msg.modify.sealed");
@@ -473,9 +473,9 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 			if ((attr & READONLY) == 0) {
 				if (start == this) {
 					int id = (info & 0xFFFF);
-					setInstanceIdValue(cx, id, value);
+					setInstanceIdValue(id, value);
 				} else {
-					ensureSymbolScriptable(start).put(cx, key, start, value);
+					ensureSymbolScriptable(start).put(key, start, value);
 				}
 			}
 			return;
@@ -486,28 +486,29 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				if (start == this && isSealed()) {
 					throw Context.reportRuntimeError0("msg.modify.sealed");
 				}
-				prototypeValues.set(cx, id, start, value);
+				prototypeValues.set(id, start, value);
 				return;
 			}
 		}
-		super.put(cx, key, start, value);
+		super.put(key, start, value);
 	}
 
 	@Override
-	public void delete(Context cx, String name) {
-		int info = findInstanceIdInfo(cx, name);
+	public void delete(String name) {
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			// Let the super class to throw exceptions for sealed objects
 			if (!isSealed()) {
 				int attr = (info >>> 16);
 				// non-configurable
 				if ((attr & PERMANENT) != 0) {
+					Context cx = Context.getContext();
 					if (cx.isStrictMode()) {
 						throw ScriptRuntime.typeError1("msg.delete.property.with.configurable.false", name);
 					}
 				} else {
 					int id = (info & 0xFFFF);
-					setInstanceIdValue(cx, id, NOT_FOUND);
+					setInstanceIdValue(id, NOT_FOUND);
 				}
 				return;
 			}
@@ -521,24 +522,25 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return;
 			}
 		}
-		super.delete(cx, name);
+		super.delete(name);
 	}
 
 	@Override
-	public void delete(Context cx, Symbol key) {
-		int info = findInstanceIdInfo(cx, key);
+	public void delete(Symbol key) {
+		int info = findInstanceIdInfo(key);
 		if (info != 0) {
 			// Let the super class to throw exceptions for sealed objects
 			if (!isSealed()) {
 				int attr = (info >>> 16);
 				// non-configurable
 				if ((attr & PERMANENT) != 0) {
+					Context cx = Context.getContext();
 					if (cx.isStrictMode()) {
 						throw ScriptRuntime.typeError0("msg.delete.property.with.configurable.false");
 					}
 				} else {
 					int id = (info & 0xFFFF);
-					setInstanceIdValue(cx, id, NOT_FOUND);
+					setInstanceIdValue(id, NOT_FOUND);
 				}
 				return;
 			}
@@ -552,12 +554,12 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return;
 			}
 		}
-		super.delete(cx, key);
+		super.delete(key);
 	}
 
 	@Override
-	public int getAttributes(Context cx, String name) {
-		int info = findInstanceIdInfo(cx, name);
+	public int getAttributes(String name) {
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			int attr = (info >>> 16);
 			return attr;
@@ -568,12 +570,12 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return prototypeValues.getAttributes(id);
 			}
 		}
-		return super.getAttributes(cx, name);
+		return super.getAttributes(name);
 	}
 
 	@Override
-	public int getAttributes(Context cx, Symbol key) {
-		int info = findInstanceIdInfo(cx, key);
+	public int getAttributes(Symbol key) {
+		int info = findInstanceIdInfo(key);
 		if (info != 0) {
 			int attr = (info >>> 16);
 			return attr;
@@ -584,13 +586,13 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return prototypeValues.getAttributes(id);
 			}
 		}
-		return super.getAttributes(cx, key);
+		return super.getAttributes(key);
 	}
 
 	@Override
-	public void setAttributes(Context cx, String name, int attributes) {
+	public void setAttributes(String name, int attributes) {
 		ScriptableObject.checkValidAttributes(attributes);
-		int info = findInstanceIdInfo(cx, name);
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			int id = (info & 0xFFFF);
 			int currentAttributes = (info >>> 16);
@@ -606,12 +608,12 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 				return;
 			}
 		}
-		super.setAttributes(cx, name, attributes);
+		super.setAttributes(name, attributes);
 	}
 
 	@Override
-	Object[] getIds(Context cx, boolean getNonEnumerable, boolean getSymbols) {
-		Object[] result = super.getIds(cx, getNonEnumerable, getSymbols);
+	Object[] getIds(boolean getNonEnumerable, boolean getSymbols) {
+		Object[] result = super.getIds(getNonEnumerable, getSymbols);
 
 		if (prototypeValues != null) {
 			result = prototypeValues.getNames(getNonEnumerable, getSymbols, result);
@@ -624,11 +626,11 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 
 			for (int id = maxInstanceId; id != 0; --id) {
 				String name = getInstanceIdName(id);
-				int info = findInstanceIdInfo(cx, name);
+				int info = findInstanceIdInfo(name);
 				if (info != 0) {
 					int attr = (info >>> 16);
 					if ((attr & PERMANENT) == 0) {
-						if (NOT_FOUND == getInstanceIdValue(cx, id)) {
+						if (NOT_FOUND == getInstanceIdValue(id)) {
 							continue;
 						}
 					}
@@ -671,7 +673,7 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 	 * Should return 0 if not found or the result of
 	 * {@link #instanceIdInfo(int, int)}.
 	 */
-	protected int findInstanceIdInfo(Context cx, String name) {
+	protected int findInstanceIdInfo(String name) {
 		return 0;
 	}
 
@@ -680,7 +682,7 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 	 * Should return 0 if not found or the result of
 	 * {@link #instanceIdInfo(int, int)}.
 	 */
-	protected int findInstanceIdInfo(Context cx, Symbol key) {
+	protected int findInstanceIdInfo(Symbol key) {
 		return 0;
 	}
 
@@ -693,12 +695,12 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 
 	/**
 	 * Get id value.
-	 * If id value is constant, descendant can call cacheIdValue to store
-	 * value in the permanent cache.
-	 * Default implementation creates IdFunctionObject instance for given id
-	 * and cache its value
+	 * * If id value is constant, descendant can call cacheIdValue to store
+	 * * value in the permanent cache.
+	 * * Default implementation creates IdFunctionObject instance for given id
+	 * * and cache its value
 	 */
-	protected Object getInstanceIdValue(Context cx, int id) {
+	protected Object getInstanceIdValue(int id) {
 		throw new IllegalStateException(String.valueOf(id));
 	}
 
@@ -706,7 +708,7 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 	 * Set or delete id value. If value == NOT_FOUND , the implementation
 	 * should make sure that the following getInstanceIdValue return NOT_FOUND.
 	 */
-	protected void setInstanceIdValue(Context cx, int id, Object value) {
+	protected void setInstanceIdValue(int id, Object value) {
 		throw new IllegalStateException(String.valueOf(id));
 	}
 
@@ -732,11 +734,11 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 		throw f.unknown();
 	}
 
-	public final IdFunctionObject exportAsJSClass(Context cx, int maxPrototypeId, Scriptable scope, boolean sealed) {
+	public final IdFunctionObject exportAsJSClass(int maxPrototypeId, Scriptable scope, boolean sealed) {
 		// Set scope and prototype unless this is top level scope itself
 		if (scope != this && scope != null) {
 			setParentScope(scope);
-			setPrototype(getObjectPrototype(cx, scope));
+			setPrototype(getObjectPrototype(scope));
 		}
 
 		activatePrototypeMap(maxPrototypeId);
@@ -744,11 +746,11 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 		if (sealed) {
 			sealObject();
 		}
-		fillConstructorProperties(cx, ctor);
+		fillConstructorProperties(ctor);
 		if (sealed) {
 			ctor.sealObject();
 		}
-		ctor.exportAsScopeProperty(cx);
+		ctor.exportAsScopeProperty();
 		return ctor;
 	}
 
@@ -818,13 +820,13 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 		return 0;
 	}
 
-	protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
+	protected void fillConstructorProperties(IdFunctionObject ctor) {
 	}
 
-	protected void addIdFunctionProperty(Context cx, Scriptable obj, Object tag, int id, String name, int arity) {
+	protected void addIdFunctionProperty(Scriptable obj, Object tag, int id, String name, int arity) {
 		Scriptable scope = ScriptableObject.getTopLevelScope(obj);
 		IdFunctionObject f = newIdFunction(tag, id, name, arity, scope);
-		f.addAsProperty(cx, obj);
+		f.addAsProperty(obj);
 	}
 
 	/**
@@ -865,50 +867,50 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 	@Override
 	public void defineOwnProperty(Context cx, Object key, ScriptableObject desc) {
 		if (key instanceof String name) {
-            int info = findInstanceIdInfo(cx, name);
+            int info = findInstanceIdInfo(name);
 			if (info != 0) {
 				int id = (info & 0xFFFF);
-				if (isAccessorDescriptor(cx, desc)) {
-					delete(cx, id); // it will be replaced with a slot
+				if (isAccessorDescriptor(desc)) {
+					delete(id); // it will be replaced with a slot
 				} else {
-					checkPropertyDefinition(cx, desc);
+					checkPropertyDefinition(desc);
 					ScriptableObject current = getOwnPropertyDescriptor(cx, key);
-					checkPropertyChange(cx, name, current, desc);
+					checkPropertyChange(name, current, desc);
 					int attr = (info >>> 16);
-					Object value = getProperty(cx, desc, "value");
+					Object value = getProperty(desc, "value");
 					if (value != NOT_FOUND && (attr & READONLY) == 0) {
-						Object currentValue = getInstanceIdValue(cx, id);
+						Object currentValue = getInstanceIdValue(id);
 						if (!sameValue(value, currentValue)) {
-							setInstanceIdValue(cx, id, value);
+							setInstanceIdValue(id, value);
 						}
 					}
-					setAttributes(cx, name, applyDescriptorToAttributeBitset(cx, attr, desc));
+					setAttributes(name, applyDescriptorToAttributeBitset(attr, desc));
 					return;
 				}
 			}
 			if (prototypeValues != null) {
 				int id = prototypeValues.findId(name);
 				if (id != 0) {
-					if (isAccessorDescriptor(cx, desc)) {
+					if (isAccessorDescriptor(desc)) {
 						prototypeValues.delete(id); // it will be replaced with a slot
 					} else {
-						checkPropertyDefinition(cx, desc);
+						checkPropertyDefinition(desc);
 						ScriptableObject current = getOwnPropertyDescriptor(cx, key);
-						checkPropertyChange(cx, name, current, desc);
+						checkPropertyChange(name, current, desc);
 						int attr = prototypeValues.getAttributes(id);
-						Object value = getProperty(cx, desc, "value");
+						Object value = getProperty(desc, "value");
 						if (value != NOT_FOUND && (attr & READONLY) == 0) {
 							Object currentValue = prototypeValues.get(id);
 							if (!sameValue(value, currentValue)) {
-								prototypeValues.set(cx, id, this, value);
+								prototypeValues.set(id, this, value);
 							}
 						}
-						prototypeValues.setAttributes(id, applyDescriptorToAttributeBitset(cx, attr, desc));
+						prototypeValues.setAttributes(id, applyDescriptorToAttributeBitset(attr, desc));
 
 						// Handle the regular slot that was created if this property was previously replaced
 						// with an accessor descriptor.
-						if (super.has(cx, name, this)) {
-							super.delete(cx, name);
+						if (super.has(name, this)) {
+							super.delete(name);
 						}
 
 						return;
@@ -925,42 +927,42 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 		ScriptableObject desc = super.getOwnPropertyDescriptor(cx, id);
 		if (desc == null) {
 			if (id instanceof String) {
-				desc = getBuiltInDescriptor(cx, (String) id);
+				desc = getBuiltInDescriptor((String) id);
 			} else if (ScriptRuntime.isSymbol(id)) {
-				desc = getBuiltInDescriptor(cx, ((NativeSymbol) id).getKey());
+				desc = getBuiltInDescriptor(((NativeSymbol) id).getKey());
 			}
 		}
 		return desc;
 	}
 
-	private ScriptableObject getBuiltInDescriptor(Context cx, String name) {
-		Object value;
-		int attr;
+	private ScriptableObject getBuiltInDescriptor(String name) {
+		Object value = null;
+		int attr = EMPTY;
 
 		Scriptable scope = getParentScope();
 		if (scope == null) {
 			scope = this;
 		}
 
-		int info = findInstanceIdInfo(cx, name);
+		int info = findInstanceIdInfo(name);
 		if (info != 0) {
 			int id = (info & 0xFFFF);
-			value = getInstanceIdValue(cx, id);
+			value = getInstanceIdValue(id);
 			attr = (info >>> 16);
-			return buildDataDescriptor(cx, scope, value, attr);
+			return buildDataDescriptor(scope, value, attr);
 		}
 		if (prototypeValues != null) {
 			int id = prototypeValues.findId(name);
 			if (id != 0) {
 				value = prototypeValues.get(id);
 				attr = prototypeValues.getAttributes(id);
-				return buildDataDescriptor(cx, scope, value, attr);
+				return buildDataDescriptor(scope, value, attr);
 			}
 		}
 		return null;
 	}
 
-	private ScriptableObject getBuiltInDescriptor(Context cx, Symbol key) {
+	private ScriptableObject getBuiltInDescriptor(Symbol key) {
 		Object value = null;
 		int attr = EMPTY;
 
@@ -974,7 +976,7 @@ public abstract class IdScriptableObject extends ScriptableObject implements IdF
 			if (id != 0) {
 				value = prototypeValues.get(id);
 				attr = prototypeValues.getAttributes(id);
-				return buildDataDescriptor(cx, scope, value, attr);
+				return buildDataDescriptor(scope, value, attr);
 			}
 		}
 		return null;

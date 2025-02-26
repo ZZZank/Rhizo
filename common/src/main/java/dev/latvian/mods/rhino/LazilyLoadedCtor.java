@@ -20,7 +20,6 @@ public final class LazilyLoadedCtor implements Serializable {
 	private static final int STATE_INITIALIZING = 1;
 	private static final int STATE_WITH_VALUE = 2;
 
-	private final Context cx;
 	private final ScriptableObject scope;
 	private final String propertyName;
 	private final String className;
@@ -29,12 +28,12 @@ public final class LazilyLoadedCtor implements Serializable {
 	private Object initializedValue;
 	private int state;
 
-	public LazilyLoadedCtor(Context cx, ScriptableObject scope, String propertyName, String className, boolean sealed) {
-		this(cx, scope, propertyName, className, sealed, false);
+	public LazilyLoadedCtor(ScriptableObject scope, String propertyName, String className, boolean sealed) {
+		this(scope, propertyName, className, sealed, false);
 	}
 
-	LazilyLoadedCtor(Context cx, ScriptableObject scope, String propertyName, String className, boolean sealed, boolean privileged) {
-		this.cx = cx;
+	LazilyLoadedCtor(ScriptableObject scope, String propertyName, String className, boolean sealed, boolean privileged) {
+
 		this.scope = scope;
 		this.propertyName = propertyName;
 		this.className = className;
@@ -83,13 +82,13 @@ public final class LazilyLoadedCtor implements Serializable {
 		Class<? extends Scriptable> cl = cast(Kit.classOrNull(className));
 		if (cl != null) {
 			try {
-				Object value = ScriptableObject.buildClassCtor(cx, scope, cl, sealed, false);
+				Object value = ScriptableObject.buildClassCtor(scope, cl, sealed, false);
 				if (value != null) {
 					return value;
 				}
 				// cl has own static initializer which is expected
 				// to set the property on its own.
-				value = scope.get(cx, propertyName, scope);
+				value = scope.get(propertyName, scope);
 				if (value != Scriptable.NOT_FOUND) {
 					return value;
 				}

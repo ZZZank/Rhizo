@@ -102,7 +102,7 @@ class NativeRegExpCtor extends BaseFunction {
 	}
 
 	@Override
-	protected int findInstanceIdInfo(Context cx, String s) {
+	protected int findInstanceIdInfo(String s) {
 		int id;
 		// #generated# Last update: 2001-05-24 16:09:31 GMT+02:00
 		L0:
@@ -239,7 +239,7 @@ class NativeRegExpCtor extends BaseFunction {
 		// #/generated#
 
 		if (id == 0) {
-			return super.findInstanceIdInfo(cx, s);
+			return super.findInstanceIdInfo(s);
 		}
 
 		int attr = switch (id) {
@@ -299,7 +299,7 @@ class NativeRegExpCtor extends BaseFunction {
 	}
 
 	@Override
-	protected Object getInstanceIdValue(Context cx, int id) {
+	protected Object getInstanceIdValue(int id) {
 		int shifted = id - super.getMaxInstanceId();
 		if (1 <= shifted && shifted <= MAX_INSTANCE_ID) {
 			RegExpImpl impl = getImpl();
@@ -343,11 +343,11 @@ class NativeRegExpCtor extends BaseFunction {
 			}
 			return (stringResult == null) ? "" : stringResult.toString();
 		}
-		return super.getInstanceIdValue(cx, id);
+		return super.getInstanceIdValue(id);
 	}
 
 	@Override
-	protected void setInstanceIdValue(Context cx, int id, Object value) {
+	protected void setInstanceIdValue(int id, Object value) {
 		int shifted = id - super.getMaxInstanceId();
 		switch (shifted) {
 			case Id_multiline:
@@ -375,7 +375,7 @@ class NativeRegExpCtor extends BaseFunction {
 					return;
 				}
 		}
-		super.setInstanceIdValue(cx, id, value);
+		super.setInstanceIdValue(id, value);
 	}
 
 	@Override

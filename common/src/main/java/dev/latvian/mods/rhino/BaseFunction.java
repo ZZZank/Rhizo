@@ -26,17 +26,17 @@ public class BaseFunction extends IdScriptableObject implements Function {
         BaseFunction obj = new BaseFunction();
         // Function.prototype attributes: see ECMA 15.3.3.1
         obj.prototypePropertyAttributes = DONTENUM | READONLY | PERMANENT;
-        obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+        obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
     }
 
     static Object initAsGeneratorFunction(Scriptable scope, boolean sealed) {
         BaseFunction obj = new BaseFunction(true);
         // Function.prototype attributes: see ECMA 15.3.3.1
         obj.prototypePropertyAttributes = READONLY | PERMANENT;
-        obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+        obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
         // The "GeneratorFunction" name actually never appears in the global scope.
         // Return it here so it can be cached as a "builtin"
-        return getProperty(cx, scope, GENERATOR_FUNCTION_CLASS);
+        return getProperty(scope, GENERATOR_FUNCTION_CLASS);
     }
 
     public BaseFunction() {
@@ -79,15 +79,14 @@ public class BaseFunction extends IdScriptableObject implements Function {
      * foo instanceof Foo;  // true<br>
      * </code>
      *
-     * @param cx
      * @param instance The value that appeared on the LHS of the instanceof
      *                 operator
      * @return true if the "prototype" property of "this" appears in
      * value's prototype chain
      */
     @Override
-    public boolean hasInstance(Context cx, Scriptable instance) {
-        Object protoProp = getProperty(cx, this, "prototype");
+    public boolean hasInstance(Scriptable instance) {
+        Object protoProp = getProperty(this, "prototype");
         if (protoProp instanceof Scriptable) {
             return ScriptRuntime.jsDelegatesTo(instance, (Scriptable) protoProp);
         }
@@ -106,7 +105,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
     }
 
     @Override
-    protected int findInstanceIdInfo(Context cx, String s) {
+    protected int findInstanceIdInfo(String s) {
         int id;
         // #generated# Last update: 2007-05-09 08:15:15 EDT
         L0:
@@ -148,7 +147,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
         // #/string_id_map#
 
         if (id == 0) {
-            return super.findInstanceIdInfo(cx, s);
+            return super.findInstanceIdInfo(s);
         }
 
         int attr;
@@ -187,19 +186,19 @@ public class BaseFunction extends IdScriptableObject implements Function {
     }
 
     @Override
-    protected Object getInstanceIdValue(Context cx, int id) {
+    protected Object getInstanceIdValue(int id) {
         return switch (id) {
             case Id_length -> ScriptRuntime.wrapInt(getLength());
             case Id_arity -> ScriptRuntime.wrapInt(getArity());
             case Id_name -> getFunctionName();
             case Id_prototype -> getPrototypeProperty();
-            case Id_arguments -> getArguments(cx);
-            default -> super.getInstanceIdValue(cx, id);
+            case Id_arguments -> getArguments();
+            default -> super.getInstanceIdValue(id);
         };
     }
 
     @Override
-    protected void setInstanceIdValue(Context cx, int id, Object value) {
+    protected void setInstanceIdValue(int id, Object value) {
         switch (id) {
             case Id_prototype:
                 if ((prototypePropertyAttributes & READONLY) == 0) {
@@ -211,8 +210,8 @@ public class BaseFunction extends IdScriptableObject implements Function {
                     // This should not be called since "arguments" is PERMANENT
                     Kit.codeBug();
                 }
-                if (defaultHas(cx, "arguments")) {
-                    defaultPut(cx, "arguments", value);
+                if (defaultHas("arguments")) {
+                    defaultPut("arguments", value);
                 } else if ((argumentsAttributes & READONLY) == 0) {
                     argumentsObj = value;
                 }
@@ -222,7 +221,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
             case Id_length:
                 return;
         }
-        super.setInstanceIdValue(cx, id, value);
+        super.setInstanceIdValue(id, value);
     }
 
     @Override
@@ -239,12 +238,12 @@ public class BaseFunction extends IdScriptableObject implements Function {
     }
 
     @Override
-    protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
+    protected void fillConstructorProperties(IdFunctionObject ctor) {
         // Fix up bootstrapping problem: getPrototype of the IdFunctionObject
         // can not return Function.prototype because Function object is not
         // yet defined.
         ctor.setPrototype(this);
-        super.fillConstructorProperties(cx, ctor);
+        super.fillConstructorProperties(ctor);
     }
 
     @Override
@@ -334,8 +333,8 @@ public class BaseFunction extends IdScriptableObject implements Function {
         throw new IllegalArgumentException(String.valueOf(id));
     }
 
-    private static BaseFunction realFunction(Context cx, Scriptable thisObj, IdFunctionObject f) {
-        Object x = thisObj.getDefaultValue(cx, ScriptRuntime.FunctionClass);
+    private static BaseFunction realFunction(Scriptable thisObj, IdFunctionObject f) {
+        Object x = thisObj.getDefaultValue(ScriptRuntime.FunctionClass);
         if (x instanceof Delegator) {
             x = ((Delegator) x).getDelegee();
         }
@@ -362,7 +361,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
         if (protoVal instanceof Scriptable) {
             return (Scriptable) protoVal;
         }
-        return getObjectPrototype(cx, this);
+        return getObjectPrototype(this);
     }
 
     /**
@@ -389,7 +388,7 @@ public class BaseFunction extends IdScriptableObject implements Function {
                 throw new IllegalStateException("Bad implementaion of call as constructor, name=" + getFunctionName() + " in " + getClass().getName());
             }
             result = (Scriptable) val;
-            if (result.getPrototype(cx) == null) {
+            if (result.getPrototype() == null) {
                 Scriptable proto = getClassPrototype();
                 if (result != proto) {
                     result.setPrototype(proto);
@@ -476,12 +475,12 @@ public class BaseFunction extends IdScriptableObject implements Function {
         }
         NativeObject obj = new NativeObject();
         final int attr = DONTENUM;
-        obj.defineProperty(cx, "constructor", this, attr);
+        obj.defineProperty("constructor", this, attr);
         // put the prototype property into the object now, then in the
         // wacky case of a user defining a function Object(), we don't
         // get an infinite loop trying to find the prototype.
         prototypeProperty = obj;
-        Scriptable proto = getObjectPrototype(cx, this);
+        Scriptable proto = getObjectPrototype(this);
         if (proto != obj) {
             // not the one we just made, it must remain grounded
             obj.setPrototype(proto);
@@ -489,11 +488,11 @@ public class BaseFunction extends IdScriptableObject implements Function {
         return obj;
     }
 
-    private Object getArguments(Context cx) {
+    private Object getArguments() {
         // <Function name>.arguments is deprecated, so we use a slow
         // way of getting it that doesn't add to the invocation cost.
         // TODO: add warning, error based on version
-        Object value = defaultHas(cx, "arguments") ? defaultGet(cx, "arguments") : argumentsObj;
+        Object value = defaultHas("arguments") ? defaultGet("arguments") : argumentsObj;
         if (value != NOT_FOUND) {
             // Should after changing <Function name>.arguments its
             // activation still be available during Function call?
@@ -502,8 +501,9 @@ public class BaseFunction extends IdScriptableObject implements Function {
             // means assigned arguments
             return value;
         }
+        Context cx = Context.getContext();
         NativeCall activation = ScriptRuntime.findFunctionActivation(cx, this);
-        return (activation == null) ? null : activation.get(cx, "arguments", activation);
+        return (activation == null) ? null : activation.get("arguments", activation);
     }
 
     private Object jsConstructor(Context cx, Scriptable scope, Object[] args) {

@@ -141,7 +141,7 @@ public interface ArrayValueProvider {
 
 		@Override
 		public Object getArrayValue(Context cx, int index) {
-			return array.get(cx, index, array);
+			return array.get(index, array);
 		}
 
 		@Override

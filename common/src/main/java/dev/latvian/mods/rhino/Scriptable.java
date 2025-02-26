@@ -82,7 +82,7 @@ public interface Scriptable {
 	 * @return the value of the property (may be null), or NOT_FOUND
 	 * @see Context#getUndefinedValue
 	 */
-	Object get(Context cx, String name, Scriptable start);
+	Object get(String name, Scriptable start);
 
 	/**
 	 * Get a property from the object selected by an integral index.
@@ -93,9 +93,9 @@ public interface Scriptable {
 	 * @param index the numeric index for the property
 	 * @param start the object in which the lookup began
 	 * @return the value of the property (may be null), or NOT_FOUND
-	 * @see Scriptable#get(Context, String, Scriptable)
+	 * @see Scriptable#get(String, Scriptable)
 	 */
-	Object get(Context cx, int index, Scriptable start);
+	Object get(int index, Scriptable start);
 
 	/**
 	 * Indicates whether or not a named property is defined in an object.
@@ -108,10 +108,10 @@ public interface Scriptable {
 	 * @param name  the name of the property
 	 * @param start the object in which the lookup began
 	 * @return true if and only if the named property is found in the object
-	 * @see Scriptable#get(Context, String, Scriptable)
-	 * @see ScriptableObject#getProperty(Context, Scriptable, String)
+	 * @see Scriptable#get(String, Scriptable)
+	 * @see ScriptableObject#getProperty(Scriptable, String)
 	 */
-	boolean has(Context cx, String name, Scriptable start);
+	boolean has(String name, Scriptable start);
 
 	/**
 	 * Indicates whether or not an indexed  property is defined in an object.
@@ -124,10 +124,10 @@ public interface Scriptable {
 	 * @param index the numeric index for the property
 	 * @param start the object in which the lookup began
 	 * @return true if and only if the indexed property is found in the object
-	 * @see Scriptable#get(Context, int, Scriptable)
-	 * @see ScriptableObject#getProperty(Context, Scriptable, int)
+	 * @see Scriptable#get(int, Scriptable)
+	 * @see ScriptableObject#getProperty(Scriptable, int)
 	 */
-	boolean has(Context cx, int index, Scriptable start);
+	boolean has(int index, Scriptable start);
 
 	/**
 	 * Sets a named property in this object.
@@ -172,12 +172,12 @@ public interface Scriptable {
 	 * @param name  the name of the property
 	 * @param start the object whose property is being set
 	 * @param value value to set the property to
-	 * @see Scriptable#has(Context, String, Scriptable)
-	 * @see Scriptable#get(Context, String, Scriptable)
-	 * @see ScriptableObject#putProperty(Context, Scriptable, String, Object)
+	 * @see Scriptable#has(String, Scriptable)
+	 * @see Scriptable#get(String, Scriptable)
+	 * @see ScriptableObject#putProperty(Scriptable, String, Object)
 	 * @see Context#toObject(Object, Scriptable)
 	 */
-	void put(Context cx, String name, Scriptable start, Object value);
+	void put(String name, Scriptable start, Object value);
 
 	/**
 	 * Sets an indexed property in this object.
@@ -191,12 +191,12 @@ public interface Scriptable {
 	 * @param index the numeric index for the property
 	 * @param start the object whose property is being set
 	 * @param value value to set the property to
-	 * @see Scriptable#has(Context, int, Scriptable)
-	 * @see Scriptable#get(Context, int, Scriptable)
-	 * @see ScriptableObject#putProperty(Context, Scriptable, int, Object)
+	 * @see Scriptable#has(int, Scriptable)
+	 * @see Scriptable#get(int, Scriptable)
+	 * @see ScriptableObject#putProperty(Scriptable, int, Object)
 	 * @see Context#toObject(Object, Scriptable)
 	 */
-	void put(Context cx, int index, Scriptable start, Object value);
+	void put(int index, Scriptable start, Object value);
 
 	/**
 	 * Removes a property from this object.
@@ -216,10 +216,10 @@ public interface Scriptable {
 	 * see deleteProperty in ScriptableObject.
 	 *
 	 * @param name the identifier for the property
-	 * @see Scriptable#get(Context, String, Scriptable)
-	 * @see ScriptableObject#deleteProperty(Context, Scriptable, String)
+	 * @see Scriptable#get(String, Scriptable)
+	 * @see ScriptableObject#deleteProperty(Scriptable, String)
 	 */
-	void delete(Context cx, String name);
+	void delete(String name);
 
 	/**
 	 * Removes a property from this object.
@@ -234,17 +234,17 @@ public interface Scriptable {
 	 * an integral index is used to select the property.
 	 *
 	 * @param index the numeric index for the property
-	 * @see Scriptable#get(Context, int, Scriptable)
-	 * @see ScriptableObject#deleteProperty(Context, Scriptable, int)
+	 * @see Scriptable#get(int, Scriptable)
+	 * @see ScriptableObject#deleteProperty(Scriptable, int)
 	 */
-	void delete(Context cx, int index);
+	void delete(int index);
 
 	/**
 	 * Get the prototype of the object.
 	 *
 	 * @return the prototype
 	 */
-	Scriptable getPrototype(Context cx);
+	Scriptable getPrototype();
 
 	/**
 	 * Set the prototype of the object.
@@ -276,10 +276,10 @@ public interface Scriptable {
 	 * @return an array of Objects. Each entry in the array is either
 	 * a java.lang.String or a java.lang.Number
 	 */
-	Object[] getIds(Context cx);
+	Object[] getIds();
 
-	default Object[] getAllIds(Context cx) {
-		return getIds(cx);
+	default Object[] getAllIds() {
+		return getIds();
 	}
 
 	/**
@@ -295,7 +295,7 @@ public interface Scriptable {
 	 * @param hint the type hint
 	 * @return the default value
 	 */
-	Object getDefaultValue(Context cx, Class<?> hint);
+	Object getDefaultValue(Class<?> hint);
 
 	/**
 	 * The instanceof operator.
@@ -315,6 +315,6 @@ public interface Scriptable {
 	 *                 operator
 	 * @return an implementation dependent value
 	 */
-	boolean hasInstance(Context cx, Scriptable instance);
+	boolean hasInstance(Scriptable instance);
 }
 

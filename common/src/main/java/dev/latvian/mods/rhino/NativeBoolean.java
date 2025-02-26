@@ -17,9 +17,9 @@ final class NativeBoolean extends IdScriptableObject {
 
 	private static final Object BOOLEAN_TAG = "Boolean";
 
-	static void init(Context cx, Scriptable scope, boolean sealed) {
+	static void init(Scriptable scope, boolean sealed) {
 		NativeBoolean obj = new NativeBoolean(false);
-		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	NativeBoolean(boolean b) {
@@ -32,13 +32,13 @@ final class NativeBoolean extends IdScriptableObject {
 	}
 
 	@Override
-	public Object getDefaultValue(Context cx, Class<?> typeHint) {
+	public Object getDefaultValue(Class<?> typeHint) {
 		// This is actually non-ECMA, but will be proposed
 		// as a change in round 2.
 		if (typeHint == ScriptRuntime.BooleanClass) {
 			return ScriptRuntime.wrapBoolean(booleanValue);
 		}
-		return super.getDefaultValue(cx, typeHint);
+		return super.getDefaultValue(typeHint);
 	}
 
 	@Override

@@ -50,7 +50,7 @@ class SpecialRef extends Ref {
 	public Object get(Context cx) {
         return switch (type) {
             case SPECIAL_NONE -> ScriptRuntime.getObjectProp(target, name, cx);
-            case SPECIAL_PROTO -> target.getPrototype(cx);
+            case SPECIAL_PROTO -> target.getPrototype();
             case SPECIAL_PARENT -> target.getParentScope();
             default -> throw Kit.codeBug();
         };
@@ -79,7 +79,7 @@ class SpecialRef extends Ref {
 							throw Context.reportRuntimeError1("msg.cyclic.value", name);
 						}
 						if (type == SPECIAL_PROTO) {
-							search = search.getPrototype(cx);
+							search = search.getPrototype();
 						} else {
 							search = search.getParentScope();
 						}

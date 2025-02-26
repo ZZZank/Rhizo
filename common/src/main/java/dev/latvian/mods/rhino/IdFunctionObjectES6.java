@@ -13,27 +13,27 @@ public class IdFunctionObjectES6 extends IdFunctionObject {
 	private boolean myName = true;
 
 	@Override
-	protected int findInstanceIdInfo(Context cx, String s) {
+	protected int findInstanceIdInfo(String s) {
 		if (s.equals("length")) {
 			return instanceIdInfo(READONLY | DONTENUM, Id_length);
 		} else if (s.equals("name")) {
 			return instanceIdInfo(READONLY | DONTENUM, Id_name);
 		}
-		return super.findInstanceIdInfo(cx, s);
+		return super.findInstanceIdInfo(s);
 	}
 
 	@Override
-	protected Object getInstanceIdValue(Context cx, int id) {
+	protected Object getInstanceIdValue(int id) {
 		if (id == Id_length && !myLength) {
 			return NOT_FOUND;
 		} else if (id == Id_name && !myName) {
 			return NOT_FOUND;
 		}
-		return super.getInstanceIdValue(cx, id);
+		return super.getInstanceIdValue(id);
 	}
 
 	@Override
-	protected void setInstanceIdValue(Context cx, int id, Object value) {
+	protected void setInstanceIdValue(int id, Object value) {
 		if (id == Id_length && value == NOT_FOUND) {
 			this.myLength = false;
 			return;
@@ -41,6 +41,6 @@ public class IdFunctionObjectES6 extends IdFunctionObject {
 			this.myName = false;
 			return;
 		}
-		super.setInstanceIdValue(cx, id, value);
+		super.setInstanceIdValue(id, value);
 	}
 }

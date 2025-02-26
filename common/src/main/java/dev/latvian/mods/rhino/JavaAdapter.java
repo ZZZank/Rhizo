@@ -86,7 +86,7 @@ public final class JavaAdapter implements IdFunctionCall {
 		if (sealed) {
 			ctor.sealObject();
 		}
-		ctor.exportAsScopeProperty(cx);
+		ctor.exportAsScopeProperty();
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public final class JavaAdapter implements IdFunctionCall {
 		// next argument is implementation, must be scriptable
 		Scriptable obj = ScriptableObject.ensureScriptable(args[classCount]);
 
-		Class<?> adapterClass = getAdapterClass(cx, scope, superClass, interfaces, obj);
+		Class<?> adapterClass = getAdapterClass(scope, superClass, interfaces, obj);
 		Object adapter;
 
 		int argsCount = N - classCount - 1;
@@ -260,7 +260,7 @@ public final class JavaAdapter implements IdFunctionCall {
 
 		Scriptable delegee = (Scriptable) in.readObject();
 
-		Class<?> adapterClass = getAdapterClass(cx, self, superClass, interfaces, delegee);
+		Class<?> adapterClass = getAdapterClass(self, superClass, interfaces, delegee);
 
 		Class<?>[] ctorParms = {ScriptRuntime.ContextFactoryClass, ScriptRuntime.ScriptableClass, ScriptRuntime.ScriptableClass};
 		Object[] ctorArgs = {factory, delegee, self};
@@ -273,16 +273,16 @@ public final class JavaAdapter implements IdFunctionCall {
         throw new ClassNotFoundException("adapter");
 	}
 
-	private static ObjToIntMap getObjectFunctionNames(Scriptable obj, Context cx) {
-		Object[] ids = ScriptableObject.getPropertyIds(cx, obj);
+	private static ObjToIntMap getObjectFunctionNames(Scriptable obj) {
+		Object[] ids = ScriptableObject.getPropertyIds(obj);
 		ObjToIntMap map = new ObjToIntMap(ids.length);
 		for (int i = 0; i != ids.length; ++i) {
 			if (!(ids[i] instanceof String id)) {
 				continue;
 			}
-            Object value = ScriptableObject.getProperty(cx, obj, id);
+            Object value = ScriptableObject.getProperty(obj, id);
 			if (value instanceof Function f) {
-                int length = ScriptRuntime.toInt32(ScriptableObject.getProperty(cx, f, "length"));
+                int length = ScriptRuntime.toInt32(ScriptableObject.getProperty(f, "length"));
 				if (length < 0) {
 					length = 0;
 				}
@@ -292,13 +292,11 @@ public final class JavaAdapter implements IdFunctionCall {
 		return map;
 	}
 
-	private static Class<?> getAdapterClass(
-		Context cx,
-		Scriptable scope, Class<?> superClass, Class<?>[] interfaces, Scriptable obj) {
+	private static Class<?> getAdapterClass(Scriptable scope, Class<?> superClass, Class<?>[] interfaces, Scriptable obj) {
 		ClassCache cache = ClassCache.get(scope);
 		Map<JavaAdapterSignature, Class<?>> generated = cache.getInterfaceAdapterCacheMap();
 
-		ObjToIntMap names = getObjectFunctionNames(obj, cx);
+		ObjToIntMap names = getObjectFunctionNames(obj);
 		JavaAdapterSignature sig;
 		sig = new JavaAdapterSignature(superClass, interfaces, names);
 		Class<?> adapterClass = generated.get(sig);
@@ -480,8 +478,8 @@ public final class JavaAdapter implements IdFunctionCall {
 		return result;
 	}
 
-	public static Function getFunction(Context cx, Scriptable obj, String functionName) {
-		Object x = ScriptableObject.getProperty(cx, obj, functionName);
+	public static Function getFunction(Scriptable obj, String functionName) {
+		Object x = ScriptableObject.getProperty(obj, functionName);
 		if (x == Scriptable.NOT_FOUND) {
 			// This method used to swallow the exception from calling
 			// an undefined method. People have come to depend on this

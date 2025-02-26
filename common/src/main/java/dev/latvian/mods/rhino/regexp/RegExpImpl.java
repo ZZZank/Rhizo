@@ -271,7 +271,7 @@ public class RegExpImpl implements RegExpProxy {
 		}
 		SubString matchsub = reImpl.lastMatch;
 		String matchstr = matchsub.toString();
-		mdata.arrayobj.put(cx, count, mdata.arrayobj, matchstr);
+		mdata.arrayobj.put(count, mdata.arrayobj, matchstr);
 	}
 
 	/*
@@ -465,7 +465,7 @@ public class RegExpImpl implements RegExpProxy {
 
 		// return an array consisting of the target if no separator given
 		if (args.length < 1 || args[0] == Undefined.instance) {
-			result.put(cx, 0, result, target);
+			result.put(0, result, target);
 			return result;
 		}
 
@@ -505,7 +505,7 @@ public class RegExpImpl implements RegExpProxy {
 				substr = target.substring(ip[0], match);
 			}
 
-			result.put(cx, len, result, substr);
+			result.put(len, result, substr);
 			len++;
 			/*
 			 * Imitate perl's feature of including parenthesized substrings
@@ -518,7 +518,7 @@ public class RegExpImpl implements RegExpProxy {
 					if (limited && len >= limit) {
 						break;
 					}
-					result.put(cx, len, result, parens[0][num]);
+					result.put(len, result, parens[0][num]);
 					len++;
 				}
 				matched[0] = false;

@@ -26,51 +26,53 @@ public class NativeJavaMapLike extends NativeJavaObject {
 	}
 
 	@Override
-	public boolean has(Context cx, String name, Scriptable start) {
+	public boolean has(String name, Scriptable start) {
 		if (map.containsKeyML(name)) {
 			return true;
 		}
-		return super.has(cx, name, start);
+		return super.has(name, start);
 	}
 
 	@Override
-	public boolean has(Context cx, int index, Scriptable start) {
+	public boolean has(int index, Scriptable start) {
 		if (map.containsKeyML(index)) {
 			return true;
 		}
-		return super.has(cx, index, start);
+		return super.has(index, start);
 	}
 
 	@Override
-	public Object get(Context cx, String name, Scriptable start) {
+	public Object get(String name, Scriptable start) {
 		if (map.containsKeyML(name)) {
+			val cx = Context.getContext();
 			val obj = map.getML(name);
 			return cx.getWrapFactory().wrap(cx, this, obj, valueType);
 		}
-		return super.get(cx, name, start);
+		return super.get(name, start);
 	}
 
 	@Override
-	public Object get(Context cx, int index, Scriptable start) {
+	public Object get(int index, Scriptable start) {
 		if (map.containsKeyML(index)) {
+			Context cx = Context.getContext();
 			Object obj = map.getML(index);
 			return cx.getWrapFactory().wrap(cx, this, obj, valueType);
 		}
-		return super.get(cx, index, start);
+		return super.get(index, start);
 	}
 
 	@Override
-	public void put(Context cx, String name, Scriptable start, Object value) {
+	public void put(String name, Scriptable start, Object value) {
 		map.putML(name, Context.jsToJava(Context.getContext(), value, this.valueType));
 	}
 
 	@Override
-	public void put(Context cx, int index, Scriptable start, Object value) {
+	public void put(int index, Scriptable start, Object value) {
 		map.putML(index, Context.jsToJava(Context.getContext(), value, this.valueType));
 	}
 
 	@Override
-	public Object[] getIds(Context cx) {
+	public Object[] getIds() {
 		Object[] k = map.keysML().toArray();
 
 		for (int i = 0; i < k.length; i++) {
@@ -83,14 +85,14 @@ public class NativeJavaMapLike extends NativeJavaObject {
 	}
 
 	@Override
-	public void delete(Context cx, String name) {
+	public void delete(String name) {
 		val obj = map.getML(name);
 		map.removeML(name);
 		Deletable.deleteObject(obj);
 	}
 
 	@Override
-	public void delete(Context cx, int index) {
+	public void delete(int index) {
 		val obj = map.getML(index);
 		map.removeML(index);
 		Deletable.deleteObject(obj);

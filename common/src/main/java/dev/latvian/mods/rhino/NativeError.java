@@ -45,20 +45,20 @@ final class NativeError extends IdScriptableObject {
 
 	private RhinoException stackProvider;
 
-	static void init(Context cx, Scriptable scope, boolean sealed) {
+	static void init(Scriptable scope, boolean sealed) {
 		NativeError obj = new NativeError();
-		putProperty(cx, obj, "name", "Error");
-		putProperty(cx, obj, "message", "");
-		putProperty(cx, obj, "fileName", "");
-		putProperty(cx, obj, "lineNumber", 0);
-		obj.setAttributes(cx, "name", DONTENUM);
-		obj.setAttributes(cx, "message", DONTENUM);
-		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
-		NativeCallSite.init(cx, obj, sealed);
+		putProperty(obj, "name", "Error");
+		putProperty(obj, "message", "");
+		putProperty(obj, "fileName", "");
+		putProperty(obj, "lineNumber", 0);
+		obj.setAttributes("name", DONTENUM);
+		obj.setAttributes("message", DONTENUM);
+		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
+		NativeCallSite.init(obj, sealed);
 	}
 
-	static @NotNull NativeError makeProto(Context cx, Scriptable scope, IdFunctionObject ctorObj) {
-		val proto = (Scriptable) (ctorObj.get(cx, "prototype", ctorObj));
+	static @NotNull NativeError makeProto(Scriptable scope, IdFunctionObject ctorObj) {
+		val proto = (Scriptable) (ctorObj.get("prototype", ctorObj));
 
 		val obj = new NativeError();
 		obj.setPrototype(proto);
@@ -67,18 +67,18 @@ final class NativeError extends IdScriptableObject {
 	}
 
 	static NativeError make(Context cx, Scriptable scope, IdFunctionObject ctorObj, Object[] args) {
-		val obj = makeProto(cx, scope, ctorObj);
+		val obj = makeProto(scope, ctorObj);
 
 		val arglen = args.length;
 		if (arglen >= 1) {
 			if (args[0] != Undefined.instance) {
-				putProperty(cx, obj, "message", ScriptRuntime.toString(args[0]));
+				putProperty(obj, "message", ScriptRuntime.toString(args[0]));
 			}
 			if (arglen >= 2) {
-				putProperty(cx, obj, "fileName", args[1]);
+				putProperty(obj, "fileName", args[1]);
 				if (arglen >= 3) {
 					int line = ScriptRuntime.toInt32(args[2]);
-					putProperty(cx, obj, "lineNumber", line);
+					putProperty(obj, "lineNumber", line);
 				}
 			}
 		}
@@ -86,8 +86,8 @@ final class NativeError extends IdScriptableObject {
 	}
 
 	@Override
-	protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
-		addIdFunctionProperty(cx, ctor, ERROR_TAG, ConstructorId_captureStackTrace, "captureStackTrace", 2);
+	protected void fillConstructorProperties(IdFunctionObject ctor) {
+		addIdFunctionProperty(ctor, ERROR_TAG, ConstructorId_captureStackTrace, "captureStackTrace", 2);
 
 		// This is running on the global "Error" object. Associate an object there that can store
 		// default stack trace, etc.
@@ -113,7 +113,7 @@ final class NativeError extends IdScriptableObject {
 			ProtoProps.class
 		);
 
-		super.fillConstructorProperties(cx, ctor);
+		super.fillConstructorProperties(ctor);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ final class NativeError extends IdScriptableObject {
 		// Get the object where prototype stuff is stored.
 		int limit = DEFAULT_STACK_LIMIT;
 		Function prepare = null;
-		NativeError cons = (NativeError) getPrototype(cx);
+		NativeError cons = (NativeError) getPrototype();
 		ProtoProps pp = (ProtoProps) cons.getAssociatedValue(ProtoProps.KEY);
 
 		if (pp != null) {
@@ -215,9 +215,9 @@ final class NativeError extends IdScriptableObject {
 	}
 
 	public void setStackDelegated(Scriptable target, Object value) {
-		target.delete(cx, "stack");
+		target.delete("stack");
 		stackProvider = null;
-		target.put(cx, "stack", target, value);
+		target.put("stack", target, value);
 	}
 
 	private Object callPrepareStack(Function prepare, ScriptStackElement[] stack) {
@@ -236,13 +236,13 @@ final class NativeError extends IdScriptableObject {
 	}
 
 	private static Object js_toString(Scriptable thisObj) {
-		Object name = getProperty(cx, thisObj, "name");
+		Object name = getProperty(thisObj, "name");
 		if (name == NOT_FOUND || name == Undefined.instance) {
 			name = "Error";
 		} else {
 			name = ScriptRuntime.toString(name);
 		}
-		Object msg = getProperty(cx, thisObj, "message");
+		Object msg = getProperty(thisObj, "message");
 		if (msg == NOT_FOUND || msg == Undefined.instance) {
 			msg = "";
 		} else {
@@ -271,7 +271,7 @@ final class NativeError extends IdScriptableObject {
 
 		// Figure out if they passed a function used to hide part of the stack
 		if (func != null) {
-			Object funcName = func.get(cx, "name", func);
+			Object funcName = func.get("name", func);
 			if ((funcName != null) && !Undefined.instance.equals(funcName)) {
 				err.associateValue(STACK_HIDE_KEY, Context.toString(funcName));
 			}

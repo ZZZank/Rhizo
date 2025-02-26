@@ -8,8 +8,6 @@
 
 package dev.latvian.mods.rhino;
 
-import lombok.val;
-
 /**
  * Java reflection of JavaScript exceptions.
  * Instances of this class are thrown by the JavaScript 'throw' keyword.
@@ -29,13 +27,12 @@ public class JavaScriptException extends RhinoException {
 		this.value = value;
 		// Fill in fileName and lineNumber automatically when not specified
 		// explicitly, see Bugzilla issue #342807
-		val cx = Context.getContext();
-		if (value instanceof NativeError error && cx.hasFeature(Context.FEATURE_LOCATION_INFORMATION_IN_ERROR)) {
-            if (!error.has(cx, "fileName", error)) {
-				error.put(cx, "fileName", error, sourceName);
+		if (value instanceof NativeError error && Context.getContext().hasFeature(Context.FEATURE_LOCATION_INFORMATION_IN_ERROR)) {
+            if (!error.has("fileName", error)) {
+				error.put("fileName", error, sourceName);
 			}
-			if (!error.has(cx, "lineNumber", error)) {
-				error.put(cx, "lineNumber", error, lineNumber);
+			if (!error.has("lineNumber", error)) {
+				error.put("lineNumber", error, lineNumber);
 			}
 			// set stack property, see bug #549604
 			error.setStackProvider(this);

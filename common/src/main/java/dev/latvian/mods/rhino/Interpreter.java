@@ -294,13 +294,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		}
 
 		private boolean fieldsEqual(CallFrame other, EqualObjectGraphs equal) {
-			return frameIndex == other.frameIndex && pc == other.pc && compareIdata(idata, other.idata) && equal.equalGraphs(
-				cx,
-				varSource.stack, other.varSource.stack) && Arrays.equals(varSource.sDbl, other.varSource.sDbl) && equal.equalGraphs(
-				cx,
-				thisObj, other.thisObj) && equal.equalGraphs(cx, fnOrScript, other.fnOrScript) && equal.equalGraphs(
-				cx,
-				scope, other.scope);
+			return frameIndex == other.frameIndex && pc == other.pc && compareIdata(idata, other.idata) && equal.equalGraphs(varSource.stack, other.varSource.stack) && Arrays.equals(varSource.sDbl, other.varSource.sDbl) && equal.equalGraphs(thisObj, other.thisObj) && equal.equalGraphs(fnOrScript, other.fnOrScript) && equal.equalGraphs(scope, other.scope);
 		}
 	}
 
@@ -1676,13 +1670,13 @@ public final class Interpreter extends Icode implements Evaluator {
 								indexReg = iCode[frame.pc++];
 								// fallthrough
 							case Token.SETVAR:
-								stackTop = doSetVar(cx, frame, stack, sDbl, stackTop, vars, varDbls, varAttributes, indexReg);
+								stackTop = doSetVar(frame, stack, sDbl, stackTop, vars, varDbls, varAttributes, indexReg);
 								continue;
 							case Icode_GETVAR1:
 								indexReg = iCode[frame.pc++];
 								// fallthrough
 							case Token.GETVAR:
-								stackTop = doGetVar(cx, frame, stack, sDbl, stackTop, vars, varDbls, indexReg);
+								stackTop = doGetVar(frame, stack, sDbl, stackTop, vars, varDbls, indexReg);
 								continue;
 							case Icode_VAR_INC_DEC: {
 								stackTop = doVarIncDec(cx, frame, stack, sDbl, stackTop, vars, varDbls, varAttributes, indexReg);
@@ -2311,7 +2305,7 @@ public final class Interpreter extends Icode implements Evaluator {
 			}
 			String stringReg = frame.idata.argNames[indexReg];
 			if (frame.scope instanceof ConstProperties cp) {
-                cp.putConst(cx, stringReg, frame.scope, val);
+                cp.putConst(stringReg, frame.scope, val);
 			} else {
 				throw Kit.codeBug();
 			}
@@ -2319,16 +2313,7 @@ public final class Interpreter extends Icode implements Evaluator {
 		return stackTop;
 	}
 
-	private static int doSetVar(
-		Context cx, CallFrame frame,
-		Object[] stack,
-		double[] sDbl,
-		int stackTop,
-		Object[] vars,
-		double[] varDbls,
-		int[] varAttributes,
-		int indexReg
-	) {
+	private static int doSetVar(CallFrame frame, Object[] stack, double[] sDbl, int stackTop, Object[] vars, double[] varDbls, int[] varAttributes, int indexReg) {
 		if (!frame.useActivation) {
 			if ((varAttributes[indexReg] & ScriptableObject.READONLY) == 0) {
 				vars[indexReg] = stack[stackTop];
@@ -2340,21 +2325,19 @@ public final class Interpreter extends Icode implements Evaluator {
 				val = ScriptRuntime.wrapNumber(sDbl[stackTop]);
 			}
 			String stringReg = frame.idata.argNames[indexReg];
-			frame.scope.put(cx, stringReg, frame.scope, val);
+			frame.scope.put(stringReg, frame.scope, val);
 		}
 		return stackTop;
 	}
 
-	private static int doGetVar(
-		Context cx,
-		CallFrame frame, Object[] stack, double[] sDbl, int stackTop, Object[] vars, double[] varDbls, int indexReg) {
+	private static int doGetVar(CallFrame frame, Object[] stack, double[] sDbl, int stackTop, Object[] vars, double[] varDbls, int indexReg) {
 		++stackTop;
 		if (!frame.useActivation) {
 			stack[stackTop] = vars[indexReg];
 			sDbl[stackTop] = varDbls[indexReg];
 		} else {
 			String stringReg = frame.idata.argNames[indexReg];
-			stack[stackTop] = frame.scope.get(cx, stringReg, frame.scope);
+			stack[stackTop] = frame.scope.get(stringReg, frame.scope);
 		}
 		return stackTop;
 	}

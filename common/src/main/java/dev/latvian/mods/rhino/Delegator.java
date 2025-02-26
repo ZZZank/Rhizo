@@ -91,112 +91,112 @@ public class Delegator implements Function, SymbolScriptable {
 	}
 
 	/**
-	 * @see Scriptable#get(Context, String, Scriptable)
+	 * @see Scriptable#get(String, Scriptable)
 	 */
 	@Override
-	public Object get(Context cx, String name, Scriptable start) {
-		return getDelegee().get(cx, name, start);
+	public Object get(String name, Scriptable start) {
+		return getDelegee().get(name, start);
 	}
 
 	@Override
-	public Object get(Context cx, Symbol key, Scriptable start) {
+	public Object get(Symbol key, Scriptable start) {
 		final Scriptable delegee = getDelegee();
 		if (delegee instanceof SymbolScriptable) {
-			return ((SymbolScriptable) delegee).get(cx, key, start);
+			return ((SymbolScriptable) delegee).get(key, start);
 		}
 		return NOT_FOUND;
 	}
 
 	/**
-	 * @see Scriptable#get(Context, int, Scriptable)
+	 * @see Scriptable#get(int, Scriptable)
 	 */
 	@Override
-	public Object get(Context cx, int index, Scriptable start) {
-		return getDelegee().get(cx, index, start);
+	public Object get(int index, Scriptable start) {
+		return getDelegee().get(index, start);
 	}
 
 	/**
-	 * @see Scriptable#has(Context, String, Scriptable)
+	 * @see Scriptable#has(String, Scriptable)
 	 */
 	@Override
-	public boolean has(Context cx, String name, Scriptable start) {
-		return getDelegee().has(cx, name, start);
+	public boolean has(String name, Scriptable start) {
+		return getDelegee().has(name, start);
 	}
 
 	@Override
-	public boolean has(Context cx, Symbol key, Scriptable start) {
+	public boolean has(Symbol key, Scriptable start) {
 		final Scriptable delegee = getDelegee();
 		if (delegee instanceof SymbolScriptable) {
-			return ((SymbolScriptable) delegee).has(cx, key, start);
+			return ((SymbolScriptable) delegee).has(key, start);
 		}
 		return false;
 	}
 
 	/**
-	 * @see Scriptable#has(Context, int, Scriptable)
+	 * @see Scriptable#has(int, Scriptable)
 	 */
 	@Override
-	public boolean has(Context cx, int index, Scriptable start) {
-		return getDelegee().has(cx, index, start);
+	public boolean has(int index, Scriptable start) {
+		return getDelegee().has(index, start);
 	}
 
 	/**
-	 * @see Scriptable#put(Context, String, Scriptable, Object)
+	 * @see Scriptable#put(String, Scriptable, Object)
 	 */
 	@Override
-	public void put(Context cx, String name, Scriptable start, Object value) {
-		getDelegee().put(cx, name, start, value);
+	public void put(String name, Scriptable start, Object value) {
+		getDelegee().put(name, start, value);
 	}
 
 	/**
-	 * @see SymbolScriptable#put(Context, Symbol, Scriptable, Object)
+	 * @see SymbolScriptable#put(Symbol, Scriptable, Object)
 	 */
 	@Override
-	public void put(Context cx, Symbol symbol, Scriptable start, Object value) {
+	public void put(Symbol symbol, Scriptable start, Object value) {
 		final Scriptable delegee = getDelegee();
 		if (delegee instanceof SymbolScriptable) {
-			((SymbolScriptable) delegee).put(cx, symbol, start, value);
+			((SymbolScriptable) delegee).put(symbol, start, value);
 		}
 	}
 
 	/**
-	 * @see Scriptable#put(Context, int, Scriptable, Object)
+	 * @see Scriptable#put(int, Scriptable, Object)
 	 */
 	@Override
-	public void put(Context cx, int index, Scriptable start, Object value) {
-		getDelegee().put(cx, index, start, value);
+	public void put(int index, Scriptable start, Object value) {
+		getDelegee().put(index, start, value);
 	}
 
 	/**
-	 * @see Scriptable#delete(Context, String)
+	 * @see Scriptable#delete(String)
 	 */
 	@Override
-	public void delete(Context cx, String name) {
-		getDelegee().delete(cx, name);
+	public void delete(String name) {
+		getDelegee().delete(name);
 	}
 
 	@Override
-	public void delete(Context cx, Symbol key) {
+	public void delete(Symbol key) {
 		final Scriptable delegee = getDelegee();
 		if (delegee instanceof SymbolScriptable) {
-			((SymbolScriptable) delegee).delete(cx, key);
+			((SymbolScriptable) delegee).delete(key);
 		}
 	}
 
 	/**
-	 * @see Scriptable#delete(Context, int)
+	 * @see Scriptable#delete(int)
 	 */
 	@Override
-	public void delete(Context cx, int index) {
-		getDelegee().delete(cx, index);
+	public void delete(int index) {
+		getDelegee().delete(index);
 	}
 
 	/**
 	 * @see Scriptable#getPrototype
 	 */
 	@Override
-	public Scriptable getPrototype(Context cx) {
-		return getDelegee().getPrototype(cx);
+	public Scriptable getPrototype() {
+		return getDelegee().getPrototype();
 	}
 
 	/**
@@ -227,8 +227,8 @@ public class Delegator implements Function, SymbolScriptable {
 	 * @see Scriptable#getIds
 	 */
 	@Override
-	public Object[] getIds(Context cx) {
-		return getDelegee().getIds(cx);
+	public Object[] getIds() {
+		return getDelegee().getIds();
 	}
 
 	/**
@@ -238,24 +238,21 @@ public class Delegator implements Function, SymbolScriptable {
 	 * <code>ScriptRuntime.FunctionClass</code>. Instead the object
 	 * itself is returned.
 	 *
-	 * @param cx
 	 * @param hint the type hint
 	 * @return the default value
 	 * @see Scriptable#getDefaultValue
 	 */
 	@Override
-	public Object getDefaultValue(Context cx, Class<?> hint) {
-		return (hint == null || hint == ScriptRuntime.ScriptableClass || hint == ScriptRuntime.FunctionClass) ? this : getDelegee().getDefaultValue(
-			cx,
-			hint);
+	public Object getDefaultValue(Class<?> hint) {
+		return (hint == null || hint == ScriptRuntime.ScriptableClass || hint == ScriptRuntime.FunctionClass) ? this : getDelegee().getDefaultValue(hint);
 	}
 
 	/**
 	 * @see Scriptable#hasInstance
 	 */
 	@Override
-	public boolean hasInstance(Context cx, Scriptable instance) {
-		return getDelegee().hasInstance(cx, instance);
+	public boolean hasInstance(Scriptable instance) {
+		return getDelegee().hasInstance(instance);
 	}
 
 	/**

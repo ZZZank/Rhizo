@@ -10,7 +10,16 @@ import dev.latvian.mods.rhino.util.DataObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.AbstractCollection;
+import java.util.AbstractSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -26,7 +35,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
 	static void init(Scriptable scope, boolean sealed) {
 		NativeObject obj = new NativeObject();
-		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	@Override
@@ -63,29 +72,27 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 	}
 
     @Override
-    protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_getPrototypeOf, "getPrototypeOf", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_setPrototypeOf, "setPrototypeOf", 2);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_keys, "keys", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_entries, "entries", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_values, "values", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_getOwnPropertyNames, "getOwnPropertyNames", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_getOwnPropertySymbols, "getOwnPropertySymbols", 1);
-        addIdFunctionProperty(
-            cx,
-            ctor, OBJECT_TAG, ConstructorId_getOwnPropertyDescriptor, "getOwnPropertyDescriptor", 2);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_defineProperty, "defineProperty", 3);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_isExtensible, "isExtensible", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_preventExtensions, "preventExtensions", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_defineProperties, "defineProperties", 2);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_create, "create", 2);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_isSealed, "isSealed", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_isFrozen, "isFrozen", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_seal, "seal", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_freeze, "freeze", 1);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_assign, "assign", 2);
-        addIdFunctionProperty(cx, ctor, OBJECT_TAG, ConstructorId_is, "is", 2);
-        super.fillConstructorProperties(cx, ctor);
+    protected void fillConstructorProperties(IdFunctionObject ctor) {
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_getPrototypeOf, "getPrototypeOf", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_setPrototypeOf, "setPrototypeOf", 2);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_keys, "keys", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_entries, "entries", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_values, "values", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_getOwnPropertyNames, "getOwnPropertyNames", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_getOwnPropertySymbols, "getOwnPropertySymbols", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_getOwnPropertyDescriptor, "getOwnPropertyDescriptor", 2);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_defineProperty, "defineProperty", 3);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_isExtensible, "isExtensible", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_preventExtensions, "preventExtensions", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_defineProperties, "defineProperties", 2);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_create, "create", 2);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_isSealed, "isSealed", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_isFrozen, "isFrozen", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_seal, "seal", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_freeze, "freeze", 1);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_assign, "assign", 2);
+        addIdFunctionProperty(ctor, OBJECT_TAG, ConstructorId_is, "is", 2);
+        super.fillConstructorProperties(ctor);
     }
 
     @Override
@@ -165,7 +172,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
             }
 
             case Id_toLocaleString: {
-                Object toString = getProperty(cx, thisObj, "toString");
+                Object toString = getProperty(thisObj, "toString");
                 if (!(toString instanceof Callable fun)) {
                     throw ScriptRuntime.notFunctionError(toString);
                 }
@@ -189,13 +196,13 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 boolean result;
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 if (arg instanceof Symbol) {
-                    result = ensureSymbolScriptable(thisObj).has(cx, (Symbol) arg, thisObj);
+                    result = ensureSymbolScriptable(thisObj).has((Symbol) arg, thisObj);
                 } else {
                     ScriptRuntime.StringIdOrIndex s = ScriptRuntime.toStringIdOrIndex(cx, arg);
                     if (s.stringId == null) {
-                        result = thisObj.has(cx, s.index, thisObj);
+                        result = thisObj.has(s.index, thisObj);
                     } else {
-                        result = thisObj.has(cx, s.stringId, thisObj);
+                        result = thisObj.has(s.stringId, thisObj);
                     }
                 }
                 return ScriptRuntime.wrapBoolean(result);
@@ -210,9 +217,9 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
 
                 if (arg instanceof Symbol) {
-                    result = ((SymbolScriptable) thisObj).has(cx, (Symbol) arg, thisObj);
+                    result = ((SymbolScriptable) thisObj).has((Symbol) arg, thisObj);
                     if (result && thisObj instanceof ScriptableObject so) {
-                        int attrs = so.getAttributes(cx, (Symbol) arg);
+                        int attrs = so.getAttributes((Symbol) arg);
                         result = ((attrs & DONTENUM) == 0);
                     }
                 } else {
@@ -221,15 +228,15 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                     // throwing an exception.  See: https://github.com/mozilla/rhino/issues/415
                     try {
                         if (s.stringId == null) {
-                            result = thisObj.has(cx, s.index, thisObj);
+                            result = thisObj.has(s.index, thisObj);
                             if (result && thisObj instanceof ScriptableObject so) {
-                                int attrs = so.getAttributes(cx, s.index);
+                                int attrs = so.getAttributes(s.index);
                                 result = ((attrs & DONTENUM) == 0);
                             }
                         } else {
-                            result = thisObj.has(cx, s.stringId, thisObj);
+                            result = thisObj.has(s.stringId, thisObj);
                             if (result && thisObj instanceof ScriptableObject so) {
-                                int attrs = so.getAttributes(cx, s.stringId);
+                                int attrs = so.getAttributes(s.stringId);
                                 result = ((attrs & DONTENUM) == 0);
                             }
                         }
@@ -252,7 +259,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 boolean result = false;
                 if (args.length != 0 && args[0] instanceof Scriptable v) {
                     do {
-                        v = v.getPrototype(cx);
+                        v = v.getPrototype();
                         if (v == thisObj) {
                             result = true;
                             break;
@@ -300,7 +307,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                     }
                     // If there is no getter or setter for the object itself,
                     // how about the prototype?
-                    Scriptable v = so.getPrototype(cx);
+                    Scriptable v = so.getPrototype();
                     if (v == null) {
                         break;
                     }
@@ -319,7 +326,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
             case ConstructorId_getPrototypeOf: {
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 Scriptable obj = getCompatibleObject(cx, scope, arg);
-                return obj.getPrototype(cx);
+                return obj.getPrototype();
             }
             case ConstructorId_setPrototypeOf: {
                 if (args.length < 2) {
@@ -345,7 +352,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                     if (prototypeProto == obj) {
                         throw ScriptRuntime.typeError1("msg.object.cyclic.prototype", obj.getClass().getSimpleName());
                     }
-                    prototypeProto = prototypeProto.getPrototype(cx);
+                    prototypeProto = prototypeProto.getPrototype();
                 }
                 obj.setPrototype(proto);
                 return obj;
@@ -353,7 +360,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
             case ConstructorId_keys: {
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 Scriptable obj = getCompatibleObject(cx, scope, arg);
-                Object[] ids = obj.getIds(cx);
+                Object[] ids = obj.getIds();
                 for (int i = 0; i < ids.length; i++) {
                     ids[i] = ScriptRuntime.toString(ids[i]);
                 }
@@ -362,12 +369,12 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 			case ConstructorId_entries: {
 				Object arg = args.length < 1 ? Undefined.instance : args[0];
 				Scriptable obj = getCompatibleObject(cx, scope, arg);
-				Object[] ids = obj.getIds(cx);
+				Object[] ids = obj.getIds();
 				Object[] entries = new Object[ids.length];
 				for (int i = 0; i < ids.length; i++) {
 					Object[] entry = new Object[2];
 					entry[0] = ScriptRuntime.toString(ids[i]);
-					entry[1] = obj.get(cx, entry[0].toString(), scope);
+					entry[1] = obj.get(entry[0].toString(), scope);
 					entries[i] = cx.newArray(scope, entry);
 				}
 				return cx.newArray(scope, entries);
@@ -375,10 +382,10 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 			case ConstructorId_values: {
 				Object arg = args.length < 1 ? Undefined.instance : args[0];
 				Scriptable obj = getCompatibleObject(cx, scope, arg);
-				Object[] ids = obj.getIds(cx);
+				Object[] ids = obj.getIds();
 				Object[] values = new Object[ids.length];
 				for (int i = 0; i < ids.length; i++) {
-					values[i] = obj.get(cx, ScriptRuntime.toString(ids[i]), scope);
+					values[i] = obj.get(ScriptRuntime.toString(ids[i]), scope);
 				}
 				return cx.newArray(scope, values);
 			}
@@ -386,7 +393,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 Scriptable s = getCompatibleObject(cx, scope, arg);
                 ScriptableObject obj = ensureScriptableObject(s);
-                Object[] ids = obj.getIds(cx, true, false);
+                Object[] ids = obj.getIds(true, false);
                 for (int i = 0; i < ids.length; i++) {
                     ids[i] = ScriptRuntime.toString(ids[i]);
                 }
@@ -396,7 +403,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 Object arg = args.length < 1 ? Undefined.instance : args[0];
                 Scriptable s = getCompatibleObject(cx, scope, arg);
                 ScriptableObject obj = ensureScriptableObject(s);
-                Object[] ids = obj.getIds(cx, true, true);
+                Object[] ids = obj.getIds(true, true);
                 ArrayList<Object> syms = new ArrayList<>();
                 for (Object o : ids) {
                     if (o instanceof Symbol) {
@@ -479,8 +486,8 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                     return Boolean.FALSE;
                 }
 
-                for (Object name : obj.getAllIds(cx)) {
-                    Object configurable = obj.getOwnPropertyDescriptor(cx, name).get(cx, "configurable");
+                for (Object name : obj.getAllIds()) {
+                    Object configurable = obj.getOwnPropertyDescriptor(cx, name).get("configurable");
                     if (Boolean.TRUE.equals(configurable)) {
                         return Boolean.FALSE;
                     }
@@ -500,12 +507,12 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                     return Boolean.FALSE;
                 }
 
-                for (Object name : obj.getAllIds(cx)) {
+                for (Object name : obj.getAllIds()) {
                     ScriptableObject desc = obj.getOwnPropertyDescriptor(cx, name);
-                    if (Boolean.TRUE.equals(desc.get(cx, "configurable"))) {
+                    if (Boolean.TRUE.equals(desc.get("configurable"))) {
                         return Boolean.FALSE;
                     }
-                    if (isDataDescriptor(cx, desc) && Boolean.TRUE.equals(desc.get(cx, "writable"))) {
+                    if (isDataDescriptor(desc) && Boolean.TRUE.equals(desc.get("writable"))) {
                         return Boolean.FALSE;
                     }
                 }
@@ -520,10 +527,10 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
                 ScriptableObject obj = ensureScriptableObject(arg);
 
-                for (Object name : obj.getAllIds(cx)) {
+                for (Object name : obj.getAllIds()) {
                     ScriptableObject desc = obj.getOwnPropertyDescriptor(cx, name);
-                    if (Boolean.TRUE.equals(desc.get(cx, "configurable"))) {
-                        desc.put(cx, "configurable", desc, Boolean.FALSE);
+                    if (Boolean.TRUE.equals(desc.get("configurable"))) {
+                        desc.put("configurable", desc, Boolean.FALSE);
                         obj.defineOwnProperty(cx, name, desc, false);
                     }
                 }
@@ -539,13 +546,13 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
                 ScriptableObject obj = ensureScriptableObject(arg);
 
-                for (Object name : obj.getIds(cx, true, true)) {
+                for (Object name : obj.getIds(true, true)) {
                     ScriptableObject desc = obj.getOwnPropertyDescriptor(cx, name);
-                    if (isDataDescriptor(cx, desc) && Boolean.TRUE.equals(desc.get(cx, "writable"))) {
-                        desc.put(cx, "writable", desc, Boolean.FALSE);
+                    if (isDataDescriptor(desc) && Boolean.TRUE.equals(desc.get("writable"))) {
+                        desc.put("writable", desc, Boolean.FALSE);
                     }
-                    if (Boolean.TRUE.equals(desc.get(cx, "configurable"))) {
-                        desc.put(cx, "configurable", desc, Boolean.FALSE);
+                    if (Boolean.TRUE.equals(desc.get("configurable"))) {
+                        desc.put("configurable", desc, Boolean.FALSE);
                     }
                     obj.defineOwnProperty(cx, name, desc, false);
                 }
@@ -564,18 +571,18 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                         continue;
                     }
                     Scriptable sourceObj = ScriptRuntime.toObject(cx, thisObj, args[i]);
-                    Object[] ids = sourceObj.getIds(cx);
+                    Object[] ids = sourceObj.getIds();
                     for (Object key : ids) {
                         if (key instanceof String) {
-                            Object val = sourceObj.get(cx, (String) key, sourceObj);
+                            Object val = sourceObj.get((String) key, sourceObj);
                             if ((val != NOT_FOUND) && !Undefined.isUndefined(val)) {
-                                targetObj.put(cx, (String) key, targetObj, val);
+                                targetObj.put((String) key, targetObj, val);
                             }
                         } else if (key instanceof Number) {
                             int ii = ScriptRuntime.toInt32(key);
-                            Object val = sourceObj.get(cx, ii, sourceObj);
+                            Object val = sourceObj.get(ii, sourceObj);
                             if ((val != NOT_FOUND) && !Undefined.isUndefined(val)) {
-                                targetObj.put(cx, ii, targetObj, val);
+                                targetObj.put(ii, targetObj, val);
                             }
                         }
                     }
@@ -605,9 +612,9 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
     @Override
     public boolean containsKey(Object key) {
         if (key instanceof String) {
-            return has(cx, (String) key, this);
+            return has((String) key, this);
         } else if (key instanceof Number) {
-            return has(cx, ((Number) key).intValue(), this);
+            return has(((Number) key).intValue(), this);
         }
         return false;
     }
@@ -615,7 +622,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
     @Override
     public boolean containsValue(Object value) {
         for (Object obj : values()) {
-            if (Objects.equals(value, obj)) {
+            if (value == obj || value != null && value.equals(obj)) {
                 return true;
             }
         }
@@ -624,11 +631,11 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
     @Override
     public Object remove(Object key) {
-        Object value = get(cx, key);
+        Object value = get(key);
         if (key instanceof String) {
-            delete(cx, (String) key);
+            delete((String) key);
         } else if (key instanceof Number) {
-            delete(cx, ((Number) key).intValue());
+            delete(((Number) key).intValue());
         }
         return value;
     }
@@ -668,7 +675,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
         @Override
         public Iterator<Entry<Object, Object>> iterator() {
             return new Iterator<Map.Entry<Object, Object>>() {
-                final Object[] ids = getIds(cx);
+                final Object[] ids = getIds();
                 Object key = null;
                 int index = 0;
 
@@ -680,7 +687,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
                 @Override
                 public Map.Entry<Object, Object> next() {
                     final Object ekey = key = ids[index++];
-                    final Object value = get(cx, key);
+                    final Object value = get(key);
                     return new Map.Entry<Object, Object>() {
                         @Override
                         public Object getKey() {
@@ -744,7 +751,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
         @Override
         public Iterator<Object> iterator() {
             return new Iterator<Object>() {
-                final Object[] ids = getIds(cx);
+                final Object[] ids = getIds();
                 Object key;
                 int index = 0;
 
@@ -784,8 +791,8 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
         @Override
         public Iterator<Object> iterator() {
-            return new Iterator<>() {
-                final Object[] ids = getIds(cx);
+            return new Iterator<Object>() {
+                final Object[] ids = getIds();
                 Object key;
                 int index = 0;
 
@@ -796,7 +803,7 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
                 @Override
                 public Object next() {
-                    return get(cx, (key = ids[index++]));
+                    return get((key = ids[index++]));
                 }
 
                 @Override
@@ -938,11 +945,9 @@ public class NativeObject extends IdScriptableObject implements Map, DataObject 
 
         try {
             for (Field field : inst.getClass().getFields()) {
-                if (Modifier.isPublic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers()) && has(
-                    cx,
-                    field.getName(), this)) {
+                if (Modifier.isPublic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers()) && has(field.getName(), this)) {
                     field.setAccessible(true);
-                    field.set(inst, get(cx, field.getName(), this));
+                    field.set(inst, get(field.getName(), this));
                 }
             }
         } catch (Exception ex) {

@@ -31,7 +31,7 @@ public class NativeWeakMap extends IdScriptableObject {
 
 	static void init(Scriptable scope, boolean sealed) {
 		NativeWeakMap m = new NativeWeakMap();
-		m.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+		m.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	@Override

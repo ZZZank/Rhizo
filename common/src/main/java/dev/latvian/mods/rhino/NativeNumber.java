@@ -28,7 +28,7 @@ final class NativeNumber extends IdScriptableObject {
 
 	static void init(Scriptable scope, boolean sealed) {
 		NativeNumber obj = new NativeNumber(0.0);
-		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	NativeNumber(double number) {
@@ -41,25 +41,25 @@ final class NativeNumber extends IdScriptableObject {
 	}
 
 	@Override
-	protected void fillConstructorProperties(Context cx, IdFunctionObject ctor) {
+	protected void fillConstructorProperties(IdFunctionObject ctor) {
 		final int attr = DONTENUM | PERMANENT | READONLY;
 
-		ctor.defineProperty(cx, "NaN", ScriptRuntime.NaNobj, attr);
-		ctor.defineProperty(cx, "POSITIVE_INFINITY", ScriptRuntime.wrapNumber(Double.POSITIVE_INFINITY), attr);
-		ctor.defineProperty(cx, "NEGATIVE_INFINITY", ScriptRuntime.wrapNumber(Double.NEGATIVE_INFINITY), attr);
-		ctor.defineProperty(cx, "MAX_VALUE", ScriptRuntime.wrapNumber(Double.MAX_VALUE), attr);
-		ctor.defineProperty(cx, "MIN_VALUE", ScriptRuntime.wrapNumber(Double.MIN_VALUE), attr);
-		ctor.defineProperty(cx, "MAX_SAFE_INTEGER", ScriptRuntime.wrapNumber(MAX_SAFE_INTEGER), attr);
-		ctor.defineProperty(cx, "MIN_SAFE_INTEGER", ScriptRuntime.wrapNumber(MIN_SAFE_INTEGER), attr);
+		ctor.defineProperty("NaN", ScriptRuntime.NaNobj, attr);
+		ctor.defineProperty("POSITIVE_INFINITY", ScriptRuntime.wrapNumber(Double.POSITIVE_INFINITY), attr);
+		ctor.defineProperty("NEGATIVE_INFINITY", ScriptRuntime.wrapNumber(Double.NEGATIVE_INFINITY), attr);
+		ctor.defineProperty("MAX_VALUE", ScriptRuntime.wrapNumber(Double.MAX_VALUE), attr);
+		ctor.defineProperty("MIN_VALUE", ScriptRuntime.wrapNumber(Double.MIN_VALUE), attr);
+		ctor.defineProperty("MAX_SAFE_INTEGER", ScriptRuntime.wrapNumber(MAX_SAFE_INTEGER), attr);
+		ctor.defineProperty("MIN_SAFE_INTEGER", ScriptRuntime.wrapNumber(MIN_SAFE_INTEGER), attr);
 
-		addIdFunctionProperty(cx, ctor, NUMBER_TAG, ConstructorId_isFinite, "isFinite", 1);
-		addIdFunctionProperty(cx, ctor, NUMBER_TAG, ConstructorId_isNaN, "isNaN", 1);
-		addIdFunctionProperty(cx, ctor, NUMBER_TAG, ConstructorId_isInteger, "isInteger", 1);
-		addIdFunctionProperty(cx, ctor, NUMBER_TAG, ConstructorId_isSafeInteger, "isSafeInteger", 1);
-		addIdFunctionProperty(cx, ctor, NUMBER_TAG, ConstructorId_parseFloat, "parseFloat", 1);
-		addIdFunctionProperty(cx, ctor, NUMBER_TAG, ConstructorId_parseInt, "parseInt", 1);
+		addIdFunctionProperty(ctor, NUMBER_TAG, ConstructorId_isFinite, "isFinite", 1);
+		addIdFunctionProperty(ctor, NUMBER_TAG, ConstructorId_isNaN, "isNaN", 1);
+		addIdFunctionProperty(ctor, NUMBER_TAG, ConstructorId_isInteger, "isInteger", 1);
+		addIdFunctionProperty(ctor, NUMBER_TAG, ConstructorId_isSafeInteger, "isSafeInteger", 1);
+		addIdFunctionProperty(ctor, NUMBER_TAG, ConstructorId_parseFloat, "parseFloat", 1);
+		addIdFunctionProperty(ctor, NUMBER_TAG, ConstructorId_parseInt, "parseInt", 1);
 
-		super.fillConstructorProperties(cx, ctor);
+		super.fillConstructorProperties(ctor);
 	}
 
 	@Override

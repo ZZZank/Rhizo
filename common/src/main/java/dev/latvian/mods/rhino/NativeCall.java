@@ -21,9 +21,9 @@ public final class NativeCall extends IdScriptableObject {
 
 	private static final Object CALL_TAG = "Call";
 
-	static void init(Scriptable scope, boolean sealed, Context cx) {
+	static void init(Scriptable scope, boolean sealed) {
 		NativeCall obj = new NativeCall();
-		obj.exportAsJSClass(cx, MAX_PROTOTYPE_ID, scope, sealed);
+		obj.exportAsJSClass(MAX_PROTOTYPE_ID, scope, sealed);
 	}
 
 	NativeCall() {
@@ -62,33 +62,33 @@ public final class NativeCall extends IdScriptableObject {
 				for (int i = 0; i < paramCount; ++i) {
 					val name = function.getParamOrVarName(i);
 					val value = i < args.length ? args[i] : Undefined.instance;
-					defineProperty(cx, name, value, PERMANENT);
+					defineProperty(name, value, PERMANENT);
 				}
-				defineProperty(cx, function.getParamOrVarName(paramCount), cx.newArray(scope, vals), PERMANENT);
+				defineProperty(function.getParamOrVarName(paramCount), cx.newArray(scope, vals), PERMANENT);
 			} else {
 				for (int i = 0; i < paramCount; ++i) {
 					val name = function.getParamOrVarName(i);
 					val val = i < args.length ? args[i] : Undefined.instance;
-					defineProperty(cx, name, val, PERMANENT);
+					defineProperty(name, val, PERMANENT);
 				}
 			}
 		}
 
 		// initialize "arguments" property but only if it was not overridden by
 		// the parameter with the same name
-		if (!super.has(cx, "arguments", this) && !isArrow) {
-			arguments = new Arguments(cx, this);
-			defineProperty(cx, "arguments", arguments, PERMANENT);
+		if (!super.has("arguments", this) && !isArrow) {
+			arguments = new Arguments(this);
+			defineProperty("arguments", arguments, PERMANENT);
 		}
 
 		if (paramAndVarCount != 0) {
 			for (int i = paramCount; i < paramAndVarCount; ++i) {
 				val name = function.getParamOrVarName(i);
-				if (!super.has(cx, name, this)) {
+				if (!super.has(name, this)) {
 					if (function.getParamOrVarConst(i)) {
-						defineProperty(cx, name, Undefined.instance, CONST);
+						defineProperty(name, Undefined.instance, CONST);
 					} else if (!(function instanceof InterpretedFunction) || ((InterpretedFunction) function).hasFunctionNamed(name)) {
-						defineProperty(cx, name, Undefined.instance, PERMANENT);
+						defineProperty(name, Undefined.instance, PERMANENT);
 					}
 				}
 			}
@@ -130,7 +130,7 @@ public final class NativeCall extends IdScriptableObject {
 			}
 			ScriptRuntime.checkDeprecated(cx, "Call");
 			NativeCall result = new NativeCall();
-			result.setPrototype(getObjectPrototype(cx, scope));
+			result.setPrototype(getObjectPrototype(scope));
 			return result;
 		}
 		throw new IllegalArgumentException(String.valueOf(id));

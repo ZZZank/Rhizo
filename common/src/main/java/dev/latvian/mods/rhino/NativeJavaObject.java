@@ -75,17 +75,17 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public boolean has(Context cx, String name, Scriptable start) {
+	public boolean has(String name, Scriptable start) {
 		return members.has(name, false);
 	}
 
 	@Override
-	public boolean has(Context cx, int index, Scriptable start) {
+	public boolean has(int index, Scriptable start) {
 		return false;
 	}
 
 	@Override
-	public boolean has(Context cx, Symbol key, Scriptable start) {
+	public boolean has(Symbol key, Scriptable start) {
 		if (javaObject instanceof Iterable<?> && SymbolKey.ITERATOR.equals(key)) {
 			return true;
 		}
@@ -93,7 +93,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public Object get(Context cx, String name, Scriptable start) {
+	public Object get(String name, Scriptable start) {
 		if (fieldAndMethods != null) {
 			val result = fieldAndMethods.get(name);
 			if (result != null) {
@@ -106,7 +106,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public Object get(Context cx, Symbol key, Scriptable start) {
+	public Object get(Symbol key, Scriptable start) {
 		if (javaObject instanceof Iterable<?> itr && SymbolKey.ITERATOR.equals(key)) {
 			return NativeJavaIterator.ofGetter(itr.iterator());
 		}
@@ -116,24 +116,24 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public Object get(Context cx, int index, Scriptable start) {
+	public Object get(int index, Scriptable start) {
 		throw members.reportMemberNotFound(Integer.toString(index));
 	}
 
 	@Override
-	public void put(Context cx, String name, Scriptable start, Object value) {
+	public void put(String name, Scriptable start, Object value) {
 		// We could be asked to modify the value of a property in the
 		// prototype. Since we can't add a property to a Java object,
 		// we modify it in the prototype rather than copy it down.
 		if (prototype == null || members.has(name, false)) {
 			members.put(this, name, javaObject, value, false);
 		} else {
-			prototype.put(cx, name, prototype, value);
+			prototype.put(name, prototype, value);
 		}
 	}
 
 	@Override
-	public void put(Context cx, Symbol symbol, Scriptable start, Object value) {
+	public void put(Symbol symbol, Scriptable start, Object value) {
 		// We could be asked to modify the value of a property in the
 		// prototype. Since we can't add a property to a Java object,
 		// we modify it in the prototype rather than copy it down.
@@ -141,23 +141,23 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 		if (prototype == null || members.has(name, false)) {
 			members.put(this, name, javaObject, value, false);
 		} else if (prototype instanceof SymbolScriptable) {
-			((SymbolScriptable) prototype).put(cx, symbol, prototype, value);
+			((SymbolScriptable) prototype).put(symbol, prototype, value);
 		}
 	}
 
 	@Override
-	public void put(Context cx, int index, Scriptable start, Object value) {
+	public void put(int index, Scriptable start, Object value) {
 		throw members.reportMemberNotFound(Integer.toString(index));
 	}
 
 	@Override
-	public boolean hasInstance(Context cx, Scriptable value) {
+	public boolean hasInstance(Scriptable value) {
 		// This is an instance of a Java class, so always return false
 		return false;
 	}
 
 	@Override
-	public void delete(Context cx, String name) {
+	public void delete(String name) {
 		if (fieldAndMethods != null) {
 			Object result = fieldAndMethods.get(name);
 			if (result != null) {
@@ -170,17 +170,17 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public void delete(Context cx, Symbol key) {
+	public void delete(Symbol key) {
 	}
 
 	@Override
-	public void delete(Context cx, int index) {
+	public void delete(int index) {
 	}
 
 	@Override
-	public Scriptable getPrototype(Context cx) {
+	public Scriptable getPrototype() {
 		if (prototype == null && javaObject instanceof String) {
-			return TopLevel.getBuiltinPrototype(cx, ScriptableObject.getTopLevelScope(parent), TopLevel.Builtins.String);
+			return TopLevel.getBuiltinPrototype(ScriptableObject.getTopLevelScope(parent), TopLevel.Builtins.String);
 		}
 		return prototype;
 	}
@@ -210,7 +210,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public Object[] getIds(Context cx) {
+	public Object[] getIds() {
 		return members.getIds(false);
 	}
 
@@ -225,7 +225,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	@Override
-	public Object getDefaultValue(Context cx, Class<?> hint) {
+	public Object getDefaultValue(Class<?> hint) {
 		Object value;
 		if (hint == null) {
 			if (javaObject instanceof Boolean) {
@@ -245,7 +245,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 			} else {
 				throw Context.reportRuntimeError0("msg.default.value");
 			}
-			Object converterObject = get(cx, converterName, this);
+			Object converterObject = get(converterName, this);
 			if (converterObject instanceof Function f) {
                 value = f.call(Context.getContext(), f.getParentScope(), this, ScriptRuntime.emptyArgs);
 			} else {
