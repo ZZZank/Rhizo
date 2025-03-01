@@ -332,7 +332,7 @@ public class Context {
         return VMBridge.vm.getContext(VMBridge.vm.getThreadContextHelper());
     }
 
-    private static final int DEBUG_ENTER_EXIT = 0;
+    private static final int DEBUG_ENTER_EXIT = -1;
 
     /**
      * Same as calling {@link ContextFactory#enterContext()} on the global
@@ -348,21 +348,6 @@ public class Context {
 
     public static Context enterWithNewFactory() {
         return enter(null, new ContextFactory());
-    }
-
-    private static final ThreadLocal<Context> DIRTY_CACHE = new ThreadLocal<>();
-
-    static void enterDirty(ContextFactory factory) {
-        if (getCurrentContext() != null) {
-            throw new IllegalStateException("trying to set context in a dirty way when context for current thread is not null");
-        }
-        Context.enter(DIRTY_CACHE.get(), factory);
-        DIRTY_CACHE.remove();
-    }
-
-    static void exitDirty() {
-        DIRTY_CACHE.set(VMBridge.vm.getContext(VMBridge.vm.getThreadContextHelper()));
-        Context.exit();
     }
 
     static Context enter(Context cx, ContextFactory factory) {
