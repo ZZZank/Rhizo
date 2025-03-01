@@ -58,6 +58,7 @@ public class TestConsole {
 		}
 
 		consoleOutput.append(s);
+		Context.exit();
 	}
 
 	public String getConsoleOutput() {
