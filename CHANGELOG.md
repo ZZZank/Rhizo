@@ -1,3 +1,17 @@
+## Rhizo 3.6.1 -> 3.6.2
+
+Concurrency fix
+
+- fixed a concurrency issue from Rhino, which is very likely to happen when events available for both client and server
+are posted
+- Rhizo will now try to pass the exact chosen context to JS codes when there are multiple contexts present
+- fixed a type wrapper bug where if type wrapper for fundamental types are present, type wrapping from Rhino itself stops
+working. Lat fixed this by not registering such type wrapper in KubeJS, but KubeJS for 1.16 is dead, so I have to fix it
+myself
+- (For developer) new typing annotation `ReturnsSelf`
+
+---
+
 ## Rhizo 3.6.0 -> 3.6.1
 
 Compiler Mode Fix
