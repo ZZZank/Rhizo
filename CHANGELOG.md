@@ -8,6 +8,7 @@ are posted
 - fixed a type wrapper bug where if type wrapper for fundamental types are present, type wrapping from Rhino itself stops
 working. Lat fixed this by not registering such type wrapper in KubeJS, but KubeJS for 1.16 is dead, so I have to fix it
 myself
+- fixed a memory leaking issue in JavaMembers
 - (For developer) new typing annotation `ReturnsSelf`
 
 ---
@@ -25,7 +26,7 @@ Compiler Mode Fix
 Enum equality & `for..of` for Java Iterables
 
 - You can use `enum == "EnumNameHere"` or `enum == 1` (enum index) to compare enum now
-    - Note: special equality is NOT added to `===` and `!==`, that is, `enum === "EnumNameHere"` or `enum == 1` (enum
+    - Note: special equality is NOT added to `===` and `!==`, that is, `enum === "EnumNameHere"` or `enum === 1` (enum
 index) will still always return `false`
 - you can now iterate through Java Iterables, just like native JS array
     - `for (let element of someJavaList) {}` for example
