@@ -128,7 +128,7 @@ public final class ES6Generator extends IdScriptableObject {
 
 			Callable nextFn = ScriptRuntime.getPropFunctionAndThis(delegee, ES6Iterator.NEXT_METHOD, cx, scope);
 			Scriptable nextThis = ScriptRuntime.lastStoredScriptable(cx);
-			Object nr = nextFn.call(cx, scope, nextThis, nextArgs);
+			Object nr = nextFn.callSync(cx, scope, nextThis, nextArgs);
 
 			Scriptable nextResult = ScriptableObject.ensureScriptable(nr);
 			if (ScriptRuntime.isIteratorDone(cx, nextResult)) {
@@ -154,7 +154,7 @@ public final class ES6Generator extends IdScriptableObject {
 			// Delegate to "throw" method. If it's not defined we'll get an error here.
 			Callable throwFn = ScriptRuntime.getPropFunctionAndThis(delegee, "throw", cx, scope);
 			Scriptable nextThis = ScriptRuntime.lastStoredScriptable(cx);
-			Object throwResult = throwFn.call(cx, scope, nextThis, new Object[]{value});
+			Object throwResult = throwFn.callSync(cx, scope, nextThis, new Object[]{value});
 
 			if (ScriptRuntime.isIteratorDone(cx, throwResult)) {
 				// Iterator is "done".
@@ -360,7 +360,7 @@ public final class ES6Generator extends IdScriptableObject {
 			if (!(retFnObj instanceof Callable)) {
 				throw ScriptRuntime.typeError2("msg.isnt.function", ES6Iterator.RETURN_METHOD, ScriptRuntime.typeof(retFnObj));
 			}
-			return ((Callable) retFnObj).call(cx, scope, ensureScriptable(delegee), retArgs);
+			return ((Callable) retFnObj).callSync(cx, scope, ensureScriptable(delegee), retArgs);
 		}
 		return null;
 	}

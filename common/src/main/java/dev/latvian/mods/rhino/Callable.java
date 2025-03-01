@@ -21,5 +21,11 @@ public interface Callable {
 	 * @return the result of the call
 	 */
 	Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args);
+
+	default Object callSync(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
+		synchronized (cx) {
+			return call(cx, scope, thisObj, args);
+		}
+	}
 }
 
