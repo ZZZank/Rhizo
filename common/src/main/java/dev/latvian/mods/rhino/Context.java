@@ -332,6 +332,8 @@ public class Context {
         return VMBridge.vm.getContext(VMBridge.vm.getThreadContextHelper());
     }
 
+    private static final int DEBUG_ENTER_EXIT = 0;
+
     /**
      * Same as calling {@link ContextFactory#enterContext()} on the global
      * ContextFactory instance.
@@ -383,7 +385,18 @@ public class Context {
             }
             VMBridge.vm.setContext(helper, cx);
         }
-        ++cx.enterCount;
+
+        cx.enterCount++;
+        if (DEBUG_ENTER_EXIT >= 0) {
+            System.out.println("Context entered, enter count: " + cx.enterCount);
+            if (DEBUG_ENTER_EXIT > 0) {
+                val stackTrace = Thread.currentThread().getStackTrace();
+                val printLen = Math.min(stackTrace.length, DEBUG_ENTER_EXIT);
+                for (int i = 0; i < printLen; i++) {
+                    System.out.println("\tat " + stackTrace[i]);
+                }
+            }
+        }
         return cx;
     }
 
@@ -408,7 +421,18 @@ public class Context {
         if (cx.enterCount < 1) {
             Kit.codeBug("Expected context to have entered at least once, but actual enter count is: " + cx.enterCount);
         }
-        if (--cx.enterCount == 0) {
+        cx.enterCount--;
+        if (DEBUG_ENTER_EXIT >= 0) {
+            System.out.println("Context exited, enter count: " + cx.enterCount);
+            if (DEBUG_ENTER_EXIT > 0) {
+                val stackTrace = Thread.currentThread().getStackTrace();
+                val printLen = Math.min(stackTrace.length, DEBUG_ENTER_EXIT);
+                for (int i = 0; i < printLen; i++) {
+                    System.out.println("\tat " + stackTrace[i]);
+                }
+            }
+        }
+        if (cx.enterCount == 0) {
             VMBridge.vm.setContext(helper, null);
             cx.factory.onContextReleased(cx);
         }
