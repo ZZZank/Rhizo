@@ -306,8 +306,8 @@ public class Context {
         this.factory = factory;
         maximumInterpreterStackDepth = Integer.MAX_VALUE;
 
-        if (RhinoProperties.INSTANCE.enableCompiler) {
-            optimizationLevel = RhinoProperties.INSTANCE.optimizationLevel;
+        if (RhinoProperties.enableCompiler) {
+            optimizationLevel = RhinoProperties.optimizationLevel;
         } else {
             optimizationLevel = -1;
         }

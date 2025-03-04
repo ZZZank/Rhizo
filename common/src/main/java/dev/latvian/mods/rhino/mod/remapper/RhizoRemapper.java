@@ -101,7 +101,11 @@ public class RhizoRemapper implements Remapper {
     }
 
     private static InputStream locateMappingFile() {
-        val cfgPath = RhinoProperties.getGameDir().resolve("config/" + RhizoMappingGen.MAPPING_FILENAME);
+        val gameDir = RhinoProperties.getGameDir();
+        if (gameDir == null) {
+            return null;
+        }
+        val cfgPath = gameDir.resolve("config/" + RhizoMappingGen.MAPPING_FILENAME);
         try {
             if (Files.exists(cfgPath)) {
                 MappingIO.LOGGER.info("Found Rhizo mapping file from config/{}.", RhizoMappingGen.MAPPING_FILENAME);

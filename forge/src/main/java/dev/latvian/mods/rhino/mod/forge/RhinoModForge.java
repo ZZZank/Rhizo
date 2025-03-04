@@ -18,7 +18,7 @@ public class RhinoModForge {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        if (RhinoProperties.INSTANCE.generateMapping) {
+        if (RhinoProperties.generateMapping) {
             Thread t = new Thread(() -> RhizoMappingGen.generate("1.16.5"));
             t.setDaemon(true);
             t.start();

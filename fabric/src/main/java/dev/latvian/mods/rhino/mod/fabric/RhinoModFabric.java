@@ -20,7 +20,7 @@ public class RhinoModFabric implements ModInitializer {
     public void onInitialize() {
         MappingTransformer.IMPL.setValue(new MappingTransformerFabric());
 
-        if (RhinoProperties.INSTANCE.generateMapping) {
+        if (RhinoProperties.generateMapping) {
             RhizoMappingGen.generate("1.16.5");
         }
     }

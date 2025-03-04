@@ -6,8 +6,8 @@ import lombok.val;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -18,16 +18,15 @@ import java.util.Properties;
  */
 public class RhinoProperties {
 
-	public static final RhinoProperties INSTANCE = new RhinoProperties();
-
-	public boolean generateMapping;
-	public boolean enableCompiler;
-	public int optimizationLevel;
+	public static boolean generateMapping = false;
+	public static boolean enableCompiler = false;
+	public static int optimizationLevel = 0;
+	public static boolean concurrentContext = true;
 
 	@ExpectPlatform
 	@Contract(value = " -> _", pure = true)
 	public static Path getGameDir() {
-		return FileSystems.getDefault().getPath("/_dev_running");
+		return null;
 	}
 
 	@ExpectPlatform
@@ -43,15 +42,25 @@ public class RhinoProperties {
 		throw new AssertionError();
 	}
 
-	private final Properties properties;
+	private static Properties properties;
 	// public boolean forceLocalMappings;
-	private boolean writeProperties;
+	private static boolean writeProperties;
 
-	RhinoProperties() {
-		this.properties = new Properties();
+	static  {
+        load();
+
+        MappingIO.LOGGER.info("Rhino properties loaded.");
+	}
+
+	public static void load() {
+		properties = new Properties();
+		val gameDir = getGameDir();
+		if (gameDir == null) {
+			return;
+		}
 
 		try {
-			val propertiesFile = getGameDir().resolve("rhino.local.properties").toAbsolutePath();
+			val propertiesFile = gameDir.resolve("rhino.local.properties").toAbsolutePath();
 			writeProperties = false;
 
 			if (Files.exists(propertiesFile)) {
@@ -62,23 +71,35 @@ public class RhinoProperties {
 				writeProperties = true;
 			}
 
-			// forceLocalMappings = get("forceLocalMappings", false);
-			this.generateMapping = get("generateMapping", false);
-			this.enableCompiler = get("enableCompiler", false);
-			this.optimizationLevel = Integer.parseInt(get("optimizationLevel", "1"));
+			generateMapping = getBool("generateMapping", false);
+			enableCompiler = getBool("enableCompiler", false);
+			optimizationLevel = getInt("optimizationLevel", 1);
+			concurrentContext = getBool("concurrentContext", true);
 
 			if (writeProperties) {
-				try (val writer = Files.newBufferedWriter(propertiesFile)) {
-					properties.store(writer, "Local properties for Rhino, please do not push this to version control if you don't know what you're doing!");
-				}
+				save(propertiesFile);
 			}
 		} catch (Exception ex) {
-			MappingIO.LOGGER.info("Error happened during Rhino properties loading: \n\t{}", ex.getMessage());
+			val msg = ex.getClass().getName() + ": " + ex.getMessage();
+			MappingIO.LOGGER.error("Error happened during Rhino properties loading: \n\t{}", msg);
 		} catch (AssertionError e) {
 			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
 		}
+	}
 
-		MappingIO.LOGGER.info("Rhino properties loaded.");
+	public static void save() throws IOException {
+		val gameDir = getGameDir();
+		if (gameDir == null) {
+			return;
+		}
+		val propertiesFile = gameDir.resolve("rhino.local.properties").toAbsolutePath();
+		save(propertiesFile);
+	}
+
+	private static void save(Path propertiesFile) throws IOException {
+		try (val writer = Files.newBufferedWriter(propertiesFile)) {
+			properties.store(writer, "Local properties for Rhino, please do not push this to version control if you don't know what you're doing!");
+		}
 	}
 
 	private void remove(String key) {
@@ -87,10 +108,11 @@ public class RhinoProperties {
 		if (s != null) {
 			properties.remove(key);
 			writeProperties = true;
+
 		}
 	}
 
-	private String get(String key, String def) {
+	private static String get(String key, String def) {
 		var s = properties.getProperty(key);
 
 		if (s == null) {
@@ -102,7 +124,11 @@ public class RhinoProperties {
 		return s;
 	}
 
-	private boolean get(String key, boolean def) {
-		return get(key, def ? "true" : "false").equals("true");
+	private static boolean getBool(String key, boolean def) {
+		return get(key, Boolean.toString(def)).equals("true");
+	}
+
+	private static int getInt(String key, int def) {
+		return Integer.parseInt(get(key, Integer.toString(def)));
 	}
 }
