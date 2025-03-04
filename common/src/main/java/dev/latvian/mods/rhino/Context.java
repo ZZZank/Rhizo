@@ -364,7 +364,7 @@ public class Context {
                 if (factory.isSealed() && !cx.isSealed()) {
                     cx.seal(null);
                 }
-            } else if (cx.enterCount != 0) {
+            } else if (cx.enterCount != 0 && !RhinoProperties.concurrentContext) {
                 throw new IllegalStateException("can not use Context instance already associated with some thread");
             }
             VMBridge.vm.setContext(helper, cx);
