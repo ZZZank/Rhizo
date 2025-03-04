@@ -113,4 +113,19 @@ public class TypeWrappers {
 	public TypeWrapper<?> getFallbackWrapper(Context cx, @Nullable Object from, TypeInfo target) {
 		return fallback != null ? fallback.getWrapper(cx, from, target) : null;
     }
+
+	/**
+	 * only kept for backward compat
+	 * @see #getWrapper(Context, Object, TypeInfo)
+	 */
+	@Nullable
+	@Deprecated
+	public TypeWrapperFactory<?> getWrapperFactory(Class<?> target, @Nullable Object from) {
+		val typeInfo = TypeInfo.of(target);
+		val cx = Context.getContext();
+		val wrapper = getWrapper(cx, from, typeInfo);
+		return wrapper == null
+			? null
+			: o -> wrapper.wrap(cx, o, typeInfo);
+	}
 }
