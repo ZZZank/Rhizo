@@ -47,43 +47,43 @@ public class RhinoProperties {
 	private static boolean writeProperties;
 
 	static  {
-        load();
+		try {
+			load();
+		} catch (Exception ex) {
+			val msg = ex.getClass().getName() + ": " + ex.getMessage();
+			MappingIO.LOGGER.error("Error happened during Rhino properties loading: \n\t{}", msg);
+		} catch (AssertionError e) {
+			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
+		}
 
         MappingIO.LOGGER.info("Rhino properties loaded.");
 	}
 
-	public static void load() {
+	public static void load() throws IOException {
 		properties = new Properties();
 		val gameDir = getGameDir();
 		if (gameDir == null) {
 			return;
 		}
 
-		try {
-			val propertiesFile = gameDir.resolve("rhino.local.properties").toAbsolutePath();
-			writeProperties = false;
+		val propertiesFile = gameDir.resolve("rhino.local.properties").toAbsolutePath();
+		writeProperties = false;
 
-			if (Files.exists(propertiesFile)) {
-				try (val reader = Files.newBufferedReader(propertiesFile)) {
-					properties.load(reader);
-				}
-			} else {
-				writeProperties = true;
+		if (Files.exists(propertiesFile)) {
+			try (val reader = Files.newBufferedReader(propertiesFile)) {
+				properties.load(reader);
 			}
+		} else {
+			writeProperties = true;
+		}
 
-			generateMapping = getBool("generateMapping", false);
-			enableCompiler = getBool("enableCompiler", false);
-			optimizationLevel = getInt("optimizationLevel", 1);
-			concurrentContext = getBool("concurrentContext", true);
+		generateMapping = getBool("generateMapping", false);
+		enableCompiler = getBool("enableCompiler", false);
+		optimizationLevel = getInt("optimizationLevel", 1);
+		concurrentContext = getBool("concurrentContext", true);
 
-			if (writeProperties) {
-				save(propertiesFile);
-			}
-		} catch (Exception ex) {
-			val msg = ex.getClass().getName() + ": " + ex.getMessage();
-			MappingIO.LOGGER.error("Error happened during Rhino properties loading: \n\t{}", msg);
-		} catch (AssertionError e) {
-			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
+		if (writeProperties) {
+			save(propertiesFile);
 		}
 	}
 
@@ -108,7 +108,6 @@ public class RhinoProperties {
 		if (s != null) {
 			properties.remove(key);
 			writeProperties = true;
-
 		}
 	}
 
