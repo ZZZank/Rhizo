@@ -1,5 +1,15 @@
 ## Rhizo 3.6.1 -> 3.6.2
 
+Multiblocked compat fix
+
+- Fixed crash when Multiblocked is installed
+- a new config entry, allowing user to allow/disallow multiple threads attach to one JS context, for better concurrency
+- internal cleanup
+
+---
+
+## Rhizo 3.6.1 -> 3.6.2
+
 Concurrency fix
 
 - fixed a concurrency issue from Rhino, which is very likely to happen when events available for both client and server
