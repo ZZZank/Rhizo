@@ -280,7 +280,6 @@ public class Context {
     private Map<Object, Object> threadLocalMap;
     private ClassLoader applicationClassLoader;
     private final Map<String, Object> customProperties;
-    public final Object lock = new Object();
     /**
      * a map from classes to associated JavaMembers objects
      * <p>
@@ -2198,25 +2197,6 @@ public class Context {
 
     public boolean hasTypeWrappers() {
         return factory.typeWrappers != null;
-    }
-
-    /**
-     * Call {@link
-     * Callable#call(Context cx, Scriptable scope, Scriptable thisObj,
-     * Object[] args)}
-     * using the Context instance associated with the current thread.
-     * If no Context is associated with the thread, then makeContext() will be called to construct
-     * new Context instance. The instance will be temporary associated
-     * with the thread during call to {@link ContextAction#run(Context)}.
-     * <p>
-     * It is allowed but not advisable to use null for <code>factory</code>
-     * argument in which case the global static singleton ContextFactory
-     * instance will be used to create new context instances.
-     */
-    public Object callSync(Callable callable, Scriptable scope, Scriptable thisObj, Object[] args) {
-        synchronized (lock) {
-            return callable.call(this, scope, thisObj, args);
-        }
     }
 
     /**

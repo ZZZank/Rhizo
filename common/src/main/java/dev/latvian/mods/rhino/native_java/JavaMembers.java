@@ -294,7 +294,7 @@ public final class JavaMembers {
                     throw Context.throwAsScriptRuntimeEx(ex);
                 }
             } else {
-                localContext.callSync(bp.setters, ScriptableObject.getTopLevelScope(scope), scope, new Object[]{value});
+                bp.setters.callSync(localContext, ScriptableObject.getTopLevelScope(scope), scope, new Object[]{value});
             }
         } else if (member instanceof NativeJavaField field) {
             if (field.isFinal) {
