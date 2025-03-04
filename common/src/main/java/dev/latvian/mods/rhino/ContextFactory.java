@@ -119,7 +119,7 @@ public class ContextFactory {
 
 	public TypeWrappers getTypeWrappers() {
 		if (typeWrappers == null) {
-			typeWrappers = new TypeWrappers();
+			typeWrappers = new TypeWrappers(new TypeWrappers());
 		}
 		return this.typeWrappers;
 	}

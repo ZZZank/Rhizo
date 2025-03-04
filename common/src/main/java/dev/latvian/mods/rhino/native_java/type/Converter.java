@@ -37,7 +37,7 @@ public final class Converter {
      * higher weight -> conversion is harder
      */
     public static int getConversionWeight(Context cx, Object from, TypeInfo target) {
-        if (cx.hasTypeWrappers() && cx.getTypeWrappers().hasWrapper(cx, from, target)) {
+        if (cx.hasTypeWrappers() && cx.getTypeWrappers().hasWrapperNoFallback(cx, from, target)) {
             return CONVERSION_EXACT;
         }
 
@@ -259,7 +259,7 @@ public final class Converter {
 
         Object unwrappedValue = Wrapper.unwrapped(from);
 
-        val typeWrapper = cx.getTypeWrappers().getWrapper(cx, unwrappedValue, target);
+        val typeWrapper = cx.getTypeWrappers().getWrapperNoFallback(cx, unwrappedValue, target);
         if (typeWrapper != null) {
             return typeWrapper.wrap(cx, unwrappedValue, target);
         }
