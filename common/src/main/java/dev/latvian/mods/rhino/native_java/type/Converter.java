@@ -144,7 +144,7 @@ public final class Converter {
                         // This is a native date to java date conversion
                         return CONVERSION_TRIVIAL;
                     }
-                } else if (target.isFunctionalInterface()) {
+                } else if (target.isInterface()) {
                     if (from instanceof BaseFunction) {
                         // See comments in createInterfaceAdapter
                         return CONVERSION_TRIVIAL;
@@ -173,13 +173,15 @@ public final class Converter {
     }
 
     public Object javaToJS(Object value, Scriptable scope, TypeInfo target) {
-        if (value instanceof String || value instanceof Number || value instanceof Boolean || value instanceof Scriptable) {
+        if (value instanceof String
+            || value instanceof Number
+            || value instanceof Boolean
+            || value instanceof Scriptable) {
             return value;
         } else if (value instanceof Character) {
             return String.valueOf(((Character) value).charValue());
-        } else {
-            return cx.getWrapFactory().wrap(cx, scope, value, target);
         }
+        return cx.getWrapFactory().wrap(cx, scope, value, target);
     }
 
     public Object jsToJava(final @Nullable Object from, final TypeInfo target) throws EvaluatorException {
