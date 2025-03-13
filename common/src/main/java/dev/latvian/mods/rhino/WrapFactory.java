@@ -125,8 +125,8 @@ public class WrapFactory {
 			return new NativeJavaList(cx, scope, list, target);
 //		} else if (javaObject instanceof Set<?> set) {
 //			return new NativeJavaList(cx, scope, set, new JavaSetWrapper<>(set), target);
-		} else if (javaObject instanceof Class<?> c) {
-			return wrapJavaClass(cx, scope, c);
+//		} else if (javaObject instanceof Class<?> c) {
+//			return wrapJavaClass(cx, scope, c);
 		}
 
 		// TODO: Wrap Gson
