@@ -32,6 +32,7 @@ import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This class represents the runtime context of an executing script.
@@ -275,7 +276,7 @@ public class Context {
     private Locale locale;
     private int maximumInterpreterStackDepth;
     private WrapFactory wrapFactory;
-    private int enterCount;
+    private final AtomicInteger enterCount = new AtomicInteger();
     private Object propertyListeners;
     private Map<Object, Object> threadLocalMap;
     private ClassLoader applicationClassLoader;
@@ -357,20 +358,20 @@ public class Context {
         } else {
             if (cx == null) {
                 cx = factory.makeContext();
-                if (cx.enterCount != 0) {
+                if (cx.enterCount.get() == 0) {
                     throw new IllegalStateException("factory.makeContext() returned Context instance already associated with some thread");
                 }
                 factory.onContextCreated(cx);
                 if (factory.isSealed() && !cx.isSealed()) {
                     cx.seal(null);
                 }
-            } else if (cx.enterCount != 0 && !RhinoProperties.concurrentContext) {
+            } else if (cx.enterCount.get() != 0 && !RhinoProperties.concurrentContext) {
                 throw new IllegalStateException("can not use Context instance already associated with some thread");
             }
             VMBridge.vm.setContext(helper, cx);
         }
 
-        cx.enterCount++;
+        cx.enterCount.incrementAndGet();
         if (DEBUG_ENTER_EXIT >= 0) {
             System.out.println("Context entered, enter count: " + cx.enterCount);
             if (DEBUG_ENTER_EXIT > 0) {
@@ -402,10 +403,10 @@ public class Context {
         if (cx == null) {
             throw new IllegalStateException("Calling Context.exit without previous Context.enter");
         }
-        if (cx.enterCount < 1) {
+        if (cx.enterCount.get() < 1) {
             Kit.codeBug("Expected context to have entered at least once, but actual enter count is: " + cx.enterCount);
         }
-        cx.enterCount--;
+        cx.enterCount.decrementAndGet();
         if (DEBUG_ENTER_EXIT >= 0) {
             System.out.println("Context exited, enter count: " + cx.enterCount);
             if (DEBUG_ENTER_EXIT > 0) {
@@ -416,7 +417,7 @@ public class Context {
                 }
             }
         }
-        if (cx.enterCount == 0) {
+        if (cx.enterCount.get() == 0) {
             VMBridge.vm.setContext(helper, null);
             cx.factory.onContextReleased(cx);
         }
