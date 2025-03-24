@@ -3,9 +3,12 @@ package dev.latvian.mods.rhino.test;
 import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 @SuppressWarnings("unused")
 public class NullishCoalescingTests {
-	public static final RhinoTest TEST = new RhinoTest("nullishCoalescing");
+	public static final RhinoTest TEST = new RhinoTest("nullishCoalescing")
+        .withBinding("list", t -> new ArrayList<>());
 
 	@Test
 	public void bothNonNull() {
@@ -78,4 +81,16 @@ public class NullishCoalescingTests {
 			10
 			""");
 	}
+
+    @Test
+    public void evalOnce() {
+        TEST.test("evalOnce", """
+            console.log(123 ?? list.add("huh"))
+            console.log(null ?? list.add("oh"))
+            console.log(list.size())
+            """, """
+            123
+            true
+            1""");
+    }
 }
