@@ -105,8 +105,11 @@ abstract class Icode {
 	// Call to GetTemplateLiteralCallSite
 	Icode_TEMPLATE_LITERAL_CALLSITE = -67,
 
+	// Jump if stack head is null or undefined
+	Icode_IF_NULL_UNDEF = Icode_TEMPLATE_LITERAL_CALLSITE - 1,
+		Icode_IF_NOT_NULL_UNDEF = Icode_IF_NULL_UNDEF - 1,
 	// Last icode
-	MIN_ICODE = -67;
+	MIN_ICODE = Icode_IF_NOT_NULL_UNDEF;
 
 	static String bytecodeName(int bytecode) {
 		if (!validBytecode(bytecode)) {
@@ -189,6 +192,8 @@ abstract class Icode {
             case Icode_GENERATOR_RETURN -> "GENERATOR_RETURN";
             case Icode_YIELD_STAR -> "YIELD_STAR";
             case Icode_TEMPLATE_LITERAL_CALLSITE -> "TEMPLATE_LITERAL_CALLSITE";
+			case Icode_IF_NULL_UNDEF -> "IF_NULL_UNDEF";
+			case Icode_IF_NOT_NULL_UNDEF -> "IF_NOT_NULL_UNDEF";
             default ->
 
                 // icode without name

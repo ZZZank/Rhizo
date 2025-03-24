@@ -1586,6 +1586,20 @@ class BodyCodegen {
                 visitTemplateLiteral(node);
                 break;
 
+            case Token.NULLISH_COALESCING: {
+                generateExpression(child, node); // left-hand side
+                int end = cfw.acquireLabel();
+
+                cfw.add(ByteCode.DUP);
+                addOptRuntimeInvoke("isNullOrUndefined", "(Ljava/lang/Object;)Z");
+                cfw.add(ByteCode.IFEQ, end);
+
+                cfw.add(ByteCode.POP);
+                generateExpression(child.getNext(), node); // right-hand side
+                cfw.markLabel(end);
+                break;
+            }
+
             default:
                 throw new RuntimeException("Unexpected node type " + type);
         }
@@ -4003,7 +4017,7 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
 
     private void visitGetProp(Node node, Node child) {
         generateExpression(child, node); // object
-        Node nameChild = child.getNext();
+        val nameChild = child.getNext();
         generateExpression(nameChild, node);  // the name
         if (node.getType() == Token.GETPROPNOWARN) {
             cfw.addALoad(contextLocal);

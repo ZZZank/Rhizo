@@ -1364,6 +1364,10 @@ public class ScriptRuntime {
 		return getObjectProp(sobj, s, cx);
 	}
 
+	public static boolean isNullOrUndefined(Object obj) {
+		return obj == null || Undefined.isUndefined(obj);
+	}
+
 	public static Object getObjectIndex(Scriptable obj, int index, Context cx) {
         var result = ScriptableObject.getProperty(obj, index);
 		if (result == Scriptable.NOT_FOUND) {

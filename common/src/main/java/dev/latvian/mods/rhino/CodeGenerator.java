@@ -644,7 +644,7 @@ class CodeGenerator extends Icode {
             }
             case Token.GETELEM, Token.BITAND, Token.BITOR, Token.BITXOR, Token.LSH, Token.RSH, Token.URSH, Token.ADD,
                  Token.SUB, Token.MOD, Token.DIV, Token.MUL, Token.EQ, Token.NE, Token.SHEQ, Token.SHNE, Token.IN,
-                 Token.INSTANCEOF, Token.LE, Token.LT, Token.GE, Token.GT, Token.NULLISH_COALESCING -> {
+                 Token.INSTANCEOF, Token.LE, Token.LT, Token.GE, Token.GT -> {
                 visitExpression(child, 0);
                 child = child.getNext();
                 visitExpression(child, 0);
@@ -843,7 +843,24 @@ class CodeGenerator extends Icode {
                 addToken(Token.LEAVEWITH);
             }
             case Token.TEMPLATE_LITERAL -> visitTemplateLiteral(node);
-            default -> throw badTree(node);
+			case Token.NULLISH_COALESCING -> {
+				visitExpression(child, 0);
+				child = child.getNext();
+
+				addIcode(Icode_DUP);
+				stackChange(1);
+				int end = iCodeTop;
+				addGotoOp(Icode.Icode_IF_NOT_NULL_UNDEF);
+				stackChange(-1);
+
+				addIcode(Icode_POP);
+				visitExpression(child, 0);
+				stackChange(-1);
+
+				resolveForwardGoto(end);
+            }
+
+			default -> throw badTree(node);
         }
 		if (savedStackDepth + 1 != stackDepth) {
 			Kit.codeBug();
