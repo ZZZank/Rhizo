@@ -158,10 +158,7 @@ public final class Converter {
             }
         }
 
-        val fallbackWrapper = cx.hasTypeWrappers()
-            ? cx.getTypeWrappers().getFallbackWrapper(cx, from, target)
-            : null;
-        if (fallbackWrapper != null) {
+        if (cx.hasTypeWrappers() && cx.getTypeWrappers().getFallbackWrapper(cx, from, target) != null) {
             return CONVERSION_EXACT;
         }
 
@@ -259,11 +256,11 @@ public final class Converter {
             return result;
         }
 
-        Object unwrappedValue = Wrapper.unwrapped(from);
+        val unwrapped = Wrapper.unwrapped(from);
 
-        val typeWrapper = cx.getTypeWrappers().getWrapperNoFallback(cx, unwrappedValue, target);
+        val typeWrapper = cx.getTypeWrappers().getWrapperNoFallback(cx, unwrapped, target);
         if (typeWrapper != null) {
-            return typeWrapper.wrap(cx, unwrappedValue, target);
+            return typeWrapper.wrap(cx, unwrapped, target);
         }
 
         switch (getJSTypeCode(from)) {
@@ -286,8 +283,6 @@ public final class Converter {
                     return from;
                 } else if (target == TypeInfo.STRING) {
                     return from.toString();
-                } else {
-                    return internalJsToJavaLast(from, target);
                 }
             }
             case JSTYPE_NUMBER -> {
@@ -297,8 +292,6 @@ public final class Converter {
                     return NativeJavaObject.coerceToNumber(TypeInfo.DOUBLE, from);
                 } else if ((target.isPrimitive() && !target.isBoolean()) || ScriptRuntime.NumberClass.isAssignableFrom(target.asClass())) {
                     return NativeJavaObject.coerceToNumber(target, from);
-                } else {
-                    return internalJsToJavaLast(from, target);
                 }
             }
             case JSTYPE_STRING -> {
@@ -315,39 +308,35 @@ public final class Converter {
                     return NativeJavaObject.coerceToNumber(target, from);
                 } else if ((target.isPrimitive() && !target.isBoolean()) || ScriptRuntime.NumberClass.isAssignableFrom(target.asClass())) {
                     return NativeJavaObject.coerceToNumber(target, from);
-                } else {
-                    return internalJsToJavaLast(from, target);
                 }
             }
             case JSTYPE_JAVA_CLASS -> {
                 if (target.asClass().isAssignableFrom(Class.class)) {
-                    return unwrappedValue;
+                    return unwrapped;
                 } else if (target == TypeInfo.STRING) {
-                    return unwrappedValue.toString();
+                    return unwrapped.toString();
                 }
-                return internalJsToJavaLast(unwrappedValue, target);
             }
             case JSTYPE_JAVA_OBJECT, JSTYPE_JAVA_ARRAY -> {
                 if (target.isPrimitive()) {
                     if (target.isBoolean()) {
-                        return internalJsToJavaLast(unwrappedValue, target);
+                        return internalJsToJavaLast(unwrapped, unwrapped, target);
                     }
-                    return NativeJavaObject.coerceToNumber(target, unwrappedValue);
+                    return NativeJavaObject.coerceToNumber(target, unwrapped);
                 }
                 if (target == TypeInfo.STRING) {
-                    return unwrappedValue.toString();
+                    return unwrapped.toString();
                 }
-                if (target.asClass().isInstance(unwrappedValue)) {
-                    return unwrappedValue;
+                if (target.asClass().isInstance(unwrapped)) {
+                    return unwrapped;
                 }
-                return internalJsToJavaLast(unwrappedValue, target);
             }
             case JSTYPE_OBJECT -> {
                 if (target == TypeInfo.STRING) {
                     return ScriptRuntime.toString(from);
                 } else if (target.isPrimitive()) {
                     if (target.isBoolean()) {
-                        return internalJsToJavaLast(from, target);
+                        return internalJsToJavaLast(from, unwrapped, target);
                     }
                     return NativeJavaObject.coerceToNumber(target, from);
                 } else if (target.asClass().isInstance(from)) {
@@ -356,27 +345,30 @@ public final class Converter {
                     // XXX: This will replace NaN by 0
                     return new Date((long) date.getJSTimeValue());
                 } else if (from instanceof Wrapper) {
-                    if (target.asClass().isInstance(unwrappedValue)) {
-                        return unwrappedValue;
+                    if (target.asClass().isInstance(unwrapped)) {
+                        return unwrapped;
                     }
-                    return internalJsToJavaLast(unwrappedValue, target);
+                    return internalJsToJavaLast(unwrapped, unwrapped, target);
                 } else if (target.isInterface()
                     && (from instanceof NativeObject || from instanceof NativeFunction || from instanceof ArrowFunction)
                 ) {
                     // Try to use function/object as implementation of Java interface.
                     return NativeJavaObject.createInterfaceAdapter(cx, target.asClass(), (ScriptableObject) from);
-                } else {
-                    return internalJsToJavaLast(from, target);
                 }
             }
         }
 
-        return internalJsToJavaLast(from, target);
+        return internalJsToJavaLast(from, unwrapped, target);
     }
 
-    private Object internalJsToJavaLast(Object from, TypeInfo target) {
+    private Object internalJsToJavaLast(Object from, Object unwrapped, TypeInfo target) {
         if (target instanceof TypeWrapper<?> typeWrapper && typeWrapper.canWrap(cx, from, target)) {
             return typeWrapper.wrap(cx, from, target);
+        }
+
+        val typeWrapper = cx.getTypeWrappers().getFallbackWrapper(cx, unwrapped, target);
+        if (typeWrapper != null) {
+            return typeWrapper.wrap(cx, unwrapped, target);
         }
 
         return NativeJavaObject.reportConversionError(from, target);
