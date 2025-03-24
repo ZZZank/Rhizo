@@ -1507,12 +1507,15 @@ class BodyCodegen {
                 child = child.getNext();
                 generateExpression(child, node);
                 cfw.addALoad(contextLocal);
+                cfw.addALoad(variableObjectLocal);
                 cfw.addPush(isName);
                 addScriptRuntimeInvoke("delete",
                     "(Ljava/lang/Object;"
                         + "Ljava/lang/Object;"
                         + "Ldev/latvian/mods/rhino/Context;"
-                        + "Z)Ljava/lang/Object;"
+                        + "Ldev/latvian/mods/rhino/Scriptable;"
+                        + "Z"
+                        + ")Ljava/lang/Object;"
                 );
                 break;
 
