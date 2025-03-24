@@ -48,7 +48,10 @@ public class MiscTests {
 
 	@Test
 	public void testDelete() {
-		TEST.test("delete", "let x = {a: 1}; delete x.a; console.info(x.a);", "undefined");
+		TEST.test("delete", """
+            let x = {a: 1}; delete x.a; console.info(x.a);""", """
+            undefined"""
+        );
 	}
 
 	/**
@@ -86,10 +89,10 @@ public class MiscTests {
 	@Test
 	public void jsonStringifyWithNestedArrays() {
 		TEST.test("jsonStringifyWithNestedArrays", """
-			const thing = {nested: [1, 2, 3]};
+			const thing = {nested: [false, 1.2, 3.4, "56+"]};
 			console.info(JSON.stringify(thing));
 			""", """
-            {"nested":[1.0,2.0,3.0]}"""
+            {"nested":[false,1.2,3.4,"56+"]}"""
         );
 	}
 

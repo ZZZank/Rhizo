@@ -14,9 +14,9 @@ import java.util.function.Consumer;
 public class DangerousTypeWrapperTest {
     private static final RhinoTest TEST = new RhinoTest("dangerous_type_wrappers")
         .withBinding("overloads", (t) -> new MethodOverloads(t.console))
-        .withTypeWrapper(typeWrappers -> {
-            typeWrappers.register(String.class, String::valueOf);
-        });
+        .withTypeWrapper(typeWrappers -> typeWrappers.register(String.class, String::valueOf));
+    private static final RhinoTest TEST_NO_WRAPPER = new RhinoTest("dangerous_type_wrappers")
+        .withBinding("overloads", (t) -> new MethodOverloads(t.console));
 
     @Test
     void functionOrObject() {
@@ -28,8 +28,24 @@ public class DangerousTypeWrapperTest {
     }
 
     @Test
+    void functionOrObjectNoExplicitWrapper() {
+        TEST_NO_WRAPPER.test("functionOrObjectNoExplicitWrapper", """
+            overloads.f1("yes")
+            overloads.f1(s => {})""", """
+            f1.string
+            f1.function""");
+    }
+
+    @Test
     void wrapFunctionObject() {
         TEST.test("wrapFunctionObject", """
+            overloads.f2(s => {})""", """
+            f2""");
+    }
+
+    @Test
+    void wrapFunctionObjectNoExplicitWrapper() {
+        TEST_NO_WRAPPER.test("wrapFunctionObjectNoExplicitWrapper", """
             overloads.f2(s => {})""", """
             f2""");
     }

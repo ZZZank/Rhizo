@@ -1,8 +1,8 @@
 package dev.latvian.mods.rhino.test;
 
+import dev.latvian.mods.rhino.mod.util.NBTUtils;
 import dev.latvian.mods.rhino.test.impl.base.RhinoTest;
-import dev.latvian.mods.rhino.util.wrap.DynamicWrapper;
-import lombok.val;
+import dev.latvian.mods.rhino.util.wrap.LegacyDynamicWrapper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,14 +18,9 @@ public class NBTActionTest {
     private static final RhinoTest TEST_WITH_WRAPPER = new RhinoTest("nbt")
         .withBinding("CompoundTag", t -> CompoundTag.class)
         .withTypeWrapper(
-            Tag.class, new DynamicWrapper<>(
-            (cx, from, to) -> from instanceof Map<?,?>,
-            (cx, from ,to) -> {
-                val map = (Map<?, ?>) from;
-                val tag = new CompoundTag();
-                map.forEach((k, v) -> tag.putString(k.toString(), String.valueOf(v)));
-                return tag;
-            }
+            Tag.class, new LegacyDynamicWrapper<>(
+            (from) -> from instanceof Map<?,?>,
+            NBTUtils::toTag
         ));
 
     @Test
@@ -33,9 +28,9 @@ public class NBTActionTest {
         TEST.test(
             "oldBehaviour", """
                 const t = new CompoundTag()
-                t.put("wow", {example: 123})
+                t.put("wow", {example: 123.4})
                 console.log(t)""", """
-                {wow:Proxy[{example: 123.0}]}
+                {wow:Proxy[{example: 123.4}]}
                 """
         );
     }
@@ -57,10 +52,10 @@ public class NBTActionTest {
     void withWrapper() {
         TEST_WITH_WRAPPER.test("withWrapper", """
             const t = new CompoundTag()
-            t.put("wow", {example: 123})
+            t.put("wow", {example: 123.4})
             const got = t.get("wow")
             console.log(got.copy())""", """
-            {example:"123.0"}
+            {example:123.4d}
             """);
     }
 }

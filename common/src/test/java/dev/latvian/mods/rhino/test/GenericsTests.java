@@ -70,12 +70,20 @@ public class GenericsTests {
 
 	@Test
 	public void mapArg() {
-		TEST.test("mapArg", "console.genericsMapArg({'test': '10.5'});", "Generics map:\n{W[M[test]]: 10}");
+		TEST.test("mapArg", """
+            console.genericsMapArg({'test': '10.5'});""", """
+            Generics map:
+            {W[M[test]]=10}"""
+        );
 	}
 
 	@Test
 	public void mapArgMap() {
-		TEST.test("mapArgMap", "console.genericsMapArg(console.testMap);", "Generics map:\n{W[M[test]]: 10}");
+		TEST.test("mapArgMap", """
+            console.genericsMapArg(console.testMap);""", """
+            Generics map:
+            {W[M[test]]=10}"""
+        );
 	}
 
 	@Test
