@@ -2197,7 +2197,7 @@ public class Context {
     }
 
     public boolean hasTypeWrappers() {
-        return factory.typeWrappers != null;
+        return factory.getTypeWrappers() != null;
     }
 
     /**

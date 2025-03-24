@@ -111,17 +111,19 @@ public class ContextFactory {
 	private final Object listenersLock;
 	private volatile Object listeners;
 	private boolean disabledListening;
-	TypeWrappers typeWrappers;
+	private final TypeWrappers typeWrappers;
 
-    public ContextFactory() {
+    public ContextFactory(TypeWrappers typeWrappers) {
         listenersLock = new Object();
+		this.typeWrappers = typeWrappers;
     }
 
+	public ContextFactory() {
+		this(new TypeWrappers(new TypeWrappers()));
+	}
+
 	public TypeWrappers getTypeWrappers() {
-		if (typeWrappers == null) {
-			typeWrappers = new TypeWrappers(new TypeWrappers());
-		}
-		return this.typeWrappers;
+        return this.typeWrappers;
 	}
 
 	public Remapper getRemapper() {
