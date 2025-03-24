@@ -54,8 +54,9 @@ public class TypeWrappers {
         if (fallback != null && target.getName().startsWith("java.lang")) {
             // trying to register type wrapper for fundamental types
             fallback.register(target, typeWrapper);
-        }
-        wrappers.put(target, typeWrapper);
+        } else {
+			wrappers.put(target, typeWrapper);
+		}
     }
 
 	public <T> void register(Class<T> target, TypeWrapperValidator validator, TypeWrapper.Always<T> wrapper) {
