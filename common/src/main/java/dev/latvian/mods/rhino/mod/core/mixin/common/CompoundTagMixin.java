@@ -16,7 +16,7 @@ import java.util.Map;
 public abstract class CompoundTagMixin implements MapLike<String, Object> {
 	@Shadow
 	@Final
-	private Map<String, Tag> tags;
+    public Map<String, Tag> tags;
 
 	@Override
 	public Object getML(String key) {

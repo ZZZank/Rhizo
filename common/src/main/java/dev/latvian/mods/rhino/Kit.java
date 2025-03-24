@@ -276,6 +276,9 @@ public class Kit {
 		}
 	}
 
+	/**
+	 * @return the value attached to the {@code key}
+	 */
 	static Object initHash(Map<Object, Object> h, Object key, Object initialValue) {
 		synchronized (h) {
 			// it will return the 'old' value
@@ -313,10 +316,9 @@ public class Kit {
 
 	public static Object makeHashKeyFromPair(Object key1, Object key2) {
 		if (key1 == null) {
-			throw new IllegalArgumentException();
-		}
-		if (key2 == null) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("the first key is null");
+		} else if (key2 == null) {
+			throw new IllegalArgumentException("the second key is null");
 		}
 		return new ComplexKey(key1, key2);
 	}

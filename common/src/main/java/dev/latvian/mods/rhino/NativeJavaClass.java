@@ -51,7 +51,7 @@ public class NativeJavaClass extends NativeJavaObject implements Function {
 
 	@Override
 	protected void initMembers(Context cx, Scriptable scope) {
-		Class<?> cl = (Class<?>) javaObject;
+		val cl = getClassObject();
 		members = JavaMembers.lookupClass(cx, scope, cl, cl, isAdapter);
 		staticFieldAndMethods = members.getFieldAndMethodsObjects(this, cl, true);
 	}

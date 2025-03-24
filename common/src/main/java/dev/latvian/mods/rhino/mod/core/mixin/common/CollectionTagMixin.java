@@ -6,10 +6,12 @@ import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.Tag;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(CollectionTag.class)
 public abstract class CollectionTagMixin implements ListLike<Object> {
 
+	@Unique
 	private CollectionTag rhizo$self() {
 		return (CollectionTag) (Object) this;
 	}

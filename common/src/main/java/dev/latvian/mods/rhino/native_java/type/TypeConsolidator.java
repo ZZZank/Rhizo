@@ -101,7 +101,6 @@ public final class TypeConsolidator {
 
         //collect current level mapping
         //current level types will only be consolidated by mappings from its subclasses
-        val parent = type.getSuperclass();
 
         //in our D.class example, this will collect mapping from C<Td>, forming Tc -> Td
         extractSuperMapping(type.getGenericSuperclass(), mapping);
@@ -113,7 +112,7 @@ public final class TypeConsolidator {
 
         //mapping from super
         //in our D.class example, super mapping will only include Ta -> Tc
-        val superMapping = getImpl(parent);
+        val superMapping = getImpl(type.getSuperclass());
 
         if (superMapping == null || superMapping.isEmpty()) {
             return postMapping(mapping);

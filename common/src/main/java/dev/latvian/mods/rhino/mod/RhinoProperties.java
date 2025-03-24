@@ -50,8 +50,7 @@ public class RhinoProperties {
 		try {
 			load();
 		} catch (Exception ex) {
-			val msg = ex.getClass().getName() + ": " + ex.getMessage();
-			MappingIO.LOGGER.error("Error happened during Rhino properties loading: \n\t{}", msg);
+            MappingIO.LOGGER.error("Error happened during Rhino properties loading: \n\t{}", ex.toString());
 		} catch (AssertionError e) {
 			System.out.println("[ERROR]AssertionError happened. If you're not running Rhino in-game, this indicates a severely broken Jar!");
 		}

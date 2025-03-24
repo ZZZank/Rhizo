@@ -1,11 +1,13 @@
 package dev.latvian.mods.rhino.native_java;
 
+import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.StringJoiner;
 
 /**
@@ -99,5 +101,20 @@ public interface ReflectsKit {
             joiner.add(javaSignature(argType));
         }
         return joiner.toString();
+    }
+
+    static String liveConnectSignature(Collection<TypeInfo> argTypes) {
+        if (argTypes.isEmpty()) {
+            return "()";
+        }
+        val builder = new StringBuilder().append('(');
+        val iter = argTypes.iterator();
+        if (iter.hasNext()) {
+            builder.append(javaSignature(iter.next().asClass()));
+            while (iter.hasNext()) {
+                builder.append(',').append(javaSignature(iter.next().asClass()));
+            }
+        }
+        return builder.append(')').toString();
     }
 }

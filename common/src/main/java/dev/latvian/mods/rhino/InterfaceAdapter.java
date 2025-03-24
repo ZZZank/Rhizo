@@ -52,14 +52,15 @@ public class InterfaceAdapter {
 					for (Method method : methods) {
 						// there are multiple methods in the interface we inspect
 						// only abstract ones, they must all have the same name.
-						if (isFunctionalMethodCandidate(method)) {
-							if (methodName == null) {
-								methodName = method.getName();
-							} else if (!methodName.equals(method.getName())) {
-								throw Context.reportRuntimeError1("msg.no.function.interface.conversion", cl.getName());
-							}
-						}
-					}
+                        if (!isFunctionalMethodCandidate(method)) {
+                            continue;
+                        }
+                        if (methodName == null) {
+                            methodName = method.getName();
+                        } else if (!methodName.equals(method.getName())) {
+                            throw Context.reportRuntimeError1("msg.no.function.interface.conversion", cl.getName());
+                        }
+                    }
 				}
 			}
 			adapter = new InterfaceAdapter(cf, cl);
