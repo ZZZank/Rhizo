@@ -1,7 +1,8 @@
 plugins {
-	id "com.github.johnrengelman.shadow" version "8.1.1" apply false
-	id "architectury-plugin" version "3.4-SNAPSHOT"
-	id "dev.architectury.loom" version "1.7-SNAPSHOT" apply false
+	id("com.github.johnrengelman.shadow").version("8.1.1").apply(false)
+	id("architectury-plugin").version("3.4-SNAPSHOT")
+	id("dev.architectury.loom").version("1.7-SNAPSHOT").apply(false)
+	id('xyz.wagyourtail.jvmdowngrader').version("${jvmdowngrader_version}").apply(false)
 }
 
 architectury {
@@ -29,13 +30,6 @@ subprojects {
 		configurations = [project.configurations.shade]
 	}
 
-	remapJar {
-		setInput(shadowJar.archiveFile)
-		dependsOn shadowJar
-	}
-
-	assemble.dependsOn shadowJar
-
 	loom {
 		silentMojangMappingsLicense()
 	}
@@ -46,11 +40,6 @@ subprojects {
 			officialMojangMappings()
 			parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:2021.10.10")
 		}
-		// https://mvnrepository.com/artifact/com.pkware.jabel/jabel-javac-plugin
-		annotationProcessor 'com.pkware.jabel:jabel-javac-plugin:1.0.1-1'
-		compileOnly 'com.pkware.jabel:jabel-javac-plugin:1.0.1-1'
-		testAnnotationProcessor('com.pkware.jabel:jabel-javac-plugin:1.0.1-1')
-		testCompileOnly('com.pkware.jabel:jabel-javac-plugin:1.0.1-1')
 
 		// https://mvnrepository.com/artifact/net.neoforged/srgutils
 		shade('net.neoforged:srgutils:1.0.9')
@@ -67,7 +56,7 @@ subprojects {
 	}
 
 	test {
-//		useJUnitPlatform()
+		useJUnitPlatform()
 	}
 }
 
@@ -75,11 +64,10 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "architectury-plugin"
 	apply plugin: "maven-publish"
-//	apply from: "https://files.latmod.com/public/markdown-git-changelog.gradle"
+	apply plugin: 'xyz.wagyourtail.jvmdowngrader'
 
 	def ENV = System.getenv()
-//	version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
-	version = mod_version
+	version = mod_version //	version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
 	group = project.mod_package
 	archivesBaseName = project.mod_name
 
@@ -87,11 +75,6 @@ allprojects {
 		sourceCompatibility = 21
 		options.encoding = "UTF-8"
 		options.compilerArgs << "-parameters"
-
-		// The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
-		// JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
-		// We'll use that if it's available, but otherwise we'll use the older option.
-		options.release = 8
 	}
 
 	repositories {
@@ -128,6 +111,15 @@ allprojects {
 		withSourcesJar()
 		modularity.inferModulePath.set(false)
 	}
+}
+
+subprojects {
+	remapJar {
+		setInput(downgradeJar.archiveFile)
+		dependsOn(shadowJar)
+	}
+
+	assemble.dependsOn(shadowJar)
 }
 
 task curseforgePublish

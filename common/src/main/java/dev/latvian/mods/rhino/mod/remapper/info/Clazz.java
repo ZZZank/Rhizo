@@ -1,6 +1,5 @@
 package dev.latvian.mods.rhino.mod.remapper.info;
 
-import com.github.bsideup.jabel.Desugar;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
@@ -10,7 +9,6 @@ import java.util.Map;
 /**
  * @author ZZZank
  */
-@Desugar
 public record Clazz(String original, String remapped, ListMultimap<String, MethodInfo> nArgMethods,
              Map<String, MethodInfo> noArgMethods, Map<String, FieldInfo> fields) {
 

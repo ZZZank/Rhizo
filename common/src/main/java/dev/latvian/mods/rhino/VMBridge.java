@@ -8,7 +8,6 @@
 
 package dev.latvian.mods.rhino;
 
-import com.github.bsideup.jabel.Desugar;
 import lombok.val;
 
 import java.lang.reflect.*;
@@ -87,7 +86,6 @@ public class VMBridge {
 		}
     }
 
-	@Desugar
 	private record DefaultInvocationHandler(
 		Context cx,
 		Scriptable topScope,

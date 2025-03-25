@@ -1,6 +1,5 @@
 package dev.latvian.mods.rhino.native_java.type;
 
-import com.github.bsideup.jabel.Desugar;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.latvian.mods.rhino.Context;
@@ -108,7 +107,6 @@ public interface ArrayValueProvider {
 		return set;
 	}
 
-	@Desugar
 	record FromObject(Object object) implements ArrayValueProvider {
 		public static final FromObject FROM_NULL = new FromObject(null);
 
@@ -132,7 +130,6 @@ public interface ArrayValueProvider {
 		return array.getLength() == 0 ? EMPTY : new FromNativeArray(array);
 	}
 
-	@Desugar
 	record FromNativeArray(NativeArray array) implements ArrayValueProvider {
 		@Override
 		public int getLength(Context cx) {
@@ -150,7 +147,6 @@ public interface ArrayValueProvider {
 		}
 	}
 
-	@Desugar
 	record FromJavaArray(Object array, int length) implements ArrayValueProvider {
 		@Override
 		public int getLength(Context cx) {
@@ -168,7 +164,6 @@ public interface ArrayValueProvider {
 		}
 	}
 
-	@Desugar
 	record FromPlainJavaArray(Object[] array) implements ArrayValueProvider {
 		@Override
 		public int getLength(Context cx) {
@@ -190,7 +185,6 @@ public interface ArrayValueProvider {
 		return list.isEmpty() ? EMPTY : new FromJavaList(list, errorSource);
 	}
 
-	@Desugar
 	record FromJavaList(List<?> list, Object errorSource) implements ArrayValueProvider {
 		@Override
 		public int getLength(Context cx) {
@@ -224,7 +218,6 @@ public interface ArrayValueProvider {
 		return len == 0 ? EMPTY : new FromIterator(len, iterable.iterator(), iterable);
 	}
 
-	@Desugar
 	record FromIterator(int length, Iterator<?> iterator, Object errorSource) implements ArrayValueProvider {
 		@Override
 		public int getLength(Context cx) {
