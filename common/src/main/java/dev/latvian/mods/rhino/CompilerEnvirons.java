@@ -122,6 +122,7 @@ public class CompilerEnvirons {
 	 * Note that code generated without source is not fully ECMA
 	 * conformant.
 	 */
+	@Deprecated
 	public void setGeneratingSource(boolean generatingSource) {
 	}
 
@@ -146,6 +147,7 @@ public class CompilerEnvirons {
 	 * @param generateObserverCount if true, generated code will contain
 	 *                              calls to accumulate an estimate of the instructions executed.
 	 */
+	@Deprecated
 	public void setGenerateObserverCount(boolean generateObserverCount) {
 	}
 
@@ -153,6 +155,7 @@ public class CompilerEnvirons {
 	 * @deprecated
 	 * @return false
 	 */
+	@Deprecated
 	public boolean isRecordingComments() {
 		return false;
 	}
@@ -160,6 +163,7 @@ public class CompilerEnvirons {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setRecordingComments(boolean record) {
 	}
 
@@ -167,6 +171,7 @@ public class CompilerEnvirons {
 	 * @deprecated
 	 * @return false
 	 */
+	@Deprecated
 	public boolean isRecordingLocalJsDocComments() {
 		return false;
 	}
@@ -174,6 +179,7 @@ public class CompilerEnvirons {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public void setRecordingLocalJsDocComments(boolean record) {
 	}
 
@@ -183,6 +189,7 @@ public class CompilerEnvirons {
 	 * throw an exception, and the parser attempts to build a full syntax tree
 	 * from the input.  Useful for IDEs and other frontends.
 	 */
+	@Deprecated
 	public void setRecoverFromErrors(boolean recover) {
 	}
 
@@ -190,6 +197,7 @@ public class CompilerEnvirons {
 	 * @deprecated
 	 * @return false
 	 */
+	@Deprecated
 	public boolean recoverFromErrors() {
 		return false;
 	}
@@ -200,6 +208,7 @@ public class CompilerEnvirons {
 	 * Puts the parser in "IDE" mode.  This enables some slightly more expensive
 	 * computations, such as figuring out helpful error bounds.
 	 */
+	@Deprecated
 	public void setIdeMode(boolean ide) {
 	}
 
@@ -207,6 +216,7 @@ public class CompilerEnvirons {
 	 * @deprecated
 	 * @return false
 	 */
+	@Deprecated
 	public boolean isIdeMode() {
 		return false;
 	}
@@ -237,6 +247,7 @@ public class CompilerEnvirons {
 	 * in an IDE environment.  Most features are enabled by default.
 	 * The {@link ErrorReporter} is set to an {@link ErrorCollector}.
 	 */
+	@Deprecated
 	public static CompilerEnvirons ideEnvirons() {
         return new CompilerEnvirons();
 	}

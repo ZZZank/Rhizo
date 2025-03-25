@@ -166,6 +166,7 @@ public class ContextFactory {
 	 * already called and false to indicate that the global factory was not
 	 * explicitly set.
 	 */
+	@Deprecated
 	public static boolean hasExplicitGlobal() {
 		return false;
 	}
@@ -178,6 +179,7 @@ public class ContextFactory {
 	 * Set global ContextFactory.
 	 * The method can only be called once.
 	 */
+	@Deprecated
 	public synchronized static void initGlobal(ContextFactory factory) {
 		throw new IllegalStateException("This method has been depecrated");
 	}
@@ -191,6 +193,7 @@ public class ContextFactory {
 	/**
 	 * @deprecated Such method has been removed, DO NOT USE
 	 */
+	@Deprecated
 	public synchronized static GlobalSetter getGlobalSetter() {
 		return null;
 	}
@@ -269,6 +272,7 @@ public class ContextFactory {
 	 * {@link #initApplicationClassLoader(ClassLoader)} the method returns
 	 * null to indicate that Thread.getContextClassLoader() should be used.
 	 */
+	@Deprecated
 	public final ClassLoader getApplicationClassLoader() {
 		return null;
 	}
@@ -278,6 +282,7 @@ public class ContextFactory {
 	 * @deprecated Such method has been removed, DO NOT USE
 	 * Set explicit class loader to use when searching for Java classes.
 	 */
+	@Deprecated
 	public final void initApplicationClassLoader(ClassLoader loader) {
 		throw new IllegalStateException("This method has been depecrated");
 	}

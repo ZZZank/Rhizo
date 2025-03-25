@@ -39,6 +39,7 @@ public final class JavaMembers {
     /**
      * @deprecated use {@link ReflectsKit#javaSignature(Class)} instead
      */
+    @Deprecated
     public static String javaSignature(@NotNull Class<?> type) {
         return ReflectsKit.javaSignature(type);
     }
@@ -46,6 +47,7 @@ public final class JavaMembers {
     /**
      * @deprecated use {@link ReflectsKit#liveConnectSignature(Class[])} instead
      */
+    @Deprecated
     public static String liveConnectSignature(Class<?>[] argTypes) {
         return ReflectsKit.liveConnectSignature(argTypes);
     }
