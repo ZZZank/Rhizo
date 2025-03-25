@@ -1,6 +1,5 @@
 package dev.latvian.mods.rhino.mod.fabric;
 
-import com.github.bsideup.jabel.Desugar;
 import dev.latvian.mods.rhino.mod.RhinoProperties;
 import dev.latvian.mods.rhino.mod.remapper.MappingTransformer;
 import dev.latvian.mods.rhino.mod.remapper.RhizoMappingGen;
@@ -56,7 +55,6 @@ public class RhinoModFabric implements ModInitializer {
         return classMap;
     }
 
-    @Desugar
     record ClazzBasedRenamer(Map<String, Clazz> classMap) implements IRenamer {
 
         public String rename(IMappingFile.IClass c) {

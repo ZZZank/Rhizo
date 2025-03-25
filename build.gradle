@@ -2,11 +2,11 @@ plugins {
 	id("com.github.johnrengelman.shadow").version("8.1.1").apply(false)
 	id("architectury-plugin").version("3.4-SNAPSHOT")
 	id("dev.architectury.loom").version("1.7-SNAPSHOT").apply(false)
-	id('xyz.wagyourtail.jvmdowngrader').version("${jvmdowngrader_version}").apply(false)
+	id('xyz.wagyourtail.jvmdowngrader').version("${jvmdowngrader_version}")
 }
 
 architectury {
-	minecraft = rootProject.minecraft_version
+	minecraft = minecraft_version
 }
 
 def sysProps = System.getProperties()
@@ -15,6 +15,7 @@ println "Java: ${ -> sysProps['java.version']} | JVM: ${ -> sysProps['java.vm.ve
 subprojects {
 	apply plugin: "com.github.johnrengelman.shadow"
 	apply plugin: "dev.architectury.loom"
+	apply plugin: 'xyz.wagyourtail.jvmdowngrader'
 
 	configurations {
 		shade
@@ -22,13 +23,21 @@ subprojects {
 	}
 
 	shadowJar {
-		archiveClassifier.set("shadow")
+		configurations = [project.configurations.shade]
 
-//		relocate("com.esotericsoftware.reflectasm", "dev.latvian.mods.rhino.shaded.reflectasm")
 		relocate("net.neoforged.srgutils", "dev.latvian.mods.rhino.shaded.srgutils")
 
-		configurations = [project.configurations.shade]
+		archiveClassifier.set("shadow")
 	}
+
+	remapJar {
+		setInput(shadeDowngradedApi.archiveFile)
+		dependsOn(downgradeJar)
+
+		archiveClassifier.set(project.name)
+	}
+
+	assemble.dependsOn(shadeDowngradedApi)
 
 	loom {
 		silentMojangMappingsLicense()
@@ -56,7 +65,7 @@ subprojects {
 	}
 
 	test {
-		useJUnitPlatform()
+//		useJUnitPlatform()
 	}
 }
 
@@ -64,7 +73,6 @@ allprojects {
 	apply plugin: "java"
 	apply plugin: "architectury-plugin"
 	apply plugin: "maven-publish"
-	apply plugin: 'xyz.wagyourtail.jvmdowngrader'
 
 	def ENV = System.getenv()
 	version = mod_version //	version = "${mod_version}-build.${ENV.GITHUB_RUN_NUMBER ?: 9999}"
@@ -109,17 +117,7 @@ allprojects {
 
 	java {
 		withSourcesJar()
-		modularity.inferModulePath.set(false)
 	}
-}
-
-subprojects {
-	remapJar {
-		setInput(downgradeJar.archiveFile)
-		dependsOn(shadowJar)
-	}
-
-	assemble.dependsOn(shadowJar)
 }
 
 task curseforgePublish

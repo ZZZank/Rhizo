@@ -43,18 +43,7 @@ processResources {
 }
 
 shadowJar {
-	relocate("net.neoforged.srgutils", "dev.latvian.mods.rhino.mod.shadow.srgutils")
-
 	configurations = [project.configurations.shadowCommon, project.configurations.shade]
-	// classifier "dev-shadow"
-	archiveClassifier.set("dev-shadow")
-}
-
-remapJar {
-	input.set shadowJar.archiveFile
-	dependsOn shadowJar
-	archiveBaseName.set "${rootProject.mod_name}-${project.name}"
-	archiveClassifier.set null
 }
 
 jar {
