@@ -1323,15 +1323,18 @@ public class ScriptRuntime {
 	}
 
 	public static Object getObjectPropOptional(Object obj, String property, Context cx, Scriptable scope) {
-		val sobj = toObjectOrNull(cx, obj, scope);
-		if (sobj == null) {
+		if (isNullOrUndefined(obj)) {
 			return Undefined.instance;
 		}
-		val result = ScriptableObject.getProperty(sobj, property);
-		if (result == Scriptable.NOT_FOUND) {
+		return getObjectProp(obj, property, cx, scope);
+	}
+
+	public static Object getObjectPropOptional(
+		Scriptable obj, String property, Context cx, Scriptable scope) {
+		if (isNullOrUndefined(obj)) {
 			return Undefined.instance;
 		}
-		return result;
+		return getObjectProp(obj, property, cx);
 	}
 
 	public static Object getObjectPropNoWarn(Object obj, String property, Context cx, Scriptable scope) {

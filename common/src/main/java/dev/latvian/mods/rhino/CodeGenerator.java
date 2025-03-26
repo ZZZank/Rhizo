@@ -257,7 +257,7 @@ class CodeGenerator extends Icode {
 	}
 
 	private static RuntimeException badTree(Node node) {
-		throw new RuntimeException(node.toString());
+		throw new RuntimeException(node.toString() + "(type: " + Token.typeToName(node.type) + ')');
 	}
 
 	private void visitStatement(Node node, int initialStackDepth) {

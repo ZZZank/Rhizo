@@ -196,32 +196,18 @@ public final class IRFactory extends Parser {
 			case Token.YIELD_STAR:
 				return transformYield((Yield) node);
 			default:
-				if (node instanceof ExpressionStatement) {
-					return transformExprStmt((ExpressionStatement) node);
-				}
-				if (node instanceof Assignment) {
-					return transformAssignment((Assignment) node);
-				}
-				if (node instanceof UnaryExpression) {
-					return transformUnary((UnaryExpression) node);
-				}
-				if (node instanceof InfixExpression) {
-					return transformInfix((InfixExpression) node);
-				}
-				if (node instanceof VariableDeclaration) {
-					return transformVariables((VariableDeclaration) node);
-				}
-				if (node instanceof ParenthesizedExpression) {
-					return transformParenExpr((ParenthesizedExpression) node);
-				}
-				if (node instanceof LabeledStatement) {
-					return transformLabeledStatement((LabeledStatement) node);
-				}
-				if (node instanceof LetNode) {
-					return transformLetNode((LetNode) node);
-				}
-				throw new IllegalArgumentException("Can't transform: " + node);
-		}
+                return switch (node) {
+                    case ExpressionStatement nodes -> transformExprStmt(nodes);
+                    case Assignment nodes -> transformAssignment(nodes);
+                    case UnaryExpression nodes -> transformUnary(nodes);
+                    case InfixExpression nodes -> transformInfix(nodes);
+                    case VariableDeclaration nodes -> transformVariables(nodes);
+                    case ParenthesizedExpression nodes -> transformParenExpr(nodes);
+                    case LabeledStatement nodes -> transformLabeledStatement(nodes);
+                    case LetNode nodes -> transformLetNode(nodes);
+                    default -> throw new IllegalArgumentException("Can't transform: " + node);
+                };
+        }
 	}
 
 	private Node transformArrayComp(ArrayComprehension node) {

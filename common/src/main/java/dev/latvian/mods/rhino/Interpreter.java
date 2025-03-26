@@ -2131,7 +2131,7 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static int doNullishCoalescing(CallFrame frame, Object[] stack, double[] sDbl, int stackTop) {
 		val left = frame.stack[stackTop - 1];
 		val right = frame.stack[stackTop];
-		stack[--stackTop] = (left == null || Undefined.isUndefined(left)) ? right : left;
+		stack[--stackTop] = ScriptRuntime.isNullOrUndefined(left) ? right : left;
 		return stackTop;
 	}
 

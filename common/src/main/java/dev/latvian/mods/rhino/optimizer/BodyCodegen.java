@@ -1601,7 +1601,7 @@ class BodyCodegen {
             }
 
             default:
-                throw new RuntimeException("Unexpected node type " + type);
+                throw new RuntimeException("Unexpected node type " + type + '(' + Token.typeToName(type) + ')');
         }
 
     }
@@ -4031,28 +4031,17 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
                     + ")Ljava/lang/Object;"
             );
             return;
-        } else if (node.getType() == Token.GETOPTIONAL) {
-            cfw.addALoad(contextLocal);
-            cfw.addALoad(variableObjectLocal);
-            addScriptRuntimeInvoke(
-                "getObjectPropOptional",
-                "(Ljava/lang/Object;"
-                    + "Ljava/lang/String;"
-                    + "Ldev/latvian/mods/rhino/Context;"
-                    + "Ldev/latvian/mods/rhino/Scriptable;"
-                    + ")Ljava/lang/Object;"
-            );
-            return;
         }
         /*
             for 'this.foo' we call getObjectProp(Scriptable...) which can
             skip some casting overhead.
         */
         int childType = child.getType();
+        val isOptional = node.getType() == Token.GETOPTIONAL;
         if (childType == Token.THIS && nameChild.getType() == Token.STRING) {
             cfw.addALoad(contextLocal);
             addScriptRuntimeInvoke(
-                "getObjectProp",
+                isOptional ? "getObjectProp" : "getObjectPropOptional",
                 "(Ldev/latvian/mods/rhino/Scriptable;"
                     + "Ljava/lang/String;"
                     + "Ldev/latvian/mods/rhino/Context;"
@@ -4062,7 +4051,7 @@ Else pass the JS object in the aReg and 0.0 in the dReg.
             cfw.addALoad(contextLocal);
             cfw.addALoad(variableObjectLocal);
             addScriptRuntimeInvoke(
-                "getObjectProp",
+                isOptional ? "getObjectProp" : "getObjectPropOptional",
                 "(Ljava/lang/Object;"
                     + "Ljava/lang/String;"
                     + "Ldev/latvian/mods/rhino/Context;"
