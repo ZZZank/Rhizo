@@ -997,7 +997,7 @@ public class Node implements Iterable<Node> {
 			toString(new ObjToIntMap(), sb);
 			return sb.toString();
 		}
-		return String.valueOf(type);
+		return "%s(%s)".formatted(type, Token.typeToName(type));
 	}
 
 	private void toString(ObjToIntMap printIds, StringBuilder sb) {
