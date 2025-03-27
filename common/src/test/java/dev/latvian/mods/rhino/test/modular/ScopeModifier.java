@@ -9,6 +9,10 @@ import dev.latvian.mods.rhino.ScriptableObject;
  */
 public interface ScopeModifier extends Snapshot.Modifier {
 
+    static ScopeModifier none() {
+        return scope -> {};
+    }
+
     static ScopeModifier putProperty(String name, Object value) {
         return scope -> ScriptableObject.putProperty(scope, name, value);
     }

@@ -9,6 +9,14 @@ import org.junit.jupiter.api.Assertions;
  */
 public interface ResultValidator extends Snapshot.Modifier {
 
+    static ResultValidator always() {
+        return (result, error) -> {};
+    }
+
+    static ResultValidator never() {
+        return (result, error) -> Assertions.fail();
+    }
+
     static ResultValidator noError() {
         return (result, error) -> Assertions.assertNull(error, "Expecting no error");
     }

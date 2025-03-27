@@ -7,6 +7,10 @@ import dev.latvian.mods.rhino.ContextFactory;
  */
 public interface ContextFactoryModifier extends Snapshot.Modifier {
 
+    static ContextFactoryModifier none() {
+        return factory -> {};
+    }
+
     static ContextFactoryModifier addListener(ContextFactory.Listener listener) {
         return factory -> factory.addListener(listener);
     }

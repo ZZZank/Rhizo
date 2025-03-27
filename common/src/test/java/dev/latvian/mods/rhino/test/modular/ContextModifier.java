@@ -9,6 +9,10 @@ import dev.latvian.mods.rhino.WrapFactory;
  */
 public interface ContextModifier extends Snapshot.Modifier {
 
+    static ContextModifier none() {
+        return context -> {};
+    }
+
     static ContextModifier setLanguageVersion(int version) {
         return context -> context.setLanguageVersion(version);
     }
