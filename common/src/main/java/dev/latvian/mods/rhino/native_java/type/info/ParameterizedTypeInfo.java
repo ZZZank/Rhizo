@@ -34,7 +34,7 @@ public final class ParameterizedTypeInfo extends TypeInfoBase {
 
 	@Override
 	public TypeInfo param(int index) {
-		return index >= 0 && index < params.length && params[index] != TypeInfo.OBJECT ? params[index] : TypeInfo.NONE;
+		return index >= 0 && index < params.length ? params[index] : TypeInfo.NONE;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Set;
 
 public abstract class ClassTypeInfo extends TypeInfoBase {
-	private final Class<?> type;
+	protected final Class<?> type;
 	private Set<Class<?>> typeSet;
 
 	ClassTypeInfo(Class<?> type) {
@@ -12,7 +12,7 @@ public abstract class ClassTypeInfo extends TypeInfoBase {
 	}
 
 	@Override
-	public Class<?> asClass() {
+	public final Class<?> asClass() {
 		return type;
 	}
 
@@ -47,56 +47,6 @@ public abstract class ClassTypeInfo extends TypeInfoBase {
 	@Override
 	public void append(TypeStringContext ctx, StringBuilder sb) {
 		ctx.appendClassName(sb, this);
-	}
-
-	@Override
-	public boolean isVoid() {
-		return type == Void.class || type == Void.TYPE;
-	}
-
-	@Override
-	public boolean isBoolean() {
-		return type == Boolean.class || type == Boolean.TYPE;
-	}
-
-	@Override
-	public boolean isNumber() {
-		return Number.class.isAssignableFrom(type);
-	}
-
-	@Override
-	public boolean isByte() {
-		return type == Byte.class || type == Byte.TYPE;
-	}
-
-	@Override
-	public boolean isShort() {
-		return type == Short.class || type == Short.TYPE;
-	}
-
-	@Override
-	public boolean isInt() {
-		return type == Integer.class || type == Integer.TYPE;
-	}
-
-	@Override
-	public boolean isLong() {
-		return type == Long.class || type == Long.TYPE;
-	}
-
-	@Override
-	public boolean isFloat() {
-		return type == Float.class || type == Float.TYPE;
-	}
-
-	@Override
-	public boolean isDouble() {
-		return type == Double.class || type == Double.TYPE;
-	}
-
-	@Override
-	public boolean isCharacter() {
-		return type == Character.class || type == Character.TYPE;
 	}
 
 	@Override
