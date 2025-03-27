@@ -6,13 +6,13 @@ import dev.latvian.mods.rhino.native_java.type.RemappedEnumConstant;
 import dev.latvian.mods.rhino.util.wrap.TypeWrapper;
 import lombok.val;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class EnumTypeInfo extends ClassTypeInfo implements TypeWrapper<Object> {
-	static final Map<Class<?>, EnumTypeInfo> CACHE = new IdentityHashMap<>();
+	static final Map<Class<?>, EnumTypeInfo> CACHE = new ConcurrentHashMap<>();
 
 	public static String getName(Object e) {
 		if (e instanceof RemappedEnumConstant c) {

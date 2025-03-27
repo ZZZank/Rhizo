@@ -3,11 +3,11 @@ package dev.latvian.mods.rhino.native_java.type.info;
 import dev.latvian.mods.rhino.util.ByteAsBool;
 import lombok.val;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InterfaceTypeInfo extends ClassTypeInfo {
-	static final Map<Class<?>, InterfaceTypeInfo> CACHE = new IdentityHashMap<>();
+	static final Map<Class<?>, InterfaceTypeInfo> CACHE = new ConcurrentHashMap<>();
 
 	private byte functional;
 

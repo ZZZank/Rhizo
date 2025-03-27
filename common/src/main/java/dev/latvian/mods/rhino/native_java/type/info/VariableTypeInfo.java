@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author ZZZank
  */
 public class VariableTypeInfo extends TypeInfoBase {
-    static final Map<TypeVariable<?>, VariableTypeInfo> CACHE = new IdentityHashMap<>();
+    static final Map<TypeVariable<?>, VariableTypeInfo> CACHE = new ConcurrentHashMap<>();
 
     private final TypeVariable<?> raw;
     private TypeInfo[] bounds = null;
