@@ -358,7 +358,7 @@ public class Context {
         } else {
             if (cx == null) {
                 cx = factory.makeContext();
-                if (cx.enterCount.get() == 0) {
+                if (cx.enterCount.get() != 0) {
                     throw new IllegalStateException("factory.makeContext() returned Context instance already associated with some thread");
                 }
                 factory.onContextCreated(cx);
