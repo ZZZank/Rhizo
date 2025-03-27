@@ -1,3 +1,9 @@
+## Rhizo 3.6.4 -> 3.6.5
+
+- fixed a bug introduced by concurrent context fix in 3.6.4
+
+---
+
 ## Rhizo 3.6.3 -> 3.6.4
 
 More fixes
