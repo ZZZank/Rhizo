@@ -32,8 +32,8 @@ public class TestsBuilder {
     public int lineNo = 1;
     public List<Object> securityDomainChoice = ofList(null);
 
-    public void test() {
-        var modifiersChoices = descartes(
+    public Stream<TestBuilder> getBuilders() {
+        return descartesArr(
             mapList(factoryProviderChoice, fp -> modifier(b -> b.factoryProvider = fp)),
             mapList(factoryModifiersChoice, fm -> modifier(b -> b.factoryModifiers = fm)),
             mapList(contextProviderChoice, cp -> modifier(b -> b.contextProvider = cp)),
@@ -46,13 +46,19 @@ public class TestsBuilder {
             List.of(modifier(b -> b.lineNo = lineNo)),
             mapList(securityDomainChoice, sd -> modifier(b -> b.securityDomain = sd))
         )
-            .toList();
-        for (var modifiers : modifiersChoices) {
-            var testBuilder = new TestBuilder();
-            for (var modifier : modifiers) {
-                modifier.accept(testBuilder);
-            }
-            testBuilder.test();
+            .map(modifiers -> {
+                var testBuilder = new TestBuilder();
+                for (var modifier : modifiers) {
+                    modifier.accept(testBuilder);
+                }
+                return testBuilder;
+            });
+    }
+
+    public void test() {
+        // convert to list before testing to simplify stack trace
+        for (TestBuilder builder : getBuilders().toList()) {
+            builder.test();
         }
     }
 
@@ -73,13 +79,13 @@ public class TestsBuilder {
     }
 
     @SafeVarargs
-    public static <T> Stream<Collection<T>> descartes(Collection<T>... layers) {
+    public static <T> Stream<Collection<T>> descartesArr(Collection<T>... layers) {
         return descartes(Arrays.asList(layers));
     }
 
     @SafeVarargs
-    public static <T> List<Collection<T>> descartesList(Collection<T>... layers) {
-        return descartes(layers).toList();
+    public static <T> List<Collection<T>> descartesArr2List(Collection<T>... layers) {
+        return descartesArr(layers).toList();
     }
 
     /**

@@ -9,6 +9,11 @@ public class TestContext extends Context {
 		super(factory);
 	}
 
+	public TestContext(TestContextFactory factory, String name) {
+		super(factory);
+		testName = name;
+	}
+
 	@Override
 	public String toString() {
 		return testName;
