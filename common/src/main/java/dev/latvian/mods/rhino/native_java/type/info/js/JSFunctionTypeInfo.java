@@ -3,8 +3,8 @@ package dev.latvian.mods.rhino.native_java.type.info.js;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeStringContext;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 // (a: string) => void
 public record JSFunctionTypeInfo(List<JSOptionalParam> params, TypeInfo returnType) implements TypeInfo {
@@ -44,11 +44,11 @@ public record JSFunctionTypeInfo(List<JSOptionalParam> params, TypeInfo returnTy
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
 		for (var param : params) {
-			param.type().collectContainedComponentClasses(classes);
+			param.type().collectContainedComponentClasses(collector);
 		}
 
-		returnType.collectContainedComponentClasses(classes);
+		returnType.collectContainedComponentClasses(collector);
 	}
 }

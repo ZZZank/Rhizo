@@ -3,9 +3,8 @@ package dev.latvian.mods.rhino.native_java.type.info;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Consumer;
 
 public final class ArrayTypeInfo extends TypeInfoBase {
 	private final TypeInfo component;
@@ -62,13 +61,8 @@ public final class ArrayTypeInfo extends TypeInfoBase {
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
-		component.collectContainedComponentClasses(classes);
-	}
-
-	@Override
-	public Set<Class<?>> getContainedComponentClasses() {
-		return component.getContainedComponentClasses();
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
+		component.collectContainedComponentClasses(collector);
 	}
 
 	@Override

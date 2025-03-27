@@ -6,10 +6,10 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public final class ParameterizedTypeInfo extends TypeInfoBase {
 	private final TypeInfo rawType;
@@ -111,17 +111,22 @@ public final class ParameterizedTypeInfo extends TypeInfoBase {
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
-		rawType.collectContainedComponentClasses(classes);
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
+		rawType.collectContainedComponentClasses(collector);
 
 		for (var param : params) {
-			param.collectContainedComponentClasses(classes);
+			param.collectContainedComponentClasses(collector);
 		}
 	}
 
 	@Override
 	public boolean isInterface() {
 		return this.rawType.isInterface();
+	}
+
+	@Override
+	public boolean isNumber() {
+		return rawType.isNumber();
 	}
 
 	@Override

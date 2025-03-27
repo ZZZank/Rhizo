@@ -5,8 +5,8 @@ import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeStringContext;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 // string | number
 public record JSOrTypeInfo(List<TypeInfo> types) implements TypeInfo {
@@ -49,9 +49,9 @@ public record JSOrTypeInfo(List<TypeInfo> types) implements TypeInfo {
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
 		for (var type : types) {
-			type.collectContainedComponentClasses(classes);
+			type.collectContainedComponentClasses(collector);
 		}
 	}
 }

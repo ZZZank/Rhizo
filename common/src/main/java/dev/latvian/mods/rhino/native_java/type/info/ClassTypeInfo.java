@@ -1,6 +1,5 @@
 package dev.latvian.mods.rhino.native_java.type.info;
 
-import java.util.Collections;
 import java.util.Set;
 
 public abstract class ClassTypeInfo extends TypeInfoBase {
@@ -49,11 +48,4 @@ public abstract class ClassTypeInfo extends TypeInfoBase {
 		ctx.appendClassName(sb, this);
 	}
 
-	@Override
-	public Set<Class<?>> getContainedComponentClasses() {
-		if (typeSet == null) {
-			typeSet = Collections.singleton(type);
-		}
-		return typeSet;
-	}
 }

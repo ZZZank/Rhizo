@@ -1,9 +1,6 @@
 package dev.latvian.mods.rhino.native_java.type.info;
 
-import com.google.common.collect.ImmutableSet;
-
-import java.util.Collection;
-import java.util.Set;
+import java.util.function.Consumer;
 
 final class NoTypeInfo implements TypeInfo {
 	static final NoTypeInfo INSTANCE = new NoTypeInfo();
@@ -51,11 +48,7 @@ final class NoTypeInfo implements TypeInfo {
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
 	}
 
-	@Override
-	public Set<Class<?>> getContainedComponentClasses() {
-		return ImmutableSet.of();
-	}
 }

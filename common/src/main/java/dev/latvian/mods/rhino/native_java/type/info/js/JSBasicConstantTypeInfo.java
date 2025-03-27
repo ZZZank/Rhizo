@@ -3,9 +3,7 @@ package dev.latvian.mods.rhino.native_java.type.info.js;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeStringContext;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.function.Consumer;
 
 // null, undefined, true, false
 public record JSBasicConstantTypeInfo(String value) implements TypeInfo {
@@ -30,11 +28,6 @@ public record JSBasicConstantTypeInfo(String value) implements TypeInfo {
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
-	}
-
-	@Override
-	public Set<Class<?>> getContainedComponentClasses() {
-		return Collections.emptySet();
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
 	}
 }

@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeStringContext;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 // {a: string, b?: number}
 public record JSObjectTypeInfo(List<JSOptionalParam> fields) implements TypeInfo {
@@ -52,9 +52,9 @@ public record JSObjectTypeInfo(List<JSOptionalParam> fields) implements TypeInfo
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
 		for (var field : fields) {
-			field.type().collectContainedComponentClasses(classes);
+			field.type().collectContainedComponentClasses(collector);
 		}
 	}
 }

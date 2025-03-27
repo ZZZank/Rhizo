@@ -1,12 +1,10 @@
 package dev.latvian.mods.rhino.native_java.type.info.js;
 
-import com.google.common.collect.ImmutableSet;
 import dev.latvian.mods.rhino.ScriptRuntime;
 import dev.latvian.mods.rhino.native_java.type.info.TypeInfo;
 import dev.latvian.mods.rhino.native_java.type.info.TypeStringContext;
 
-import java.util.Collection;
-import java.util.Set;
+import java.util.function.Consumer;
 
 // "abc"
 public record JSStringConstantTypeInfo(String constant) implements TypeInfo {
@@ -28,11 +26,7 @@ public record JSStringConstantTypeInfo(String constant) implements TypeInfo {
 	}
 
 	@Override
-	public void collectContainedComponentClasses(Collection<Class<?>> classes) {
+	public void collectContainedComponentClasses(Consumer<Class<?>> collector) {
 	}
 
-	@Override
-	public Set<Class<?>> getContainedComponentClasses() {
-		return ImmutableSet.of();
-	}
 }

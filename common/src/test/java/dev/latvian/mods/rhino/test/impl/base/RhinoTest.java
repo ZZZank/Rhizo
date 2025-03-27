@@ -72,9 +72,7 @@ public class RhinoTest {
 			}
 
 			cx.testName = name;
-			if (compile) {
-				cx.setOptimizationLevel(9);
-			}
+            cx.setOptimizationLevel(compile ? 9 : -1);
 			cx.evaluateString(rootScope, script, testName + "/" + name, 1, null);
 		} catch (Exception ex) {
 			ex.printStackTrace();
