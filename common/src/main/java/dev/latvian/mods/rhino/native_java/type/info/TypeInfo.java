@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface TypeInfo {
-	TypeInfo NONE = new NoTypeInfo();
+	TypeInfo NONE = NoTypeInfo.INSTANCE;
 
 	TypeInfo[] EMPTY_ARRAY = new TypeInfo[0];
 

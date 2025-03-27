@@ -6,6 +6,10 @@ import java.util.Collection;
 import java.util.Set;
 
 final class NoTypeInfo implements TypeInfo {
+	static final NoTypeInfo INSTANCE = new NoTypeInfo();
+
+	private NoTypeInfo() {}
+
 	@Override
 	public Class<?> asClass() {
 		return Object.class;
