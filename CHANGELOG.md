@@ -1,3 +1,18 @@
+## Rhizo 3.6.3 -> 3.6.4
+
+More fixes
+
+- restored old Rhino NBT handling that will provide proxy for `NBT` interface
+    - It's absolutely bad programming practise, but backward compat
+- removed explicit class wrapping, added `ClassWrapper` for those in need of static method access
+- fixed another concurrent issue when multiple threads request the same Context
+- fixed some `delete` calling in compiler mode
+- fixed Nullish Coalescing in compile mode
+- (dev) added `Deprecated` annotations to deprecated members
+- optimized java type actions a bit
+
+---
+
 ## Rhizo 3.6.2 -> 3.6.3
 
 Multiblocked compat fix
