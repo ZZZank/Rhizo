@@ -61,7 +61,8 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	public NativeJavaObject(Context cx, Scriptable scope, Object javaObject, TypeInfo typeInfo, boolean isAdapter) {
 		this.parent = scope;
 		this.javaObject = javaObject;
-		this.typeInfo = typeInfo;
+		if (typeInfo!=null) this.typeInfo = typeInfo;
+		else this.typeInfo = TypeInfo.NONE;
 		this.isAdapter = isAdapter;
 		initMembers(cx, scope);
 	}
