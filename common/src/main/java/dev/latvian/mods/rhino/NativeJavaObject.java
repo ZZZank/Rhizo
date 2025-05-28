@@ -43,6 +43,7 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 
 	protected transient final Object javaObject;
 	protected transient final TypeInfo typeInfo;
+	private transient Map<VariableTypeInfo, TypeInfo> cachedConsolidationMapping;
 
 	@Getter
 	protected transient JavaMembers members;
@@ -261,6 +262,13 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 	}
 
 	public Map<VariableTypeInfo, TypeInfo> extractMapping() {
+		if (this.cachedConsolidationMapping == null) {
+			this.cachedConsolidationMapping = extractMappingImpl();
+		}
+		return cachedConsolidationMapping;
+	}
+
+	private Map<VariableTypeInfo, TypeInfo> extractMappingImpl() {
 		if (this.javaObject == null) {
 			return Collections.emptyMap();
 		}
