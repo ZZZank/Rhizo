@@ -98,7 +98,7 @@ public final class JavaAdapter implements IdFunctionCall {
 
 	public static Scriptable createAdapterWrapper(Scriptable obj, Object adapter) {
 		val scope = ScriptableObject.getTopLevelScope(obj);
-		val res = new NativeJavaObject(Context.getContext(), scope, adapter, TypeInfo.OBJECT, true);
+		val res = new NativeJavaObject(Context.getContext(), scope, adapter, TypeInfo.NONE, true);
 		res.setPrototype(obj);
 		return res;
 	}
@@ -183,9 +183,9 @@ public final class JavaAdapter implements IdFunctionCall {
 				// Found the constructor, so try invoking it.
 				adapter = NativeJavaClass.constructInternal(cx, ctorArgs, ctors.methods[index]);
 			} else {
-				Class<?>[] ctorParms = {ScriptRuntime.ScriptableClass, ScriptRuntime.ContextFactoryClass};
-				Object[] ctorArgs = {obj, cx.getFactory()};
-				adapter = adapterClass.getConstructor(ctorParms).newInstance(ctorArgs);
+				adapter = adapterClass
+					.getConstructor(ScriptRuntime.ScriptableClass, ScriptRuntime.ContextFactoryClass)
+					.newInstance(obj, cx.getFactory());
 			}
 
 			Object self = getAdapterSelf(adapterClass, adapter);
@@ -251,10 +251,10 @@ public final class JavaAdapter implements IdFunctionCall {
 
 		Class<?> adapterClass = getAdapterClass(self, superClass, interfaces, delegee);
 
-		Class<?>[] ctorParms = {ScriptRuntime.ContextFactoryClass, ScriptRuntime.ScriptableClass, ScriptRuntime.ScriptableClass};
-		Object[] ctorArgs = {factory, delegee, self};
 		try {
-			return adapterClass.getConstructor(ctorParms).newInstance(ctorArgs);
+			return adapterClass
+				.getConstructor(ScriptRuntime.ContextFactoryClass, ScriptRuntime.ScriptableClass, ScriptRuntime.ScriptableClass)
+				.newInstance(factory, delegee, self);
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException ignored) {
 		}
@@ -265,19 +265,19 @@ public final class JavaAdapter implements IdFunctionCall {
 	private static ObjToIntMap getObjectFunctionNames(Scriptable obj) {
 		Object[] ids = ScriptableObject.getPropertyIds(obj);
 		ObjToIntMap map = new ObjToIntMap(ids.length);
-		for (int i = 0; i != ids.length; ++i) {
-			if (!(ids[i] instanceof String id)) {
-				continue;
-			}
-            Object value = ScriptableObject.getProperty(obj, id);
-			if (value instanceof Function f) {
+        for (val o : ids) {
+            if (!(o instanceof String id)) {
+                continue;
+            }
+            val value = ScriptableObject.getProperty(obj, id);
+            if (value instanceof Function f) {
                 int length = ScriptRuntime.toInt32(ScriptableObject.getProperty(f, "length"));
-				if (length < 0) {
-					length = 0;
-				}
-				map.put(id, length);
-			}
-		}
+                if (length < 0) {
+                    length = 0;
+                }
+                map.put(id, length);
+            }
+        }
 		return map;
 	}
 
@@ -331,8 +331,7 @@ public final class JavaAdapter implements IdFunctionCall {
 
 		// generate methods to satisfy all specified interfaces.
 		for (int i = 0; i < interfacesCount; i++) {
-			Method[] methods = interfaces[i].getMethods();
-            for (Method method : methods) {
+            for (Method method : interfaces[i].getMethods()) {
                 int mods = method.getModifiers();
                 if (Modifier.isStatic(mods) || Modifier.isFinal(mods) || method.isDefault()) {
                     continue;
@@ -366,8 +365,7 @@ public final class JavaAdapter implements IdFunctionCall {
 		// methods or additional methods to override.
 
 		// generate any additional overrides that the object might contain.
-		Method[] methods = getOverridableMethods(superClass);
-        for (Method method : methods) {
+        for (Method method : getOverridableMethods(superClass)) {
             int mods = method.getModifiers();
             // if a method is marked abstract, must implement it or the
             // resulting class won't be instantiable. otherwise, if the object
