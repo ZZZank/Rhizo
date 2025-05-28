@@ -25,6 +25,9 @@ public interface Wrapper {
 	Object unwrap();
 
 	static Object unwrapped(Object o) {
-		return o instanceof Wrapper ? unwrapped(((Wrapper) o).unwrap()) : o;
+		while (o instanceof Wrapper wrapper) {
+			o = wrapper.unwrap();
+		}
+		return o;
 	}
 }
