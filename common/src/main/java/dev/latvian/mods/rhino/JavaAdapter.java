@@ -31,9 +31,9 @@ public final class JavaAdapter implements IdFunctionCall {
 	 * adapter classes stored in a hash table.
 	 */
 	static class JavaAdapterSignature {
-		Class<?> superClass;
-		Class<?>[] interfaces;
-		ObjToIntMap names;
+		private final Class<?> superClass;
+		private final Class<?>[] interfaces;
+		private final ObjToIntMap names;
 
 		JavaAdapterSignature(Class<?> superClass, Class<?>[] interfaces, ObjToIntMap names) {
 			this.superClass = superClass;
@@ -43,30 +43,19 @@ public final class JavaAdapter implements IdFunctionCall {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof JavaAdapterSignature sig)) {
+			if (!(obj instanceof JavaAdapterSignature other)
+				|| superClass != other.superClass
+				|| !Arrays.equals(interfaces, other.interfaces)) {
 				return false;
 			}
-            if (superClass != sig.superClass) {
+			if (names.size() != other.names.size()) {
 				return false;
 			}
-			if (interfaces != sig.interfaces) {
-				if (interfaces.length != sig.interfaces.length) {
-					return false;
-				}
-				for (int i = 0; i < interfaces.length; i++) {
-					if (interfaces[i] != sig.interfaces[i]) {
-						return false;
-					}
-				}
-			}
-			if (names.size() != sig.names.size()) {
-				return false;
-			}
-			ObjToIntMap.Iterator iter = new ObjToIntMap.Iterator(names);
+			val iter = new ObjToIntMap.Iterator(names);
 			for (iter.start(); !iter.done(); iter.next()) {
-				String name = (String) iter.getKey();
-				int arity = iter.getValue();
-				if (arity != sig.names.get(name, arity + 1)) {
+				val name = (String) iter.getKey();
+				val arity = iter.getValue();
+				if (arity != other.names.get(name, arity + 1)) {
 					return false;
 				}
 			}
