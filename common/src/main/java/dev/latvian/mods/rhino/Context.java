@@ -236,6 +236,9 @@ public class Context {
      * Convenient value to use as zero-length array of objects.
      */
     public static final Object[] emptyArgs = ScriptRuntime.emptyArgs;
+
+    public final Object lock = new Object();
+
     private final ContextFactory factory;
     private int optimizationLevel;
     // Generate an observer count on compiled code

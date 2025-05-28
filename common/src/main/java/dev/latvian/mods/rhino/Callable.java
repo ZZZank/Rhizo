@@ -23,7 +23,7 @@ public interface Callable {
 	Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args);
 
 	default Object callSync(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
-		synchronized (cx) {
+		synchronized (cx.lock) {
 			return call(cx, scope, thisObj, args);
 		}
 	}
