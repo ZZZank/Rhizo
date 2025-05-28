@@ -109,7 +109,7 @@ public final class JavaAdapter implements IdFunctionCall {
 
 	public static Scriptable createAdapterWrapper(Scriptable obj, Object adapter) {
 		val scope = ScriptableObject.getTopLevelScope(obj);
-		val res = new NativeJavaObject(Context.getContext(), scope, adapter, null, true);
+		val res = new NativeJavaObject(Context.getContext(), scope, adapter, TypeInfo.OBJECT, true);
 		res.setPrototype(obj);
 		return res;
 	}
