@@ -2803,10 +2803,8 @@ public final class Interpreter extends Icode implements Evaluator {
 	private static boolean stack_boolean(CallFrame frame, int i) {
 		Object x = Wrapper.unwrapped(frame.stack[i]);
 
-		if (Boolean.TRUE.equals(x)) {
-			return true;
-		} else if (Boolean.FALSE.equals(x)) {
-			return false;
+		if (x instanceof Boolean b) {
+			return b;
 		} else if (x == DOUBLE_MARK) {
 			double d = frame.sDbl[i];
 			return !Double.isNaN(d) && d != 0.0;

@@ -227,7 +227,6 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 
 	@Override
 	public Object getDefaultValue(Class<?> hint) {
-		Object value;
 		if (hint == null) {
 			if (javaObject instanceof Boolean) {
 				hint = ScriptRuntime.BooleanClass;
@@ -236,30 +235,25 @@ public class NativeJavaObject implements Scriptable, SymbolScriptable, Wrapper, 
 			}
 		}
 		if (hint == null || hint == ScriptRuntime.StringClass) {
-			value = javaObject.toString();
-		} else {
-			String converterName;
-			if (hint == ScriptRuntime.BooleanClass) {
-				converterName = "booleanValue";
-			} else if (hint == ScriptRuntime.NumberClass) {
-				converterName = "doubleValue";
-			} else {
-				throw Context.reportRuntimeError0("msg.default.value");
-			}
-			Object converterObject = get(converterName, this);
-			if (converterObject instanceof Function f) {
-                value = f.call(Context.getContext(), f.getParentScope(), this, ScriptRuntime.emptyArgs);
-			} else {
-				if (hint == ScriptRuntime.NumberClass && javaObject instanceof Boolean) {
-					boolean b = (Boolean) javaObject;
-					value = b ? ScriptRuntime.wrapNumber(1.0) : ScriptRuntime.zeroObjInt;
-				} else {
-					value = javaObject.toString();
-				}
-			}
+			return javaObject.toString();
 		}
-		return value;
-	}
+		String converterName;
+		if (hint == ScriptRuntime.BooleanClass) {
+			converterName = "booleanValue";
+		} else if (hint == ScriptRuntime.NumberClass) {
+			converterName = "doubleValue";
+		} else {
+			throw Context.reportRuntimeError0("msg.default.value");
+		}
+		Object converterObject = get(converterName, this);
+		if (converterObject instanceof Function f) {
+			return f.call(Context.getContext(), f.getParentScope(), this, ScriptRuntime.emptyArgs);
+		}
+        if (hint == ScriptRuntime.NumberClass && javaObject instanceof Boolean b) {
+            return b ? ScriptRuntime.wrapNumber(1.0) : ScriptRuntime.zeroObjInt;
+        }
+        return javaObject.toString();
+    }
 
 	public Map<VariableTypeInfo, TypeInfo> extractMapping() {
 		if (this.cachedConsolidationMapping == null) {
