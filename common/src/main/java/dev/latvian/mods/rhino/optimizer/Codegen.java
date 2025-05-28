@@ -13,7 +13,6 @@ import dev.latvian.mods.rhino.ast.ScriptNode;
 import dev.latvian.mods.rhino.ast.TemplateCharacters;
 import dev.latvian.mods.rhino.classfile.ByteCode;
 import dev.latvian.mods.rhino.classfile.ClassFileWriter;
-import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import lombok.val;
 
 import java.lang.reflect.Constructor;
@@ -1311,8 +1310,7 @@ public class Codegen implements Evaluator {
         if (n.getType() == Token.FUNCTION) {
             OptFunctionNode ofn = OptFunctionNode.get(n);
             if (ofn.isTargetOfDirectCall()) {
-                int pCount = ofn.fnode.getParamCount();
-                sb.append(JavaPortingHelper.repeat("Ljava/lang/Object;D", pCount));
+                sb.append("Ljava/lang/Object;D".repeat(ofn.fnode.getParamCount()));
             }
         }
         sb.append("[Ljava/lang/Object;)Ljava/lang/Object;");

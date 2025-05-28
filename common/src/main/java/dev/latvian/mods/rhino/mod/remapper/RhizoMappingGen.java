@@ -2,7 +2,6 @@ package dev.latvian.mods.rhino.mod.remapper;
 
 import com.google.gson.JsonObject;
 import dev.latvian.mods.rhino.mod.util.JsonUtils;
-import dev.latvian.mods.rhino.util.JavaPortingHelper;
 import dev.latvian.mods.rhino.util.remapper.RemapperException;
 import lombok.val;
 import net.neoforged.srgutils.IMappingFile;
@@ -40,7 +39,7 @@ public abstract class RhizoMappingGen {
             //in-game -> mapped
             val target = renamed.reverse();
             //write mapping
-            writeRhizoMapping(JavaPortingHelper.ofPath(MAPPING_FILENAME), target, mcVersion);
+            writeRhizoMapping(Path.of(MAPPING_FILENAME), target, mcVersion);
         } catch (Exception e) {
             MappingIO.LOGGER.error("Mapping generation failed", e);
             return;
